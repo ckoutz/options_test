@@ -1,0 +1,65 @@
+name: Options footprint
+
+on:
+  schedule:
+    - cron: "15 22 * * 1-5"   # weekdays 22:15 UTC = 3:15 PM Pacific (2:15 PM in winter), after the close
+  workflow_dispatch:           # "Run workflow" button in the Actions tab
+    inputs:
+      command:
+        description: "What to run"
+        type: choice
+        default: nightly
+        options:
+          - nightly
+          - compare
+          - backfill
+
+permissions:
+  contents: write
+
+concurrency:
+  group: options-footprint
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: options-footprint
+    timeout-minutes: 120
+    env:
+      ALPACA_KEY_ID: ${{ secrets.ALPACA_KEY_ID }}
+      ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Restore Alpaca response cache
+        uses: actions/cache@v4
+        with:
+          path: options-footprint/data/cache
+          key: alpaca-cache-${{ github.run_id }}
+          restore-keys: alpaca-cache-
+
+      - name: Run
+        run: |
+          case "${{ github.event.inputs.command || 'nightly' }}" in
+            nightly)  python collector.py nightly ;;
+            compare)  python collector.py compare --ticker WOLF ;;
+            backfill) python collector.py find-movers --start 2024-03-01 --min-move 15
+                      python collector.py collect
+                      python collector.py controls --per-event 2
+                      python collector.py features ;;
+          esac
+
+      - name: Save dataset back to the repository
+        run: |
+          git config user.name "options-footprint-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/*.csv
+          git diff --cached --quiet || git commit -m "Dataset update $(date -u +%Y-%m-%d)"
+          git push

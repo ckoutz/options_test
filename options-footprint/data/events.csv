@@ -1,0 +1,11 @@
+ticker,event_date,event_type,move_pct,prior_close,event_close,catalyst,label,notes
+WOLF,2026-10-07,after_hours,27.3,31.40,39.97,"Conditional $1.5 billion 30-year loan commitment from Department of War Office of Strategic Capital, announced after close",news_catalyst,After-hours move; event_close is reported after-hours price
+WOLF,2026-10-02,two_day,25.4,28.13,35.28,Unconfirmed,unknown,Move spans 2026-10-01 (+10.8%) and 2026-10-02 (+13.2%); TipRanks flagged bullish call volume 2026-10-02
+WOLF,2026-08-07,close_to_close,19.1,27.59,32.87,Unconfirmed,unknown,
+WOLF,2026-06-18,close_to_close,17.9,48.69,57.41,Unconfirmed,unknown,
+FCEL,2026-09-08,close_to_close,18.8,14.95,17.76,Unconfirmed,unknown,
+RXRX,2026-10-05,close_to_close,16.0,4.12,4.78,Unconfirmed,unknown,Followed by heavy volume 2026-10-06
+FCEL,2026-07-30,close_to_close,30.6,18.08,23.62,Unconfirmed,sector_day,Same day as BE/APLD/CORZ rallies; likely sector-wide
+BE,2026-07-30,close_to_close,26.5,163.75,207.12,Unconfirmed,sector_day,Same day as FCEL/APLD/CORZ rallies; likely sector-wide
+APLD,2026-07-30,close_to_close,20.5,23.22,27.97,Unconfirmed,sector_day,Same day as FCEL/BE/CORZ rallies; likely sector-wide
+CORZ,2026-07-30,close_to_close,20.4,18.12,21.81,Unconfirmed,sector_day,Same day as FCEL/BE/APLD rallies; likely sector-wide

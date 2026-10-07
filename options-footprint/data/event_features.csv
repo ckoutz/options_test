@@ -1,0 +1,11 @@
+ticker,event_date,label,move_pct,days_with_put_call,baseline_put_call_median,recent_put_call_min,put_call_drop_ratio,days_from_low_to_event,stock_volume_last_vs_avg,price_change_in_window_pct,max_daily_abs_move_pct
+WOLF,2026-10-07,news_catalyst,27.3,10,0.15,0.16,0.9,3,1.65,19.4,13.2
+WOLF,2026-10-02,unknown,25.4,8,0.76,0.05,15.2,3,1.8,9.9,8.3
+WOLF,2026-08-07,unknown,19.1,0,,,,,,,
+WOLF,2026-06-18,unknown,17.9,0,,,,,,,
+FCEL,2026-09-08,unknown,18.8,0,,,,,,,
+RXRX,2026-10-05,unknown,16.0,0,,,,,,,
+FCEL,2026-07-30,sector_day,30.6,0,,,,,,,
+BE,2026-07-30,sector_day,26.5,0,,,,,,,
+APLD,2026-07-30,sector_day,20.5,0,,,,,,,
+CORZ,2026-07-30,sector_day,20.4,0,,,,,,,

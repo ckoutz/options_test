@@ -41,7 +41,15 @@ adds control days, and recomputes features.
 - `call_volume_recent_vs_baseline` – call volume spike
 - `short_otm_call_recent_max`, `short_otm_call_recent_vs_baseline` – calls expiring within
   2 weeks with strikes 5%+ above the price (the cheap lottery tickets informed money tends to buy)
+- `call_vol_short_spike`, `call_vol_medium_spike`, `call_vol_long_spike` – call buying by time to
+  expiration (2 weeks or less, 15 to 60 days, over 60 days), recent peak versus baseline
+- `call_vol_otm_spike`, `call_vol_atm_spike`, `call_vol_itm_spike` – call buying by strike: out of
+  the money (5%+ above the price), near the money (within 5%), in the money (5%+ below)
 - `stock_volume_last_vs_avg`, `price_change_in_window_pct`, `max_daily_abs_move_pct` – was the stock quiet
+
+Wolfspeed, late September 2026: the early buying was NOT short-dated out-of-the-money calls; those
+only spiked after the stock had already run, from chasers. The breakdown columns exist to test
+whether early money consistently lands in longer-dated or near-the-money calls.
 
 ## Labels
 `news_catalyst`, `sector_day` (3+ universe names moved together that day), `unknown`, `control`.

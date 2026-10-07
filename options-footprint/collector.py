@@ -92,6 +92,14 @@ def add_days(d, n):
     return (dt.date.fromisoformat(d) + dt.timedelta(days=n)).isoformat()
 
 
+def safe_end(end_date):
+    """Alpaca's free tier refuses the most recent 15 minutes; stop the range 20 minutes ago."""
+    now = dt.datetime.now(dt.timezone.utc)
+    end_of_day = dt.datetime.fromisoformat(end_date).replace(tzinfo=dt.timezone.utc) + dt.timedelta(days=1)
+    cutoff = now - dt.timedelta(minutes=20)
+    return end_date if end_of_day <= cutoff else cutoff.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
 # ---------------------------------------------------------------- Alpaca
 def http_json(url, headers=None):
     for attempt in range(5):
@@ -103,7 +111,9 @@ def http_json(url, headers=None):
             if e.code == 429:              # rate limited: back off and retry
                 time.sleep(2 ** attempt)
                 continue
-            raise
+            body = e.read().decode("utf-8", "replace")[:500]
+            safe_url = url.split("?")[0]
+            sys.exit(f"Alpaca refused {safe_url} with HTTP {e.code}: {body}")
     raise RuntimeError("Alpaca kept rate-limiting; try again in a minute.")
 
 
@@ -137,7 +147,7 @@ def alpaca_get(base, path, params, cache_name=None):
 def stock_bars(symbols, start, end):
     pages = alpaca_get("https://data.alpaca.markets", "/v2/stocks/bars",
                        {"symbols": ",".join(symbols), "timeframe": "1Day", "start": start,
-                        "end": end, "limit": 10000, "adjustment": "raw", "feed": "sip"})
+                        "end": safe_end(end), "limit": 10000, "adjustment": "raw", "feed": "sip"})
     out = {}
     for page in pages:
         for sym, bars in (page.get("bars") or {}).items():
@@ -172,7 +182,7 @@ def option_daily_volume(ticker, dates, closes):
         chunk = symbols[i:i + 100]
         pages = alpaca_get("https://data.alpaca.markets", "/v1beta1/options/bars",
                            {"symbols": ",".join(chunk), "timeframe": "1Day",
-                            "start": start, "end": end, "limit": 10000},
+                            "start": start, "end": safe_end(end), "limit": 10000},
                            cache_name=f"optbars_{ticker}_{start}_{end}_{i // 100}.json")
         for page in pages:
             for sym, bars in (page.get("bars") or {}).items():

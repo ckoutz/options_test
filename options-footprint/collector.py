@@ -48,8 +48,10 @@ FEATURES = os.path.join(DATA, "event_features.csv")
 EVENT_FIELDS = ["ticker", "event_date", "event_type", "move_pct", "prior_close",
                 "event_close", "catalyst", "label", "notes"]
 DAILY_FIELDS = ["ticker", "date", "put_call_ratio", "put_call_alpaca", "call_volume",
-                "put_volume", "short_otm_call_volume", "stock_close", "stock_volume",
-                "source_put_call", "source_price"]
+                "put_volume", "short_otm_call_volume",
+                "call_vol_short", "call_vol_medium", "call_vol_long",
+                "call_vol_otm", "call_vol_atm", "call_vol_itm",
+                "stock_close", "stock_volume", "source_put_call", "source_price"]
 
 # Volatile, optionable small and mid caps. Edit freely (Alpaca takes 100 per call).
 UNIVERSE = """WOLF PLUG SOUN RGTI QUBT IONQ ACHR JOBY LUNR RKLB ASTS OKLO SMR NNE BBAI
@@ -57,9 +59,12 @@ RXRX UPST AFRM SOFI HIMS CLSK MARA RIOT CIFR IREN APLD CORZ WULF OPEN LCID RIVN 
 CHPT BLNK QS SLDP FCEL BE ENPH RUN""".split()
 
 ALPACA_HISTORY_START = "2024-02-01"
-MAX_EXPIRY_DAYS = 120      # contracts expiring further out carry little volume
+MAX_EXPIRY_DAYS = 1100     # whole chain, including long-dated contracts (matches Alpha Vantage)
 SHORT_DATED_DAYS = 14      # "short-dated" = expires within two weeks
 OTM_PCT = 0.05             # "out of the money" = strike at least 5% above the close
+MEDIUM_DATED_DAYS = 60     # 15-60 days = medium dated; beyond that = long dated
+CALL_BUCKETS = ("call_vol_short", "call_vol_medium", "call_vol_long",
+                "call_vol_otm", "call_vol_atm", "call_vol_itm")
 
 
 # ---------------------------------------------------------------- helpers
@@ -86,6 +91,12 @@ def to_float(x):
 
 def iso(d):
     return d.isoformat() if isinstance(d, dt.date) else d
+
+
+def chunk_key(symbols):
+    """Short fingerprint of a contract list, so a changed list never reuses an old cache file."""
+    import hashlib
+    return hashlib.sha1(",".join(symbols).encode()).hexdigest()[:12]
 
 
 def add_days(d, n):
@@ -177,13 +188,13 @@ def option_daily_volume(ticker, dates, closes):
     start, end = min(dates), max(dates)
     contracts = option_contracts(ticker, start, add_days(end, MAX_EXPIRY_DAYS))
     symbols = sorted(contracts)
-    totals = {d: {"call": 0, "put": 0, "short_otm_call": 0} for d in dates}
+    totals = {d: {k: 0 for k in ("call", "put", "short_otm_call") + CALL_BUCKETS} for d in dates}
     for i in range(0, len(symbols), 100):
         chunk = symbols[i:i + 100]
         pages = alpaca_get("https://data.alpaca.markets", "/v1beta1/options/bars",
                            {"symbols": ",".join(chunk), "timeframe": "1Day",
                             "start": start, "end": safe_end(end), "limit": 10000},
-                           cache_name=f"optbars_{ticker}_{start}_{end}_{i // 100}.json")
+                           cache_name=f"optbars_{ticker}_{start}_{end}_{chunk_key(chunk)}.json")
         for page in pages:
             for sym, bars in (page.get("bars") or {}).items():
                 c = contracts[sym]
@@ -195,14 +206,32 @@ def option_daily_volume(ticker, dates, closes):
                     totals[d][kind] += b["v"]
                     close = closes.get(d)
                     days_left = (dt.date.fromisoformat(c["expiration_date"]) - dt.date.fromisoformat(d)).days
-                    if (kind == "call" and close and days_left <= SHORT_DATED_DAYS
-                            and float(c["strike_price"]) >= close * (1 + OTM_PCT)):
-                        totals[d]["short_otm_call"] += b["v"]
+                    if kind != "call":
+                        continue
+                    strike = float(c["strike_price"])
+                    # Where did the call buying land? By time to expiration...
+                    if days_left <= SHORT_DATED_DAYS:
+                        totals[d]["call_vol_short"] += b["v"]
+                    elif days_left <= MEDIUM_DATED_DAYS:
+                        totals[d]["call_vol_medium"] += b["v"]
+                    else:
+                        totals[d]["call_vol_long"] += b["v"]
+                    # ...and by strike versus the stock price.
+                    if close:
+                        if strike >= close * (1 + OTM_PCT):
+                            totals[d]["call_vol_otm"] += b["v"]
+                            if days_left <= SHORT_DATED_DAYS:
+                                totals[d]["short_otm_call"] += b["v"]
+                        elif strike <= close * (1 - OTM_PCT):
+                            totals[d]["call_vol_itm"] += b["v"]
+                        else:
+                            totals[d]["call_vol_atm"] += b["v"]
     out = {}
     for d, t in totals.items():
         out[d] = {"call_volume": t["call"], "put_volume": t["put"],
                   "short_otm_call_volume": t["short_otm_call"],
                   "put_call_alpaca": round(t["put"] / t["call"], 3) if t["call"] else ""}
+        out[d].update({k: t[k] for k in CALL_BUCKETS})
     return out
 
 
@@ -250,9 +279,12 @@ def ensure_prices(ticker, start, end, daily):
         merge_stock_bars(daily, stock_bars([ticker], start, end))
 
 
-def fill_window(ticker, dates, daily):
+def fill_window(ticker, dates, daily, refresh=False):
     index = {(r["ticker"], r["date"]): r for r in daily}
-    todo = [d for d in dates if not index.get((ticker, d), {}).get("put_call_alpaca")]
+    def missing(d):
+        r = index.get((ticker, d), {})
+        return not r.get("put_call_alpaca") or r.get("call_vol_short", "") == ""
+    todo = [d for d in dates if refresh or missing(d)]
     if not todo:
         return
     closes = {d: to_float(index[(ticker, d)]["stock_close"]) for d in dates if (ticker, d) in index}
@@ -378,6 +410,12 @@ def compute(row, daily, lookback, signal_window=3):
         f["short_otm_call_recent_max"] = int(max(otm[-signal_window:]))
         if base > 0:  # blank when the baseline was zero; the raw max above still shows the spike
             f["short_otm_call_recent_vs_baseline"] = round(max(otm[-signal_window:]) / base, 2)
+    for col in CALL_BUCKETS:
+        series = [to_float(r.get(col)) for r in hist if to_float(r.get(col)) is not None]
+        if len(series) >= signal_window + 2:
+            base = statistics.median(series[:-signal_window])
+            if base > 0:
+                f[f"{col}_spike"] = round(max(series[-signal_window:]) / base, 2)
     if len(vol) >= 4:
         f["stock_volume_last_vs_avg"] = round(vol[-1] / statistics.mean(vol[:-1]), 2)
     if len(close) >= 2:
@@ -391,6 +429,7 @@ FEATURE_FIELDS = ["ticker", "event_date", "label", "move_pct", "days_with_put_ca
                   "window_put_call_min", "sessions_from_low_to_event",
                   "call_volume_recent_vs_baseline", "short_otm_call_recent_max",
                   "short_otm_call_recent_vs_baseline",
+                  ] + [f"{c}_spike" for c in CALL_BUCKETS] + [
                   "stock_volume_last_vs_avg", "price_change_in_window_pct", "max_daily_abs_move_pct"]
 
 
@@ -416,7 +455,7 @@ def compare(args):
     if not rows:
         sys.exit(f"No Alpha Vantage values on file for {args.ticker}.")
     ensure_prices(args.ticker, add_days(rows[0]["date"], -5), rows[-1]["date"], daily)
-    fill_window(args.ticker, [r["date"] for r in rows], daily)
+    fill_window(args.ticker, [r["date"] for r in rows], daily, refresh=True)
     save_daily(daily)
     print(f"{'date':<12}{'alpha vantage':>14}{'alpaca':>10}{'calls':>10}{'puts':>10}")
     diffs = []

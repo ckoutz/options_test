@@ -631,9 +631,10 @@ Rewrite your working notes{' as your final notes for the committee editor' if la
 Keep what held up, fix or drop what didn't, add what you learned. Write rules in terms of the columns
 (thresholds, combinations, instrument, expiry, strike, exit), with the evidence behind each (how many trades,
 returns, in how many bundles it held) and how confident you are. Be honest about small samples and about
-ideas that worked in one bundle and failed in another. No stock codes. No length limit: be as thorough as
+ideas that worked in one bundle and failed in another. Put your rules and conclusions first and the supporting
+detail after. No stock codes. No length limit: be as thorough as
 is useful, organized under headings. Reply with the notes only."""
-        working = llm.chat([{"role": "user", "content": prompt}], max_tokens=12000)
+        working = llm.chat([{"role": "user", "content": prompt}], max_tokens=24000)
         if llm.last_finish == "length":
             working += "\n\n(The notes were cut off here by the reply limit.)"
     reply = llm.chat([{"role": "user", "content": f"Your final notes:\n{working}\n\n{RULES_PROMPT}"}], max_tokens=3000)
@@ -688,8 +689,17 @@ the rules you state next, never these traders' notes or trades.
 Weigh the evidence: trust rules the code confirmed across many trades and most bundles, and treat ideas
 that only one trader saw, or that the code did not confirm, as weak. Say where the traders agreed and
 where they disagreed. Keep useful ideas that still need testing, clearly marked as untested. No stock
-codes. No length limit: be as thorough as is useful, organized under headings. Reply with the notes only."""
-    notes = llm.chat([{"role": "user", "content": prompt}], max_tokens=12000)
+codes. No length limit: be as thorough as is useful, organized under headings. Reply with the notes only.
+
+How to organize them: start with what to DO (the rules worth trading, with their scorebook numbers),
+then what to AVOID, then untested ideas worth trying, then open questions. Spend your words on trading
+ideas and evidence, not on bookkeeping. Things that are expected and need no comment: each trader's
+trades and rating counts differ (they chose and rated independently), traders' notes are summaries
+rather than full logs, and the scorebook's numbers supersede any figure a trader quoted.
+
+What the columns mean:
+""" + "\n".join(f"- {label}: {meaning}" for _, label, meaning in A.FEATURES)
+    notes = llm.chat([{"role": "user", "content": prompt}], max_tokens=24000)
     if llm.last_finish == "length":
         notes += "\n\n(The notes were cut off here by the reply limit.)"
     reply = llm.chat([{"role": "user", "content": f"Your notes:\n{notes}\n\n{RULES_PROMPT}"}], max_tokens=3000)

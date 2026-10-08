@@ -618,11 +618,13 @@ Write the updated lessons document for the next trader, who will see ONLY this d
 trades or results. Keep what held up, fix or drop what didn't, add what you learned. Write general
 rules for MAKING MONEY, in terms of the columns (thresholds, combinations, which instrument, expiry, strike and exit),
 with how confident you are in each. Be honest about what did not work and about small samples.
-No stock codes. At most {LESSON_WORDS} words. Reply with the document only."""
+No stock codes. There is no length limit: be as thorough as is useful, organized under headings, with
+the evidence (number of trades, returns) behind each rule. Reply with the document only."""
     llm.check_budget()
-    text = llm.chat([{"role": "user", "content": prompt}], max_tokens=2000)
-    words = text.split()
-    return " ".join(words[:int(LESSON_WORDS * 1.15)])
+    text = llm.chat([{"role": "user", "content": prompt}], max_tokens=12000)
+    if llm.last_finish == "length":
+        text += "\n\n(The notes were cut off here by the reply limit.)"
+    return text
 
 
 # ---------------------------------------------------------------- commands

@@ -89,7 +89,7 @@ Agents walk week by week through history, trade, learn, and pass on lessons. Eac
    profit (passing earns $0). Results show up two weeks later. Each candidate shows options activity
    plus technicals: 1/5/20-day change, price vs 20- and 50-day averages, distance from the 60-day high,
    RSI(14), and daily volatility.
-2. **Lessons**: it rewrites the lessons document it inherited (max 400 words). Only this document
+2. **Lessons**: it rewrites the lessons document it inherited (no length limit). Only this document
    passes to the next generation; its trades and results never do.
 3. **Scoring** (July 2025 to January 2026): it trades blind with its new lessons, no feedback.
 Every run is compared with a random picker making the same number and kind of trades in the same

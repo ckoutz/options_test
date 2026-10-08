@@ -1,0 +1,45 @@
+name: Open interest test
+
+# Databento US options data (OPRA): does a build-up of new option positions predict moves?
+# Needs the repository secret DATABENTO_API_KEY. "estimate" is free; later steps check the price first.
+
+on:
+  workflow_dispatch:
+    inputs:
+      command:
+        description: "What to run"
+        type: choice
+        default: estimate
+        options:
+          - estimate
+
+permissions:
+  contents: read
+
+concurrency:
+  group: options-oi
+  cancel-in-progress: false
+
+jobs:
+  oi:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    defaults:
+      run:
+        working-directory: options-footprint
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      DATABENTO_API_KEY: ${{ secrets.DATABENTO_API_KEY }}
+      DAILY_MIRROR: "off"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install libraries
+        run: pip install --quiet "psycopg[binary]" databento
+
+      - name: Run
+        run: python oi_test.py ${{ github.event.inputs.command }}

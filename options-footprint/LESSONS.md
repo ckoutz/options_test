@@ -1,4 +1,4 @@
-# Agent notes (2026-10-08 22:16 UTC)
+# Agent notes (2026-10-08 22:21 UTC)
 
 Every lessons document each generation passed on, oldest first, then what the agents wrote
 week by week in their latest runs. Lineages without -v2 are the first test, whose weekly
@@ -118,157 +118,157 @@ replies were cut off (no trades) and were not saved.
 
 ## Weekly notes: committee, generation 1, train
 
-- week 1 [stock +15%; stock -13%]: [Bundle 1 of 6] C1 is overbought after a 44% five-day run. C4 is oversold after a 34% drop, and stock trades carry low costs. Options are expensive, so I avoid them.
-- week 2 [pass]: [Bundle 1 of 6] Passing. Extreme run-ups with overbought RSI and call crowding look like blowoff risk; no candidate shows a clear edge after option costs.
-- week 3 [pass]: [Bundle 1 of 6] No clear edge. Overbought spikes (C1, C3) and put-heavy selloff (C5, C7) lean fade, but the signals are mixed and option costs are high, so I pass.
-- week 4 [stock -4%]: [Bundle 1 of 6] C6 shows heavy far-OTM and long-dated call buying with falling puts. C4 is overbought at RSI 91 after a 22% five-day run, so I expect a pullback. Other signals are mixed.
-- week 5 [pass]: [Bundle 1 of 6] Crowded-call names are already extended, and the one prior run-up trade lost. Option costs are high. Passing this week.
-- week 6 [stock -1%]: [Bundle 1 of 6] C5 shows medium-dated call buying while price is flat and calm. Cheap stock entry avoids option costs. Overbought C1 and C3 get lean-avoid.
-- week 7 [stock +22%]: [Bundle 1 of 6] C5 shows broad bullish call flow across expiries with rising shares. Most others look like noise, lottery-style calls, or falling knives.
-- week 8 [stock +30%]: [Bundle 1 of 6] C8 shows unusual OTM and short-dated call activity with a modest trend; the rest are overbought, crashing, or lack unusual call flow.
-- week 9 [stock +7%; stock -6%]: [Bundle 1 of 6] C2 shows medium-dated call buying with price rising and puts crowded out. C4 has near-zero puts and calls dominating. C7 is an extreme spike too risky to chase.
-- week 10 [stock -26%; stock -5%]: [Bundle 1 of 6] Heavy call buying with strong 5-20 day momentum in C2 and C5. Stock avoids option decay and the 5% option cost. C1 looks oversold but has no real call edge.
-- week 11 [stock +5%]: [Bundle 1 of 6] C4 is deeply oversold (RSI 10) after a sharp drop, and a prior oversold bounce paid. C8 is overbought with heavy put hedging.
-- week 12 [stock +3%]: [Bundle 1 of 6] C2 shows call-crowded momentum with no put interest. The others show put-heavy flow or crashes with no clear edge, so I rate them neutral or lean avoid.
-- week 13 [stock +1%]: [Bundle 1 of 6] C1 is oversold (RSI 24, 28% off high) with put selling and call buying. C6 chased a 21% gap, and C2 is overbought.
-- week 14 [stock -10%; stock -34%]: [Bundle 1 of 6] C1 shows broad call crowding and a breakout at the high with puts subdued. C3 has strong short-dated call interest and a 13% five-day gain. Put-heavy or collapsing names are avoided.
-- week 15 [pass]: [Bundle 1 of 6] C1 spiked 17% on heavy put buying, so mean reversion risk is high. Others show no clear edge, so I pass.
-- week 16 [stock +1%]: [Bundle 1 of 6] C3 shows heavy far-OTM long-dated call buying on an oversold, sub-$10 name. Falling knives C2, C6, C7 rated avoid. Others unclear.
-- week 17 [stock +10%; stock -5%]: [Bundle 1 of 6] Oversold C6 may bounce; C2 shows heavy call flow with put-free tape. Overextended rallies (C3, C7, C8) look prone to reversal.
-- week 18 [pass]: [Bundle 1 of 6] Past winners were calls-crowded runners that reverted. Current setups look similar or lack a clear edge, so I pass.
-- week 19 [pass]: [Bundle 1 of 6] Past momentum buys after big run-ups lost. Nothing here shows a clear edge after option costs, so I pass.
-- week 20 [pass]: [Bundle 1 of 6] Past call-spike momentum plays mostly lost, and option costs eat the edge. No candidate shows a clear, repeatable setup, so I pass.
-- week 21 [pass]: [Bundle 1 of 6] No clear edge. Extended names (C7, C8) have faded before, and the crashed C1 has no confirmed bounce signal, so I'm passing.
-- week 22 [stock -9%]: [Bundle 1 of 6] C4 shows broad call buying with a stock near its 50-day average and a mild 5-day gain. Most others are overbought or show heavy put flow. One small position only.
-- week 23 [pass]: [Bundle 1 of 6] Bullish call spikes after big moves have mostly failed here; no clear edge, so pass this bundle.
-- week 24 [stock -10%]: [Bundle 1 of 6] C4 shows a call-volume and put-drop shift with modest momentum. Others look extended, crashed, or illiquid, and my track record on spikes is weak.
-- week 25 [pass]: [Bundle 1 of 6] Extreme overbought blow-offs (RSI 87-95, huge 20d gains) look due for reversal. Past momentum calls lost. Only C1 shows a plausible setup, and the edge is too thin to trade.
-- week 26 [stock -4%]: [Bundle 2 of 6] C2 is oversold (20d -15%, rsi 31) with no run-up. Most others are extended (5d ≥4.5%). C6 is oversold but low-volatility, so I pass.
-- week 27 [stock -20%; stock -6%; stock +3%]: [Bundle 2 of 6] Oversold rule fired on C1, C2, C6 (off-high or vs-ma20 drops). Extended names C3, C5, C7 avoided. Stocks only, low confidence.
-- week 28 [stock -14%]: [Bundle 2 of 6] C1 is oversold (rsi 23, vs ma20 -9.9). C2, C3, C4, C7, C8 are extended, the pattern that lost. C5 and C6 fire no rule.
-- week 29 [stock -1%; stock -1%]: [Bundle 2 of 6] Oversold rule fires on C7 (rsi 16, -34% off high) and C3 (rsi 28, -40% off high). C1, C5, C8 are extended, so skipped.
-- week 30 [pass]: [Bundle 2 of 6] Oversold bounce rule failed in bundle 2 so far; no candidate shows a clean, unextended setup. Passing.
-- week 31 [pass]: [Bundle 2 of 6] C1 and C5 are extended, which lost in bundle 1. C7 fires the oversold rule, but recent oversold stock trades lost, so the edge is unproven. Pass.
-- week 32 [stock -27%]: [Bundle 2 of 6] C2 is down 28% off its high with a 10% weekly drop, matching the oversold-bounce rule. The extended names (C1, C4, C6, C7) fail the run-up filter. The rest have no rule firing.
-- week 33 [pass]: [Bundle 2 of 6] No oversold name fires the bounce rule. Several are extended (vs ma50 well above 9.5), which lost in bundle 1. Passing.
-- week 34 [pass]: [Bundle 2 of 6] Oversold rule lost 7 of 8 recent trades, and extension names fail the avoid rule. No candidate clears a validated signal.
-- week 35 [pass]: [Bundle 2 of 6] Passing. Extended names (C1, C6, C4, C8) fit the bundle-1 loser pattern. C3 is oversold, but recent oversold stock trades lost, so the bounce rule is unconfirmed.
-- week 36 [pass]: [Bundle 2 of 6] Oversold rule fires on C2, C4, C8, but this bundle's recent oversold trades won only 1 of 8. Extended names C5 and C6 are avoids. Passing.
-- week 37 [stock +61%]: [Bundle 2 of 6] C3 is deeply oversold (RSI 10) and cheap. Oversold-bounce evidence is weak, so one small position only. Extended names C2, C4, C8 avoided.
-- week 38 [stock +25%; stock +5%]: [Bundle 2 of 6] Oversold bounce rule fires on C7 (RSI 16) and C8 (RSI 21). C6 is extended after a +12.6% day, so it is avoided. Stock trades keep costs low.
-- week 39 [stock -15%; stock -19%; stock -5%]: [Bundle 2 of 6] Buy oversold names that fire rule 3b (off-high, vs ma20, RSI). Avoid extended C1 and C7 per rule 3a. Ratings are feature-based, not rating-based.
-- week 40 [stock +3%; stock +6%]: [Bundle 2 of 6] C7 and C8 are deeply oversold (rsi ~25, vs ma20 near -20%), matching the bundle-1 bounce rule. C5 is extended (vs ma50 +21%), so it is avoided.
-- week 41 [stock -8%; stock +3%]: [Bundle 2 of 6] Oversold bounce rule fires (C2 rsi 19, C5 rsi 28). Other names are not oversold or are extended. Options costs are too high for these.
-- week 42 [stock -15%]: [Bundle 2 of 6] C6 fires the oversold rule (rsi 24, vs ma20 -28.7%). Extended names (5d ≥4.5) are avoided. Others lack a clean signal.
-- week 43 [stock +21%]: [Bundle 2 of 6] C6 fires the oversold rule (vs ma20 -8.7, off high -32). C1, C2, C5, C7 are extended, so avoid. C8 spiked 23% today, so I'm leaning against it.
-- week 44 [stock +10%]: [Bundle 2 of 6] C6 is 49% off its high with RSI 56, matching the oversold-bounce rule. The extended names (C1, C3, C4, C8) fail the run-up filter.
-- week 45 [pass]: [Bundle 2 of 6] Every name is extended (5d or vs ma50 well above thresholds) or a falling knife with no confirmed bounce. The oversold-bounce evidence is weak. Pass.
-- week 46 [stock +2%]: [Bundle 2 of 6] C1 is deeply oversold (rsi 29, -26% vs ma20), which fires the bounce rule. C7 and C3 are extended, which fires the avoid rule.
-- week 47 [pass]: [Bundle 2 of 6] Extended names (5d or vs ma50 above thresholds) fit the avoid rule. No oversold name clearly meets the bounce rule, so pass.
-- week 48 [stock +29%; stock -6%]: [Bundle 2 of 6] Oversold rule fires on C1 and C3 (rsi 23, far below ma20). C7 is extended (5d +24%, vs ma50 +21%), so I avoid it. C6 is a falling knife, so I pass.
-- week 49 [pass]: [Bundle 2 of 6] No candidate cleanly fires the oversold buy rule or the extended avoid rule. C4 is borderline on both, so pass.
-- week 50 [stock -6%]: [Bundle 2 of 6] C4 is the only oversold name (off high -40%, 20d -19%) and stock costs little. Extended names C6, C7, C1 and C8 are skipped per the run-up rule. Other names have no rule firing.
-- week 51 [pass]: [Bundle 3 of 6] Sub-$10 stock crashed 25% on heavy put buying with 33% ATM call cost. Likely event-driven with no clear edge, so pass.
-- week 52 [pass]: [Bundle 3 of 6] Unusual call activity is noisy here; no candidate shows a clear, repeatable edge, so I pass.
-- week 53 [pass]: [Bundle 3 of 6] No clear edge. C2 looks overbought after a spike, C8 is oversold with heavy put and call activity, and option costs are high. Passing.
-- week 54 [stock +8%]: [Bundle 3 of 6] C6 shows broad call buying with OTM strikes and an uptrend above both averages. Options carry too much decay and cost, so I stay with stock. Other names lack a clear edge.
-- week 55 [stock +3%]: [Bundle 3 of 6] C7 has trend-confirmed call buying with low volatility and cheap stock execution. Others show lottery-style or put-heavy signals with weaker support.
-- week 56 [stock +2%]: [Bundle 3 of 6] C1 shows broad medium-dated call buying with calls crowding out puts and a rising trend. C2 and C6 look like overextended or bearish flow. C3 and C7 show put dominance.
-- week 57 [stock -7%]: [Bundle 3 of 6] C5 shows strong 5-day momentum with broad call demand. Its uptrend is intact, and stock costs less than calls here. C1 and C3 show heavy put activity after sharp moves.
-- week 58 [stock +6%]: [Bundle 3 of 6] C3 shows heavy call flow with no put hedging, a rebound off its high, and cheap stock-trade costs. Other setups look noisy or overextended.
-- week 59 [stock -5%; call 30d +0% double_or_10 -79%]: [Bundle 3 of 6] Momentum with heavy call buying in C2 and C8. Falling stocks with put pressure rated negative. Thin evidence, so sizing stays modest.
-- week 60 [pass]: [Bundle 3 of 6] Extreme call spikes after big 5-day runs have reverted in past trades. Nothing here shows a clear, repeatable edge, so I pass.
-- week 61 [stock +3%]: [Bundle 3 of 6] C3 has heavy far-OTM call buying, low put/call, and RSI near neutral. The extended, overbought momentum names look like mean-reversion risks.
-- week 62 [stock +25%]: [Bundle 3 of 6] C7 has steady gains, rising OTM call interest and low volatility. C1 and C6 chased rallies amid heavy put buying, which looks like hedging.
-- week 63 [pass]: [Bundle 3 of 6] No clear edge: spikes look like blowoffs or falling knives, and my recent record is negative, so I pass.
-- week 64 [pass]: [Bundle 3 of 6] No clear edge. Crashing names and put-heavy names lean down, call spikes on dips and overextended names are mixed, so I pass.
-- week 65 [pass]: [Bundle 3 of 6] Mixed signals and no clear edge. C4 is overbought after a huge run-up, and C2 and C5 are weak sub-$10 names. Passing this week.
-- week 66 [stock -30%]: [Bundle 3 of 6] C6 has a strong short-dated call surge and modest momentum. C2 and C5 look like blow-off or lottery call buying. C3 is put-heavy against a rally.
-- week 67 [stock -9%]: [Bundle 3 of 6] C1 shows medium-dated call crowding with puts low and a calm tape. Others are falling knives or chased, overextended moves.
-- week 68 [pass]: [Bundle 3 of 6] Recent rally-driven call spikes lost money, and the best setup (C7) has no clear edge after option costs. Passing.
-- week 69 [pass]: [Bundle 3 of 6] Momentum after huge 5-day runs (C2, C8, C7) has reversed in past bundles, and the rest show no clean edge. Passing.
-- week 70 [stock -4%]: [Bundle 3 of 6] C3 has broad call buying (OTM and long-dated) with a strong run. C4 is overextended. The rest show no clear edge.
-- week 71 [stock -6%]: [Bundle 3 of 6] C8 shows fresh call buying and a 5-day rally while still below its 50-day average. C2 and C4 are overextended, so I avoid them.
-- week 72 [call 30d +5% double_or_10 -51%]: [Bundle 3 of 6] C7 shows heavy call buying, near-zero put/call, and an unextended price. Chasing extended or distressed names has lost money, so I avoid them.
-- week 73 [pass]: [Bundle 3 of 6] Recent call-spike bets after big 5-day rallies mostly lost. No candidate shows a clear edge, so I pass.
-- week 74 [pass]: [Bundle 3 of 6] Most setups are extended after big 5-day runs or show heavy put flow with no clear edge. Given the losing record, passing.
-- week 75 [pass]: [Bundle 3 of 6] Flow signals are mixed or noisy, and our record has been negative. No candidate shows a clear, repeatable edge, so we pass.
-- week 76 [pass]: [Bundle 3 of 6] Flow signals are mixed or already priced in after large moves, and our record is negative, so no trades.
-- week 77 [pass]: [Bundle 4 of 6] No candidate has a clear edge. C5 trips the untested run-chase filter, and C3 is far above its 20-day average. Passing.
-- week 78 [pass]: [Bundle 4 of 6] C1 and C2 hit the fixed chase filter (5d at least +9%, 4%+ above MA20). Others show no validated edge; the baseline is negative, so pass.
-- week 79 [pass]: [Bundle 4 of 6] C3 hits the untested 5-day and MA20 chase filter, and C8 is extended at RSI 82. No candidate has a clear edge, so I pass.
-- week 80 [stock -1%]: [Bundle 4 of 6] C1 hits the unvalidated short-run-chase filter and is overbought. C5 is above $50 and pulled back, the only mild positive setup. Others lack a clear edge.
-- week 81 [pass]: [Bundle 4 of 6] Passing. C1 and C8 hit the untested short-run-chase filter, and the only other signals are weak. The notes show a negative baseline and no validated edge.
-- week 82 [pass]: [Bundle 4 of 6] No candidate clears the baseline. C8 is extended but misses the run filter, and C2's above-$50 lean is too thin. Passing.
-- week 83 [pass]: [Bundle 4 of 6] C1, C4, C7 hit the untested run-chase filter (5d ≥9%, ≥4% above MA20). C2 is overbought (RSI 78). Nothing clears a negative baseline, so pass.
-- week 84 [pass]: [Bundle 4 of 6] C5 and C6 hit the 5-day run-up filter (3.1), so they lean avoid. C2 has RSI 82 after a +32% month. Nothing else clears a positive bar, so I pass.
-- week 85 [stock +5%; stock -18%]: [Bundle 4 of 6] C1 and C5 show heavy call and OTM call buying without a short-term run-up, so they avoid the chase filter. Low conviction; sized as stock only.
-- week 86 [pass]: [Bundle 4 of 6] C2 and C3 hit the run-up filter (5d >=+9%, far above MA20) and RSI is overbought. Other setups lack clear edge, and the bundle baseline is negative. Pass.
-- week 87 [pass]: [Bundle 4 of 6] C2 trips the untested chase filter (+23.7% 5d, +17.4% vs MA20). No candidate shows a clean stock setup, and option costs are high. Passing.
-- week 88 [pass]: [Bundle 4 of 6] Five of eight hit the untested chase filter (5-day ≥+9%, ≥+4% over MA20). Remaining names lack an edge, and the baseline is negative.
-- week 89 [pass]: [Bundle 4 of 6] C1 and C2 hit the untested run-chase filter (5d up 9%+, far above MA20). Nothing else shows a clear edge over a negative baseline, so pass.
-- week 90 [pass]: [Bundle 4 of 6] Filter 3.1 flags C3, C4, C5, C7 as chasers to avoid. C1 is overbought at RSI 81. No candidate shows a clear edge, and the notes' baseline is negative, so pass.
-- week 91 [pass]: [Bundle 4 of 6] No candidate clears the bundle-3 bar. C3 and C8 hit the untested chase filter, and calls remain unproven. Passing.
-- week 92 [pass]: [Bundle 4 of 6] Passing. C2 and C8 hit the chase filter (5d up at least 9%, above MA20 by 4%). No candidate shows a clear edge over the negative baseline.
-- week 93 [pass]: [Bundle 4 of 6] Filter 3.1 flags C3 and C7 as chasing runs. Others show no clear edge, and the baseline is negative, so pass.
-- week 94 [pass]: [Bundle 4 of 6] No candidate has a clear edge. C2 trips the chase filter. Pass; the notes show no reliable buy signal.
-- week 95 [pass]: [Bundle 4 of 6] Stock filter 3.1 flags C3 and C7 as run-ups to avoid. C8 is in a crash. No clean buy; baseline is negative and evidence is thin.
-- week 96 [pass]: [Bundle 4 of 6] Passing. C2, C3, C5, C8 hit the fixed run-up filter; C6 is parabolic. C1, C4, C7 show no clear edge, and calls remain untested.
-- week 97 [pass]: [Bundle 4 of 6] Notes say the baseline is negative and the stock filter is untested. C5 and C7 fail the run-up filter, and no candidate shows a clean edge, so I pass.
-- week 98 [stock +10%]: [Bundle 4 of 6] C8 is above $50 and misses the short-run-chase filter, the only positive watch item. Other names are extended or show bearish put flow. Weak, provisional edge.
-- week 99 [pass]: [Bundle 4 of 6] No candidate meets the fixed filter, the prior evidence is weak, and options lost badly, so I pass this week.
-- week 100 [pass]: [Bundle 4 of 6] Passing. Parabolic names C3, C6, C7 hit the untested chase filter. Remaining names have no clear edge and the baseline is negative.
-- week 101 [pass]: [Bundle 4 of 6] Filter 3.1 hits C6 (5d +48%, far above MA20); C2 and C7 are overextended after runs. No clean edge, and options stay off per rule 5.2.
-- week 102 [pass]: [Bundle 5 of 6] C1, C4, C6, C7 meet the untested 3.1 chase filter, which had a negative median in-sample. No clear edge elsewhere, so pass.
-- week 103 [pass]: [Bundle 5 of 6] No candidate clears the evidence bar. C2 trips the untested 3.1 run filter. C8 has the only supportive feature (price above $50). Bundle baseline is weak, so pass.
-- week 104 [pass]: [Bundle 5 of 6] No candidate meets the 3.1 filter, rules remain unconfirmed, and the bundle baseline is weak. Passing this week.
-- week 105 [pass]: [Bundle 5 of 6] C2, C3, C6 and C8 hit the untested 3.1 run-chaser filter. No candidate has a clear, replicated edge, so I pass.
-- week 106 [pass]: [Bundle 5 of 6] Rule 3.1 hits C2, and most others show overbought or chasing signals. No candidate clears a tested edge, so I pass.
-- week 107 [stock -2%]: [Bundle 5 of 6] C7 is above $50 and fails the 3.1 short-run filter. C2 is a chase, just under the 9% filter, with RSI 68. Stock only; no calls.
-- week 108 [stock -13%]: [Bundle 5 of 6] Stock only. C1, C2, C3, C4 and C6 hit the short-term run-up filter. C8 is above $50 without a run-up, so it is the one entry.
-- week 109 [pass]: [Bundle 5 of 6] No candidate meets the 3.1 filter, and no stock rule has shown an out-of-sample edge. Bundle baseline is negative. Pass.
-- week 110 [pass]: [Bundle 5 of 6] No candidate has a demonstrated edge. C4 and C7 are parabolic blow-offs that fail 3.1-style filters, and bundle 5 is already losing.
-- week 111 [pass]: [Bundle 5 of 6] C1 and C7 hit the untested 3.1 chase filter. Bundle evidence is too thin to show an edge, and the stock median is about zero, so I pass.
-- week 112 [pass]: [Bundle 5 of 6] Passing. C2 and C5 hit the in-sample 3.1 run-up filter. No candidate shows a clear, repeatable edge, and the notes show none has held out of sample.
-- week 113 [stock +6%]: [Bundle 5 of 6] C8 is above $50, not extended, and not hit by the 3.1 run filter. C3 and C4 hit the run filter, so I avoid them. Evidence is thin.
-- week 114 [stock -21%]: [Bundle 5 of 6] C2 hits the untested 3.1 run filter and is overbought. C8 is above $50 with no filter hit. Options have lost in past bundles, so I'm passing on them.
-- week 115 [pass]: [Bundle 5 of 6] Two candidates (C1, C3) hit the untested 3.1 run-chase filter. No setup clears the stock-only edge bar, so pass.
-- week 116 [pass]: [Bundle 5 of 6] No candidate shows a clear edge. Stock trades are near breakeven, options have lost, and the bundle baseline is weak. Passing.
-- week 117 [pass]: [Bundle 5 of 6] C3 and C7 hit the 3.1 chase filter (avg -6.2%). No candidate shows a tested edge over the weak baseline, so I pass.
-- week 118 [pass]: [Bundle 5 of 6] No candidate has a clear edge. C2 and C8 hit the untested 3.1 chase filter, and the bundle baseline is weak. Passing.
-- week 119 [pass]: [Bundle 5 of 6] Passing. C6 trips the untested 5-day run-up filter, and no candidate shows a clear, repeatable edge over this bundle's weak baseline.
-- week 120 [pass]: [Bundle 5 of 6] Passing. C1, C2 and C4 hit the 3.1 run-chase filter, which is untested out of sample. Stock median is about 0% and no rule has shown an edge.
-- week 121 [pass]: [Bundle 5 of 6] C3 and C6 hit the untested 3.1 run-up filter. C4 is a speculative sub-$10 lottery. Baseline is negative and no candidate shows a clear edge, so pass.
-- week 122 [pass]: [Bundle 5 of 6] C3 and C4 hit the untested 3.1 chase filter. C5, C7 and C8 are overextended. No candidate has a clear edge, so pass.
-- week 123 [pass]: [Bundle 5 of 6] No candidate meets the untested 3.1 run filter. Stock edge is unproven, the baseline is negative, and options have lost badly, so pass.
-- week 124 [pass]: [Bundle 5 of 6] Passing. C8 trips the untested 3.1 run filter, C1 and C6 are overbought and extended, and no stock rule has shown an out-of-sample edge.
-- week 125 [pass]: [Bundle 5 of 6] C3 and C7 hit the untested 3.1 run-up filter and C1 is overbought at RSI 88. Bundle 4 baseline was negative, so no clear edge; pass.
-- week 126 [pass]: [Bundle 5 of 6] Five of eight hit the untested run-chase filter (3.1), and the strongest runs are RSI-overbought. Only C5 fits the $50+ watch rule, and that is too thin to trade.
-- week 127 [pass]: [Bundle 6 of 6] Most spikes are extended after large 20-day runs with overbought RSI and heavy put activity. Mean reversion looks likelier than follow-through, so I pass.
-- week 128 [stock +15%]: [Bundle 6 of 6] C3 shows momentum with call-flow spike and moderate move; C2 is overbought at RSI 80 after a 25% run. Option costs are high, so I favor stock.
-- week 129 [stock -4%]: [Bundle 6 of 6] C2 shows heavy medium-dated call buying with puts nearly absent, after a pullback. The other setups lack a clear edge.
-- week 130 [stock +4%]: [Bundle 6 of 6] C1 shows heavy medium-dated call buying with puts absent after a 10% five-day gain. The others are overextended, crashing, or show mixed flow.
-- week 131 [stock -4%; stock -7%]: [Bundle 6 of 6] C7 and C3 show broad bullish call flow with momentum and OTM/long-dated buying. C2 is contrarian oversold. C5 shows put dominance.
-- week 132 [stock +10%]: [Bundle 6 of 6] C1 shows a broad call and share surge with positive 5-day momentum, the pattern that worked in recent trades. The rest lack a clear edge.
-- week 133 [stock -2%; call 30d +15% double_or_10 -69%; call 30d +10% hold10 -95%]: [Bundle 6 of 6] Heavy long-dated call flow with rising share volume in C7 and C8; C5 shows speculative short-dated OTM call buying. Bearish-flow names rated down.
-- week 134 [pass]: [Bundle 6 of 6] Call spikes look like chasing; C4's one-day blowout and C1's heavy put-buying lack a clear edge. Passing.
-- week 135 [stock -13%; stock +10%]: [Bundle 6 of 6] C2 and C6 show call flow crowding out puts with no overbought stretch. C3 and C7 are extended after huge runs; C1 and C4 have heavy put flow.
-- week 136 [stock -1%]: [Bundle 6 of 6] C1 is oversold under $10 with low-cost stock entry. Others show crowded speculative calls or put-heavy bearish flow.
-- week 137 [stock +6%]: [Bundle 6 of 6] Heavy long-dated call buying on a quiet stock suggests informed bullishness. Calls have lost badly, so I stick to stock.
-- week 138 [pass]: [Bundle 6 of 6] Signals look weak or stretched: overbought runs, heavy put-side flow, and calls that have lost money in recent bundles. Passing.
-- week 139 [stock -26%]: [Bundle 6 of 6] C4 gapped up on heavy call buying after a deep selloff. Other names lack a clear edge, and past call trades lost money.
-- week 140 [stock -0%]: [Bundle 6 of 6] C2 is an oversold large cap with low stock costs. Most others show bearish flow or penny-stock risk, and my recent trades have lost money.
-- week 141 [pass]: [Bundle 6 of 6] Signals look mixed and our recent trades lost money. C3 is overbought after a 17.8% five-day run. Passing.
-- week 142 [stock +12%]: [Bundle 6 of 6] C4 shows calls crowding out puts with a short-dated call spike and an 8% gap up. Pass on the rest; my options record is poor.
-- week 143 [stock +11%]: [Bundle 6 of 6] Short-dated call spike with flat price suggests possible informed buying. Other setups look overextended or unclear, so I'm mostly passing.
-- week 144 [pass]: [Bundle 6 of 6] No clear edge. Spikes like C1 and C5 look stretched, and expensive OTM calls have been losing, so I pass.
-- week 145 [pass]: [Bundle 6 of 6] Mixed or ambiguous signals across candidates; my track record here is weak, so I'm passing rather than forcing a trade.
-- week 146 [stock +19%]: [Bundle 6 of 6] C1 shows calls crowding out puts, a bullish signal. C2 has heavy put buying. Calls have been losing on costs, so I favor cheap stock trades.
-- week 147 [pass]: [Bundle 6 of 6] Passing. Our record is negative, and the strongest candidate (C1) is overbought after a 13% one-day jump with options priced high.
-- week 148 [stock -5%]: [Bundle 6 of 6] C5 has heavy call crowding near its high; my past stock trades beat my call trades, so I take the stock. Others lack a clear edge.
-- week 149 [pass]: [Bundle 6 of 6] Overextended names look mean-reversion prone, and the options are costly with little edge. Passing this week.
-- week 150 [stock -9%]: [Bundle 6 of 6] C8 shows call-over-put crowding with strong volume and momentum. C2 and C7 look like short-dated call frenzies prone to reversal. Kept to one pick given the weak record.
-- week 151 [pass]: [Bundle 6 of 6] Calls crowd out puts in C3 and C6, but C3 is overextended and my recent record is poor, so I pass.
+- week 1 [pass]: [Bundle 1 of 6] No track record yet. Options carry heavy premium and 5% costs, and no candidate shows a clear edge, so I pass this week.
+- week 2 [stock +6%]: [Bundle 1 of 6] C6 has broad call buying with a moderate 20-day run, less overextended than C2/C4. C2 and C4 are overbought (RSI 81-84). C8 shows bearish put flow.
+- week 3 [stock -10%]: [Bundle 1 of 6] C1 shows calls crowding out puts with modest volatility. Others are overbought, crashed, or lack a clear signal.
+- week 4 [stock -4%]: [Bundle 1 of 6] C4 shows a huge call surge on a dip, which fits the prior winner. Overbought C6 and heavy-put C5 look weak. Others are mixed.
+- week 5 [pass]: [Bundle 1 of 6] Call-volume spikes after large runs have mostly faded in our results. No candidate shows a clear edge, so I pass.
+- week 6 [pass]: [Bundle 1 of 6] No clear edge. Most names are extended or heavily put-skewed, and option costs plus 5% round-trip fees make small edges hard to capture. Passing.
+- week 7 [stock +22%]: [Bundle 1 of 6] C5 has broad bullish call flow after a +10% day and sits near its averages. Most others show weak or capitulation setups with no clear edge.
+- week 8 [stock +30%; stock +3%]: [Bundle 1 of 6] C7 and C1 show fresh call and long-dated call buildup with little put activity. C3 and C2 are overextended after big runs; C4 and C5 show put pressure and weakness.
+- week 9 [stock -6%]: [Bundle 1 of 6] C1 shows strong call flow with almost no puts and a cheap 0.1% stock cost. C3 is overextended after a 70% five-day spike, so I lean against it.
+- week 10 [stock +5%; stock -3%]: [Bundle 1 of 6] C8 shows call buildup with very low puts and an uptrend. C3 has rising shares and calls with a modest, orderly move. Stocks keep costs low. Chasing blowoffs (C6) and falling names look poor.
+- week 11 [call 30d +15% double_or_10 -28%]: [Bundle 1 of 6] C3 shows medium-dated call buying at cheap 15% OTM strikes. C1 and C8 are overextended after huge runs, so I avoid them.
+- week 12 [stock +3%]: [Bundle 1 of 6] C2 shows strong momentum with heavy long-dated call buying. C1 and C6 show rising put activity. C5 and C7 crashed on heavy speculative calls, so I'd avoid them.
+- week 13 [pass]: [Bundle 1 of 6] Signals are mixed and noisy. Overbought C1 and falling C4/C6 lean avoid. No candidate shows a clear, repeatable edge, so I pass.
+- week 14 [stock -10%]: [Bundle 1 of 6] C1 shows bullish call flow, calls crowding out puts, at 20-day high. Others are either falling sharply or show no clear signal.
+- week 15 [stock -13%; call 30d +0% hold10 -86%]: [Bundle 1 of 6] C3 has medium-dated call buying after a deep oversold drop. C8 shows long-dated OTM call demand. Heavy put flow on C2, C4, C6 reads as bearish or overextended.
+- week 16 [pass]: [Bundle 1 of 6] Heavy put flow and sharp 5-day drops look like falling knives; no clear edge, and recent results argue for passing.
+- week 17 [stock +10%]: [Bundle 1 of 6] Oversold C6 with weak puts may bounce; the parabolic and call-frenzy names (C4, C5, C8) look likely to revert.
+- week 18 [stock +27%; stock +33%]: [Bundle 1 of 6] Call-flow speculation in cheap names, not chasing extended momentum. Past momentum buys lost. Sized small.
+- week 19 [pass]: [Bundle 1 of 6] No clear edge: spikes are mixed, mean-reversion risk is high after big moves, and option costs are steep. Passing.
+- week 20 [stock -5%]: [Bundle 1 of 6] C3 shows broad call buying across expiries with momentum and volume. C1 is overheated with heavy put buying. The rest are unclear or fading.
+- week 21 [stock +6%]: [Bundle 1 of 6] C5 shows heavy call buying and share volume with momentum, and stock trades carry low cost. Others lack a clear edge.
+- week 22 [stock -0%]: [Bundle 1 of 6] C6 has extreme call crowding and strong momentum, though it is overbought. Others show mixed or weak signals, so I pass on them.
+- week 23 [pass]: [Bundle 1 of 6] C1 and C8 show call-led momentum, but the sample is thin and recent momentum trades reversed. Bearish setups get negative ratings. No trade clears the cost hurdle.
+- week 24 [stock -10%; stock +1%]: [Bundle 1 of 6] C5 shows strong call crowding of puts with price still below its high. C2 has similar flow with momentum, but it is extended, so I rate it lower. The rest are overextended or in downtrends.
+- week 25 [pass]: [Bundle 1 of 6] Most candidates are extended after large run-ups with overbought RSI, which has reversed in recent results. No setup clearly favors a profitable entry, so I pass.
+- week 26 [stock +2%; stock -4%]: [Bundle 2 of 6] Calls spiking on beaten-down, moderately volatile names; avoiding parabolic runs. Shares only, per bundle-1 rules, at low cost.
+- week 27 [stock -5%]: [Bundle 2 of 6] C8 shows strong medium-dated and OTM call flow with moderate momentum and RSI 69, not overextended. Bearish flow in C5 and C2. Shares only.
+- week 28 [stock -11%; stock -18%]: [Bundle 2 of 6] C7 and C3 show bullish call flow with falling put/call and sharp recent gains. C1 and C5 are overbought, so no calls. Pass on the rest.
+- week 29 [stock -4%; stock -8%]: [Bundle 2 of 6] C7 and C2 show unusual OTM and medium-dated call buying with rising share volume. C8 is put-heavy on an extended name. Shares over options given bundle 1 results.
+- week 30 [stock +2%; stock +3%]: [Bundle 2 of 6] Shares by default. C7 has heavy long-dated call flow on a rebound. C3 has bullish call flow after a 12% drop. Option structures unproven.
+- week 31 [stock +11%; stock +1%]: [Bundle 2 of 6] C2 and C7 show steady uptrends without overheated RSI or extreme call crowding. Falling or extreme-call names look weak, and calls have been costly.
+- week 32 [stock -13%]: [Bundle 2 of 6] Calm, non-extended name with RSI 33 and modest volume; avoids the chase-and-call pattern that lost in bundle 1.
+- week 33 [stock +31%; stock +1%]: [Bundle 2 of 6] Heavy call-volume spikes with modest 5-day gains and no extreme RSI. Options stay unbought given bundle 1 losses.
+- week 34 [stock +5%; stock +13%]: [Bundle 2 of 6] Momentum breakout near highs with heavy volume (C8); high-volume up day with call surge (C2). Options skipped given bundle 1 losses.
+- week 35 [stock -0%]: [Bundle 2 of 6] C4 is a mild pullback in an uptrend, the only setup that fits. Overbought spikes (C5, C8) and the crashed C2 and C6 are avoided. Options are skipped.
+- week 36 [stock -42%]: [Bundle 2 of 6] C7 is a mild pullback in an uptrend, above its 50-day average. C4 is overextended after a 29% five-day run. Other names lack a clear edge. Shares only, small size.
+- week 37 [stock -22%]: [Bundle 2 of 6] C8 is a volume-backed trend near its high. C2 and C3 are extended spikes, C6 is a put-heavy crash, and C4 is a falling knife. Shares only.
+- week 38 [pass]: [Bundle 2 of 6] No candidate shows a clear, repeatable edge. Recent oversold and chasing setups were mixed, and call evidence is weak. Passing.
+- week 39 [pass]: [Bundle 2 of 6] No candidate has a clear, validated edge. Chasing names look stretched, and the heavy put buying in C8 looks like distress. Passing.
+- week 40 [stock +3%]: [Bundle 2 of 6] C1 is call-heavy with extreme put/call 0.10 and RSI 26 after a sharp drop; a shares-only oversold bounce. Puts dominate C2, C3, C7, C8.
+- week 41 [stock +0%; stock +19%]: [Bundle 2 of 6] Bullish long-dated and short-dated call flow with put/call dropping; C7 and C8 are the cleanest. Avoiding capitulating and event-spike names. Shares only, given the call record.
+- week 42 [pass]: [Bundle 2 of 6] No clear edge. C6 is overextended after a 56% five-day run. Calls on beaten-down names have failed before. Passing.
+- week 43 [pass]: [Bundle 2 of 6] No candidate shows a clear, repeatable edge. Overextended names (C1, C6, C7, C8) chase momentum, and call-heavy setups on falling stocks (C3, C4) match prior losing patterns.
+- week 44 [stock +15%]: [Bundle 2 of 6] C7 shows strong call and share volume with momentum but no overextension. Other names are weak or extended. Options are not justified, and the evidence is thin.
+- week 45 [stock +7%; stock +4%]: [Bundle 2 of 6] Shares only. C8 has call-led flow near its high without extension; C2 has moderate call buying and no overheating. Chasing run-ups failed last bundle.
+- week 46 [stock +2%]: [Bundle 2 of 6] C1 is deeply oversold with heavy volume, a bounce candidate. C5 and C6 are extended after big runs. Shares only, small size.
+- week 47 [stock -1%]: [Bundle 2 of 6] C7 is at its 20-day high with a steady run and moderate call interest. C8 looks like a blow-off with extreme RSI and volume. Calls stay off per my rules.
+- week 48 [stock +7%]: [Bundle 2 of 6] C2 has momentum and 23% above its 50-day with heavy call interest. The others are beaten-down or overextended, so I pass on them.
+- week 49 [stock +5%]: [Bundle 2 of 6] C3 pulled back near its average with heavy unusual call and share activity. Others are extended, beaten-down, or lack a clear setup.
+- week 50 [stock -7%; stock +12%]: [Bundle 2 of 6] Heavy call flow on C2 and C3 with moderate momentum. C8 is parabolic (RSI 82). Calls are excluded per notes; shares only.
+- week 51 [pass]: [Bundle 3 of 6] Sub-$10 name crashed 25% in one day on 11x share volume, with options priced at 33% of the stock. Distress-like, no reliable edge, so pass.
+- week 52 [stock -3%]: [Bundle 3 of 6] Only C7 shows strong call-flow confirmation with an unstretched RSI. Options cost too much and calls lost in bundle 1, so I stay in shares.
+- week 53 [stock +3%]: [Bundle 3 of 6] C2 is an oversold $10-50 name with heavy share volume. C1 and C4 are overextended run-ups, and the notes flag calls there as losers. Edge is weak, so one small stock trade.
+- week 54 [stock +8%; stock -6%]: [Bundle 3 of 6] Call-led momentum in C5 and C3 with median-positive stock history; put-heavy falling names rated lean avoid. Options left alone per rules.
+- week 55 [stock -3%]: [Bundle 3 of 6] Beaten-down $10-50 name with positive stock median history. Option costs are high and calls on extended or speculative names have lost before, so I pass on options.
+- week 56 [stock +2%; stock -4%]: [Bundle 3 of 6] Shares by default per rules. C5 shows strong call and momentum confirmation; C8 has broad call activity after a mild pullback. Ratings are low-confidence.
+- week 57 [pass]: [Bundle 3 of 6] No candidate meets the two-independent-signal bar. C1 is oversold but a falling sub-$10 name; C4 and C5 are overextended after big run-ups.
+- week 58 [stock +6%; stock -13%]: [Bundle 3 of 6] Shares by default per my rules. C1 has heavy call crowding with a rising 5-day trend. C8 has a long-dated call surge. Ratings stay low-confidence.
+- week 59 [stock -12%; stock +8%]: [Bundle 3 of 6] Shares only: beaten-down names with low RSI, cheap to trade. Overbought run-ups and call-heavy setups look poor, and option costs are high.
+- week 60 [stock +13%]: [Bundle 3 of 6] Rating signal is unproven. Pick is a trend name with positive 20d and 50d momentum; C2 and C8 look like overheated spikes.
+- week 61 [stock -11%; stock +3%]: [Bundle 3 of 6] Avoid extended spikes (C3, C7). Modest long bets on the quieter, non-extended names with unusual call activity (C8, C1).
+- week 62 [pass]: [Bundle 3 of 6] No candidate shows a separating signal. Past bundles found no reliable edge, and option trades lost badly, so I pass this week.
+- week 63 [stock -8%]: [Bundle 3 of 6] C1 is a modest uptrend with normal volatility and no extreme options signal. Other names are above-$50 or sub-$10 speculative spikes, or illiquid, so I avoid them.
+- week 64 [stock +12%]: [Bundle 3 of 6] Extreme call-to-put skew on a down name. Weak signal, but stock trades have a positive median, and calls have lost. One small stock position.
+- week 65 [pass]: [Bundle 3 of 6] Edge is unproven and recent trades lost money. Parabolic C4 and crowded C7 look likely to fall; the rest show no clear setup.
+- week 66 [pass]: [Bundle 3 of 6] Passing. C3 is overextended (+36% in 5 days, RSI 73), and the notes show no reliable edge in ratings or options, so no trade clears the bar.
+- week 67 [stock -11%]: [Bundle 3 of 6] C2 is deeply oversold after a 24% five-day drop, so a short-term bounce is plausible. Evidence is weak; I'm sizing one trade only.
+- week 68 [pass]: [Bundle 3 of 6] Rating signal is unreliable across bundles, and no candidate shows a clear edge. Passing this week to avoid noise-driven losses.
+- week 69 [stock -14%]: [Bundle 3 of 6] C5 is oversold and well off highs, a setup that held up as shares before. C4 and C6 ran up too far to chase, so I rate them avoid.
+- week 70 [stock +18%]: [Bundle 3 of 6] C7 is deeply off its high with RSI 38, a pattern that held for shares in bundle 2. Momentum spikes (C1, C5, C8) look extended. Conviction is low.
+- week 71 [stock +3%]: [Bundle 3 of 6] Median-positive stock edge is weak but plausible. C2 is mid-range RSI and a modest pullback. Avoid extreme call crowding and overbought names. Oversold trades lost recently.
+- week 72 [stock +1%; stock +29%]: [Bundle 3 of 6] C4 shows heavy call buying with no put offset. C6 has large out-of-the-money call flow after a pullback. Options costs are too high.
+- week 73 [stock -26%]: [Bundle 3 of 6] C2 is a beaten-down sub-$10 name with heavy puts, a pattern that worked as shares in recent bundles. Ratings are weak evidence, so I pick one stock and skip calls.
+- week 74 [stock +9%]: [Bundle 3 of 6] Neutral setups with no reliable edge. Lean avoid on overbought, extended names (C2, C8) and the put-heavy and spike names (C4, C5). Stock on C3 only, since stock medians have been positive.
+- week 75 [stock -11%]: [Bundle 3 of 6] Extreme short-dated call flow on C8 with a positive trend. Ratings are weak, and calls have lost in past bundles, so I'm taking one stock trade.
+- week 76 [stock -13%]: [Bundle 3 of 6] Overextended C3 and C2 lean avoid. Beaten-down C4 shows a possible share bounce; signals are weak, so one small stock trade only.
+- week 77 [pass]: [Bundle 4 of 6] Ratings are low-confidence. Prior bundles show no stable rating edge, call costs are high, and the notes flag heavy left tails. Passing.
+- week 78 [pass]: [Bundle 4 of 6] No reliable edge across bundles; ratings and stock medians unstable. Passing, as the sizing rule and option costs argue against trading this week.
+- week 79 [pass]: [Bundle 4 of 6] Stock and call edges are unconfirmed across bundles, and sizing criteria call for caution. No candidate shows a clear enough edge.
+- week 80 [pass]: [Bundle 4 of 6] Edge is unconfirmed after three negative-trending bundles. Extended names and expensive lottery calls don't clear the bar, so pass.
+- week 81 [pass]: [Bundle 4 of 6] Rating signal unconfirmed across bundles, calls lost heavily, and no candidate shows a clear edge. Passing this week.
+- week 82 [pass]: [Bundle 4 of 6] Edge is unconfirmed after three bundles, and option costs (5% per side) need large moves. Passing this week.
+- week 83 [pass]: [Bundle 4 of 6] No clear edge. Stock and option evidence has been flat to negative across bundles, and the candidates lack a consistent signal.
+- week 84 [pass]: [Bundle 4 of 6] No candidate clears a bar given the unconfirmed stock edge, cost of the cheap-looking calls, and the heavy left tail. Passing this week.
+- week 85 [pass]: [Bundle 4 of 6] No edge clears the bar. Recent bundles show a negative stock median and poor call results, so I pass.
+- week 86 [pass]: [Bundle 4 of 6] Three bundles show no reliable stock or rating edge, and calls lost heavily. Passing this week while the evidence stays negative.
+- week 87 [pass]: [Bundle 4 of 6] Stock edge is unconfirmed and calls have lost badly. No candidate shows a clear, repeatable setup, so I pass this week.
+- week 88 [pass]: [Bundle 4 of 6] Most names are extended after large spikes with high RSI, and our stock and call edge is unconfirmed. C4 is oversold with quiet volume. Passing.
+- week 89 [pass]: [Bundle 4 of 6] Edge unconfirmed across bundles; overextended momentum names (C6, C7) lean avoid. Passing this week.
+- week 90 [pass]: [Bundle 4 of 6] Most names are overbought after large 20-day run-ups with call spikes. Stock edge is unconfirmed, so I pass. C2 is oversold, a weak bounce lean.
+- week 91 [pass]: [Bundle 4 of 6] No clear edge. Stock and call results have been negative or noisy across bundles, and the candidates show no setup I trust.
+- week 92 [pass]: [Bundle 4 of 6] Stock and option edge are unconfirmed after three bundles, with heavy left tails and calls losing. No candidate clears that bar, so pass.
+- week 93 [pass]: [Bundle 4 of 6] Bundles 2-3 show no reliable stock or rating edge and heavy left tails. Flow signals are mixed. Passing this week.
+- week 94 [pass]: [Bundle 4 of 6] Stock edge unconfirmed, calls lost badly, and no candidate shows a clear, repeatable setup. Passing this week.
+- week 95 [pass]: [Bundle 4 of 6] Rating signal and stock median are unconfirmed, tails are heavy, and option costs are high. No candidate clears that bar, so pass.
+- week 96 [pass]: [Bundle 4 of 6] Parabolic, overbought names with no reliable edge after three weak bundles. Passing on all eight.
+- week 97 [pass]: [Bundle 4 of 6] Rating and stock edges are unconfirmed, tails are heavy, and the setups are extended or event-driven. No trade has a clear edge.
+- week 98 [pass]: [Bundle 4 of 6] Rating edge is unconfirmed and recent bundles were negative. No candidate shows a clear, strong setup, so I pass.
+- week 99 [pass]: [Bundle 4 of 6] Edge unconfirmed across bundles; options lost and stock median turned negative. No candidate shows a clear, repeatable setup, so pass.
+- week 100 [pass]: [Bundle 4 of 6] Stock edge unconfirmed, median negative in bundle 3, and calls carry 5% round-trip costs. No candidate shows a clear, repeatable edge, so I pass.
+- week 101 [pass]: [Bundle 4 of 6] Calls and stock edges haven't held up across bundles. Flow signals are mixed and option costs are high, so I'm passing this week.
+- week 102 [pass]: [Bundle 5 of 6] Four bundles show no reliable rating edge. Extended blow-offs (C4, C5) carry reversal risk, and calls have failed so far. Pass.
+- week 103 [pass]: [Bundle 5 of 6] No edge shown across bundles; calls are barred by my rules and the stock median has been negative, so I pass.
+- week 104 [pass]: [Bundle 5 of 6] Rating signal has no stable ordering, stock-side record is negative, and calls are ruled out. Passing this week.
+- week 105 [pass]: [Bundle 5 of 6] Parabolic, RSI 85 C1 looks stretched, but no reliable edge across bundles and calls have lost money, so pass.
+- week 106 [pass]: [Bundle 5 of 6] Rating signal unstable across bundles, calls failed, and the pool fell. Overbought, extended names lean avoid. Passing.
+- week 107 [pass]: [Bundle 5 of 6] Four bundles show no stable rating edge, and calls and tails have lost. Passing on a flow-only setup.
+- week 108 [pass]: [Bundle 5 of 6] Parabolic run-ups (C2, C5, C1) look prone to reversal, but the notes show no reliable edge, and calls have lost money, so I pass.
+- week 109 [pass]: [Bundle 5 of 6] Rating signal shows no stable edge, calls have lost, and the shares record is flat. Passing this week.
+- week 110 [pass]: [Bundle 5 of 6] Pool shows no stable rating edge and calls have lost; the parabolic C7 spike looks like reversal risk. Passing.
+- week 111 [pass]: [Bundle 5 of 6] Four bundles show no reliable rating edge, calls have lost, and costs and decay are high. Passing this week.
+- week 112 [pass]: [Bundle 5 of 6] Passing. Record shows no stable rating edge, calls have lost, and the 20-day run-ups in C2 and C4 look overextended.
+- week 113 [pass]: [Bundle 5 of 6] No proven edge after four bundles, RSI and heavy call-chasing show mixed signals, and no-new-calls rule applies. Passing.
+- week 114 [pass]: [Bundle 5 of 6] No stable rating edge across bundles, and the stock and call records are negative. Passing this week.
+- week 115 [pass]: [Bundle 5 of 6] Call-volume spike in C6 is the only lean; no edge clear enough to trade, and calls stay out per policy.
+- week 116 [pass]: [Bundle 5 of 6] Past trades have lost money and the rating signal is unstable, so I'm passing this week rather than trading on weak evidence.
+- week 117 [pass]: [Bundle 5 of 6] No candidate has a clear edge. Rating signal is unstable, and the RSI and call rules are untested, so I pass.
+- week 118 [pass]: [Bundle 5 of 6] Rating signal has no stable edge across bundles, and call history is negative. Passing this week.
+- week 119 [pass]: [Bundle 5 of 6] Call-flow signals are mixed and four bundles show no reliable rating edge. Notes bar new calls, so I pass.
+- week 120 [pass]: [Bundle 5 of 6] Four bundles show no stable rating edge and a negative trade record. Spikes like C4, C5 and C7 look prone to fading. Passing.
+- week 121 [pass]: [Bundle 5 of 6] Rating signal has no stable ordering across bundles, shares show roughly zero net edge, and calls remain off per the notes. Passing.
+- week 122 [stock -1%]: [Bundle 5 of 6] C1 shows strong call-led momentum and a put-to-call drop; the rest look like noise or overheated spikes.
+- week 123 [pass]: [Bundle 5 of 6] No reliable edge in the notes; calls have failed and pool trend is negative. Passing this week.
+- week 124 [pass]: [Bundle 5 of 6] Four bundles show no reliable rating edge, and calls and stocks have lost money. Passing this week.
+- week 125 [pass]: [Bundle 5 of 6] Rating signal unstable across bundles, left tails heavy, and no call evidence. No edge clear enough to risk capital this week.
+- week 126 [pass]: [Bundle 5 of 6] Most candidates are extended after large runs with high RSI, and the record shows no reliable edge. Passing this week.
+- week 127 [pass]: [Bundle 6 of 6] Notes show no stable rating edge and shares/calls near zero or negative. Extended names carry mean-reversion risk, but there is no tested rule to trade on, so pass.
+- week 128 [pass]: [Bundle 6 of 6] Rating signal is unstable across bundles and calls are unproven. Extended runups (C2, C6) and heavy put buying (C4) lean avoid. No trades.
+- week 129 [pass]: [Bundle 6 of 6] Five bundles show no stable rating edge, calls have a poor record, and no candidate shows a clear setup. Passing.
+- week 130 [stock -5%; stock -7%]: [Bundle 6 of 6] C8 and C6 are deeply oversold after sharp falls, a possible bounce setup. C2, C3, C4 and C7 show crowded call buying after big run-ups.
+- week 131 [pass]: [Bundle 6 of 6] No candidate shows a clear edge. Past rating signals are unstable, and the RSI and momentum hypotheses are untested. Passing.
+- week 132 [pass]: [Bundle 6 of 6] Rating signal has been unstable across five bundles, and the stock and call record is negative. No candidate shows a clear edge, so I pass.
+- week 133 [pass]: [Bundle 6 of 6] No candidate shows a clear, repeatable edge. Rating signal has been unstable, calls lack a positive record, and two trades this bundle already lost.
+- week 134 [pass]: [Bundle 6 of 6] Rating evidence is weak and unstable, and no candidate shows a clear edge. Passing this bundle.
+- week 135 [pass]: [Bundle 6 of 6] No stable rating edge across bundles, shares flat-to-negative, calls untested with no expiry records, and this bundle's two stock trades already lost. Passing.
+- week 136 [stock +3%]: [Bundle 6 of 6] Oversold C2 (RSI 22, 20d -16%) is a mean-reversion bet. Overextended runners are rated lean avoid. Calls stay out per notes.
+- week 137 [pass]: [Bundle 6 of 6] Rating signal is noisy across bundles, costs are real, and calls remain unproven, so I pass this week.
+- week 138 [pass]: [Bundle 6 of 6] Extended names (C1, C6, C8) lean avoid. C2 is oversold and lean buy. No trade: the notes show no reliable edge and calls are unproven.
+- week 139 [pass]: [Bundle 6 of 6] No reliable edge after five bundles. Rating ordering is unstable and calls are unproven, so I pass this week.
+- week 140 [pass]: [Bundle 6 of 6] Recent oversold names kept falling, and no rule has shown a stable edge. Passing this final bundle.
+- week 141 [pass]: [Bundle 6 of 6] Rating edge is unstable across bundles and shares-only shows no reliable edge, so I pass this final bundle.
+- week 142 [pass]: [Bundle 6 of 6] Prior bundles show no stable edge and calls have lost money. C6 is oversold but the RSI rule is untested, so I pass.
+- week 143 [pass]: [Bundle 6 of 6] No candidate shows a repeatable edge. Extended names lean avoid, and recent calls and shares have been flat to negative, so I pass.
+- week 144 [pass]: [Bundle 6 of 6] No candidate shows a clear, repeatable edge. Calls and oversold entries have lost in past bundles, so I pass.
+- week 145 [pass]: [Bundle 6 of 6] Rating buckets are unstable across five bundles, shares and calls have lost money, and no candidate shows a clear edge. Passing.
+- week 146 [pass]: [Bundle 6 of 6] Notes show no stable rating edge and no reliable option or momentum rule. Overbought names look weak, and the setups don't clear the bar, so I pass.
+- week 147 [pass]: [Bundle 6 of 6] Big one-day spikes (C3, C7, C8) look stretched, but past bundles show no reliable edge, and calls have been costly. Passing.
+- week 148 [pass]: [Bundle 6 of 6] No candidate shows a clear edge. Signals are mixed and past bundles were noisy, so I'm passing and keeping the calls and sizing rules.
+- week 149 [stock +1%]: [Bundle 6 of 6] Deeply oversold, far off highs, low volatility. Extended run-ups look worse. One small stock position, no calls.
+- week 150 [pass]: [Bundle 6 of 6] Rating and momentum signals have been unstable across bundles, and call evidence is negative. Weak edge, so I pass.
+- week 151 [pass]: [Bundle 6 of 6] No stable rating edge across bundles, shares near flat, and calls unproven. Passing this final bundle.
 
 ## Weekly notes: committee, generation 1, score
 
@@ -416,4 +416,305 @@ replies were cut off (no trades) and were not saved.
 - week 142 [stock; stock]: [Bundle 6] C8 fits trend momentum; C1 fits oversold dip. Calls scored poorly, so no option trades.
 - week 143 [stock; stock; stock]: [Bundle 6] Below-ma50 turning-up and momentum rules have the best in-sample means. Calm-stock call rule is negative, so no calls.
 - week 144 [stock; stock; stock]: [Bundle 6] Rules: turning-up below ma50 (C4, C6) and trend above ma50 (C1, C2). Calls rejected: calm-call rule has negative median. C3 overbought, extreme run-up, neutral.
+
+## Weekly notes: options1, generation 1, train
+
+- week 1 [call 30d +10% hold10 -66%; call 30d +10% double_or_10 -46%]: [Bundle 1 of 6] C3 tests cheap far-OTM call flood into a dip; C5 tests short-dated flow with a calm, modest uptrend. C8 is overbought after a 63% run.
+- week 2 [call 14d +0% double_or_10 -100%; call 30d +5% double_or_10 -45%; call 14d +5% hold10 +13%]: [Bundle 1 of 6] Oversold bounces (C3, C5) with heavy call buying; C7 tests cheap 5% OTM calls on strong flow. Overbought names rated down.
+- week 3 [call 90d +10% hold10 -70%]: [Bundle 1 of 6] Overheated spikes (C1, C2) tend to fade. C7 has cheap long-dated OTM calls with put/call falling, a test of the quiet-flow idea.
+- week 4 [call 90d +5% hold10 -62%; call 30d +0% hold10 -41%]: [Bundle 1 of 6] Test whether heavy OTM/long-dated call buying with zero put flow and calm shares beats decay; C8 tests medium-dated calls into a drop.
+- week 5 [call 14d +15% double_or_10 +1280%; call 30d +10% hold10 -85%]: [Bundle 1 of 6] Test cheap far-OTM calls on a deep-drawdown bounce (C7) and a quiet dip inside an uptrend (C6). Fade extended rallies with heavy call crowding (C2, C4).
+- week 6 [call 30d +5% double_or_10 -84%; call 30d +5% double_or_10 +307%]: [Bundle 1 of 6] Long-dated OTM call surges on dipping stocks (C8) and put-collapse on a bounce (C1) are the only flow-plus-setup combos; overbought, put-heavy rallies look like fades.
+- week 7 [call 30d +5% double_or_10 +144%; call 14d +0% double_or_10 +128%]: [Bundle 1 of 6] C7 has broad OTM and medium-dated call buying with puts quiet; C8 shows a 10% breakout on heavy calls. Other setups are chasing or falling.
+- week 8 [call 14d +0% double_or_10 +163%; call 30d +10% double_or_10 -75%]: [Bundle 1 of 6] C4 has a 58x short-dated call spike and a modest rise. C1 is deeply oversold with long-dated call buying and cheap 10% OTM premium, a test of mean reversion.
+- week 9 [call 14d +15% double_or_10 -100%; call 30d +15% double_or_10 -90%]: [Bundle 1 of 6] C8: medium-dated call spike with 5d momentum, cheap OTM 14d, matches prior winner. C1: quiet long-dated flow test, cheap options.
+- week 10 [call 30d +10% double_or_10 -78%; call 30d +5% double_or_10 +146%; call 30d +5% hold10 -23%]: [Bundle 1 of 6] C8 shows quiet OTM call buying with collapsed puts; C3 is cheap convexity; C1 is calm with puts collapsing. Testing cheap OTM 30d.
+- week 11 [call 14d +0% double_or_10 +43%; call 30d +0% hold10 -61%]: [Bundle 1 of 6] Test short-dated call spike in a beaten-down stock (C1); C2 has cheap calls and strong put-to-call crowding-out.
+- week 12 [call 30d +5% double_or_10 -50%; call 90d +10% hold10 +20%]: [Bundle 1 of 6] C5: heavy OTM call buying after a 16% drop, cheap 30d. C7: test long-dated spike, 90d calls, held 10 sessions.
+- week 13 [call 14d +0% double_or_10 -100%; call 30d +0% double_or_10 -77%]: [Bundle 1 of 6] Buy the huge call spike after a sharp reversal (C1) and cheap long-dated flow (C7). Avoid put surges in falling stocks. Test next: oversold call bounces.
+- week 14 [call 30d +5% hold10 -45%; call 14d +20% double_or_10 -100%]: [Bundle 1 of 6] C6 has momentum with cheap calls. C2 is an oversold lottery bet on a cheap 20%-OTM call. Both test untried strike and expiry combinations.
+- week 15 [call 30d +5% double_or_10 -81%; call 30d +5% hold10 -86%; call 30d +5% hold10 -82%]: [Bundle 1 of 6] C3 and C4 sit well below their 50-day average and bounced, a pattern that earlier averaged +4%. C5 tests cheap OTM quiet call buying.
+- week 16 [call 30d +10% double_or_10 -58%; call 14d +0% hold10 -100%]: [Bundle 1 of 6] C1: deeply oversold, cheap options, heavy OTM call buying. C5: sharp selloff with short-dated call surge, cheap premium. Both are low-conviction tests.
+- week 17 [call 14d +5% double_or_10 +192%; call 90d +0% hold10 -11%]: [Bundle 1 of 6] C3: short-dated call spike near support, cheap strike. C8: contrarian long-dated calls after a sharp selloff. Testing the bounce idea.
+- week 18 [call 30d +10% double_or_10 +443%]: [Bundle 1 of 6] Heavy long and OTM call flow on a cheap sub-$10 stock with calls priced near 1.8%. Tests whether cheap OTM flow beats decay. Chasing extended runs (C2, C3) is avoided.
+- week 19 [call 90d +15% hold10 -14%; call 14d +0% double_or_10 -21%]: [Bundle 1 of 6] C4: heavy far-OTM long-dated call buying at low cost, testing slower decay. C1: sharp drop with call crowding, cheap short calls, possible bounce. C8 is a blowoff top like a prior loser.
+- week 20 [call 30d +0% double_or_10 -83%]: [Bundle 1 of 6] C1: huge far-OTM and long call buying while the stock is calm and cheap to option. Others show no clear edge, or are overbought or put-heavy.
+- week 21 [call 30d +5% double_or_10 +156%; call 30d +5% hold10 -26%]: [Bundle 1 of 6] C1: deep oversold, 10x long-dated call buying, p/c 0.03, cheap strikes. C7: cheap options, mild breakout. Others look like overbought or fading flow.
+- week 22 [call 30d +0% double_or_10 -42%]: [Bundle 1 of 6] C6 tests a panic-put capitulation bounce (RSI 12, puts 10x). Momentum runs (C1, C8) look due to fade; cheap calls decay.
+- week 23 [call 30d +0% double_or_10 +172%; call 14d +5% double_or_10 -100%]: [Bundle 1 of 6] Short-dated call spike on a below-50-day, up-today setup (C2); strong flow with momentum at the high (C1). Both are cheap, and the exit caps the decay risk.
+- week 24 [call 30d +0% double_or_10 -56%; call 30d +0% hold10 -56%]: [Bundle 1 of 6] C1 is an oversold bounce with extreme OTM call buying; C4 has calls and a put drop with a modest uptrend. Both are speculative.
+- week 25 [call 30d +0% double_or_10 -39%; call 30d +5% hold10 -90%; call 14d +5% hold10 -100%]: [Bundle 1 of 6] C1 has a short-dated call spike with low put/call after a calm rise. C2 is a flow-plus-dip setup. C8 is an oversold cheap-call test.
+- week 26 [call 30d +5% double_or_10 +13%; call 30d +5% double_or_10 -83%; call 30d +5% double_or_10 +228%]: [Bundle 2 of 6] C7 and C2 show crowded call spikes with calls crowding out puts; C6 has a big flow spike but is overbought. Tests the 30d +5% double rule.
+- week 27 [call 30d +5% double_or_10 -95%; call 30d +5% double_or_10 -60%]: [Bundle 2 of 6] C7 has a 48x medium-expiry spike, cheap 30d +5% calls and low volatility. C1 meets the screen but is overbought (RSI 83), so it gets a smaller rating.
+- week 28 [call 30d +5% double_or_10 -100%; call 30d +5% double_or_10 -100%]: [Bundle 2 of 6] C1 and C3 pass the medium-expiry spike screen with 5% OTM 30d calls. C3 also tests the deep-below-high idea. C4 is overbought and extended.
+- week 29 [call 30d +5% double_or_10 -78%; call 30d +5% double_or_10 -52%; call 30d +5% double_or_10 -51%]: [Bundle 2 of 6] Calls spiking with medium/long bucket support, 30d +5% strike; C7 tests the deep-below-high oversold idea.
+- week 30 [call 30d +5% double_or_10 -29%; call 30d +5% double_or_10 -15%; call 30d +10% hold10 +68%]: [Bundle 2 of 6] C8 has a large medium-dated OTM call spike. C5 has a long-dated spike and a breakout. C7 is a deep-below-high flow test.
+- week 31 [call 30d +5% double_or_10 +154%; call 30d +5% double_or_10 +134%]: [Bundle 2 of 6] Strongest flow with calls dominating puts and long-dated call spikes; C8 also oversold. Testing the 30d +5% double_or_10 cell on new stocks.
+- week 32 [call 30d +5% double_or_10 -44%; call 30d +5% double_or_10 -84%; call 30d +5% double_or_10 +104%]: [Bundle 2 of 6] Pullback-from-high setups with call spikes and no put crowding; avoid overextended RSI 70+ names. Tests deep-below-high idea.
+- week 33 [call 30d +5% double_or_10 +144%; call 30d +5% double_or_10 +332%]: [Bundle 2 of 6] C2 and C8 pass the call and long-spike screen with cheap 5% OTM 30d calls. C5 is overextended (+64% in 5 days, RSI 76). C2 14d hold10 tests exit and expiry.
+- week 34 [call 30d +5% double_or_10 +301%]: [Bundle 2 of 6] C7 meets the screen: calls 6.8x and medium 5.5x, with a 30d +5% strike. Other names lack a medium-dated spike.
+- week 35 [call 30d +5% double_or_10 +106%; call 30d +20% double_or_10 +119%]: [Bundle 2 of 6] C4 fits the 30d +5% spike screen. C1 is an exploratory oversold far-OTM test, with a cheap 3.3% cost. C7 looks like a blow-off reversal.
+- week 36 [call 30d +5% double_or_10 +176%; call 30d +5% double_or_10 -99%; call 30d +5% hold10 -72%]: [Bundle 2 of 6] C8 and C2 fit the 30d +5% spike setup. C5 tests the exit rule on a deep-below-high, crowded-call name. C4 is overbought after +29% in 5 days.
+- week 37 [call 30d +5% double_or_10 -94%; call 30d +15% double_or_10 -84%]: [Bundle 2 of 6] C2 fits the 30d +5% double-or-10 core. C8 is an exploratory 15% OTM test on a huge call spike. Other setups look overbought or weak.
+- week 38 [call 30d +5% double_or_10 -89%; call 30d +5% double_or_10 -86%; call 30d +5% double_or_10 -43%]: [Bundle 2 of 6] Tests the 30d +5% double_or_10 cell on spiked calls with medium/long buildup. Stock ratings have been weak, so they stay mild.
+- week 39 [call 30d +5% double_or_10 -67%; call 30d +0% hold10 -10%]: [Bundle 2 of 6] C4 has a medium/long call spike in the strategy's 30d +5% cell despite heavy put flow. C7 is a cheap oversold contrarian test (RSI 22, 48% off high).
+- week 40 [call 30d +5% double_or_10 -34%]: [Bundle 2 of 6] C3 shows call-heavy spike with reversal and oversold RSI. Put-heavy C4, C5, C8 rated down. Weak-flow C7 rated down. Single pick follows the 30d +5% double_or_10 cell.
+- week 41 [call 30d +5% double_or_10 +124%; call 14d +0% double_or_10 -100%]: [Bundle 2 of 6] C2 has a 3.6x call spike, 8x long-dated spike, cheap 30d +5% option. C5 is an extreme spike, tested with cheap 14d ATM. Others lack spikes.
+- week 42 [call 30d +5% double_or_10 +87%; call 30d +5% double_or_10 -92%]: [Bundle 2 of 6] Oversold names with large call spikes (C3 long 9x, C6 short 58x) fit the deep-below-high test; medium spike near 2x on C6. Recent 30d +5% trades lost heavily, so size stays small.
+- week 43 [call 30d +5% double_or_10 +28%; call 30d +5% double_or_10 -100%]: [Bundle 2 of 6] C6: deep off-high gap-up on heavy volume. C8: calls 28x with 5-day momentum. C1, C4, C7 are overbought after big runs. Testing the 30d +5% cell.
+- week 44 [call 30d +5% double_or_10 +11%; call 30d +5% double_or_10 -84%]: [Bundle 2 of 6] Both pass the medium-spike screen with 30d +5% strikes. C2 is also deep below its high, testing that idea. C3 is overbought and C8 has no 30d cell.
+- week 45 [call 30d +5% double_or_10 +146%; call 30d +10% double_or_10 +121%]: [Bundle 2 of 6] C8 fits the 30d +5% screen (calls 3.4x, medium 4x). C6 tests an oversold deep-below-high bounce at 30d +10%, a small exploratory bet.
+- week 46 [call 30d +5% double_or_10 -56%; call 90d +10% double_or_10 +2%]: [Bundle 2 of 6] C5 fits my 30d +5% double-or-10 setup. C7 tests a contrarian bounce after a 33% five-day crash, with a cheap 90-day call.
+- week 47 [call 30d +5% double_or_10 -8%; call 30d +5% double_or_10 +38%]: [Bundle 2 of 6] Core setup: 30d +5% double_or_10 with a large medium/long spike. C2 has the biggest flow but fell 18% today, so it is a risky test. C1 qualifies on long calls.
+- week 48 [call 30d +5% double_or_10 +1%; call 30d +5% double_or_10 -78%]: [Bundle 2 of 6] Test the 30d +5% double_or_10 cell on two deep-below-high stocks with call spikes; screen is partial, so this is a test trade.
+- week 49 [call 30d +5% double_or_10 +13%; call 30d +10% double_or_10 +45%]: [Bundle 2 of 6] C1 fits the 30d +5% screen (long calls 5.35x, cheap 3.9% cost). C2 tests a 10% OTM strike on heavy far-OTM call demand despite high put volume.
+- week 50 [call 30d +5% double_or_10 +131%; call 30d +5% double_or_10 -60%]: [Bundle 2 of 6] C1 has a strong long-dated call spike, low put/call, and cheap 5% OTM option. C4 tests a short-spike, low put/call setup as a second idea.
+- week 51 [call 30d +5% double_or_10 -34%]: [Bundle 3 of 6] Crashed 25% on heavy put flow (21x) with a 33% option cost. Lean avoid, but a trade is required, so I take the default 30d +5% cell.
+- week 52 [call 30d +5% double_or_10 -69%; call 30d +5% double_or_10 -59%; call 30d +5% hold10 -57%]: [Bundle 3 of 6] C3 and C1 fit the 30d +5% call-spike setup. C4 is an oversold contrarian test of hold10 against double_or_10 on the same strike.
+- week 53 [call 30d +5% double_or_10 +148%; call 30d +5% hold10 -58%]: [Bundle 3 of 6] Oversold, cheap 30d +5% calls on C5 and C1. C1 hold10 tests the exit rule on equal trades. Ratings are low-confidence.
+- week 54 [call 30d +5% double_or_10 -98%; call 90d +5% hold10 -28%]: [Bundle 3 of 6] C6 has a 5.2x medium spike and cheap 30d +5% calls. C5 tests a 90d long-spike idea (6.7x) with heavy puts, beaten down below its MA20.
+- week 55 [call 30d +5% double_or_10 -70%; call 30d +5% double_or_10 -21%; call 30d +15% hold10 -48%]: [Bundle 3 of 6] C8 fits the 30d +5% default with call-only flow. C1 is a momentum version. C6 tests deep-below-high with a cheap far-OTM call.
+- week 56 [call 30d +5% double_or_10 -10%; call 30d +5% hold10 -71%]: [Bundle 3 of 6] C2 has 5x call spike with 5d/20d momentum, default 30d +5% cell. C7 tests a 17x spike with hold10 exit. Rest weak or falling.
+- week 57 [call 30d +5% double_or_10 -73%; call 30d +5% hold10 +4%]: [Bundle 3 of 6] C7 has a 5-day surge with heavy long-dated and OTM call buying. C1 shows long-dated accumulation. Both are cheap 30d +5% calls; C1 tests hold10.
+- week 58 [call 30d +5% double_or_10 +122%; call 30d +5% double_or_10 -96%]: [Bundle 3 of 6] Low call spike, 30d +5% is the strategy default. Avoid extreme call spikes, which lost badly recently.
+- week 59 [call 30d +5% double_or_10 -79%; call 30d +5% double_or_10 -80%]: [Bundle 3 of 6] Tests the 30d +5% default on a huge call spike (C7) and a low-spike control (C2). Overbought C3 and C8 rated against.
+- week 60 [call 30d +5% double_or_10 -73%; call 30d +5% hold10 +10243%]: [Bundle 3 of 6] Oversold deep-below-high stock with medium-dated call spike and cheap options; second pick tests hold10 exit for comparison.
+- week 61 [call 30d +10% double_or_10 -70%]: [Bundle 3 of 6] Deep-below-high oversold test: C6 down 28% off high, RSI 46, cheap 30d +10% call. Overbought spikes (C5, C8) rated down.
+- week 62 [call 30d +5% double_or_10 +82%; call 30d +10% hold10 +881%]: [Bundle 3 of 6] C2 fits the 30d +5% call-spike setup with the cheapest premium. C6 tests a 10% strike with hold10 for exit comparison.
+- week 63 [call 30d +5% double_or_10 -54%; call 30d +5% hold10 +70%; call 90d +5% hold10 +232%]: [Bundle 3 of 6] C8 fits the 30d +5% strategy with calls and volume rising. C4 tests the hold10 exit on a cheap quiet option. C7 is a 90-day side test.
+- week 64 [call 30d +5% double_or_10 +295%; call 30d +5% double_or_10 -17%; call 30d +10% double_or_10 +164%]: [Bundle 3 of 6] Event-like call spikes with heavy short and medium calls; 30d +5% is the default strike; C5 is an oversold bounce test.
+- week 65 [call 30d +5% double_or_10 -100%]: [Bundle 3 of 6] C5 has the strongest call flow (6.4x calls, 23.8x short) and a cheap 30d +5% option. Its medium-expiry component is not met, so this is a small test.
+- week 66 [call 30d +5% double_or_10 -86%; call 30d +5% double_or_10 -90%; call 30d +5% double_or_10 +212%]: [Bundle 3 of 6] Testing the 30d +5% double_or_10 default. C7 has heavy call and share spikes. C2 is an oversold bounce test. C4 is a cheap-stock spike check.
+- week 67 [call 30d +5% double_or_10 -58%; call 30d +5% hold10 -73%; call 30d +5% double_or_10 -86%]: [Bundle 3 of 6] C6 has a 2.4x call spike and cheap 30d +5% cost. C7 is an oversold bounce test. C3 has a 4.9x call spike.
+- week 68 [call 30d +5% double_or_10 -64%; call 30d +5% double_or_10 -93%]: [Bundle 3 of 6] Medium-dated call spike with a stock bouncing off deep lows (testing spike plus depth-below-high idea); 30d +5% per strategy.
+- week 69 [call 30d +5% double_or_10 -83%; call 90d +10% hold10 -59%]: [Bundle 3 of 6] C2: cheap 30d +5% after 13% drop, calls 5.5x. C7: 90d +10% tests a new expiry. C3 and C5 overextended.
+- week 70 [call 30d +5% double_or_10 -32%; call 30d +5% hold10 -22%; call 90d +5% hold10 -44%]: [Bundle 3 of 6] C2 and C5 fit the spike-plus-momentum setup at the default strike; C5 tests hold10 on equal footing. C1 tests 90-day expiry, which is cheap.
+- week 71 [call 30d +10% hold10 -20%; call 30d +5% double_or_10 -61%]: [Bundle 3 of 6] C1 is oversold and 19% off its high with a default 30d +5% strike. C5 is deep below its high and tests the hold10 exit.
+- week 72 [call 30d +5% hold10 -80%; call 30d +5% double_or_10 -51%]: [Bundle 3 of 6] C8 has an 18x medium-expiry call spike near its high at a cheap 3.2% premium. C7 shows broad call buying. C7 hold10 tests the exit rule.
+- week 73 [call 30d +0% double_or_10 -48%; call 14d +0% hold10 +2%]: [Bundle 3 of 6] C5 tests the untested >5x call spike idea on a beaten-down stock. C8 has a cheap 14d ATM call after a 5-day rebound. Both small.
+- week 74 [call 30d +5% double_or_10 +184%; call 30d +5% hold10 -81%]: [Bundle 3 of 6] Tests the 30d +5% cell with a call spike (C6) and records the hold10 exit on a cheap, non-spiking name (C3). Ratings are weak; most candidates lack a clear edge.
+- week 75 [call 30d +5% double_or_10 -85%; call 30d +5% double_or_10 -88%; call 30d +10% hold10 +12%]: [Bundle 3 of 6] Strategy 30d +5% double_or_10 on C2 and C1 (heavy call spikes, cheap premium). C4 at 30d +10% hold10 tests the exit.
+- week 76 [call 30d +5% double_or_10 +266%; call 30d +5% double_or_10 -16%; call 30d +5% double_or_10 +48%]: [Bundle 3 of 6] Core 30d +5% double_or_10 on strong call spikes with cheap premium; C6 and C8 look overbought or weak.
+- week 77 [call 30d +10% double_or_10 -69%]: [Bundle 4 of 6] Tests the 30d +10% candidate strike on the cheapest grid option, at minimum size. Rating reflects call-flow only; weak evidence.
+- week 78 [call 30d +10% double_or_10 -82%; call 30d +10% hold10 -34%]: [Bundle 4 of 6] Tests the 30d +10% candidate strike on two names with cheap premium and large call spikes. Splits exits for a matched comparison. Ratings are low-confidence.
+- week 79 [call 30d +10% double_or_10 -94%; call 30d +10% hold10 -36%]: [Bundle 4 of 6] Testing the 30d +10% candidate strike on two names with rising call flow (C6 medium spike, C3 OTM spike) and cheap options. Small sizing.
+- week 80 [call 30d +10% hold10 -58%]: [Bundle 4 of 6] Oversold, down 20% in 20 days, puts unwinding. Small side test at the 30d +10% strike; recent flow spikes lost.
+- week 81 [call 30d +10% hold10 +21%; call 30d +10% hold10 -59%]: [Bundle 4 of 6] Thin test of the 30d +10% candidate at small size. C1 is a cheap contrarian side test after heavy put buying. Ratings are weak and mostly bearish.
+- week 82 [call 30d +0% hold10 -47%; call 14d +5% hold10 -100%]: [Bundle 4 of 6] C1 tests a pullback with 12.8x long-dated call buildup; C5 tests broad flow momentum. The 30d +10% strike is failing this bundle, so I'm not using it.
+- week 83 [call 30d +10% hold10 +225%; call 30d +10% double_or_10 -36%]: [Bundle 4 of 6] Tests the 30d +10% candidate on two names with flow spikes and deep pullbacks, at minimum size; ratings are weak.
+- week 84 [call 30d +10% hold10 -91%; call 30d +10% double_or_10 -70%]: [Bundle 4 of 6] Testing the 30d +10% strike on two different setups: momentum (C2) and oversold big OTM call spike (C4). Overbought C3 and C5 rated down.
+- week 85 [call 30d +10% hold10 -26%; call 30d +10% double_or_10 +107%]: [Bundle 4 of 6] C8 tests the extreme call spike (11x, 14x OTM) on the 30d +10% candidate strike. C2 has a 4x OTM spike with a non-falling stock. Both are small side tests.
+- week 86 [call 30d +10% double_or_10 -61%; call 30d +10% hold10 -47%]: [Bundle 4 of 6] Testing the 30d +10% candidate strike on a quiet, cheap contract (C3) and a momentum spike (C7). Ratings are weak; no validated filter.
+- week 87 [call 30d +10% hold10 -100%; call 30d +10% double_or_10 -100%]: [Bundle 4 of 6] Testing the 30d +10% strike on C3's broad call flow (hold10), and a sub-$10 spike (C2) with double_or_10. Both are small side tests.
+- week 88 [call 30d +10% hold10 -55%; call 30d +10% double_or_10 +44%]: [Bundle 4 of 6] Testing the 30d +10% candidate strike on two small trades. Ratings are low-confidence: C7 has a big call spike, C1 is not overextended, and C2/C6 look stretched after big rallies.
+- week 89 [call 30d +10% double_or_10 -84%; call 30d +10% hold10 -26%]: [Bundle 4 of 6] Testing the 30d +10% candidate at minimum size. C1 is oversold after a big drop with heavy call activity. C8 is overbought after a sharp rally, so it is a thin side test.
+- week 90 [call 30d +10% double_or_10 -80%; call 30d +10% hold10 +117%]: [Bundle 4 of 6] Oversold C1 as contrarian test of the 30d +10% strike. C4 tests the 30d +10% strike on a large call spike, with double_or_10 exit. Both at minimum size.
+- week 91 [call 30d +10% double_or_10 -97%; call 30d +10% hold10 -69%]: [Bundle 4 of 6] Momentum with a short-dated call spike (C7) and heavy call crowding (C5). Both at the 30d +10% candidate strike, small size.
+- week 92 [call 30d +10% hold10 -43%; call 30d +10% double_or_10 -90%]: [Bundle 4 of 6] C7 medium-dated call crowding (p/c drop 10x) on a deep drawdown. C2 oversold sub-$10 call spike. Tests 30d +10% strike, split exits.
+- week 93 [call 30d +10% hold10 -89%; call 30d +10% hold10 -19%]: [Bundle 4 of 6] Testing the 30d +10% candidate on C1 flow, plus a contrarian oversold, deep-below-high idea on C5. Both are small, logged tests.
+- week 94 [call 30d +10% double_or_10 -77%; call 30d +5% hold10 -35%]: [Bundle 4 of 6] C1 tests the 30d +10% candidate with flow spike and momentum. C4 tests a deep-below-high call-spike bounce, my own idea.
+- week 95 [call 30d +10% double_or_10 -84%]: [Bundle 4 of 6] C7 has a fresh breakout with a heavy call spike and is near its high. C8 collapsed on huge volume. C4 and C5 are in downtrends with weak call flow. Pick is 1% sized.
+- week 96 [call 90d +0% hold10 +0%]: [Bundle 4 of 6] Side test of ATM 90-day call on extreme call-flow name; parabolic overbought names rated lean avoid. 30d +10% strike keeps failing this bundle, so not repeated.
+- week 97 [call 30d +10% hold10 -63%; call 30d +10% hold10 +251%]: [Bundle 4 of 6] Testing the 30d +10% candidate strike on two cheap, call-heavy names, hold10 to match the bundle-3 result. Small sizing.
+- week 98 [call 30d +10% double_or_10 +480%; call 30d +10% hold10 -11%]: [Bundle 4 of 6] C8 tests the 30d +10% candidate at a cheap 2% cost with a call spike. C4 is a side test of an extreme long/OTM flow spike.
+- week 99 [call 30d +10% hold10 +218%; call 30d +10% double_or_10 -61%]: [Bundle 4 of 6] Testing 30d +10% strike: C7 on rising flow with momentum; C5 as an oversold contrarian side test. Both small size.
+- week 100 [call 30d +10% hold10 +137%; call 30d +10% double_or_10 +89%]: [Bundle 4 of 6] Testing 30d +10% strike on a spiked-OTM down name (C8) and a no-call-spike rally control (C7), at 1% sizing. Ratings are weak views.
+- week 101 [call 30d +10% double_or_10 -89%; call 30d +10% hold10 -5%]: [Bundle 4 of 6] Cheap 30d +10% on C1 after a pullback; C2 tests the same strike under the other exit. Chasing and far-OTM names rated down.
+- week 102 [call 30d +0% hold10 -71%; call 90d +20% hold10 -15%]: [Bundle 5 of 6] C7 shows moderate call crowding with a rising trend. C1 tests cheap far-OTM 90-day calls on a quiet stock. C2 is parabolic and overbought.
+- week 103 [call 30d +10% double_or_10 -83%; call 30d +10% hold10 +180%]: [Bundle 5 of 6] Side tests only: 30d +10% hold10 on C8 (bundle-4 cell) and cheap oversold C2 for exit comparison. Ratings are weak momentum/trend reads.
+- week 104 [call 30d +10% hold10 -88%; call 30d +10% hold10 -69%]: [Bundle 5 of 6] Test matched exits on C7 (cheap 30d +10%, momentum, 20d +31%). C3 has rising call and long flow after a 20d run-up. Ratings low-confidence; C1 and C2 show bearish or speculative flow.
+- week 105 [call 90d +10% hold10 +288%; call 30d +10% hold10 -69%]: [Bundle 5 of 6] Momentum with a call spike; C1 tests a 90d side cell on a call-and-put surge. Ratings are low-confidence.
+- week 106 [call 30d +10% hold10 -48%]: [Bundle 5 of 6] Side test of 30d +10% hold10 on C3, the cheapest option in that cell, with call-crowding (p/c drop 3.07). Small size per sizing rule.
+- week 107 [call 90d +10% hold10 -20%; call 30d +10% hold10 -69%]: [Bundle 5 of 6] C2 is the 30d +10% side-test cell with heavy call crowding. C5 tests a contrarian long-dated idea on put-heavy flow. Both small.
+- week 108 [call 14d +0% hold10 +67%]: [Bundle 5 of 6] Side test: cheap short-dated ATM call on a low-vol name with a recent 5d breakout. Parabolic names rated lean avoid.
+- week 109 [call 30d +10% hold10 +55%; call 14d +5% hold10 -86%]: [Bundle 5 of 6] C2 is the working 30d +10% cell on hot flow; C6 tests an oversold 5-day-crash bounce at 14d +5%.
+- week 110 [call 30d +10% hold10 -46%; call 30d +10% hold10 -81%]: [Bundle 5 of 6] Dip-buying call flow on C4 and C3 with a rebound view; both at the working 30d +10% hold10 cell, small size. Other names look overextended or weak.
+- week 111 [call 30d +10% hold10 -87%; call 90d +0% hold10 -46%]: [Bundle 5 of 6] Small side tests only: 30d +10% hold10 (working cell) and 90d ATM as an untested long-dated idea. No validated edge; ratings low-confidence.
+- week 112 [call 30d +10% hold10 -5%]: [Bundle 5 of 6] C3 has the strongest call flow and the working 30d +10% cell. Others show overbought or falling setups, or no flow. Sized at minimum.
+- week 113 [call 30d +10% hold10 -93%; call 30d +5% hold10 -90%]: [Bundle 5 of 6] C3: heavy call crowding, cheap 30d +10% (2.5%), test cell. C2: deep-drawdown bounce test. Both small, 1% sizing.
+- week 114 [call 30d +10% hold10 -33%; call 90d +15% hold10 -69%]: [Bundle 5 of 6] Side test of the 30d +10% hold10 cell on C1. Test idea: 90d +15% on C7's long-dated OTM flow spike, cheap premium, small size.
+- week 115 [call 30d +10% hold10 -91%]: [Bundle 5 of 6] Side test of the 30d +10% hold10 cell on C7, the only name with a strong flow spike and a rising trend. Bundle 4 evidence is weak, so size stays at $1,000.
+- week 116 [call 30d +10% hold10 +49%; call 30d +5% double_or_10 +7%; call 30d +0% hold10 +105%]: [Bundle 5 of 6] Side tests: 30d +10% hold10 on C3 (cheap, call build-up); C5 double exit to check cap; C4 deep oversold bounce at 0%. Sized small.
+- week 117 [call 30d +10% hold10 -91%]: [Bundle 5 of 6] Side test in the 30d +10% hold10 cell, the best-median cell so far, at 1% sizing. Ratings lean bearish on the extended spikes and deep drawdowns.
+- week 118 [call 90d +0% hold10 -2%; call 30d +5% hold10 -78%]: [Bundle 5 of 6] Bullish call crowding with very low put/call on C4 and C7 after a strong 5-day run. Small side tests per the sizing rule.
+- week 119 [call 30d +10% hold10 -78%; call 30d +10% double_or_10 -45%]: [Bundle 5 of 6] Working 30d +10% side test on C1 (deep drawdown, RSI 26). C8 tests contrarian idea: extreme put spike may mark hedging. Sized small.
+- week 120 [call 30d +10% hold10 +5%; call 14d +5% double_or_10 +211%]: [Bundle 5 of 6] C1 is a medium-expiry flow spike on a dip, cheap calls at the notes' best-median cell. C6 tests a near-money spike with a double exit. Both are minimum-size side tests.
+- week 121 [call 30d +10% hold10 -79%; call 30d +10% double_or_10 -86%; call 30d +5% hold10 -99%]: [Bundle 5 of 6] Side tests only: 30d calls, the working cell. C5 tests a dip-rebound contrarian idea and the exit question. Sizing kept at test level.
+- week 122 [call 30d +10% hold10 -33%; call 90d +15% hold10 -42%]: [Bundle 5 of 6] C1 tests the 30d +10% hold10 side cell on heavy call flow. C7 tests a cheap 90d OTM lottery idea. Ratings are weak; no validated edge.
+- week 123 [call 30d +10% hold10 +45%; call 30d +5% hold10 -68%]: [Bundle 5 of 6] C1 has strong call crowding and the standard 30d +10% side-test cell. C7 tests an oversold, put-heavy bounce at 30d +5%, a new idea.
+- week 124 [call 30d +10% hold10 -71%; call 30d +10% double_or_10 -78%]: [Bundle 5 of 6] Side tests at minimum size. C2 is the 30d +10% hold10 cell. C6 tests a deep-drawdown bounce idea. Overextended, high-RSI names rated lean avoid.
+- week 125 [call 30d +10% hold10 -56%]: [Bundle 5 of 6] Side test in the working 30d +10% hold10 cell. C8 has heavy call flow with shares up and room off the high; C1 and C6 look overbought.
+- week 126 [call 30d +10% hold10 -42%; call 90d +0% hold10 -45%]: [Bundle 5 of 6] C1: heavy medium-dated call flow, low put/call, side-test cell. C7: RSI 12 oversold contrarian test at 90d ATM.
+- week 127 [call 30d +0% hold10 +165%; call 30d +0% hold10 +29%]: [Bundle 6 of 6] Side test of quiet, unspiked ATM calls after a dip (own idea). Ratings: spiked, overbought, extended names avoided.
+- week 128 [call 30d +5% hold10 +304%; call 90d +0% hold10 -50%]: [Bundle 6 of 6] C3: flow plus 5d momentum, 30d cell test. C8: contrarian test of a call spike after a 20% five-day drop.
+- week 129 [call 30d +0% hold10 -82%; call 30d +0% hold10 -37%]: [Bundle 6 of 6] Side test: ATM 30-day calls on the 4x call spike with put flow collapsing (C1). Second test: C5 ATM, to log the 0% cell.
+- week 130 [call 30d +10% hold10 -19%; call 30d +0% hold10 -70%]: [Bundle 6 of 6] Small test trades. C8 is the 30d +10% hold10 cell the decision rule tracks. C3 tests the 0% strike with a large call spike.
+- week 131 [call 30d +0% hold10 -73%; call 30d +5% hold10 -35%]: [Bundle 6 of 6] Oversold C7 with medium-dated call spike, ATM 30d unresolved cell. C5 strong 5d momentum and flow. Small sized tests.
+- week 132 [call 30d +0% hold10 +8%; call 30d +0% hold10 -96%]: [Bundle 6 of 6] C1 has a strong call spike and is cheap at 0% strike. C5 is a low-spike side test. Sizing kept small.
+- week 133 [call 30d +10% hold10 +7%]: [Bundle 6 of 6] Bundle 6 decision cell is 30d +10% hold10. C8 has the strongest flow with cheap premium. Low confidence; sized at the test minimum.
+- week 134 [call 30d +10% hold10 +9%]: [Bundle 6 of 6] Strongest call crowding with puts collapsing, not overextended. Tests main 30d +10% cell per decision rule; sized at 1% of book.
+- week 135 [call 30d +10% hold10 -72%]: [Bundle 6 of 6] Single minimum-size test of the 30d +10% hold10 cell, the committee's main side test. Momentum and call flow are strong, but the premium is cheap.
+- week 136 [call 30d +10% hold10 -100%]: [Bundle 6 of 6] Single minimum-size test in the 30d +10% hold10 cell, the bundle 6 decision cell. C7 has cheap premium and strong 20d momentum. Ratings are weak; the premium-loss base rate is high.
+- week 137 [call 30d +10% hold10 -58%; call 90d +5% hold10 +27%]: [Bundle 6 of 6] C2 is the main 30d +10% cell at a cheap 1.6% cost, with a strong flow spike. C5 is a logged 90-day side test.
+- week 138 [call 90d +10% hold10 -34%; call 30d +10% hold10 -34%]: [Bundle 6 of 6] Own test: oversold, deep-off-high stock with long-dated call flow, 90d. Primary 30d +10% hold10 cell on C2 for the bundle 6 decision rule.
+- week 139 [call 90d +0% hold10 -62%]: [Bundle 6 of 6] Side test: long-dated ATM call after a sharp drop with long-dated flow (2.98x). Cheap, logged as an idea test, not a validated strategy.
+- week 140 [call 30d +10% hold10 -59%; call 30d +10% hold10 -94%]: [Bundle 6 of 6] Planned final test of the 30d +10% hold10 cell, the only decision-rule cell. Two cheap-premium names. Ratings are weak lean-avoid on steep 20-day declines.
+- week 141 [call 30d +10% hold10 +1235%; call 30d +10% hold10 -63%]: [Bundle 6 of 6] Working-cell test: 30d +10% hold10. C3 shows calls crowding out puts. C2 is cheap and deeply off-high. Small, per the sizing rule.
+- week 142 [call 30d +0% hold10 -29%; call 14d +0% hold10 -100%]: [Bundle 6 of 6] Side test: call crowding over puts after a selloff (C2), and cheap 14-day ATM on a momentum name (C6). Logged, not a strategy.
+- week 143 [call 30d +10% hold10 +267%; call 30d +0% hold10 +605%]: [Bundle 6 of 6] Bundle 6 decision test: 30d +10% hold10 on cheap C6. C7 tests a put-heavy spike at ATM, a side test.
+- week 144 [call 30d +10% hold10 +180%; call 30d +0% hold10 -65%]: [Bundle 6 of 6] Small tests of the 30d +10% hold10 cell and an ATM call-crowding idea. Ratings are weak, not a filter.
+- week 145 [call 30d +10% hold10 -29%; call 30d +10% hold10 -37%]: [Bundle 6 of 6] Bundle 6 test cell: 30d +10% hold10 on heavy call flow (C3) and a cheap oversold reversal (C1). Small size, sizing rule kept.
+- week 146 [call 30d +10% hold10 -88%; call 14d +5% hold10 -100%]: [Bundle 6 of 6] C1 fits the 30d +10% hold10 decision cell with broad call crowding. C5 is a short-dated side test after a sharp gap-up and heavy call flow.
+- week 147 [call 30d +5% hold10 +204%; call 30d +15% hold10 -60%]: [Bundle 6 of 6] C2: 7.8x call spike with 18% 5d gain, tests 30d +5% hold10. C6: 32x spike, cheapest grid, tests far-OTM 30d.
+- week 148 [call 30d +0% hold10 -27%]: [Bundle 6 of 6] Call spike plus share volume at the 20-day high, rising day. Side test only; the 30d ATM cell is unresolved, so one minimum-size trade.
+- week 149 [call 30d +10% hold10 -25%; call 14d +0% hold10 -85%]: [Bundle 6 of 6] C4 tests the bundle-6 decision cell (30d +10% hold10). C5 is a side test on deep-oversold bounce (RSI 14, -29% off high).
+- week 150 [call 30d +0% hold10 -100%; call 90d +0% hold10 +9%]: [Bundle 6 of 6] Ratings are near-null. Must trade, so two small side tests: 30d ATM hold10 on heavy call flow, and 90d ATM hold10 as a longer-expiry check.
+- week 151 [call 30d +10% hold10 -20%; call 30d +10% hold10 -62%]: [Bundle 6 of 6] Only the pre-registered 30d +10% hold10 cell, at the cheapest quoted costs. Ratings are low-conviction; no validated edge.
+
+## Weekly notes: options1, generation 1, score
+
+- week 1 [call 30d +5% hold10; call 30d +5% hold10]: [Bundle 1] Both under $10 with call spikes above 3x and 5-day gains, matching the best-supported rule. Medians are negative, so sizing is small.
+- week 2 [call 30d +0% hold10]: [Bundle 1] C8 matches the call-spike-5d-up rule, the best-averaging tradable setup. Its median is negative, so the size is one trade. Other matches had no tradable strike.
+- week 3 [pass]: [Bundle 1] No setup has a positive median. C2, C7 and C8 match the under-$10 rules, but the 90-day strikes are unavailable and the 30-day median is negative. Pass.
+- week 4 [call 30d +5% hold10; call 30d +5% hold10]: [Bundle 1] Both match rules with positive averages in both halves (under-$10 call spike; MA20 run-up). Medians are negative, so size small.
+- week 5 [call 90d +10% hold10]: [Bundle 1] C7 is under $10 with a 6.9x call spike and 5-day gain, the best-supported lead. Scorebook median is still negative, so size small.
+- week 6 [call 90d +10% hold10; call 90d +10% hold10; call 90d +5% hold10]: [Bundle 1] Under-$10 and 90-day run-up or surge rules have the best positive averages; medians are negative, so sized small.
+- week 7 [call 30d +5% hold10; call 30d +5% hold10]: [Bundle 1] Under-$10 with call spike matches the best-supported lead. C5 has the cheapest option; C6 is pricier. Others lack a rule.
+- week 8 [pass]: [Bundle 1] No candidate matches a rule that passes the test; C7 is a one-day shock, which the notes flag as a loser. Passing.
+- week 9 [call 90d +10% hold10; call 30d +0% hold10; call 90d +10% hold10]: [Bundle 1] Under-$10 90d 10%-out lead fires on C4 and C7; C3 fits the call-spike with 5-day-up rule. Medians are negative, so sizing stays small.
+- week 10 [call 30d +0% hold10; call 30d +0% hold10]: [Bundle 1] Both meet callspike3_5d_up (calls ≥3, 5d up), the only rule with positive averages in both halves. Medians are negative, so sizing stays small.
+- week 11 [call 30d +5% hold10]: [Bundle 1] C3 matches the above-MA20 with 20-day run-up rule (positive average, both halves). Other candidates fail their rules or lack the needed tenor.
+- week 12 [call 30d +5% hold10; call 30d +5% hold10; call 30d +0% hold10]: [Bundle 1] Only rules with positive averages and both-half support qualify. Medians are negative, so sizes are small.
+- week 13 [call 30d +5% hold10]: [Bundle 1] C5 matches the under-$10 call-spike rule, the best-supported lead, though its median is negative. Other candidates lack a supported setup.
+- week 14 [call 90d +10% hold10; call 30d +5% hold10; call 30d +0% hold10]: [Bundle 1] Scorebook rules match: C4 under-$10 90d 10%-out; C1 and C8 call-spike and run-up rules. Medians negative, so sizing stays small.
+- week 15 [pass]: [Bundle 1] No rule has a positive median. The under-$10 90-day rules have no tradable calls here, and the trading rules that do apply are weak. Passing.
+- week 16 [call 90d +10% hold10; call 90d +10% hold10]: [Bundle 1] Under-$10 90-day 10%-out is the best lead; C5 also fits crash-knife. C7 is a second under-$10 name. Medians are negative, so size small.
+- week 17 [call 90d +10% hold10; call 30d +0% hold10]: [Bundle 1] C1 fits the under-$10 90-day 10%-out rule (best halves). C8 fits call-spike with 5-day up, though its median is negative.
+- week 18 [call 30d +0% hold10; call 30d +5% hold10]: [Bundle 1] C7 fits the under-$10 call-spike rule with a positive average. C5 fits call-spike with 5-day up. Both are weak on median, so sizing stays small.
+- week 19 [call 30d +5% hold10; call 30d +0% hold10; call 90d +10% hold10]: [Bundle 1] Under-$10 rules and call-spike-with-5-day-up have the best average and halves; medians are negative, so sizing stays small.
+- week 20 [call 90d +10% hold10; call 30d +0% hold10; call 30d +0% hold10]: [Bundle 1] C6 and C7 match the call-spike 5-day-up rule (positive average, negative median). C4 matches the extended run-up rule. Medians are negative, so sizing stays small.
+- week 21 [call 90d +10% hold10; call 90d +10% hold10]: [Bundle 1] Two rule matches: under-$10 90d 10%-out (C6) and extended run-up 90d 10%-out (C3). Notes show negative medians, so sized small.
+- week 22 [call 30d +5% hold10; call 30d +5% hold10; call 30d +5% hold10]: [Bundle 1] Picks match the under-$10 call-spike and above-MA20 run-up rules, the best-supported leads. Medians are negative, so sizing stays small.
+- week 23 [call 30d +0% hold10]: [Bundle 1] C4 fits the under-$10 call-spike with 5-day-up rule, the best-supported lead, though medians stay negative. Other candidates lack a matching rule or tradable strike.
+- week 24 [pass]: [Bundle 1] No option rule has a positive median in the scorebook. C8 fits the call-spike rule, but that evidence is weak, so pass.
+- week 25 [call 30d +0% hold10; call 30d +5% hold10]: [Bundle 2] Under-$10 call-spike rules fire with positive means and both halves; medians negative, so modest lead bets only.
+- week 26 [call 30d +5% hold10]: [Bundle 2] Under-$10 with calls ≥3 and 5-day up is the best-supported lead, though medians are negative. Small single pick.
+- week 27 [call 30d +5% hold10]: [Bundle 2] Under-$10 with calls ≥3 and 5-day up matches the best-supported rule. Medians are negative, so size is one trade at $1,000.
+- week 28 [call 30d +5% hold10; call 30d +0% hold10]: [Bundle 2] C1 fits under-$10 plus call-spike-with-5d-up, both positive averages. C7 fits under-$10 call-spike at 5% out. Medians negative, so sized small.
+- week 29 [call 30d +5% hold10; call 30d +5% hold10]: [Bundle 2] C6 matches under-$10 call-spike rule; C3 matches above-MA20 20-day run-up rule. Both are weak leads with negative medians, so I'm sizing at 1% each.
+- week 30 [call 90d +5% hold10; call 30d +5% hold10; call 90d +10% hold10]: [Bundle 2] Positive backtest averages for matched rules, but medians are negative; small, capped size.
+- week 31 [call 30d +5% hold10; call 30d +5% hold10; call 30d +5% hold10]: [Bundle 2] Under-$10 call-spike rule (30d, 5% out, hold10) has positive average and beat baseline; medians are weak, so sizing stays small.
+- week 32 [call 90d +10% hold10; call 90d +10% hold10]: [Bundle 2] Under-$10 90-day 10%-out is the strongest lead despite negative median. C1 has heavy call flow. C7 is cheap. Others lack a matching rule.
+- week 33 [call 90d +10% hold10; call 90d +10% hold10]: [Bundle 2] C7 hits under-$10 90d 10%-out and extended run-up rules. C1 is under $10 with the same 90d setup. Both are the best-supported leads, though medians are still negative.
+- week 34 [call 30d +5% hold10; call 90d +10% hold10]: [Bundle 2] Under-$10 bands have the best relative record. Both picks are small paper-sized trades, though the medians stay negative.
+- week 35 [call 30d +0% hold10; call 30d +5% hold10; call 30d +5% hold10]: [Bundle 2] Medians negative everywhere, but C3, C6, C7 match positive-average rules; C4 too extended. Small, capped sizing.
+- week 36 [call 30d +5% hold10; call 30d +0% hold10; call 30d +5% hold10]: [Bundle 2] Positive-mean rules matched: under-$10 call spike, call spike with 5d up, MA20 run-up. Medians are negative, so sizing stays small.
+- week 37 [call 30d +0% hold10; call 30d +5% hold10]: [Bundle 2] C4 matches the under-$10 call-spike rule with cheap 4.2% cost. C2 matches the call-spike-with-5-day-up rule, which has positive halves but a weak median.
+- week 38 [call 30d +5% hold10]: [Bundle 2] C8 matches under-$10 with calls≥3 (avg +40%, halves positive) but median is negative; small sizing. Other rules unavailable or unmatched.
+- week 39 [pass]: [Bundle 2] (unreadable) {"ratings": {"C1": -1, "C2": 1, "C3": 1, "C4": -1, "C5": -1, "C
+- week 40 [call 30d +5% hold10; call 90d +10% hold10]: [Bundle 2] Extended run-up on C4 has the least-negative median; under-$10 call-spike on C2 has a positive average. Medians remain negative, so sizing is small.
+- week 41 [call 30d +5% hold10; call 30d +5% hold10]: [Bundle 2] C3 and C8 are under $10 with calls at least 3x median, matching the best-supported lead. Medians are negative, so sizing stays at $1,000 each.
+- week 42 [call 30d +5% hold10; call 30d +5% hold10; call 30d +0% hold10]: [Bundle 2] Three rules with positive averages in both halves, all cheap or ATM; medians still negative, so sizing is small.
+- week 43 [call 90d +10% hold10]: [Bundle 2] C5 is an under-$10 name on the best-supported lead. Others match weak or negative rules, or have no clear setup.
+- week 44 [call 90d +5% hold10; call 30d +5% hold10]: [Bundle 2] Positive-mean rules fire on C2 and C7; medians are negative, so sizing stays small.
+- week 45 [call 90d +10% hold10; call 90d +10% hold10; call 30d +5% hold10]: [Bundle 2] Under-$10 and extended-run-up rules have the best averages, though medians are negative. Ratings are low-confidence.
+- week 46 [call 30d +5% hold10; call 30d +0% hold10; call 30d +5% hold10]: [Bundle 2] Three rule matches with positive halves. Medians are negative, so sizing stays small.
+- week 47 [call 30d +5% hold10; call 30d +5% hold10; call 90d +10% hold10]: [Bundle 2] Under-$10 rules with positive averages, though medians are negative; sized small.
+- week 48 [call 30d +5% hold10; call 30d +5% hold10]: [Bundle 2] Only C7 (under-$10, calls≥3) and C1 (above MA20, 20d>15%) match scorebook rules with positive averages. Medians are negative, so sizing stays small.
+- week 49 [call 30d +5% hold10; call 90d +10% hold10; call 90d +10% hold10]: [Bundle 3] Under-$10 and extended run-up rules have positive averages in the scorebook, though medians are negative. Picks follow those rules with hold10 exits.
+- week 50 [call 30d +5% hold10; call 90d +10% hold10]: [Bundle 3] Under-$10 rules have the best averages and triggered on C5 and C7. Median is negative, so sized small. C1 and C4 are extended or crashing, so I avoid them.
+- week 51 [call 90d +10% hold10; call 30d +5% hold10; call 30d +0% hold10]: [Bundle 3] Under-$10 rules have the best-supported positive averages; C2 fits the call-spike rule. Medians are negative, so sizing stays small.
+- week 52 [call 30d +5% hold10]: [Bundle 3] C8 fits the under-$10 call-spike rule (30d, 5% out). Medians are negative, so this is a small, sized lead, not an edge.
+- week 53 [call 30d +5% hold10; call 30d +5% hold10]: [Bundle 3] Under-$10 with calls at least 3x is the best-supported lead. C1 is too extended (RSI 92, +63% in 5 days), so I skipped it.
+- week 54 [call 30d +5% hold10; call 30d +5% hold10; call 30d +5% hold10]: [Bundle 3] Lead rules: under-$10 call-spike and above-MA20 run-up, 30-day 5% OTM, hold10. Medians negative; sized small.
+- week 55 [call 30d +0% hold10; call 30d +5% hold10]: [Bundle 3] C5 fits the under-$10 call-spike lead. C8 fits the call-spike 5-day-up rule at a cheaper cost. Medians are negative, so size small.
+- week 56 [call 30d +5% hold10; call 30d +0% hold10; call 30d +5% hold10]: [Bundle 3] Picks fire the ma20-runup and call-spike rules with positive averages, though medians are negative; sized small.
+- week 57 [call 30d +5% hold10; call 30d +0% hold10; call 30d +0% hold10]: [Bundle 3] Rule matches only: under-$10 call-spike, and call-spike with 5-day up. Positive in-sample averages, though medians are negative.
+- week 58 [call 30d +5% hold10; call 30d +0% hold10; call 30d +5% hold10]: [Bundle 3] Under-$10 call-spike rule has the best average and halves; C5 meets the call-spike 5-day-up rule. Medians are still negative, so sizing stays small.
+- week 59 [call 30d +5% hold10]: [Bundle 3] C3 alone fires a rule (above MA20, 20-day run-up >15%) with a positive average, though its median is negative. Other rules need 90-day calls that aren't listed.
+- week 60 [call 30d +5% hold10]: [Bundle 3] C3 meets the above-MA20 with 20-day run-up rule, which has a positive average but a weak median. Sized small. Most other rules are unavailable or fail.
+- week 61 [call 30d +0% hold10; call 30d +5% hold10]: [Bundle 3] C2 fits the under-$10 call-spike lead; C8 fits the call-spike-with-5-day-up rule at a cheap 4% cost. Medians are negative, so sizing stays small.
+- week 62 [call 30d +5% hold10; call 90d +10% hold10]: [Bundle 3] C8 matches extended run-up rule; C5 matches MA20 run-up rule. Both have weak medians, so small size.
+- week 63 [call 90d +10% hold10; call 30d +0% hold10]: [Bundle 3] C1 is the under-$10 lead with a 5-day surge. C4 fits the call-spike-with-5-day-up rule. Both medians are negative, so size small.
+- week 64 [call 30d +5% hold10; call 30d +5% hold10]: [Bundle 3] C7 fits the under-$10 call-spike rule with positive halves. C3 fits the above-MA20 20-day run-up rule at a cheap 2.4% premium. Medians stay negative, so size small.
+- week 65 [call 90d +10% hold10]: [Bundle 3] C1 matches the under-$10 90d/10%-out lead and the extended run-up rule. No other candidate meets a scorebook rule.
+- week 66 [call 30d +5% hold10]: [Bundle 3] C5 fits the under-$10 call-spike rule, the only positive-average setup here. Its median is negative, so the size is small.
+- week 67 [call 90d +10% hold10; call 90d +10% hold10; call 30d +5% hold10]: [Bundle 3] C6 matches three rules, including the extended run-up with the best half-split. C7 and C1 are under-$10 leads. Medians remain negative, so sizing stays small.
+- week 68 [call 30d +5% hold10]: [Bundle 3] C4 meets under-$10 with calls at 28.6x, 5d up, above MA20 and 20d up 65%, the best-supported rule. Medians are still negative, so one trade only.
+- week 69 [call 90d +10% hold10; call 30d +5% hold10]: [Bundle 3] C1 matches the best-supported under-$10 90-day rule and is cheap. C5 matches the 20-day run-up rule, positive in both halves.
+- week 70 [call 90d +10% hold10; call 90d +10% hold10; call 30d +0% hold10]: [Bundle 3] Under-$10 90d 10%-out lead (positive mean, beats baseline) on C3 and C6; C8 meets call-spike 5d-up rule at 30d ATM.
+- week 71 [call 30d +5% hold10; call 30d +0% hold10]: [Bundle 3] C7 fits the under-$10 call-spike rule, cheap at 6.4%. C8 fits the call-spike 5-day-up rule. Both lead rules have positive averages but negative medians.
+- week 72 [call 30d +5% hold10; call 90d +10% hold10]: [Bundle 3] Under-$10 rules are the strongest leads with positive averages and baseline beats; both medians are negative, so sizing stays small.
+- week 73 [pass]: [Bundle 4] No rule has a positive median. C8 is the under-$10 lead but has no 90-day quote, so it doesn't qualify. Passing.
+- week 74 [call 30d +5% hold10; call 30d +0% hold10]: [Bundle 4] C3 fits under-$10 call-spike rule; C1 fits call-spike with 5-day up. C7 is a 24% one-day shock, which the notes flag as a loser.
+- week 75 [call 30d +5% hold10; call 30d +5% hold10; call 30d +0% hold10]: [Bundle 4] Under-$10 call-spike and call-spike-5d-up rules fire on C8 and C3; the ma20 run-up rule fires on C4, the cheapest tradable option.
+- week 76 [call 90d +10% hold10; call 30d +0% hold10; call 90d +10% hold10]: [Bundle 4] Scorebook rules (under-$10 90d 10%-out, call spike with 5-day up) have positive averages and halves; medians are negative, so sizes stay small.
+- week 77 [call 30d +0% hold10; call 30d +5% hold10]: [Bundle 4] Under-$10 call-spike and 5-day-surge rules match; medians are negative, so sizing stays at 1% per trade, two picks only.
+- week 78 [call 30d +5% hold10; call 30d +5% hold10]: [Bundle 4] Under-$10 with calls≥3 rule has positive average EV despite negative median. Small size; cheaper strikes preferred.
+- week 79 [call 90d +10% hold10; call 90d +10% hold10]: [Bundle 4] Under-$10 and extended run-up 90d 10%-out rules match C2 and C1; C2 has cheap premium. Ratings are weak; the medians are negative.
+- week 80 [pass]: [Bundle 4] (unreadable) 
+- week 81 [call 90d +10% hold10; call 30d +0% hold10]: [Bundle 4] C6 fits the under-$10 and extended run-up rules; C2 fits the call-spike rule. Both are unvalidated on the median, so keep sizing small.
+- week 82 [call 30d +0% hold10; call 30d +5% hold10]: [Bundle 4] C2 fits the under-$10 call-spike rule; C5 fits call-spike with 5-day up. Both are cheap, and the medians are negative, so sizing stays small.
+- week 83 [pass]: [Bundle 4] No candidate meets a tested rule's conditions with an available option. Notes show no configuration with positive median, so pass.
+- week 84 [call 30d +5% hold10; call 30d +0% hold10]: [Bundle 4] C8 and C7 meet the call-spike-5d-up rules, which have the best average returns, though medians are negative. Others lack signal.
+- week 85 [call 30d +0% hold10; call 30d +5% hold10]: [Bundle 4] Two rule matches with positive averages, though medians are negative. Small, lottery-style sizing per the playbook.
+- week 86 [call 30d +0% hold10; call 30d +0% hold10]: [Bundle 4] Call-spike with 5-day-up rule is the best-supported available signal. C8 skipped: a 31% one-day shock is the chase pattern the notes warn against.
+- week 87 [call 30d +5% hold10; call 30d +5% hold10]: [Bundle 4] Under-$10 call-spike rule has the best positive mean and both halves positive, though medians stay negative. Small size, two names.
+- week 88 [call 30d +5% hold10]: [Bundle 4] C4 alone fits the under-$10 call-spike and MA20 run-up rules with a 30-day 5%-out call. The 90-day contracts are n/a for the others.
+- week 89 [call 30d +5% hold10; call 30d +5% hold10]: [Bundle 4] C5 matches under-$10 call-spike rule; C2 matches MA20 run-up rule. Medians negative; small, cheap bets.
+- week 90 [call 30d +5% hold10; call 30d +0% hold10; call 30d +5% hold10]: [Bundle 4] C7 fits the under-$10 call-spike rule; C2 is an under-$10 lead; C1 fits the call-spike rule. Medians are negative; averages are the case.
+- week 91 [call 90d +10% hold10; call 30d +5% hold10]: [Bundle 4] C6 fits the under-$10 call-spike lead; C2 fits extended run-up, with both halves and baseline favorable despite negative medians.
+- week 92 [call 90d +10% hold10; call 90d +10% hold10]: [Bundle 4] Extended run-up and under-$10 90d 10%-out rules have the best average support, though medians are negative. Keeping size small.
+- week 93 [call 30d +5% hold10; call 30d +0% hold10; call 30d +5% hold10]: [Bundle 4] Matches under-$10 call-spike, MA20 run-up, and call-spike-5d-up rules on 30-day expiry; positive averages, though medians are negative.
+- week 94 [pass]: [Bundle 4] No rule passes its median test. C8's under-$10 rule needs a 90-day call that isn't listed, so I pass.
+- week 95 [pass]: [Bundle 4] No candidate matches a positive-median setup. C6 hits the one-day-shock avoid rule, and C2 has no 90-day quote for the under-$10 lead.
+- week 96 [call 30d +5% hold10; call 30d +5% hold10; call 30d +0% hold10]: [Bundle 4] Rules with positive averages: C3 call-spike 5d-up, C7 under-$10 call-spike, C4 above-MA20 run-up. Medians stay negative, so small size.
+- week 97 [call 90d +10% hold10]: [Bundle 5] C8 is under $10 with a 5-day surge, matching the best-supported under-$10 90-day rule. Other names match no rule.
+- week 98 [call 30d +5% hold10]: [Bundle 5] C2 fits the under-$10 call-spike rule, the best-supported lead, and has the cheapest option (4.4%). Other candidates fit no rule or sit on avoid lists.
+- week 99 [pass]: [Bundle 5] (unreadable) 
+- week 100 [call 30d +0% hold10; call 30d +5% hold10]: [Bundle 5] C3 matches under-$10 call-spike rule; C5 matches call-spike 5-day-up rule. Medians negative, so small size.
+- week 101 [pass]: [Bundle 5] No setup has a validated positive median. C1 is a 127% five-day spike with RSI 73, so I expect reversal. Passing this week.
+- week 102 [call 30d +0% hold10; call 90d +10% hold10; call 30d +5% hold10]: [Bundle 5] Under-$10 rules with call spikes and run-ups have the best average scorebook returns. Medians are still negative, so sizing stays small.
+- week 103 [call 30d +5% hold10; call 30d +5% hold10]: [Bundle 5] C5 matches the under-$10 call-spike rule, the lead with positive halves. C3 meets the above-MA20 20-day run-up rule.
+- week 104 [call 90d +10% hold10; call 30d +5% hold10; call 30d +5% hold10]: [Bundle 5] C4 matches the under-$10 90-day rule, the best average in the scorebook. C3 and C7 match other tested rules with cheaper or positive-average setups.
+- week 105 [call 90d +10% hold10; call 30d +0% hold10; call 90d +10% hold10]: [Bundle 5] C7 hits three positive-average rules (under-$10, 5-day surge, extended run-up); C1 fits under-$10 90d; C5 fits call spike with 5-day up. Medians are negative, so sizing stays small.
+- week 106 [call 30d +0% hold10; call 30d +0% hold10]: [Bundle 5] Both match the callspike3_5d_up rule, which has a positive average in both halves. Its median is negative, so sizing is kept at $1,000 each.
+- week 107 [call 90d +10% hold10; call 90d +10% hold10]: [Bundle 5] C2 meets several rules (under-$10, extended run-up, 5-day surge). C6 is a lighter under-$10 90-day lead. Medians are negative, so size small.
+- week 108 [call 90d +10% hold10; call 30d +5% hold10; call 30d +0% hold10]: [Bundle 5] Under-$10 rules have the best code record; C5 fits several and C4 and C7 fit the call-spike rules. Medians are still negative, so size small.
+- week 109 [call 90d +10% hold10; call 30d +5% hold10]: [Bundle 5] Under-$10 rules matched C1 and C5, the strongest lead in the scorebook. Medians are still negative, so this is a small, low-conviction bet.
+- week 110 [call 30d +5% hold10; call 30d +0% hold10]: [Bundle 5] Both fit positive-average rules with positive halves; medians are negative, so size small.
+- week 111 [pass]: [Bundle 5] (unreadable) 
+- week 112 [call 90d +10% hold10]: [Bundle 5] C4 is the only buyable under-$10 call match for the best-supported lead. Its median is still negative, so this is a small, low-conviction bet.
+- week 113 [call 90d +10% hold10; call 30d +5% hold10; call 30d +5% hold10]: [Bundle 5] Under-$10 rules match C1, C2, C3 and have the best average returns, though medians are negative. Ratings are weak judgment.
+- week 114 [call 30d +5% hold10; call 30d +0% hold10; call 90d +10% hold10]: [Bundle 5] C3 matches under-$10 and extended run-up; C1 under-$10 call-spike; C8 call-spike-5d-up. Medians negative; averages carry.
+- week 115 [call 30d +0% hold10]: [Bundle 5] C7 meets the call-spike, 5-day-up, and above-MA20 run-up rules. The only tradable strike is 30-day at-the-money. Median is still negative, so this is a small, sized trade.
+- week 116 [pass]: [Bundle 5] Every option configuration has a negative median net of costs, so no setup passes. Ratings reflect rule matches only.
+- week 117 [call 90d +10% hold10; call 30d +5% hold10; call 30d +5% hold10]: [Bundle 5] Picks follow the best-supported rules (extended run-up, MA20 run-up, under-$10 call spike). Medians are negative, so sizing stays small.
+- week 118 [call 30d +0% hold10; call 90d +5% hold10]: [Bundle 5] C8 fits the 5-day surge and call-spike rules; C6 fits call-spike with 5-day up. Both are tested rules, though medians are weak.
+- week 119 [call 90d +10% hold10; call 30d +5% hold10]: [Bundle 5] C7 is under $10 (best-supported lead). C4 fits the MA20 run-up rule, which has positive average and halves. Both have negative medians, so size small.
+- week 120 [call 90d +10% hold10]: [Bundle 5] C6 is under $10 with call spike, 5-day surge and extended run-up. Its 90d 10%-out rule had the best median in the scorebook, though still negative.
+- week 121 [call 30d +5% hold10; call 90d +10% hold10]: [Bundle 6] C3 matches the under-$10 90d 10%-out lead (best relative record). C7 matches the under-$10 call-spike 30d 5%-out rule. Both medians are negative, so sizing stays small.
+- week 122 [call 30d +0% hold10; call 30d +5% hold10; call 30d +0% hold10]: [Bundle 6] Under-$10 call-spike and call-spike-with-5d-up rules show positive averages in both halves, though medians are negative. Small size.
+- week 123 [call 30d +0% hold10; call 90d +5% hold10]: [Bundle 6] C5 fits the 5-day surge rule, C3 the call-spike-with-5-day-up rule. Both have positive averages, though medians are weak. Other names fail the rules or look weak.
+- week 124 [pass]: [Bundle 6] (unreadable) 
+- week 125 [call 30d +5% hold10; call 30d +5% hold10; call 30d +5% hold10]: [Bundle 6] Under-$10 call-spike rule has positive average but negative median; small, diversified-by-name bet only, not a validated edge.
+- week 126 [call 90d +10% hold10]: [Bundle 6] C4 is under $10 and matches the best-supported rule (90d, 10% out). Medians are still negative, so this is a single, sized-small trade.
+- week 127 [call 30d +5% hold10]: [Bundle 6] C4 is under $10 with calls at 12.9x and 5-day up, matching the under-$10 call-spike rule. Its median is still negative, so this is a small lead, not an edge.
+- week 128 [call 90d +10% hold10; call 30d +5% hold10]: [Bundle 6] 
+- week 129 [pass]: [Bundle 6] Only C6 fits a rule (callspike3_5d_up), but that rule's median is -39%, so the odds don't favor a trade. Passing.
+- week 130 [call 90d +10% hold10; call 90d +10% hold10]: [Bundle 6] Under-$10 90d 10%-out is the strongest lead, and C7 also meets the extended run-up rule. Medians are still negative, so sizing stays small.
+- week 131 [call 30d +5% hold10; call 90d +10% hold10; call 30d +5% hold10]: [Bundle 6] C7 matches the best-supported under-$10 call-spike rule. C6 fits the MA20 run-up rule. C3 is a crash-knife setup. All medians are negative, so sizing stays small.
+- week 132 [call 30d +5% hold10; call 30d +5% hold10]: [Bundle 6] 
+- week 133 [pass]: [Bundle 6] No rule's conditions match a listed option with an available grid. Notes show every configuration has a negative median, so pass.
+- week 134 [call 90d +10% hold10; call 30d +5% hold10; call 30d +5% hold10]: [Bundle 6] Under-$10 rules have the best code record. C7 fits the 90-day 10%-out rule; C8 and C1 fit the under-$10 call-spike rule. Medians are still negative.
+- week 135 [call 30d +5% hold10; call 30d +5% hold10]: [Bundle 6] C7 fits under-$10 call-spike rule (best average lead). C6 fits above-MA20 with 20-day run-up rule. Medians are negative, so sizing stays small.
+- week 136 [call 90d +10% hold10]: [Bundle 6] C8 matches the extended run-up rule (Tier B, 5 of 6 bundles beat baseline) and its 90-day 10%-out call is cheap. Median still negative, so one small pick only.
+- week 137 [call 30d +0% hold10; call 30d +0% hold10; call 30d +0% hold10]: [Bundle 6] Each triggers the callspike3_5d_up rule (calls ≥3, 5d up), tested at 30d ATM hold10; sized small given negative medians.
+- week 138 [call 90d +10% hold10]: [Bundle 6] C4 meets the extended run-up rule, which has the highest backtest average. Median is still negative, so this is a small, sized-down bet.
+- week 139 [call 90d +10% hold10; call 30d +5% hold10]: [Bundle 6] Medians are negative everywhere, so these are small-stake leads. C5 fits the extended run-up rule; C8 fits the sub-$10 call-spike rule.
+- week 140 [call 90d +10% hold10; call 90d +10% hold10; call 30d +5% hold10]: [Bundle 6] Under-$10 rules have the best average and beat baseline most often, though medians stay negative. Ratings are weak; sizing stays small.
+- week 141 [call 90d +10% hold10; call 90d +10% hold10; call 90d +10% hold10]: [Bundle 6] Under-$10 and extended run-up rules have the best averages and strongest lead evidence; medians remain negative, so sizing is small.
+- week 142 [call 90d +10% hold10; call 30d +5% hold10]: [Bundle 6] Under-$10 rules are the best-supported leads (C8 90d 10%-out, C5 30d 5%-out). Other candidates trigger no tested positive rule. Median still negative, so keep size small.
+- week 143 [call 30d +0% hold10; call 90d +10% hold10; call 30d +5% hold10]: [Bundle 6] Rule matches: under-$10 90d 10%-out (C1), MA20 run-up 30d 5%-out (C6), call-spike 5d-up ATM (C2). Medians are negative; small size.
+- week 144 [call 30d +0% hold10]: [Bundle 6] C6 meets the call-spike-with-5-day-up rule (calls 3.3x, 5d +23%), the best-positive-average rule. Its median is negative, so this is one small paper-sized bet.
 

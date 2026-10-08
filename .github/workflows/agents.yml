@@ -26,8 +26,8 @@ on:
         description: "OpenRouter model, e.g. anthropic/claude-haiku-5.5, deepseek/deepseek-v4.1-flash, anthropic/claude-sonnet-5.5"
         default: anthropic/claude-haiku-5.5
       generations:
-        description: "How many generations to run (loop)"
-        default: "3"
+        description: "How many generations to run (loop); it chains rounds on its own until done"
+        default: "30"
       max_usd:
         description: "Total spending cap across ALL runs so far, in dollars"
         default: "25"
@@ -37,9 +37,10 @@ on:
 
 permissions:
   contents: write
+  actions: write     # lets an unfinished loop launch its next round
 
 concurrency:
-  group: options-agents
+  group: options-agents-${{ github.event.inputs.lineage }}   # lineages can run side by side
   cancel-in-progress: false
 
 jobs:
@@ -92,3 +93,18 @@ jobs:
           git commit -q -m "Trader generations report $(date -u '+%Y-%m-%d %H:%M')"
           for i in 1 2 3; do git pull --rebase -q && git push -q && exit 0; sleep 5; done
           exit 1
+
+      - name: Launch the next round if generations remain
+        if: ${{ !cancelled() && github.event.inputs.command == 'loop' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          remaining=$(cat agents_status.txt 2>/dev/null || echo 0)
+          echo "Generations remaining: $remaining"
+          if [ "$remaining" -gt 0 ]; then
+            gh workflow run agents.yml --ref "${{ github.ref_name }}" \
+              -f command=loop -f lineage="${{ github.event.inputs.lineage }}" \
+              -f model="${{ github.event.inputs.model }}" -f generations="$remaining" \
+              -f max_usd="${{ github.event.inputs.max_usd }}"
+            echo "Launched the next round."
+          fi

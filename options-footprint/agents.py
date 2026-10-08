@@ -538,9 +538,13 @@ def loop(args):
     if not st.backend.read("arena"):
         build(args)
     deadline = time.monotonic() + 60 * args.max_minutes
+    done, out_of_money, failed = 0, False, False
+    started = time.monotonic()
     for _ in range(args.generations):
-        if time.monotonic() > deadline - 60 * 25:
-            print("Not enough time left for another generation; stopping cleanly.")
+        # Leave room for one more generation: 1.5x the average so far, or 25 minutes to start.
+        per_gen = (time.monotonic() - started) / done if done else 60 * 15
+        if time.monotonic() + 1.5 * per_gen > deadline:
+            print("Not enough time left for another generation in this round; stopping cleanly.")
             break
         gen_before, lessons = latest_lessons(st, args.lineage)
         generation = gen_before + 1
@@ -549,12 +553,15 @@ def loop(args):
             run_id, trades, status = run_phase(st, llm, args.lineage, generation, "train", lessons, deadline)
             if status != "complete":
                 print(f"Training run incomplete ({status}); no lessons written.")
+                out_of_money = "spending" in status
+                failed = not out_of_money and "time limit" not in status
                 break
             if not trades:
                 print("Warning: the training run made no trades; lessons will be thin.")
             new_lessons = write_lessons(llm, lessons, trades)
         except Budget as b:
             print(f"Stopping: {b}.")
+            out_of_money = True
             break
         st.backend.upsert("agent_lessons", [{"lineage": args.lineage, "generation": generation, "run_id": run_id,
                                               "model": args.model, "text": new_lessons,
@@ -565,8 +572,18 @@ def loop(args):
         print(f"\nGeneration {generation} lessons:\n{new_lessons}\n")
         llm2 = LLM(args.model, args.max_usd, spent(st))
         _, _, status = run_phase(st, llm2, args.lineage, generation, "validation", new_lessons, deadline)
+        done += 1
         if status.startswith("stopped: spending"):
+            out_of_money = True
             break
+    remaining = 0 if (out_of_money or failed) else max(0, args.generations - done)
+    if done == 0 and remaining:
+        print("No generation finished this round, so not scheduling another (it would just repeat).")
+        remaining = 0
+    with open(os.path.join(C.ROOT, "agents_status.txt"), "w") as f:
+        f.write(str(remaining))
+    print(f"This round: {done} generation(s). Remaining for the next round: {remaining}"
+          + (" (spending cap reached)" if out_of_money else ""))
     report(args)
 
 

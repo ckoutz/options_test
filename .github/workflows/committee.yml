@@ -1,0 +1,113 @@
+name: Committee generations
+
+# Four independent agents per generation, stock bundles, a code-kept scorebook, and an editor
+# (see committee.py). Needs the repository secret OPENROUTER_API_KEY. Spending is capped across
+# ALL agent runs (old single-agent runs included).
+# First time: run "build-pool" once (reads the ladder archive release, not Neon), then "loop".
+
+on:
+  workflow_dispatch:
+    inputs:
+      command:
+        description: "What to run"
+        type: choice
+        default: loop
+        options:
+          - loop
+          - build-pool
+          - report
+          - final-test
+      model:
+        description: "OpenRouter model, e.g. anthropic/claude-haiku-5.5, deepseek/deepseek-v4.1-flash, anthropic/claude-sonnet-5.5"
+        default: anthropic/claude-haiku-5.5
+      generations:
+        description: "How many generations to run (loop); it chains rounds on its own until done"
+        default: "10"
+      weeks_fraction:
+        description: "Share of training weeks each bundle uses per generation (0.5 = half; cheaper, more generations)"
+        default: "0.5"
+      max_usd:
+        description: "Total spending cap across ALL agent runs so far, in dollars"
+        default: "25"
+      test_generation:
+        description: "Which generation takes the final exam (final-test only)"
+        default: ""
+
+permissions:
+  contents: write
+  actions: write     # lets an unfinished loop launch its next round
+
+concurrency:
+  group: options-committee
+  cancel-in-progress: false
+
+jobs:
+  committee:
+    runs-on: ubuntu-latest
+    timeout-minutes: 165
+    defaults:
+      run:
+        working-directory: options-footprint
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      LLM_BASE_URL: https://openrouter.ai/api/v1
+      MAX_USD: ${{ github.event.inputs.max_usd }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install the database driver
+        run: pip install --quiet "psycopg[binary]"
+
+      - name: Run
+        run: |
+          if [ -z "$DATABASE_URL" ]; then echo "DATABASE_URL secret is not set"; exit 1; fi
+          case "${{ github.event.inputs.command }}" in
+            build-pool)
+              tag=$(gh release list -R "${{ github.repository }}" --limit 50 --json tagName \
+                    -q '[.[] | select(.tagName | startswith("ladder-trades-archive"))][0].tagName')
+              if [ -z "$tag" ]; then echo "No ladder-trades-archive release found"; exit 1; fi
+              echo "Using archive release $tag"
+              gh release download "$tag" -R "${{ github.repository }}" --pattern "ladder_trades.csv.gz" --dir "$RUNNER_TEMP"
+              python committee.py build-pool --archive "$RUNNER_TEMP/ladder_trades.csv.gz"
+              python committee.py report ;;
+            loop)
+              if [ -z "$LLM_API_KEY" ]; then echo "OPENROUTER_API_KEY secret is not set"; exit 1; fi
+              python committee.py loop --model "${{ github.event.inputs.model }}" \
+                --generations "${{ github.event.inputs.generations }}" \
+                --weeks-fraction "${{ github.event.inputs.weeks_fraction }}" --max-minutes 140 ;;
+            final-test)
+              python committee.py final-test --model "${{ github.event.inputs.model }}" \
+                --generation "${{ github.event.inputs.test_generation }}" --max-minutes 140 ;;
+            report) python committee.py report ;;
+          esac
+
+      - name: Commit the report
+        if: always()
+        run: |
+          [ -f COMMITTEE.md ] || exit 0
+          git config user.name "options-footprint-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add COMMITTEE.md
+          git diff --cached --quiet && exit 0
+          git commit -q -m "Committee report $(date -u '+%Y-%m-%d %H:%M')"
+          for i in 1 2 3; do git pull --rebase -q && git push -q && exit 0; sleep 5; done
+          exit 1
+
+      - name: Launch the next round if generations remain
+        if: ${{ !cancelled() && github.event.inputs.command == 'loop' }}
+        run: |
+          remaining=$(cat committee_status.txt 2>/dev/null || echo 0)
+          echo "Generations remaining: $remaining"
+          if [ "$remaining" -gt 0 ]; then
+            gh workflow run committee.yml --ref "${{ github.ref_name }}" \
+              -f command=loop -f model="${{ github.event.inputs.model }}" -f generations="$remaining" \
+              -f weeks_fraction="${{ github.event.inputs.weeks_fraction }}" \
+              -f max_usd="${{ github.event.inputs.max_usd }}"
+            echo "Launched the next round."
+          fi

@@ -68,11 +68,21 @@ AGENT_RUN_COLS = {"run_id": T, "lineage": T, "generation": I, "phase": T, "model
                   "win_rate": F, "baseline_mean": F, "baseline_median": F, "baseline_win": F,
                   "prompt_tokens": I, "completion_tokens": I, "cost_usd": F, "status": T,
                   "profit_usd": F, "baseline_profit_usd": F, "replies": I, "bad_replies": I, "cut_off": I,
-                  "sample_reply": T}
+                  "sample_reply": T, "agent": T, "rating_corr": F, "rating_corr_lo": F, "rating_corr_hi": F,
+                  "top_rated_ret": F, "bottom_rated_ret": F, "rated": I}
 AGENT_TRADE_COLS = {"run_id": T, "week_index": I, "cand_id": T, "ticker": T, "signal_date": D,
                     "action": T, "expiry": I, "strike_pct": F, "exit_rule": T, "ret_pct": F,
                     "reason": T}
 AGENT_WEEK_COLS = {"run_id": T, "week_index": I, "picks": I, "why": T, "finish": T, "readable": T}
+# Committee version: a larger candidate pool split into stock bundles and month blocks, notes per
+# generation and author, a code-kept scorebook of every rule, and every rating an agent gives.
+POOL_COLS = {"ticker": T, "signal_date": D, "bundle": I, "split": T, "week": D, "month": T, "grp": T,
+             "features": T, "options": T, "shares_ret10": F}
+COMMITTEE_NOTE_COLS = {"generation": I, "author": T, "model": T, "text": T, "rules": T, "created": T}
+SCOREBOOK_COLS = {"generation": I, "author": T, "rule_name": T, "period": T, "rule": T, "trades": I,
+                  "mean_ret": F, "median_ret": F, "win_rate": F, "ci_low": F, "ci_high": F,
+                  "baseline_mean": F, "bundles_beat": I, "bundles_total": I, "half1_mean": F, "half2_mean": F}
+RATING_COLS = {"run_id": T, "ticker": T, "signal_date": D, "rating": I, "shares_ret10": F}
 LESSON_COLS = {"lineage": T, "generation": I, "run_id": T, "model": T, "text": T, "created": T}
 
 TABLES = {
@@ -90,6 +100,10 @@ TABLES = {
     "agent_runs": (AGENT_RUN_COLS, ["run_id"]),
     "agent_trades": (AGENT_TRADE_COLS, ["run_id", "ticker", "signal_date"]),
     "agent_weeks": (AGENT_WEEK_COLS, ["run_id", "week_index"]),
+    "pool": (POOL_COLS, ["ticker", "signal_date"]),
+    "committee_notes": (COMMITTEE_NOTE_COLS, ["generation", "author"]),
+    "scorebook": (SCOREBOOK_COLS, ["generation", "author", "rule_name", "period"]),
+    "agent_ratings": (RATING_COLS, ["run_id", "ticker", "signal_date"]),
     "agent_lessons": (LESSON_COLS, ["lineage", "generation"]),
 }
 CSV_FILES = {"events": "events.csv", "controls": "controls.csv", "daily": "daily_features.csv",
@@ -97,7 +111,8 @@ CSV_FILES = {"events": "events.csv", "controls": "controls.csv", "daily": "daily
              "errors": "errors.csv", "signal_report": "signal_report.csv", "flags": "flags.csv",
              "ladder_trades": "ladder_trades.csv", "ladder_report": "ladder_report.csv",
              "arena": "arena.csv", "agent_runs": "agent_runs.csv", "agent_trades": "agent_trades.csv",
-             "agent_lessons": "agent_lessons.csv", "agent_weeks": "agent_weeks.csv"}
+             "agent_lessons": "agent_lessons.csv", "agent_weeks": "agent_weeks.csv", "pool": "pool.csv", "committee_notes": "committee_notes.csv",
+             "scorebook": "scorebook.csv", "agent_ratings": "agent_ratings.csv"}
 
 
 def _to_db(value, kind):

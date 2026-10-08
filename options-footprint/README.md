@@ -100,6 +100,24 @@ A training run stops itself if most replies can't be read, and the loop stops if
 GitHub: Actions → "Trader generations". Needs the secret `OPENROUTER_API_KEY`. Results: AGENTS.md
 and tables `agent_runs`, `agent_trades`, `agent_lessons`. A hard spending cap stops runs at `MAX_USD`.
 
+## Committee generations (committee.py)
+The bigger version of the agent loop. GitHub: Actions → "Committee generations".
+- **Data split.** Every stock is dealt into one of 8 bundles matched on number of big moves and
+  volatility; bundles 7 and 8 are held back for the final exam. March 2024 to January 2026 is cut into
+  3-month blocks, and one random month per block is a blind scoring month. Candidates whose 10-session
+  outcome would run into the other kind of month are dropped. February 2026 onward is the final exam.
+- **Each generation.** Four agents start from the notes passed down and, independently, walk the six
+  training bundles in the same shuffled order. Each week they rate every candidate (-2 to +2) and may
+  buy up to 3. After each bundle they rewrite their own notes; at the end they state testable rules.
+  Code tests every rule on all training bundles (the scorebook). An editor merges the four into the
+  notes for the next generation (no length limit). A blind run trades the scoring months with the
+  editor's notes, and the editor's rules are scored on those months; neither is ever shown to a later
+  generation.
+- **Run it.** First `build-pool` (reads the ladder archive release, not Neon), then `loop`.
+  `weeks_fraction` 0.5 uses half the training weeks per bundle per generation (cheaper, more
+  generations). Results: COMMITTEE.md, tables `pool`, `committee_notes`, `scorebook`, `agent_ratings`.
+- **Final exam:** `final-test` with a generation number, once, at the very end.
+
 ## Scoring the signals
 `python scorer.py` (runs automatically after every nightly and backfill) uses every trading day for
 tickers with full history. For each day it computes signals from that day and earlier only, then

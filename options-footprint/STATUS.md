@@ -1,17 +1,17 @@
-# Status (2026-10-08 22:21 UTC, storage: postgres)
+# Status (2026-10-08 22:29 UTC, storage: postgres)
 
 ## Backfill
 - Big moves logged: 5,382 across 1,649 stocks
 - Pre-move windows filled: 5,382 of 5,382
 - Stocks eligible for full history (3+ moves): 649; done: 668
 - Control days: 10,754 (filled 10,754)
-- Daily rows: 1,058,724; database size: 227 MB
+- Daily rows: 1,058,724; database size: 237 MB
 
 ## Table sizes
 - daily: 183 MB, about 1,058,724 rows
+- news: 18 MB, about 89,121 rows
 - pool: 12 MB, about 6,515 rows
 - ladder_trades: 10 MB, about 41,402 rows
-- news: 7 MB, about 36,558 rows
 - arena: 5 MB, about 1,613 rows
 - event_features: 3 MB, about 16,136 rows
 - agent_ratings: 2 MB, about 11,851 rows
@@ -23,14 +23,14 @@
 - committee_notes: 0 MB, about 10 rows
 - history_done: 0 MB, about 668 rows
 - bundles: 0 MB, about 533 rows
-- ladder_report: 0 MB, about 90 rows
 - scorebook: 0 MB, about 72 rows
+- ladder_report: 0 MB, about 90 rows
+- wide_universe: 0 MB, about 300 rows
+- news_fetched: 0 MB, about 311 rows
 - signal_report: 0 MB, about 36 rows
 - agent_runs: 0 MB, about 19 rows
-- news_fetched: 0 MB, about 128 rows
 - agent_lessons: 0 MB, about 4 rows
-- wide_universe: 0 MB, about 25 rows
-- run_log: 0 MB, about 2 rows
+- run_log: 0 MB, about 4 rows
 - errors: 0 MB, about 0 rows
 
 ## Labels
@@ -118,9 +118,11 @@
 # Lessons for the Next Trader **Baseline:** Over 136 trades of $1,000 each, the overall result was -4.1% average and -5.5k total, with 45% winners. Trading shares was roughly flat (+0.4% average, -1.1% median, 92 trades). Most option variants lost money. Treat everything below as hypotheses, not established edges. ## Rules, with confidence 1. **Default to shares unless an option setup clearly beats them. Confidence: moderate.** Shares were the only large group near breakeven. Options lost on most variants, and their losses were often total (-100%), so one bad option trade costs far more than one bad share trade. 2. **Avoid 30-day calls struck above the money with a 10-day hold. Confidence: moderate.** The 30d +5%, +10%, and +15% hold10 groups averaged roughly -50% to -65%. Short expiry leaves too little time for the move to arrive. 3. **Avoid the "double_or_10" exit as a default. Confidence: moderate.** It produced the largest single gains and many of the largest losses. Its median outcome was poor, so it behaves like a lottery ticket, not a plan. 4. **Longer expiry (90 days) with a 10-day hold is the least bad option structure. Confidence: low.** The 90d +20% hold10 group averaged +13.6% over 3 trades, and the 90d +0% hold10 group had a positive median (+4.5%) but a negative average. Both samples are too small to trust. 5. **Do not trust the ratio columns (calls, puts, long, short, shares) as predictors. Confidence: moderate that they were not useful here.** Large and small values showed up in both winners and losers. I found no threshold that separated them. 6. **Short-term price moves (1d, 5d) and volatility (vol20) did not separate winners from losers in this data. Confidence: low.** Several large losses followed positive 1d and 5d moves, and some winners had weak early moves. ## What failed - Far-OTM short-dated calls: nearly every variant lost most of its premium. - Averaging across all option types hid the few winners. Medians were often worse than averages, meaning results depended on a handful of outliers. - Sizing every trade at $1,000 regardless of instrument risk. ## Sample caveats - Most groups have 1 to 11 trades. A single trade drives several results (the +258% and +123% gains each come from one or two trades). - Groups were chosen after seeing results, which inflates apparent edges. - Results cover one period. Regime changes may invalidate everything above. ## Next steps - Collect more trades in the 90-day hold10 structures before sizing up. - Test shares against 90-day options at equal dollar risk. - Record whether the exit rule fired and why, to separate strategy from luck.
 
 ## Wide list (chosen without hindsight)
-- 25 stocks chosen; full options history done for 25
+- 300 stocks chosen; full options history done for 48
 
 ## Job notes (latest 8)
+- 2026-10-08T22:29:04+00:00 wide-select: assets listed: 14,392 active (0 with options), 19,169 delisted; after exchange/fund filters: 8,351 (6,965 active); with 15+ January 2024 bars: 5,337; met price and volume bar: 1,556; checked for options: 313; chosen: 300 (299 still listed); already big movers: 44.
+- 2026-10-08T22:24:42+00:00 wide-select: re-choosing the wide list (it had 25 stocks).
 - 2026-10-08T22:21:13+00:00 wide-select: assets listed: 14,392 active (0 with options), 19,169 delisted; after exchange/fund filters: 1,499 (0 active); with 15+ January 2024 bars: 102; met price and volume bar: 25; chosen: 25; already big movers: 6.
 - 2026-10-08T22:21:06+00:00 wide-select: re-choosing the wide list (it had 25 stocks).
 

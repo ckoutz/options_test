@@ -1,11 +1,11 @@
-# Status (2026-10-08 14:29 UTC, storage: postgres)
+# Status (2026-10-08 14:36 UTC, storage: postgres)
 
 ## Backfill
 - Big moves logged: 5,382 across 1,649 stocks
 - Pre-move windows filled: 5,382 of 5,382
 - Stocks eligible for full history (3+ moves): 649; done: 649
-- Control days: 10,754 (filled 9,810)
-- Daily rows: 1,049,473; database size: 269 MB
+- Control days: 10,754 (filled 9,930)
+- Daily rows: 1,049,473; database size: 270 MB
 
 ## Labels
 - unknown: 4,598
@@ -14,7 +14,7 @@
 - news_catalyst: 1
 
 ## Ladder backtest
-- flag: 22,069 days, 331,035 contracts (188,182 could be bought)
+- flag: 22,356 days, 335,340 contracts (190,291 could be bought)
 
 ## Flags (daily shortlist)
 - 2,689 flags; latest signal date: 2026-10-07

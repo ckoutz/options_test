@@ -66,7 +66,9 @@ ARENA_COLS = {"ticker": T, "signal_date": D, "period": T, "week": D, "grp": T, "
 AGENT_RUN_COLS = {"run_id": T, "lineage": T, "generation": I, "phase": T, "model": T, "started": T,
                   "finished": T, "weeks": I, "trades": I, "mean_ret": F, "median_ret": F,
                   "win_rate": F, "baseline_mean": F, "baseline_median": F, "baseline_win": F,
-                  "prompt_tokens": I, "completion_tokens": I, "cost_usd": F, "status": T}
+                  "prompt_tokens": I, "completion_tokens": I, "cost_usd": F, "status": T,
+                  "profit_usd": F, "baseline_profit_usd": F, "replies": I, "bad_replies": I, "cut_off": I,
+                  "sample_reply": T}
 AGENT_TRADE_COLS = {"run_id": T, "week_index": I, "cand_id": T, "ticker": T, "signal_date": D,
                     "action": T, "expiry": I, "strike_pct": F, "exit_rule": T, "ret_pct": F,
                     "reason": T}

@@ -71,8 +71,16 @@ FEATURES = [  # (key in the arena, label shown to the agent, meaning)
     ("ret_1d_pct", "1d %", "stock price change today, percent"),
     ("ret_5d_pct", "5d %", "stock price change over the last 5 sessions, percent"),
     ("vol20_pct", "vol20 %", "typical daily move over the last 20 sessions (standard deviation), percent"),
+    ("ret_20d_pct", "20d %", "stock price change over the last 20 sessions, percent"),
+    ("vs_ma20_pct", "vs ma20 %", "price versus its 20-session average close, percent (above 0 = above the average)"),
+    ("vs_ma50_pct", "vs ma50 %", "price versus its 50-session average close, percent"),
+    ("from_high60_pct", "off high %", "price versus the highest close of the last 60 sessions, percent (0 = at the high)"),
+    ("rsi14", "rsi", "14-session RSI of closes (above 70 = overbought, below 30 = oversold)"),
     ("price_band", "price", "share price band: under $10, $10 to $50, or over $50"),
 ]
+TECHNICALS = ("ret_20d_pct", "vs_ma20_pct", "vs_ma50_pct", "from_high60_pct", "rsi14")
+TRADE_USD = 1000                  # every trade is the same size, so profit = return x $10
+LINEAGE_VERSION = "-v2"           # v1 runs (truncated replies, no trades) stay in the tables, kept apart
 
 SEED_BRIEFING = """Findings from an earlier statistical study of these stocks (not from an agent):
 - Big call-volume spikes (5x+ normal) were followed by 30%+ rallies about 1.3x as often as an average
@@ -127,6 +135,50 @@ def ladder_rows(st, picked):
     return [r for r in st.backend.read("ladder_trades") if (r["ticker"], r["signal_date"]) in keys]
 
 
+def technicals(closes, i):
+    """Price-only technical indicators for day i, from closes up to and including day i."""
+    c = [x for x in closes[max(0, i - 60):i + 1]]
+    if any(x is None or x <= 0 for x in c[-21:]) or len(c) < 21:
+        return {k: None for k in TECHNICALS}
+    now = c[-1]
+    out = {"ret_20d_pct": round((now / c[-21] - 1) * 100, 1),
+           "vs_ma20_pct": round((now / statistics.mean(c[-20:]) - 1) * 100, 1)}
+    ok = [x for x in c if x]
+    out["vs_ma50_pct"] = round((now / statistics.mean(ok[-50:]) - 1) * 100, 1) if len(ok) >= 50 else None
+    out["from_high60_pct"] = round((now / max(ok[-60:]) - 1) * 100, 1) if len(ok) >= 40 else None
+    diffs = [b - a for a, b in zip(c[-15:-1], c[-14:])]
+    gain = sum(d for d in diffs if d > 0) / 14
+    loss = -sum(d for d in diffs if d < 0) / 14
+    out["rsi14"] = round(100.0 if loss == 0 else 100 - 100 / (1 + gain / loss), 0)
+    return out
+
+
+def add_technicals(args):
+    """Add the technical columns to an existing arena (needs only the daily prices, not ladder_trades)."""
+    st = C.db()
+    rows = st.backend.read("arena")
+    if not rows:
+        sys.exit("The arena is empty.")
+    by_t = {}
+    for r in rows:
+        by_t.setdefault(r["ticker"], []).append(r)
+    for n, (t, items) in enumerate(sorted(by_t.items()), 1):
+        daily = [r for r in st.daily(t) if C.to_float(r.get("stock_close"))]
+        dates = [r["date"] for r in daily]
+        closes = [C.to_float(r["stock_close"]) for r in daily]
+        index = {d: i for i, d in enumerate(dates)}
+        for r in items:
+            f = json.loads(r["features"])
+            i = index.get(str(r["signal_date"]))
+            f.update(technicals(closes, i) if i is not None else {k: None for k in TECHNICALS})
+            r["features"] = json.dumps(f)
+        if n % 100 == 0:
+            print(f"  {n}/{len(by_t)} stocks")
+    st.backend.replace("arena", rows)
+    have = sum(1 for r in rows if json.loads(r["features"]).get("vs_ma20_pct") is not None)
+    print(f"Technicals added to {have:,} of {len(rows):,} candidates.")
+
+
 def build(args):
     st = C.db()
     days = ladder_days(st)
@@ -174,6 +226,7 @@ def build(args):
             f = {k: scored[d].get(k) for k, _, _ in FEATURES if k in scored[d]}
             f["vol20_pct"] = round(statistics.pstdev(rets) * 100, 2) if len(rets) > 5 else None
             price = closes[i]
+            f.update(technicals(closes, i))
             f["price_band"] = "<$10" if price < 10 else "$10-50" if price <= 50 else ">$50"
             shares = (closes[i + 11] * (1 - SHARE_COST)) / (closes[i + 1] * (1 + SHARE_COST)) - 1
             out.append({"ticker": t, "signal_date": d, "period": period_of(d), "week": week_of(d),
@@ -199,6 +252,7 @@ class LLM:
         self.max_usd, self.spent_before = max_usd, spent_before
         self.prompt_tokens = self.completion_tokens = 0
         self.cost = 0.0
+        self.last_finish = None
         # Fallback prices (USD per million tokens) when the provider doesn't report cost.
         self.in_price = float(os.environ.get("LLM_PRICE_IN", "2.0"))
         self.out_price = float(os.environ.get("LLM_PRICE_OUT", "10.0"))
@@ -242,7 +296,9 @@ class LLM:
             self.completion_tokens += ct
             self.cost += float(u["cost"]) if u.get("cost") is not None else \
                 (pt * self.in_price + ct * self.out_price) / 1e6
-            return (data["choices"][0]["message"].get("content") or "").strip()
+            choice = data["choices"][0]
+            self.last_finish = choice.get("finish_reason")
+            return (choice["message"].get("content") or "").strip()
         raise RuntimeError("model API kept failing")
 
 
@@ -255,6 +311,25 @@ def parse_json(text):
         return json.loads(m.group(0))
     except json.JSONDecodeError:
         return None
+
+
+PICK_RE = re.compile(r'\{[^{}]*"id"\s*:\s*"C\d+"[^{}]*\}')
+
+
+def parse_picks(text):
+    """(picks, why, ok). Falls back to pulling complete pick objects out of a cut-off or messy reply."""
+    data = parse_json(text)
+    if isinstance(data, dict) and isinstance(data.get("picks"), list):
+        return data["picks"], str(data.get("why", "")), True
+    picks = []
+    for m in PICK_RE.finditer(text or ""):
+        try:
+            picks.append(json.loads(m.group(0)))
+        except json.JSONDecodeError:
+            pass
+    why = re.search(r'"why"\s*:\s*"([^"]*)', text or "")
+    passed = re.search(r'"picks"\s*:\s*\[\s*\]', text or "") is not None
+    return picks, (why.group(1) if why else ""), bool(picks) or passed
 
 
 # ---------------------------------------------------------------- prompts
@@ -270,9 +345,12 @@ Each week you see about a dozen candidate stock-days. For each, you may:
   the stock price; exit "hold10" (sell after 10 sessions) or "double_or_10" (sell as soon as it is worth
   2x, otherwise after 10 sessions), or
 - pass.
-Pick at most {MAX_PICKS_PER_WEEK} per week; every trade is the same dollar size. Passing is fine, and
-often right. Your goal: the best average return per trade. You buy at the next session's price; a 5%
-cost applies to each side of an option trade and 0.1% to each side of a stock trade.
+Pick at most {MAX_PICKS_PER_WEEK} per week. Every trade is ${TRADE_USD:,}.
+YOUR GOAL: MAKE AS MUCH MONEY AS POSSIBLE. Your score is your total profit in dollars over the whole run.
+A pass earns $0; a trade earns its return on ${TRADE_USD:,} (+50% = +$500, -100% = -${TRADE_USD:,}). So trade
+when you believe the odds favor you, and pass when they don't: losing trades cost real money, but a
+trader who never trades cannot win. You buy at the next session's price; a 5% cost applies to each side
+of an option trade and 0.1% to each side of a stock trade.
 Calls marked "n/a" did not trade that day and cannot be bought.
 {feedback}
 
@@ -282,11 +360,10 @@ only from the numbers. Columns:
 - option grid: the cost of each call as a percent of the stock price (cheaper = further from the money
   or shorter expiry)
 
-Reply with JSON only:
-{{"picks": [{{"id": "C3", "buy": "stock"}},
-           {{"id": "C7", "buy": "call", "expiry": 30, "strike": 10, "exit": "hold10"}}],
-  "why": "one or two sentences"}}
-Use {{"picks": [], "why": "..."}} to pass on the whole week."""
+Think it through silently, then reply with ONE compact JSON object and nothing else (no code fences,
+no notes before or after):
+{{"picks": [{{"id": "C3", "buy": "stock"}}, {{"id": "C7", "buy": "call", "expiry": 30, "strike": 10, "exit": "hold10"}}], "why": "under 25 words"}}
+Use {{"picks": [], "why": "under 25 words"}} to pass on the whole week."""
 
 
 def fmt(v, spec="{:.2f}"):
@@ -307,6 +384,8 @@ def candidate_table(cands):
         for k, _, _ in FEATURES:
             if k == "price_band":
                 vals.append(str(f.get(k) or "-"))
+            elif k == "rsi14":
+                vals.append(fmt(f.get(k), "{:.0f}"))
             elif k == "vol20_pct":
                 vals.append(fmt(f.get(k), "{:.1f}"))
             elif k.endswith("_pct"):
@@ -394,6 +473,7 @@ def run_phase(st, llm, lineage, generation, phase, lessons, deadline):
                                        "weeks": len(weeks)}])
     system = rules_text(phase)
     trades, revealed, status = [], [], "complete"
+    replies, bad_replies, cut_off, sample_reply = 0, 0, 0, ""
     print(f"{run_id}: {len(weeks)} weeks")
     for wi, cands in enumerate(weeks):
         if time.monotonic() > deadline:
@@ -410,7 +490,8 @@ def run_phase(st, llm, lineage, generation, phase, lessons, deadline):
             by_kind = {}
             for t in revealed:
                 by_kind.setdefault("stock" if t["action"] == "stock" else f"call {t['expiry']}d", []).append(t["ret_pct"])
-            parts.append(f"Your results so far: {len(rr)} trades, average {statistics.mean(rr):+.1f}%, "
+            parts.append(f"Your profit so far: ${sum(rr) * TRADE_USD / 100:+,.0f} on {len(rr)} trades. "
+                         f"Average {statistics.mean(rr):+.1f}%, "
                          f"median {statistics.median(rr):+.1f}%, {100 * sum(r > 0 for r in rr) / len(rr):.0f}% winners. "
                          + "; ".join(f"{k}: {len(v)} trades, avg {statistics.mean(v):+.1f}%"
                                      for k, v in sorted(by_kind.items())))
@@ -424,15 +505,24 @@ def run_phase(st, llm, lineage, generation, phase, lessons, deadline):
         messages = [{"role": "system", "content": system}, {"role": "user", "content": "\n\n".join(parts)}]
         try:
             llm.check_budget()
-            reply = llm.chat(messages, max_tokens=600)
+            reply = llm.chat(messages, max_tokens=2500)
         except Budget as b:
             status = f"stopped: {b}"
             break
         except RuntimeError as ex:
             print(f"  week {wi + 1}: model error, treated as pass: {str(ex)[:150]}")
             continue
-        data = parse_json(reply) or {}
-        picks = data.get("picks") if isinstance(data.get("picks"), list) else []
+        replies += 1
+        cut_off += llm.last_finish == "length"
+        picks, why, ok = parse_picks(reply)
+        if not ok:
+            bad_replies += 1
+            if not sample_reply:
+                sample_reply = (reply or "(empty reply)")[:600]
+                print(f"  week {wi + 1}: could not read the reply ({llm.last_finish}): {sample_reply[:200]!r}")
+            if phase == "train" and wi >= 4 and bad_replies > 0.6 * replies:
+                status = "stopped: model replies unreadable"
+                break
         by_id = {c["id"]: c for c in cands}
         used = set()
         for p in picks[:MAX_PICKS_PER_WEEK]:
@@ -457,9 +547,10 @@ def run_phase(st, llm, lineage, generation, phase, lessons, deadline):
             used.add(c["id"])
             trades.append(dict(spec, run_id=run_id, week_index=wi, cand_id=c["id"], code=c["code"],
                                ticker=c["ticker"], signal_date=c["date"], ret_pct=round(r, 2), f=c["f"],
-                               reason=str(data.get("why", ""))[:300]))
+                               reason=why[:300]))
         if (wi + 1) % 10 == 0:
-            print(f"  week {wi + 1}: {len(trades)} trades, ${llm.cost:.3f} spent this run")
+            print(f"  week {wi + 1}: {len(trades)} trades, {bad_replies} unreadable replies, "
+                  f"${llm.cost:.3f} spent this run")
     st.backend.upsert("agent_trades", [{k: t.get(k) for k in
                                         ("run_id", "week_index", "cand_id", "ticker", "signal_date", "action",
                                          "expiry", "strike_pct", "exit_rule", "ret_pct", "reason")} for t in trades])
@@ -471,11 +562,15 @@ def run_phase(st, llm, lineage, generation, phase, lessons, deadline):
                "median_ret": round(statistics.median(rets), 2) if rets else None,
                "win_rate": round(100 * sum(r > 0 for r in rets) / len(rets), 1) if rets else None,
                "baseline_mean": bm, "baseline_median": bmed, "baseline_win": bw,
+               "profit_usd": round(sum(rets) * TRADE_USD / 100, 2),
+               "baseline_profit_usd": round(bm * len(rets) * TRADE_USD / 100, 2) if bm is not None else None,
+               "replies": replies, "bad_replies": bad_replies, "cut_off": cut_off, "sample_reply": sample_reply,
                "prompt_tokens": llm.prompt_tokens, "completion_tokens": llm.completion_tokens,
                "cost_usd": round(llm.cost, 4), "status": status,
                "finished": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")}
     st.backend.upsert("agent_runs", [summary])
-    print(f"{run_id}: {summary['trades']} trades, mean {summary['mean_ret']}, median {summary['median_ret']}, "
+    print(f"{run_id}: {summary['trades']} trades, profit ${summary['profit_usd']:+,.0f} "
+          f"(random ${summary['baseline_profit_usd'] or 0:+,.0f}), {bad_replies}/{replies} unreadable, mean {summary['mean_ret']}, median {summary['median_ret']}, "
           f"win {summary['win_rate']}% | random same-trades: mean {bm}, median {bmed}, win {bw}% | "
           f"${llm.cost:.3f} | {status}")
     return run_id, trades, status
@@ -490,7 +585,8 @@ def write_lessons(llm, lessons, trades):
         groups = {}
         for t in trades:
             groups.setdefault(describe_pick(t), []).append(t["ret_pct"])
-        summary = (f"{len(rets)} trades: average {statistics.mean(rets):+.1f}%, median {statistics.median(rets):+.1f}%, "
+        summary = (f"Total profit: ${sum(rets) * TRADE_USD / 100:+,.0f} on {len(rets)} trades of ${TRADE_USD:,}. "
+                   f"Average {statistics.mean(rets):+.1f}%, median {statistics.median(rets):+.1f}%, "
                    f"{100 * sum(r > 0 for r in rets) / len(rets):.0f}% winners.\nBy trade type:\n" +
                    "\n".join(f"- {k}: {len(v)} trades, avg {statistics.mean(v):+.1f}%, median {statistics.median(v):+.1f}%"
                              for k, v in sorted(groups.items(), key=lambda kv: -len(kv[1]))))
@@ -514,11 +610,11 @@ The lessons you started with:
 
 Write the updated lessons document for the next trader, who will see ONLY this document, never your
 trades or results. Keep what held up, fix or drop what didn't, add what you learned. Write general
-rules in terms of the columns (thresholds, combinations, which instrument, expiry, strike and exit),
+rules for MAKING MONEY, in terms of the columns (thresholds, combinations, which instrument, expiry, strike and exit),
 with how confident you are in each. Be honest about what did not work and about small samples.
 No stock codes. At most {LESSON_WORDS} words. Reply with the document only."""
     llm.check_budget()
-    text = llm.chat([{"role": "user", "content": prompt}], max_tokens=900)
+    text = llm.chat([{"role": "user", "content": prompt}], max_tokens=2000)
     words = text.split()
     return " ".join(words[:int(LESSON_WORDS * 1.15)])
 
@@ -531,15 +627,20 @@ def spent(st):
 def latest_lessons(st, lineage):
     rows = [r for r in st.backend.read("agent_lessons") if r["lineage"] == lineage]
     if not rows:
-        return 0, (SEED_BRIEFING if lineage == "briefed" else "")
+        return 0, (SEED_BRIEFING if lineage.startswith("briefed") else "")
     last = max(rows, key=lambda r: int(r["generation"]))
     return int(last["generation"]), last["text"]
 
 
 def loop(args):
     st = C.db()
-    if not st.backend.read("arena"):
+    arena = st.backend.read("arena")
+    if not arena:
         build(args)
+    elif "rsi14" not in json.loads(arena[0]["features"]):
+        print("Adding technical-analysis columns to the candidates (one time)...")
+        add_technicals(args)
+    args.lineage = args.lineage + LINEAGE_VERSION
     deadline = time.monotonic() + 60 * args.max_minutes
     done, out_of_money, failed = 0, False, False
     started = time.monotonic()
@@ -560,7 +661,9 @@ def loop(args):
                 failed = not out_of_money and "time limit" not in status
                 break
             if not trades:
-                print("Warning: the training run made no trades; lessons will be thin.")
+                print("The training run made no trades at all; stopping rather than passing on empty lessons.")
+                failed = True
+                break
             new_lessons = write_lessons(llm, lessons, trades)
         except Budget as b:
             print(f"Stopping: {b}.")
@@ -592,6 +695,7 @@ def loop(args):
 
 def final_test(args):
     st = C.db()
+    args.lineage = args.lineage + LINEAGE_VERSION
     rows = [r for r in st.backend.read("agent_lessons")
             if r["lineage"] == args.lineage and int(r["generation"]) == args.generation]
     if not rows:
@@ -612,13 +716,15 @@ def report(args=None):
              f"Total spent: ${spent(st):.2f}", "",
              "Each generation trains (with feedback) on March 2024 to June 2025, writes lessons, then is scored",
              "blind on July 2025 to January 2026. \"Random\" makes the same number and kind of trades in the",
-             "same weeks on random candidates; beating it is what counts. Returns are per trade, after costs.", "",
-             "| lineage | gen | phase | model | trades | mean % | median % | win % | random mean % | random median % | random win % | cost $ | status |",
-             "|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
-    for r in sorted(runs, key=lambda r: (r["lineage"], int(r["generation"] or 0), r["started"])):
-        lines.append(f"| {r['lineage']} | {r['generation']} | {r['phase']} | {r['model']} | {r['trades']} | "
-                     f"{r['mean_ret']} | {r['median_ret']} | {r['win_rate']} | {r['baseline_mean']} | "
-                     f"{r['baseline_median']} | {r['baseline_win']} | {r['cost_usd']} | {r['status']} |")
+             "same weeks on random candidates; beating it is what counts. Every trade is $1,000; returns after costs.",
+             "Lineages without -v2 are from the first version (replies were cut off, so they never traded).", "",
+             "| lineage | gen | phase | trades | profit $ | random profit $ | mean % | median % | win % | random mean % | random win % | unreadable | cost $ | status |",
+             "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
+    for r in sorted(runs, key=lambda r: (r["lineage"], int(r["generation"] or 0), r["started"] or "")):
+        unread = f"{r.get('bad_replies') or 0}/{r.get('replies')}" if r.get("replies") not in (None, "") else "-"
+        lines.append(f"| {r['lineage']} | {r['generation']} | {r['phase']} | {r['trades']} | {r.get('profit_usd') or '-'} | "
+                     f"{r.get('baseline_profit_usd') or '-'} | {r['mean_ret']} | {r['median_ret']} | {r['win_rate']} | "
+                     f"{r['baseline_mean']} | {r['baseline_win']} | {unread} | {r['cost_usd']} | {r['status']} |")
     for lin in sorted({l["lineage"] for l in lessons}):
         last = max((l for l in lessons if l["lineage"] == lin), key=lambda l: int(l["generation"]))
         lines += ["", f"## Latest lessons: {lin} lineage, generation {last['generation']} ({last['model']})", "",
@@ -643,8 +749,10 @@ def main():
         else:
             a.add_argument("--generation", type=int, required=True)
     sub.add_parser("report")
+    sub.add_parser("add-technicals")
     a = p.parse_args()
-    {"build": build, "loop": loop, "test": final_test, "report": report}[a.cmd](a)
+    {"build": build, "loop": loop, "test": final_test, "report": report,
+     "add-technicals": add_technicals}[a.cmd](a)
 
 
 if __name__ == "__main__":

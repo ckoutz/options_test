@@ -85,13 +85,18 @@ running backfill, and re-launches itself until done. Rerun it later to add newly
 Agents walk week by week through history, trade, learn, and pass on lessons. Each generation:
 1. **Training** (March 2024 to June 2025): each week it sees ~12 anonymized candidate stock-days
    (stock codes reshuffled every run, time as week numbers, prices only as percentages) and may buy
-   the stock or one of 15 calls, up to 3 picks a week. Results show up two weeks later.
+   the stock or one of 15 calls, up to 3 picks a week. Every trade is $1,000 and the goal is total
+   profit (passing earns $0). Results show up two weeks later. Each candidate shows options activity
+   plus technicals: 1/5/20-day change, price vs 20- and 50-day averages, distance from the 60-day high,
+   RSI(14), and daily volatility.
 2. **Lessons**: it rewrites the lessons document it inherited (max 400 words). Only this document
    passes to the next generation; its trades and results never do.
 3. **Scoring** (July 2025 to January 2026): it trades blind with its new lessons, no feedback.
 Every run is compared with a random picker making the same number and kind of trades in the same
 weeks. February 2026 onward is held back as a one-time final exam (`--phase test`).
 Two lineages: `blank` (starts with nothing) and `briefed` (starts with our scorer findings).
+Lineages are stored as `blank-v2` / `briefed-v2` (v1 runs had cut-off replies and never traded).
+A training run stops itself if most replies can't be read, and the loop stops if a run makes no trades.
 GitHub: Actions → "Trader generations". Needs the secret `OPENROUTER_API_KEY`. Results: AGENTS.md
 and tables `agent_runs`, `agent_trades`, `agent_lessons`. A hard spending cap stops runs at `MAX_USD`.
 

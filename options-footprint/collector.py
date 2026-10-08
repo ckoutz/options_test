@@ -705,6 +705,23 @@ def run_log(step, message):
         print(f"(could not save the log line: {ex})")
 
 
+def had_options(sym):
+    """True if any call or put on this stock expired between February and June 2024 (so its options
+    were trading when the history starts). One small request per status; no paging."""
+    kid, sec = os.environ.get("ALPACA_KEY_ID"), os.environ.get("ALPACA_SECRET_KEY")
+    headers = {"APCA-API-KEY-ID": kid, "APCA-API-SECRET-KEY": sec}
+    for status in ("inactive", "active"):
+        q = urllib.parse.urlencode({"underlying_symbols": sym, "status": status, "limit": 1,
+                                    "expiration_date_gte": "2024-02-01", "expiration_date_lte": "2024-06-30"})
+        try:
+            data = http_json(f"https://paper-api.alpaca.markets/v2/options/contracts?{q}", headers)
+        except RuntimeError:
+            continue
+        if (data or {}).get("option_contracts"):
+            return True
+    return False
+
+
 def select_wide(args):
     """Pick the wide list once: a random sample of liquid stocks with options, using ONLY January 2024
     data (price and share volume), so whether a stock later moved plays no part in choosing it.
@@ -724,9 +741,7 @@ def select_wide(args):
             sym = a.get("symbol", "")
             if (a.get("exchange") in MAJOR_EXCHANGES and a.get("exchange") != "ARCA"
                     and not looks_like_fund(a.get("name", "")) and sym.isalpha() and len(sym) <= 5):
-                # Active stocks must have listed options; for delisted ones the history step finds out.
-                if status == "active" and "options_enabled" not in (a.get("attributes") or []):
-                    continue
+                # Alpaca no longer tags which stocks have options, so that is checked per stock below.
                 status_of.setdefault(sym, status)
     symbols = sorted(status_of)
     print(f"Wide list: {len(symbols):,} candidate stocks (active with options, plus delisted).")
@@ -742,14 +757,22 @@ def select_wide(args):
         if price >= MIN_PRICE and volume >= MIN_AVG_SHARE_VOLUME:
             eligible.append((sym, price, volume))
     rank = lambda s: hashlib.sha1(f"wide-v1|{s}".encode()).hexdigest()
-    chosen = sorted(eligible, key=lambda e: rank(e[0]))[:args.n]
+    # In a fixed random order, keep stocks that had option contracts trading in early 2024.
+    chosen, checked = [], 0
+    for e in sorted(eligible, key=lambda e: rank(e[0])):
+        if len(chosen) >= args.n:
+            break
+        checked += 1
+        if had_options(e[0]):
+            chosen.append(e)
     db().backend.upsert("wide_universe", [{"ticker": s, "status": status_of[s], "avg_price": round(p, 2),
                                             "avg_volume": round(v), "selected": today} for s, p, v in chosen])
     overlap = len({s for s, _, _ in chosen} & set(mover_tickers()))
     run_log("wide-select", f"assets listed: {seen['active']:,} active ({seen['active_with_options']:,} with options), "
             f"{seen['inactive']:,} delisted; after exchange/fund filters: {len(symbols):,} "
             f"({sum(1 for v in status_of.values() if v == 'active'):,} active); with 15+ January 2024 bars: "
-            f"{with_bars:,}; met price and volume bar: {len(eligible):,}; chosen: {len(chosen)}; "
+            f"{with_bars:,}; met price and volume bar: {len(eligible):,}; checked for options: {checked}; "
+            f"chosen: {len(chosen)} ({sum(1 for s_, _, _ in chosen if status_of[s_] == 'active')} still listed); "
             f"already big movers: {overlap}.")
     print(f"Wide list: {len(eligible):,} stocks met the January 2024 bar (price ${MIN_PRICE:.0f}+, "
           f"{MIN_AVG_SHARE_VOLUME:,}+ shares a day); sampled {len(chosen)} at random, {overlap} of them already "

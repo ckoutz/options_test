@@ -205,7 +205,11 @@ def build_pool(args):
     by_ticker = {}
     for (t, d), g in days.items():
         by_ticker.setdefault(t, {})[d] = g
-    wide_only = set(C.wide_tickers()) - set(C.mover_tickers())
+    movers = set(C.mover_tickers())
+    wide_only = set(C.wide_tickers()) - movers
+    # Stocks on neither list (e.g. dropped from a re-chosen wide list) are left out of the pool.
+    for t in [t for t in by_ticker if t not in movers and t not in wide_only]:
+        del by_ticker[t]
     universe = {t: ("wide" if t in wide_only else "movers") for t in by_ticker}
     print(f"Ladder data: {len(days):,} stock-days across {len(by_ticker):,} stocks "
           f"({sum(1 for u in universe.values() if u == 'wide')} from the wide list).")

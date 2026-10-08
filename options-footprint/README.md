@@ -14,7 +14,11 @@ Options history starts February 2024. No Alpha Vantage needed once `compare` che
 3. Actions tab → "Options footprint" → Run workflow → choose `compare`.
    The log prints Alpaca's Wolfspeed put/call next to Alpha Vantage's. An average
    difference under about 0.05 means Alpaca is good enough.
-4. Run workflow again → choose `backfill` (seeds every 15%+ move since March 2024; can take a while).
+4. Run workflow again → choose `backfill`. It finds every 15%+ move since March 2024, pulls the
+   full daily options history for tickers with 3+ events (one pass per ticker instead of one per
+   event), fills the rest event by event, and adds control days. Each run works for about 100
+   minutes; if it isn't finished, it launches the next round by itself (up to 20 rounds).
+   `data/history_done.csv` shows which tickers have full history; `data/errors.csv` lists anything skipped.
 5. From then on it runs `nightly` by itself every weekday after the close and commits
    the updated CSVs back to the repository.
 
@@ -55,6 +59,22 @@ whether early money consistently lands in longer-dated or near-the-money calls.
 `news_catalyst`, `sector_day` (3+ universe names moved together that day), `unknown`, `control`.
 After-hours moves can't be seen in daily bars, so add those by hand as `after_hours` events.
 
+## Scoring the signals
+`python scorer.py` (runs automatically after every nightly and backfill) uses every trading day for
+tickers with full history. For each day it computes signals from that day and earlier only, then
+checks what the stock did over the next 10 sessions. Output:
+- `data/signal_report.csv` – one row per rule and threshold: how often it fired, how often a big
+  rally followed (hit rate), lift versus an average day, lift in each half of the data, and lift for
+  a big DROP (if that is as high as the rally lift, the signal predicts volatility, not direction).
+- `data/signal_days.csv` – every scored day with its signals and what happened next.
+
+## Universe
+- `core` (default): the 40 hand-picked volatile names in `UNIVERSE` at the top of the script.
+- `all`: every active US stock with listed options on a major exchange (several thousand),
+  skipping moves in stocks under $5 or trading under 500,000 shares a day on average.
+- To switch everything over, edit collector.py on GitHub and change
+  `DEFAULT_UNIVERSE = "core"` to `DEFAULT_UNIVERSE = "all"`. Then run `backfill` again
+  (several times; each run resumes where the last stopped) and nightly picks it up from there.
+
 ## Limits
 - No historical open interest from Alpaca, so "volume above open interest" needs another source later.
-- Universe is 40 volatile names in `UNIVERSE` at the top of the script. Widen it as needed.

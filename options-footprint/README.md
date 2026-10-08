@@ -151,6 +151,25 @@ with no news in the prior 3 days, the footprint this project is looking for). Ag
 headline text, only these numbers, so they can't recognize a company or a date.
 Tables: `news`, `news_fetched`. Resumable; continues in another round if time runs out.
 
+## Machine learning benchmark (benchmark.py)
+A gradient-boosted tree model trained on the same columns and training months as the agents, judged the
+same way on the blind months (up to 3 picks per bundle-week, same costs, versus a random picker making the
+same trades). Nothing is tuned on the blind months. It runs after every pool rebuild, or on its own with
+the committee workflow's `benchmark` command, and writes BENCHMARK.md. If it finds no edge, the agents
+probably won't either; if it does, the committee has to beat it.
+
+## Honesty checks
+- **Confidence ranges resample whole weeks**, not single trades, because stocks in the same week move
+  together; treating them as independent made ranges look narrower than they are.
+- **Realistic option costs:** each side of an option trade costs 5% or $0.05 a share, whichever is larger
+  (cheap contracts can't be traded closer than that). Applied when the pool is built, from the prices
+  the ladder recorded.
+- **Sanity stops:** the wide-list chain stops if fewer than 200 stocks were chosen or fewer than 500 days
+  need pricing, and a pool rebuild keeps the old pool if the new one is much smaller or missing the wide
+  list. Each stop is written to "Job notes" in STATUS.md.
+- **Stronger editor model** (`editor_model`, default anthropic/claude-sonnet-5.5): only the editor, the one
+  call per generation whose notes every later generation inherits.
+
 ## Scoring the signals
 `python scorer.py` (runs automatically after every nightly and backfill) uses every trading day for
 tickers with full history. For each day it computes signals from that day and earlier only, then

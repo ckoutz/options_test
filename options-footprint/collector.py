@@ -693,6 +693,7 @@ def history_tickers():
 
 
 WIDE_N = 300                                         # how many stocks the wide list samples
+WIDE_MIN_OK = 200                                    # fewer than this means the selection went wrong
 WIDE_SELECT_START, WIDE_SELECT_END = "2024-01-02", "2024-01-31"   # known before the history begins
 
 
@@ -793,7 +794,17 @@ def wide(args):
     """Choose the wide list (once) and pull each stock's full daily options history. Resumable;
     writes 'done' or 'more' to backfill_status.txt for the workflow."""
     select_wide(args)
+    n = len(wide_tickers())
+    if n < WIDE_MIN_OK:
+        # Something went wrong choosing the list: stop here rather than chain hours of work on it.
+        run_log("wide", f"STOPPED: only {n} stocks on the wide list (expected about {WIDE_N}). Check the "
+                        f"wide-select note above, then rerun select-wide.")
+        with open(STATUS_FILE, "w") as f:
+            f.write("stopped")
+        return
     finished = history(args, time.monotonic() + 60 * args.max_minutes)
+    if finished:
+        run_log("wide", f"full options history done for all {n} wide-list stocks.")
     with open(STATUS_FILE, "w") as f:
         f.write("done" if finished else "more")
     left = [t for t in history_tickers() if t not in {r["ticker"] for r in db().history_done()}]

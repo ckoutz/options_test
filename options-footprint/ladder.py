@@ -179,6 +179,12 @@ def run(args):
         new = set(C.wide_tickers()) - set(C.mover_tickers())
         plan = [p for p in plan if p[0]["ticker"] in new]
         print(f"Wide list only: {len(new)} stocks not in the big-movers list.")
+        if len(new) < 100 or len(plan) < 500:
+            C.run_log("ladder-wide", f"STOPPED: {len(new)} new stocks and {len(plan)} days to price; "
+                                     f"expected 200+ stocks and thousands of days. Not continuing the chain.")
+            with open(STATUS_FILE, "w") as f:
+                f.write("stopped")
+            return
     done = {(r["grp"], r["ticker"], r["signal_date"]) for r in st.backend.read("ladder_trades")}
     todo = [p for p in plan if (p[1], p[0]["ticker"], p[0]["date"]) not in done]
     by_ticker = {}
@@ -241,6 +247,8 @@ def run(args):
         if not finished:
             break
         print(f"  {t}: {len(work)} days ({n_done}/{len(todo)} overall)")
+    if finished and getattr(args, "universe", "all") == "wide":
+        C.run_log("ladder-wide", f"priced {n_done:,} new stock-days for the wide list.")
     with open(STATUS_FILE, "w") as f:
         f.write("done" if finished else "more")
     print("Ladder complete." if finished else "Ladder not finished; another round needed.")

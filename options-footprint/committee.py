@@ -183,6 +183,28 @@ def market_closes():
         return {}
 
 
+LADDER_COST = 0.05          # what the ladder charged on each side
+MIN_HALF_SPREAD = 0.05      # dollars per share: cheap contracts can't be bought or sold closer than this
+
+
+def realistic_cell(entry, stock_close, ret_hold, ret_double):
+    """Reprice one ladder contract with a more realistic cost. The ladder charged a flat 5% each way,
+    which for a $0.20 option is a penny, while real quotes on cheap, thinly traded contracts are often
+    5 to 30 cents wide. Here each side costs 5% or $0.05 a share, whichever is larger. Raw prices are
+    recovered from what the ladder stored. (The take-profit point of double_or_10 is kept where the
+    ladder found it, a close approximation.)"""
+    raw_in = entry / (1 + LADDER_COST)
+    new_in = raw_in + max(LADDER_COST * raw_in, MIN_HALF_SPREAD)
+
+    def redo(ret):
+        if ret is None:
+            return None
+        value = (ret / 100 + 1) * entry / (1 - LADDER_COST)      # the option's value at the exit
+        out = max(0.0, value - max(LADDER_COST * value, MIN_HALF_SPREAD)) if value > 0 else 0.0
+        return round((out / new_in - 1) * 100, 2)
+    return [round(new_in / stock_close * 100, 2), redo(ret_hold), redo(ret_double)]
+
+
 def runway(values, i, recent=20, before=40):
     """Average over the last `recent` sessions ÷ the median of the `before` sessions ahead of them."""
     if i < recent + before - 1:
@@ -313,9 +335,9 @@ def build_pool(args):
             continue
         ok = r["filled"] == "yes" and r["entry_price"] and r["stock_close"]
         cell = f"{int(float(r['target_dte']))}d+{float(r['target_otm_pct']):g}"
-        options.setdefault(k, {})[cell] = [
-            round(float(r["entry_price"]) / float(r["stock_close"]) * 100, 2),
-            C.to_float(r["ret_hold10_pct"]), C.to_float(r["ret_double_or_10_pct"])] if ok else None
+        options.setdefault(k, {})[cell] = realistic_cell(
+            float(r["entry_price"]), float(r["stock_close"]), C.to_float(r["ret_hold10_pct"]),
+            C.to_float(r["ret_double_or_10_pct"])) if ok else None
     import news as N
     nidx = N.Index(st, {t for _, t, _ in picked}) if st.backend.read("news_fetched") else None
     out = []
@@ -328,7 +350,20 @@ def build_pool(args):
                     "options": json.dumps({k: v for k, v in options.get((t, d), {}).items() if v},
                                           separators=(",", ":")),
                     "shares_ret10": sh})
+    # Sanity check before replacing anything: a much smaller pool, or a missing wide list, means
+    # something upstream went wrong. Keep the old pool and say so.
+    old_n = len(st.backend.read("pool"))
+    n_wide = sum(1 for r in out if r["universe"] == "wide")
+    problems = []
+    if old_n and len(out) < 0.7 * old_n:
+        problems.append(f"new pool has {len(out):,} candidates versus {old_n:,} before")
+    if wide_only and n_wide == 0:
+        problems.append(f"the wide list has {len(wide_only)} stocks but none made it into the pool")
+    if problems and not getattr(args, "force", False):
+        C.run_log("build-pool", "STOPPED, old pool kept: " + "; ".join(problems) + ". Rerun with --force if intended.")
+        sys.exit("Pool not replaced: " + "; ".join(problems))
     st.backend.replace("pool", out)
+    C.run_log("build-pool", f"pool rebuilt: {len(out):,} candidates ({n_wide:,} from the wide list).")
     counts = {}
     for r in out:
         key = f"{r['split']}/{r['universe']}"
@@ -412,18 +447,34 @@ def rule_return(rule, cand):
     return A.trade_return(cand, "call", rule["expiry"], rule["strike"], rule["exit"])
 
 
-def boot_ci(values, stat=statistics.mean, reps=1000, seed=5):
-    if len(values) < 5:
+def boot_ci(pairs, reps=1000, seed=5):
+    """95% range of the average return, resampling whole WEEKS rather than single trades.
+
+    Stocks in the same week move together (a market-wide jump lifts many at once), so treating
+    every trade as independent makes the range look narrower than it really is. pairs is a list
+    of (week, return)."""
+    if len(pairs) < 5:
+        return None, None
+    by_week = {}
+    for w, r in pairs:
+        by_week.setdefault(w, []).append(r)
+    weeks = list(by_week.values())
+    if len(weeks) < 3:
         return None, None
     rng = random.Random(seed)
-    sims = sorted(stat([rng.choice(values) for _ in values]) for _ in range(reps))
+    sims = []
+    for _ in range(reps):
+        pick = [rng.choice(weeks) for _ in weeks]
+        total = sum(len(w) for w in pick)
+        sims.append(sum(sum(w) for w in pick) / total)
+    sims.sort()
     return round(sims[int(0.025 * reps)], 2), round(sims[int(0.975 * reps) - 1], 2)
 
 
 def score_rule(rule, cands):
     rets, base, by_b, base_b, months = [], [], {}, {}, sorted({c["month"] for c in cands})
     half = months[len(months) // 2] if months else ""
-    h1, h2 = [], []
+    h1, h2, pairs = [], [], []
     for c in cands:
         r = rule_return(rule, c)
         if r is None:
@@ -432,9 +483,10 @@ def score_rule(rule, cands):
         base_b.setdefault(c["bundle"], []).append(r)
         if rule_matches(rule, c["f"]):
             rets.append(r)
+            pairs.append((c["week"], r))
             by_b.setdefault(c["bundle"], []).append(r)
             (h1 if c["month"] < half else h2).append(r)
-    lo, hi = boot_ci(rets)
+    lo, hi = boot_ci(pairs)
     beat = [b for b, v in by_b.items() if len(v) >= 3]
     return {"trades": len(rets),
             "mean_ret": round(statistics.mean(rets), 2) if rets else None,
@@ -460,7 +512,8 @@ def describe_rule(rule):
 def scorebook_line(rule, s):
     if not s["trades"]:
         return f"- {rule['name']} ({describe_rule(rule)}): matched no tradable training candidates."
-    rng = f" (95% range {s['ci_low']:+.1f}% to {s['ci_high']:+.1f}%)" if s["ci_low"] is not None else " (too few trades for a range)"
+    rng = (f" (95% range {s['ci_low']:+.1f}% to {s['ci_high']:+.1f}%, resampling whole weeks)"
+           if s["ci_low"] is not None else " (too few trades or weeks for a range)")
     halves = f"; first half of the months {s['half1_mean']:+.1f}%, second half {s['half2_mean']:+.1f}%" \
         if s["half1_mean"] is not None and s["half2_mean"] is not None else ""
     return (f"- {rule['name']} ({describe_rule(rule)}): {s['trades']} trades, average {s['mean_ret']:+.1f}%{rng}, "
@@ -583,8 +636,10 @@ def parse_ratings(text, ids):
 
 
 def rating_stats(ratings):
-    """ratings: list of (rating, shares return). Rank correlation with a 95% range."""
-    pts = [(r, x) for r, x in ratings if x is not None]
+    """ratings: list of (rating, shares return, week). Rank correlation with a 95% range that
+    resamples whole weeks."""
+    pts_w = [(w, r, x) for r, x, w in ratings if x is not None]
+    pts = [(r, x) for _, r, x in pts_w]
     if len(pts) < 20 or len({r for r, _ in pts}) < 2:
         return {}
 
@@ -609,7 +664,11 @@ def rating_stats(ratings):
         return num / den if den else 0.0
 
     rng = random.Random(9)
-    sims = sorted(spearman([rng.choice(pts) for _ in pts]) for _ in range(300))
+    by_week = {}
+    for p_ in pts_w:
+        by_week.setdefault(p_[0], []).append(p_[1:])
+    weeks = list(by_week.values())
+    sims = sorted(spearman([x for w in (rng.choice(weeks) for _ in weeks) for x in w]) for _ in range(300))
     top = [x for r, x in pts if r >= 1]
     bottom = [x for r, x in pts if r <= -1]
     return {"rated": len(pts), "rating_corr": round(spearman(pts), 3),
@@ -729,7 +788,8 @@ class Walk:
              "prompt_tokens": self.llm.prompt_tokens, "completion_tokens": self.llm.completion_tokens,
              "cost_usd": round(self.llm.cost, 4), "status": "complete",
              "finished": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")}
-        s.update(rating_stats([(r["rating"], r["shares_ret10"]) for r in self.ratings]))
+        s.update(rating_stats([(r["rating"], r["shares_ret10"], A.week_of(str(r["signal_date"])))
+                               for r in self.ratings]))
         return s
 
 
@@ -963,7 +1023,7 @@ def run_generation(st, args, pool, deadline, pot):
         agent_out[a] = (working, rules)
         print(f"  agent {a}: {len(walk.trades)} trades, ${sum(t['ret_pct'] for t in walk.trades) * 10:+,.0f}, "
               f"{len(rules)} rules, {walk.bad}/{walk.replies} unreadable")
-    ed = pot.llm(args.model)
+    ed = pot.llm(getattr(args, "editor_model", None) or args.model)   # the editor's judgment matters most
     ed_notes, ed_rules = editor(ed, gen, notes, agent_out, lines)
     rows, ed_lines = book_rows(gen, "editor", "train", ed_rules, train_cands)
     book += rows
@@ -997,7 +1057,8 @@ def run_generation(st, args, pool, deadline, pot):
     st.backend.upsert("scorebook", book)
     notes_rows = [{"lineage": CFG["lineage"], "generation": gen, "author": f"agent{a}", "model": args.model, "text": w, "rules": json.dumps(r),
                    "created": now} for a, (w, r) in agent_out.items()]
-    notes_rows.append({"lineage": CFG["lineage"], "generation": gen, "author": "editor", "model": args.model, "text": ed_notes,
+    notes_rows.append({"lineage": CFG["lineage"], "generation": gen, "author": "editor",
+                       "model": getattr(args, "editor_model", None) or args.model, "text": ed_notes,
                        "rules": json.dumps(ed_rules), "created": now})
     st.backend.upsert("committee_notes", notes_rows)
     print(f"Generation {gen} done: scoring run {sc['trades']} trades, profit ${sc['profit_usd']:+,.0f} "
@@ -1164,6 +1225,7 @@ def main():
     b.add_argument("--archive", help="the ladder archive file (rows still in the database are added)")
     b.add_argument("--per-week-movers", type=int, default=6)
     b.add_argument("--per-week-wide", type=int, default=4)
+    b.add_argument("--force", action="store_true", help="replace the pool even if the sanity checks object")
     for name in ("loop", "final-test"):
         a = sub.add_parser(name)
         a.add_argument("--model", default=os.environ.get("LLM_MODEL", "anthropic/claude-haiku-5.5"))
@@ -1172,6 +1234,8 @@ def main():
         if name == "loop":
             a.add_argument("--generations", type=int, default=1)
             a.add_argument("--weeks-fraction", type=float, default=0.5)
+            a.add_argument("--editor-model", default=os.environ.get("EDITOR_MODEL", "anthropic/claude-sonnet-5.5"),
+                           help="a stronger model for the editor, who writes the notes every later generation inherits")
         else:
             a.add_argument("--generation", type=int, required=True)
     sub.add_parser("report")

@@ -16,6 +16,7 @@ on:
           - loop
           - build-pool
           - news
+          - benchmark
           - report
           - final-test
       model:
@@ -33,6 +34,9 @@ on:
       test_generation:
         description: "Which generation takes the final exam (final-test only)"
         default: ""
+      editor_model:
+        description: "Stronger model for the editor only (writes the notes every later generation inherits)"
+        default: anthropic/claude-sonnet-5.5
       lineage:
         description: "Lineage: a separate line of generations with its own notes (lowercase, e.g. options1)"
         default: committee
@@ -78,8 +82,8 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install the database driver
-        run: pip install --quiet "psycopg[binary]"
+      - name: Install the database driver (and the machine learning library for the benchmark)
+        run: pip install --quiet "psycopg[binary]" scikit-learn
 
       - name: Restore the local copy of the daily table
         uses: actions/cache/restore@v4
@@ -103,14 +107,17 @@ jobs:
               python committee.py build-pool --archive "$RUNNER_TEMP/ladder_trades.csv.gz"
               # News for every pool stock: fetch, score the tone, add the news columns.
               python news.py update --model "${{ github.event.inputs.model }}" --max-minutes 100 || true
+              python benchmark.py || true
               python committee.py report ;;
+            benchmark) python benchmark.py ;;
             news)
               python news.py update --model "${{ github.event.inputs.model }}" --max-minutes 140 ;;
             loop)
               if [ -z "$LLM_API_KEY" ]; then echo "OPENROUTER_API_KEY secret is not set"; exit 1; fi
               python committee.py loop $LINEAGE_ARGS --model "${{ github.event.inputs.model }}" \
                 --generations "${{ github.event.inputs.generations }}" \
-                --weeks-fraction "${{ github.event.inputs.weeks_fraction }}" --max-minutes 140 ;;
+                --weeks-fraction "${{ github.event.inputs.weeks_fraction }}" --max-minutes 140 \
+              --editor-model "${{ github.event.inputs.editor_model || 'anthropic/claude-sonnet-5.5' }}" ;;
             final-test)
               python committee.py final-test $LINEAGE_ARGS --model "${{ github.event.inputs.model }}" \
                 --generation "${{ github.event.inputs.test_generation }}" --max-minutes 140 ;;
@@ -127,10 +134,10 @@ jobs:
       - name: Commit the report
         if: always()
         run: |
-          ls COMMITTEE*.md >/dev/null 2>&1 || exit 0
+          ls COMMITTEE*.md BENCHMARK.md 2>/dev/null | grep -q . || exit 0
           git config user.name "options-footprint-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add COMMITTEE*.md
+          git add COMMITTEE*.md; if [ -f BENCHMARK.md ]; then git add BENCHMARK.md; fi
           git diff --cached --quiet && exit 0
           git commit -q -m "Committee report $(date -u '+%Y-%m-%d %H:%M')"
           for i in 1 2 3; do git pull --rebase -q && git push -q && exit 0; sleep 5; done
@@ -155,7 +162,7 @@ jobs:
               -f command=loop -f model="${{ github.event.inputs.model }}" -f generations="$remaining" \
               -f weeks_fraction="${{ github.event.inputs.weeks_fraction }}" \
               -f lineage="${{ github.event.inputs.lineage }}" -f options_only="${{ github.event.inputs.options_only }}" \
-              -f seed="${{ github.event.inputs.seed }}" \
+              -f seed="${{ github.event.inputs.seed }}" -f editor_model="${{ github.event.inputs.editor_model }}" \
               -f max_usd="${{ github.event.inputs.max_usd }}"
             echo "Launched the next round."
           fi

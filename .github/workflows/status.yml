@@ -37,9 +37,14 @@ jobs:
 
       - name: Build the reports
         run: |
-          python collector.py status
-          { echo '```'; python ladder.py --report-only; echo '```'; } > LADDER_REPORT.md
-          cat LADDER_REPORT.md
+          # Any error goes into the report itself, so it can be read from the repository.
+          if ! python collector.py status > status_out.txt 2> status_err.txt; then
+            { echo "# Status report FAILED ($(date -u '+%Y-%m-%d %H:%M') UTC)"; echo '```'; tail -40 status_err.txt; echo '```'; } > STATUS.md
+          fi
+          if ! { echo '```'; python ladder.py --report-only 2>&1; echo '```'; } > LADDER_REPORT.md; then
+            echo "ladder report failed" >> LADDER_REPORT.md
+          fi
+          cat STATUS.md
 
       - name: Commit the reports
         run: |

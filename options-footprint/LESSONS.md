@@ -1,4 +1,4 @@
-# Agent notes (2026-10-08 20:52 UTC)
+# Agent notes (2026-10-08 22:16 UTC)
 
 Every lessons document each generation passed on, oldest first, then what the agents wrote
 week by week in their latest runs. Lineages without -v2 are the first test, whose weekly
@@ -96,7 +96,7 @@ replies were cut off (no trades) and were not saved.
 ## Weekly notes: blank-v2, generation 1, validation
 
 (weeks the agent passed were not recorded for this run)
-- week 1 [stock; call 90d +10% hold10]: C8 has heavy long-dated call buying and the 90d hold10 structure is the least bad so far. C1 has momentum; shares are the default.
+- week 1 [call 90d +10% hold10; stock]: C8 has heavy long-dated call buying and the 90d hold10 structure is the least bad so far. C1 has momentum; shares are the default.
 - week 3 [stock]: Shares were the only near-breakeven group. C6 is a pullback in an uptrend, with price above its 50-day average, so a modest stock trade fits the lessons. Options lost on most variants.
 - week 5 [stock; stock]: Shares are the default. C3 looks oversold with calls crowding out puts; C9 is a dip in a strong uptrend. Options setups here look weak.
 - week 6 [stock]: Extreme oversold (RSI 8, 20d -49%) with a fresh bounce. Shares were the only near-breakeven group, so I use shares, not options.
@@ -115,4 +115,305 @@ replies were cut off (no trades) and were not saved.
 - week 27 [stock]: Heavy call-volume surge with a strong 1d move; shares are the lesson-favored low-cost structure. Other candidates lack a clear edge.
 - week 28 [stock; stock]: Shares were the only near-breakeven group. Both picks show call-heavy trends above their moving averages, with lower option cost risk.
 - week 31 [stock; stock]: Shares were the only near-breakeven group. Both picks are oversold or pulled back in uptrends, a weak but reasonable setup. No option structure looks favored.
+
+## Weekly notes: committee, generation 1, train
+
+- week 1 [stock +15%; stock -13%]: [Bundle 1 of 6] C1 is overbought after a 44% five-day run. C4 is oversold after a 34% drop, and stock trades carry low costs. Options are expensive, so I avoid them.
+- week 2 [pass]: [Bundle 1 of 6] Passing. Extreme run-ups with overbought RSI and call crowding look like blowoff risk; no candidate shows a clear edge after option costs.
+- week 3 [pass]: [Bundle 1 of 6] No clear edge. Overbought spikes (C1, C3) and put-heavy selloff (C5, C7) lean fade, but the signals are mixed and option costs are high, so I pass.
+- week 4 [stock -4%]: [Bundle 1 of 6] C6 shows heavy far-OTM and long-dated call buying with falling puts. C4 is overbought at RSI 91 after a 22% five-day run, so I expect a pullback. Other signals are mixed.
+- week 5 [pass]: [Bundle 1 of 6] Crowded-call names are already extended, and the one prior run-up trade lost. Option costs are high. Passing this week.
+- week 6 [stock -1%]: [Bundle 1 of 6] C5 shows medium-dated call buying while price is flat and calm. Cheap stock entry avoids option costs. Overbought C1 and C3 get lean-avoid.
+- week 7 [stock +22%]: [Bundle 1 of 6] C5 shows broad bullish call flow across expiries with rising shares. Most others look like noise, lottery-style calls, or falling knives.
+- week 8 [stock +30%]: [Bundle 1 of 6] C8 shows unusual OTM and short-dated call activity with a modest trend; the rest are overbought, crashing, or lack unusual call flow.
+- week 9 [stock +7%; stock -6%]: [Bundle 1 of 6] C2 shows medium-dated call buying with price rising and puts crowded out. C4 has near-zero puts and calls dominating. C7 is an extreme spike too risky to chase.
+- week 10 [stock -26%; stock -5%]: [Bundle 1 of 6] Heavy call buying with strong 5-20 day momentum in C2 and C5. Stock avoids option decay and the 5% option cost. C1 looks oversold but has no real call edge.
+- week 11 [stock +5%]: [Bundle 1 of 6] C4 is deeply oversold (RSI 10) after a sharp drop, and a prior oversold bounce paid. C8 is overbought with heavy put hedging.
+- week 12 [stock +3%]: [Bundle 1 of 6] C2 shows call-crowded momentum with no put interest. The others show put-heavy flow or crashes with no clear edge, so I rate them neutral or lean avoid.
+- week 13 [stock +1%]: [Bundle 1 of 6] C1 is oversold (RSI 24, 28% off high) with put selling and call buying. C6 chased a 21% gap, and C2 is overbought.
+- week 14 [stock -10%; stock -34%]: [Bundle 1 of 6] C1 shows broad call crowding and a breakout at the high with puts subdued. C3 has strong short-dated call interest and a 13% five-day gain. Put-heavy or collapsing names are avoided.
+- week 15 [pass]: [Bundle 1 of 6] C1 spiked 17% on heavy put buying, so mean reversion risk is high. Others show no clear edge, so I pass.
+- week 16 [stock +1%]: [Bundle 1 of 6] C3 shows heavy far-OTM long-dated call buying on an oversold, sub-$10 name. Falling knives C2, C6, C7 rated avoid. Others unclear.
+- week 17 [stock +10%; stock -5%]: [Bundle 1 of 6] Oversold C6 may bounce; C2 shows heavy call flow with put-free tape. Overextended rallies (C3, C7, C8) look prone to reversal.
+- week 18 [pass]: [Bundle 1 of 6] Past winners were calls-crowded runners that reverted. Current setups look similar or lack a clear edge, so I pass.
+- week 19 [pass]: [Bundle 1 of 6] Past momentum buys after big run-ups lost. Nothing here shows a clear edge after option costs, so I pass.
+- week 20 [pass]: [Bundle 1 of 6] Past call-spike momentum plays mostly lost, and option costs eat the edge. No candidate shows a clear, repeatable setup, so I pass.
+- week 21 [pass]: [Bundle 1 of 6] No clear edge. Extended names (C7, C8) have faded before, and the crashed C1 has no confirmed bounce signal, so I'm passing.
+- week 22 [stock -9%]: [Bundle 1 of 6] C4 shows broad call buying with a stock near its 50-day average and a mild 5-day gain. Most others are overbought or show heavy put flow. One small position only.
+- week 23 [pass]: [Bundle 1 of 6] Bullish call spikes after big moves have mostly failed here; no clear edge, so pass this bundle.
+- week 24 [stock -10%]: [Bundle 1 of 6] C4 shows a call-volume and put-drop shift with modest momentum. Others look extended, crashed, or illiquid, and my track record on spikes is weak.
+- week 25 [pass]: [Bundle 1 of 6] Extreme overbought blow-offs (RSI 87-95, huge 20d gains) look due for reversal. Past momentum calls lost. Only C1 shows a plausible setup, and the edge is too thin to trade.
+- week 26 [stock -4%]: [Bundle 2 of 6] C2 is oversold (20d -15%, rsi 31) with no run-up. Most others are extended (5d ≥4.5%). C6 is oversold but low-volatility, so I pass.
+- week 27 [stock -20%; stock -6%; stock +3%]: [Bundle 2 of 6] Oversold rule fired on C1, C2, C6 (off-high or vs-ma20 drops). Extended names C3, C5, C7 avoided. Stocks only, low confidence.
+- week 28 [stock -14%]: [Bundle 2 of 6] C1 is oversold (rsi 23, vs ma20 -9.9). C2, C3, C4, C7, C8 are extended, the pattern that lost. C5 and C6 fire no rule.
+- week 29 [stock -1%; stock -1%]: [Bundle 2 of 6] Oversold rule fires on C7 (rsi 16, -34% off high) and C3 (rsi 28, -40% off high). C1, C5, C8 are extended, so skipped.
+- week 30 [pass]: [Bundle 2 of 6] Oversold bounce rule failed in bundle 2 so far; no candidate shows a clean, unextended setup. Passing.
+- week 31 [pass]: [Bundle 2 of 6] C1 and C5 are extended, which lost in bundle 1. C7 fires the oversold rule, but recent oversold stock trades lost, so the edge is unproven. Pass.
+- week 32 [stock -27%]: [Bundle 2 of 6] C2 is down 28% off its high with a 10% weekly drop, matching the oversold-bounce rule. The extended names (C1, C4, C6, C7) fail the run-up filter. The rest have no rule firing.
+- week 33 [pass]: [Bundle 2 of 6] No oversold name fires the bounce rule. Several are extended (vs ma50 well above 9.5), which lost in bundle 1. Passing.
+- week 34 [pass]: [Bundle 2 of 6] Oversold rule lost 7 of 8 recent trades, and extension names fail the avoid rule. No candidate clears a validated signal.
+- week 35 [pass]: [Bundle 2 of 6] Passing. Extended names (C1, C6, C4, C8) fit the bundle-1 loser pattern. C3 is oversold, but recent oversold stock trades lost, so the bounce rule is unconfirmed.
+- week 36 [pass]: [Bundle 2 of 6] Oversold rule fires on C2, C4, C8, but this bundle's recent oversold trades won only 1 of 8. Extended names C5 and C6 are avoids. Passing.
+- week 37 [stock +61%]: [Bundle 2 of 6] C3 is deeply oversold (RSI 10) and cheap. Oversold-bounce evidence is weak, so one small position only. Extended names C2, C4, C8 avoided.
+- week 38 [stock +25%; stock +5%]: [Bundle 2 of 6] Oversold bounce rule fires on C7 (RSI 16) and C8 (RSI 21). C6 is extended after a +12.6% day, so it is avoided. Stock trades keep costs low.
+- week 39 [stock -15%; stock -19%; stock -5%]: [Bundle 2 of 6] Buy oversold names that fire rule 3b (off-high, vs ma20, RSI). Avoid extended C1 and C7 per rule 3a. Ratings are feature-based, not rating-based.
+- week 40 [stock +3%; stock +6%]: [Bundle 2 of 6] C7 and C8 are deeply oversold (rsi ~25, vs ma20 near -20%), matching the bundle-1 bounce rule. C5 is extended (vs ma50 +21%), so it is avoided.
+- week 41 [stock -8%; stock +3%]: [Bundle 2 of 6] Oversold bounce rule fires (C2 rsi 19, C5 rsi 28). Other names are not oversold or are extended. Options costs are too high for these.
+- week 42 [stock -15%]: [Bundle 2 of 6] C6 fires the oversold rule (rsi 24, vs ma20 -28.7%). Extended names (5d ≥4.5) are avoided. Others lack a clean signal.
+- week 43 [stock +21%]: [Bundle 2 of 6] C6 fires the oversold rule (vs ma20 -8.7, off high -32). C1, C2, C5, C7 are extended, so avoid. C8 spiked 23% today, so I'm leaning against it.
+- week 44 [stock +10%]: [Bundle 2 of 6] C6 is 49% off its high with RSI 56, matching the oversold-bounce rule. The extended names (C1, C3, C4, C8) fail the run-up filter.
+- week 45 [pass]: [Bundle 2 of 6] Every name is extended (5d or vs ma50 well above thresholds) or a falling knife with no confirmed bounce. The oversold-bounce evidence is weak. Pass.
+- week 46 [stock +2%]: [Bundle 2 of 6] C1 is deeply oversold (rsi 29, -26% vs ma20), which fires the bounce rule. C7 and C3 are extended, which fires the avoid rule.
+- week 47 [pass]: [Bundle 2 of 6] Extended names (5d or vs ma50 above thresholds) fit the avoid rule. No oversold name clearly meets the bounce rule, so pass.
+- week 48 [stock +29%; stock -6%]: [Bundle 2 of 6] Oversold rule fires on C1 and C3 (rsi 23, far below ma20). C7 is extended (5d +24%, vs ma50 +21%), so I avoid it. C6 is a falling knife, so I pass.
+- week 49 [pass]: [Bundle 2 of 6] No candidate cleanly fires the oversold buy rule or the extended avoid rule. C4 is borderline on both, so pass.
+- week 50 [stock -6%]: [Bundle 2 of 6] C4 is the only oversold name (off high -40%, 20d -19%) and stock costs little. Extended names C6, C7, C1 and C8 are skipped per the run-up rule. Other names have no rule firing.
+- week 51 [pass]: [Bundle 3 of 6] Sub-$10 stock crashed 25% on heavy put buying with 33% ATM call cost. Likely event-driven with no clear edge, so pass.
+- week 52 [pass]: [Bundle 3 of 6] Unusual call activity is noisy here; no candidate shows a clear, repeatable edge, so I pass.
+- week 53 [pass]: [Bundle 3 of 6] No clear edge. C2 looks overbought after a spike, C8 is oversold with heavy put and call activity, and option costs are high. Passing.
+- week 54 [stock +8%]: [Bundle 3 of 6] C6 shows broad call buying with OTM strikes and an uptrend above both averages. Options carry too much decay and cost, so I stay with stock. Other names lack a clear edge.
+- week 55 [stock +3%]: [Bundle 3 of 6] C7 has trend-confirmed call buying with low volatility and cheap stock execution. Others show lottery-style or put-heavy signals with weaker support.
+- week 56 [stock +2%]: [Bundle 3 of 6] C1 shows broad medium-dated call buying with calls crowding out puts and a rising trend. C2 and C6 look like overextended or bearish flow. C3 and C7 show put dominance.
+- week 57 [stock -7%]: [Bundle 3 of 6] C5 shows strong 5-day momentum with broad call demand. Its uptrend is intact, and stock costs less than calls here. C1 and C3 show heavy put activity after sharp moves.
+- week 58 [stock +6%]: [Bundle 3 of 6] C3 shows heavy call flow with no put hedging, a rebound off its high, and cheap stock-trade costs. Other setups look noisy or overextended.
+- week 59 [stock -5%; call 30d +0% double_or_10 -79%]: [Bundle 3 of 6] Momentum with heavy call buying in C2 and C8. Falling stocks with put pressure rated negative. Thin evidence, so sizing stays modest.
+- week 60 [pass]: [Bundle 3 of 6] Extreme call spikes after big 5-day runs have reverted in past trades. Nothing here shows a clear, repeatable edge, so I pass.
+- week 61 [stock +3%]: [Bundle 3 of 6] C3 has heavy far-OTM call buying, low put/call, and RSI near neutral. The extended, overbought momentum names look like mean-reversion risks.
+- week 62 [stock +25%]: [Bundle 3 of 6] C7 has steady gains, rising OTM call interest and low volatility. C1 and C6 chased rallies amid heavy put buying, which looks like hedging.
+- week 63 [pass]: [Bundle 3 of 6] No clear edge: spikes look like blowoffs or falling knives, and my recent record is negative, so I pass.
+- week 64 [pass]: [Bundle 3 of 6] No clear edge. Crashing names and put-heavy names lean down, call spikes on dips and overextended names are mixed, so I pass.
+- week 65 [pass]: [Bundle 3 of 6] Mixed signals and no clear edge. C4 is overbought after a huge run-up, and C2 and C5 are weak sub-$10 names. Passing this week.
+- week 66 [stock -30%]: [Bundle 3 of 6] C6 has a strong short-dated call surge and modest momentum. C2 and C5 look like blow-off or lottery call buying. C3 is put-heavy against a rally.
+- week 67 [stock -9%]: [Bundle 3 of 6] C1 shows medium-dated call crowding with puts low and a calm tape. Others are falling knives or chased, overextended moves.
+- week 68 [pass]: [Bundle 3 of 6] Recent rally-driven call spikes lost money, and the best setup (C7) has no clear edge after option costs. Passing.
+- week 69 [pass]: [Bundle 3 of 6] Momentum after huge 5-day runs (C2, C8, C7) has reversed in past bundles, and the rest show no clean edge. Passing.
+- week 70 [stock -4%]: [Bundle 3 of 6] C3 has broad call buying (OTM and long-dated) with a strong run. C4 is overextended. The rest show no clear edge.
+- week 71 [stock -6%]: [Bundle 3 of 6] C8 shows fresh call buying and a 5-day rally while still below its 50-day average. C2 and C4 are overextended, so I avoid them.
+- week 72 [call 30d +5% double_or_10 -51%]: [Bundle 3 of 6] C7 shows heavy call buying, near-zero put/call, and an unextended price. Chasing extended or distressed names has lost money, so I avoid them.
+- week 73 [pass]: [Bundle 3 of 6] Recent call-spike bets after big 5-day rallies mostly lost. No candidate shows a clear edge, so I pass.
+- week 74 [pass]: [Bundle 3 of 6] Most setups are extended after big 5-day runs or show heavy put flow with no clear edge. Given the losing record, passing.
+- week 75 [pass]: [Bundle 3 of 6] Flow signals are mixed or noisy, and our record has been negative. No candidate shows a clear, repeatable edge, so we pass.
+- week 76 [pass]: [Bundle 3 of 6] Flow signals are mixed or already priced in after large moves, and our record is negative, so no trades.
+- week 77 [pass]: [Bundle 4 of 6] No candidate has a clear edge. C5 trips the untested run-chase filter, and C3 is far above its 20-day average. Passing.
+- week 78 [pass]: [Bundle 4 of 6] C1 and C2 hit the fixed chase filter (5d at least +9%, 4%+ above MA20). Others show no validated edge; the baseline is negative, so pass.
+- week 79 [pass]: [Bundle 4 of 6] C3 hits the untested 5-day and MA20 chase filter, and C8 is extended at RSI 82. No candidate has a clear edge, so I pass.
+- week 80 [stock -1%]: [Bundle 4 of 6] C1 hits the unvalidated short-run-chase filter and is overbought. C5 is above $50 and pulled back, the only mild positive setup. Others lack a clear edge.
+- week 81 [pass]: [Bundle 4 of 6] Passing. C1 and C8 hit the untested short-run-chase filter, and the only other signals are weak. The notes show a negative baseline and no validated edge.
+- week 82 [pass]: [Bundle 4 of 6] No candidate clears the baseline. C8 is extended but misses the run filter, and C2's above-$50 lean is too thin. Passing.
+- week 83 [pass]: [Bundle 4 of 6] C1, C4, C7 hit the untested run-chase filter (5d ≥9%, ≥4% above MA20). C2 is overbought (RSI 78). Nothing clears a negative baseline, so pass.
+- week 84 [pass]: [Bundle 4 of 6] C5 and C6 hit the 5-day run-up filter (3.1), so they lean avoid. C2 has RSI 82 after a +32% month. Nothing else clears a positive bar, so I pass.
+- week 85 [stock +5%; stock -18%]: [Bundle 4 of 6] C1 and C5 show heavy call and OTM call buying without a short-term run-up, so they avoid the chase filter. Low conviction; sized as stock only.
+- week 86 [pass]: [Bundle 4 of 6] C2 and C3 hit the run-up filter (5d >=+9%, far above MA20) and RSI is overbought. Other setups lack clear edge, and the bundle baseline is negative. Pass.
+- week 87 [pass]: [Bundle 4 of 6] C2 trips the untested chase filter (+23.7% 5d, +17.4% vs MA20). No candidate shows a clean stock setup, and option costs are high. Passing.
+- week 88 [pass]: [Bundle 4 of 6] Five of eight hit the untested chase filter (5-day ≥+9%, ≥+4% over MA20). Remaining names lack an edge, and the baseline is negative.
+- week 89 [pass]: [Bundle 4 of 6] C1 and C2 hit the untested run-chase filter (5d up 9%+, far above MA20). Nothing else shows a clear edge over a negative baseline, so pass.
+- week 90 [pass]: [Bundle 4 of 6] Filter 3.1 flags C3, C4, C5, C7 as chasers to avoid. C1 is overbought at RSI 81. No candidate shows a clear edge, and the notes' baseline is negative, so pass.
+- week 91 [pass]: [Bundle 4 of 6] No candidate clears the bundle-3 bar. C3 and C8 hit the untested chase filter, and calls remain unproven. Passing.
+- week 92 [pass]: [Bundle 4 of 6] Passing. C2 and C8 hit the chase filter (5d up at least 9%, above MA20 by 4%). No candidate shows a clear edge over the negative baseline.
+- week 93 [pass]: [Bundle 4 of 6] Filter 3.1 flags C3 and C7 as chasing runs. Others show no clear edge, and the baseline is negative, so pass.
+- week 94 [pass]: [Bundle 4 of 6] No candidate has a clear edge. C2 trips the chase filter. Pass; the notes show no reliable buy signal.
+- week 95 [pass]: [Bundle 4 of 6] Stock filter 3.1 flags C3 and C7 as run-ups to avoid. C8 is in a crash. No clean buy; baseline is negative and evidence is thin.
+- week 96 [pass]: [Bundle 4 of 6] Passing. C2, C3, C5, C8 hit the fixed run-up filter; C6 is parabolic. C1, C4, C7 show no clear edge, and calls remain untested.
+- week 97 [pass]: [Bundle 4 of 6] Notes say the baseline is negative and the stock filter is untested. C5 and C7 fail the run-up filter, and no candidate shows a clean edge, so I pass.
+- week 98 [stock +10%]: [Bundle 4 of 6] C8 is above $50 and misses the short-run-chase filter, the only positive watch item. Other names are extended or show bearish put flow. Weak, provisional edge.
+- week 99 [pass]: [Bundle 4 of 6] No candidate meets the fixed filter, the prior evidence is weak, and options lost badly, so I pass this week.
+- week 100 [pass]: [Bundle 4 of 6] Passing. Parabolic names C3, C6, C7 hit the untested chase filter. Remaining names have no clear edge and the baseline is negative.
+- week 101 [pass]: [Bundle 4 of 6] Filter 3.1 hits C6 (5d +48%, far above MA20); C2 and C7 are overextended after runs. No clean edge, and options stay off per rule 5.2.
+- week 102 [pass]: [Bundle 5 of 6] C1, C4, C6, C7 meet the untested 3.1 chase filter, which had a negative median in-sample. No clear edge elsewhere, so pass.
+- week 103 [pass]: [Bundle 5 of 6] No candidate clears the evidence bar. C2 trips the untested 3.1 run filter. C8 has the only supportive feature (price above $50). Bundle baseline is weak, so pass.
+- week 104 [pass]: [Bundle 5 of 6] No candidate meets the 3.1 filter, rules remain unconfirmed, and the bundle baseline is weak. Passing this week.
+- week 105 [pass]: [Bundle 5 of 6] C2, C3, C6 and C8 hit the untested 3.1 run-chaser filter. No candidate has a clear, replicated edge, so I pass.
+- week 106 [pass]: [Bundle 5 of 6] Rule 3.1 hits C2, and most others show overbought or chasing signals. No candidate clears a tested edge, so I pass.
+- week 107 [stock -2%]: [Bundle 5 of 6] C7 is above $50 and fails the 3.1 short-run filter. C2 is a chase, just under the 9% filter, with RSI 68. Stock only; no calls.
+- week 108 [stock -13%]: [Bundle 5 of 6] Stock only. C1, C2, C3, C4 and C6 hit the short-term run-up filter. C8 is above $50 without a run-up, so it is the one entry.
+- week 109 [pass]: [Bundle 5 of 6] No candidate meets the 3.1 filter, and no stock rule has shown an out-of-sample edge. Bundle baseline is negative. Pass.
+- week 110 [pass]: [Bundle 5 of 6] No candidate has a demonstrated edge. C4 and C7 are parabolic blow-offs that fail 3.1-style filters, and bundle 5 is already losing.
+- week 111 [pass]: [Bundle 5 of 6] C1 and C7 hit the untested 3.1 chase filter. Bundle evidence is too thin to show an edge, and the stock median is about zero, so I pass.
+- week 112 [pass]: [Bundle 5 of 6] Passing. C2 and C5 hit the in-sample 3.1 run-up filter. No candidate shows a clear, repeatable edge, and the notes show none has held out of sample.
+- week 113 [stock +6%]: [Bundle 5 of 6] C8 is above $50, not extended, and not hit by the 3.1 run filter. C3 and C4 hit the run filter, so I avoid them. Evidence is thin.
+- week 114 [stock -21%]: [Bundle 5 of 6] C2 hits the untested 3.1 run filter and is overbought. C8 is above $50 with no filter hit. Options have lost in past bundles, so I'm passing on them.
+- week 115 [pass]: [Bundle 5 of 6] Two candidates (C1, C3) hit the untested 3.1 run-chase filter. No setup clears the stock-only edge bar, so pass.
+- week 116 [pass]: [Bundle 5 of 6] No candidate shows a clear edge. Stock trades are near breakeven, options have lost, and the bundle baseline is weak. Passing.
+- week 117 [pass]: [Bundle 5 of 6] C3 and C7 hit the 3.1 chase filter (avg -6.2%). No candidate shows a tested edge over the weak baseline, so I pass.
+- week 118 [pass]: [Bundle 5 of 6] No candidate has a clear edge. C2 and C8 hit the untested 3.1 chase filter, and the bundle baseline is weak. Passing.
+- week 119 [pass]: [Bundle 5 of 6] Passing. C6 trips the untested 5-day run-up filter, and no candidate shows a clear, repeatable edge over this bundle's weak baseline.
+- week 120 [pass]: [Bundle 5 of 6] Passing. C1, C2 and C4 hit the 3.1 run-chase filter, which is untested out of sample. Stock median is about 0% and no rule has shown an edge.
+- week 121 [pass]: [Bundle 5 of 6] C3 and C6 hit the untested 3.1 run-up filter. C4 is a speculative sub-$10 lottery. Baseline is negative and no candidate shows a clear edge, so pass.
+- week 122 [pass]: [Bundle 5 of 6] C3 and C4 hit the untested 3.1 chase filter. C5, C7 and C8 are overextended. No candidate has a clear edge, so pass.
+- week 123 [pass]: [Bundle 5 of 6] No candidate meets the untested 3.1 run filter. Stock edge is unproven, the baseline is negative, and options have lost badly, so pass.
+- week 124 [pass]: [Bundle 5 of 6] Passing. C8 trips the untested 3.1 run filter, C1 and C6 are overbought and extended, and no stock rule has shown an out-of-sample edge.
+- week 125 [pass]: [Bundle 5 of 6] C3 and C7 hit the untested 3.1 run-up filter and C1 is overbought at RSI 88. Bundle 4 baseline was negative, so no clear edge; pass.
+- week 126 [pass]: [Bundle 5 of 6] Five of eight hit the untested run-chase filter (3.1), and the strongest runs are RSI-overbought. Only C5 fits the $50+ watch rule, and that is too thin to trade.
+- week 127 [pass]: [Bundle 6 of 6] Most spikes are extended after large 20-day runs with overbought RSI and heavy put activity. Mean reversion looks likelier than follow-through, so I pass.
+- week 128 [stock +15%]: [Bundle 6 of 6] C3 shows momentum with call-flow spike and moderate move; C2 is overbought at RSI 80 after a 25% run. Option costs are high, so I favor stock.
+- week 129 [stock -4%]: [Bundle 6 of 6] C2 shows heavy medium-dated call buying with puts nearly absent, after a pullback. The other setups lack a clear edge.
+- week 130 [stock +4%]: [Bundle 6 of 6] C1 shows heavy medium-dated call buying with puts absent after a 10% five-day gain. The others are overextended, crashing, or show mixed flow.
+- week 131 [stock -4%; stock -7%]: [Bundle 6 of 6] C7 and C3 show broad bullish call flow with momentum and OTM/long-dated buying. C2 is contrarian oversold. C5 shows put dominance.
+- week 132 [stock +10%]: [Bundle 6 of 6] C1 shows a broad call and share surge with positive 5-day momentum, the pattern that worked in recent trades. The rest lack a clear edge.
+- week 133 [stock -2%; call 30d +15% double_or_10 -69%; call 30d +10% hold10 -95%]: [Bundle 6 of 6] Heavy long-dated call flow with rising share volume in C7 and C8; C5 shows speculative short-dated OTM call buying. Bearish-flow names rated down.
+- week 134 [pass]: [Bundle 6 of 6] Call spikes look like chasing; C4's one-day blowout and C1's heavy put-buying lack a clear edge. Passing.
+- week 135 [stock -13%; stock +10%]: [Bundle 6 of 6] C2 and C6 show call flow crowding out puts with no overbought stretch. C3 and C7 are extended after huge runs; C1 and C4 have heavy put flow.
+- week 136 [stock -1%]: [Bundle 6 of 6] C1 is oversold under $10 with low-cost stock entry. Others show crowded speculative calls or put-heavy bearish flow.
+- week 137 [stock +6%]: [Bundle 6 of 6] Heavy long-dated call buying on a quiet stock suggests informed bullishness. Calls have lost badly, so I stick to stock.
+- week 138 [pass]: [Bundle 6 of 6] Signals look weak or stretched: overbought runs, heavy put-side flow, and calls that have lost money in recent bundles. Passing.
+- week 139 [stock -26%]: [Bundle 6 of 6] C4 gapped up on heavy call buying after a deep selloff. Other names lack a clear edge, and past call trades lost money.
+- week 140 [stock -0%]: [Bundle 6 of 6] C2 is an oversold large cap with low stock costs. Most others show bearish flow or penny-stock risk, and my recent trades have lost money.
+- week 141 [pass]: [Bundle 6 of 6] Signals look mixed and our recent trades lost money. C3 is overbought after a 17.8% five-day run. Passing.
+- week 142 [stock +12%]: [Bundle 6 of 6] C4 shows calls crowding out puts with a short-dated call spike and an 8% gap up. Pass on the rest; my options record is poor.
+- week 143 [stock +11%]: [Bundle 6 of 6] Short-dated call spike with flat price suggests possible informed buying. Other setups look overextended or unclear, so I'm mostly passing.
+- week 144 [pass]: [Bundle 6 of 6] No clear edge. Spikes like C1 and C5 look stretched, and expensive OTM calls have been losing, so I pass.
+- week 145 [pass]: [Bundle 6 of 6] Mixed or ambiguous signals across candidates; my track record here is weak, so I'm passing rather than forcing a trade.
+- week 146 [stock +19%]: [Bundle 6 of 6] C1 shows calls crowding out puts, a bullish signal. C2 has heavy put buying. Calls have been losing on costs, so I favor cheap stock trades.
+- week 147 [pass]: [Bundle 6 of 6] Passing. Our record is negative, and the strongest candidate (C1) is overbought after a 13% one-day jump with options priced high.
+- week 148 [stock -5%]: [Bundle 6 of 6] C5 has heavy call crowding near its high; my past stock trades beat my call trades, so I take the stock. Others lack a clear edge.
+- week 149 [pass]: [Bundle 6 of 6] Overextended names look mean-reversion prone, and the options are costly with little edge. Passing this week.
+- week 150 [stock -9%]: [Bundle 6 of 6] C8 shows call-over-put crowding with strong volume and momentum. C2 and C7 look like short-dated call frenzies prone to reversal. Kept to one pick given the weak record.
+- week 151 [pass]: [Bundle 6 of 6] Calls crowd out puts in C3 and C6, but C3 is overextended and my recent record is poor, so I pass.
+
+## Weekly notes: committee, generation 1, score
+
+- week 1 [stock]: [Bundle 1] C1 meets the oversold-dip rule (5d -29%, RSI 19). Other names show no rule trigger or conflicting signals, so I pass on them.
+- week 2 [stock]: [Bundle 1] C7 fits the trend-momentum rule (20d above 15, above ma50) with calm volatility. Calls on calm stocks scored poorly, so no options. C2 is too overheated to buy.
+- week 3 [stock; stock; stock]: [Bundle 1] Below-ma50 turning-up rule is the strongest; trend rule is secondary. Call rule is negative, so no calls. Overbought names rated neutral or negative.
+- week 4 [stock]: [Bundle 1] C3 meets the trend-momentum rule (20d above 15, above ma50), which beat baseline in 5 of 6 bundles. C2 is a put-heavy name below ma20, a weak rule.
+- week 5 [stock]: [Bundle 1] C2 meets the trend-momentum rule (20d above 15%, above ma50), which beat baseline in 5 of 6 bundles. Other candidates trigger no reliable rule.
+- week 6 [stock; stock]: [Bundle 1] Trend-momentum rule (20d>15, above ma50) has the strongest tested edge; C4 and C8 fit it. C3 is too overbought.
+- week 7 [stock]: [Bundle 1] C5 fits the trend-momentum rule (20d above 15%, above ma50), which beat baseline in 5 of 6 bundles. C3 fits the weak put-heavy rule. Other candidates match no positive rule.
+- week 8 [stock; stock]: [Bundle 1] Trend-above-ma50 rule fits C1 and C2, the strongest-tested signal. C6 triggers the losing calm-call rule. No other rule fires.
+- week 9 [stock; stock]: [Bundle 1] Trend-momentum rule (20d>15%, above ma50) fires on C2 and C7. Calm-call rule is negative on median, so no calls.
+- week 10 [stock]: [Bundle 1] C8 fits the trend-momentum rule (20d above 15, above ma50), which beat baseline in 5 of 6 bundles. Overbought names and the calm-call rule look weak.
+- week 11 [stock]: [Bundle 1] C7 meets the trend-momentum rule (20d>15, above ma50), which beat baseline in 5 of 6 bundles. Calls on calm stocks have a poor median, so I skip them.
+- week 12 [stock; stock]: [Bundle 1] Trend-momentum stock rule has the best evidence here; calls and overbought names look weak, so I avoid them.
+- week 13 [stock]: [Bundle 1] C2 fits the below-ma50-turning-up rule (+4.0% mean, 52% winners). Other rules are weak or baseline-level, so I pass on them.
+- week 14 [stock; stock]: [Bundle 1] C6 fits the below-ma50 turning-up rule (best scorebook edge). C1 fits trend momentum. C4 is overbought and extended. Option rules performed poorly, so no calls.
+- week 15 [stock; stock; stock]: [Bundle 1] C7 meets oversold-dip and turning-up rules. C5 and C8 meet trend momentum. Calls have no reliable edge in the scorebook.
+- week 16 [stock; stock; stock]: [Bundle 1] Oversold dip rule (5d below -8, RSI under 35) fires on C3, C4, C5. Its median is near zero and the data is shaky, so ratings are modest. Calls are skipped because the calm-call rule is negative.
+- week 17 [stock; stock]: [Bundle 1] C1 fits the trend-momentum rule and C2 the oversold-dip rule, both with positive scorebook averages. Call rules scored poorly, so no options.
+- week 18 [stock; stock; stock]: [Bundle 1] C2 and C6 fit the oversold-dip rule, and C5 fits trend momentum. Calm-stock calls scored badly, so I avoided options.
+- week 19 [stock; stock; stock]: [Bundle 1] Trend-momentum rule (20d>15, above ma50) matches most names; its mean beats baseline but median is flat. Calls are weak in the scorebook, so I chose stocks.
+- week 20 [stock; stock]: [Bundle 1] C1 fits the trend-momentum rule. C7 fits the below-ma50 turning-up rule. Calm-stock call rule scored badly, so no calls.
+- week 21 [stock; stock]: [Bundle 1] C7 hits two positive rules: oversold dip and below-ma50 turning up. C5 fits trend momentum. Calm-stock calls scored badly, so C2 and C6 are avoided.
+- week 22 [stock; stock; stock]: [Bundle 1] Trend-momentum rule (20d>15, above ma50) is the best-supported; C7 fits crowded-put and calm-call avoid rules.
+- week 23 [stock; stock]: [Bundle 1] Trend momentum rule (20d>15%, above ma50) is the strongest scorebook signal; C4 and C5 fit it. Others don't.
+- week 24 [stock]: [Bundle 1] C2 fits the oversold dip rule (5d -10.9%, RSI 29), the strongest in-sample signal. Calls on calm, oversold names scored poorly, so none bought.
+- week 25 [stock]: [Bundle 2] Only C8 fits the momentum rule (20d>15, above ma50), the best-supported rule. Other fits are weak or negative, and the notes say no rule is confirmed.
+- week 26 [stock; stock]: [Bundle 2] Trend-momentum rule (20d>15%, above ma50) is the best-supported fire here; both picks meet it. Edge is small and in-sample.
+- week 27 [stock; stock]: [Bundle 2] Trend-above-ma50 rule has the most support (+2.9% mean, beat baseline 5 of 6 bundles). Median is weak, so keep sizing modest. Option rules don't fire.
+- week 28 [stock]: [Bundle 2] C7 meets trend-momentum rule (20d above 15%, above ma50). Others lack qualifying signals; calm-call rule is negative, so no calls.
+- week 29 [stock; stock]: [Bundle 2] Trend-above-ma50 rule has the strongest support; C1 and C7 fit it. Calls and other rules show no edge.
+- week 30 [stock; stock]: [Bundle 2] Trend-momentum rule (20d>15%, above ma50) has the best pooled mean, but its median is negative. Only the stock rule fires; no call rule triggers. Evidence is weak.
+- week 31 [stock; stock]: [Bundle 2] Only trend-momentum rule fires (C2, C8); its in-sample edge is modest and median is near zero. Calls lost badly in the scorebook, so no calls.
+- week 32 [stock; stock; stock]: [Bundle 2] C8 fits the below-ma50 turning-up rule, C7 and C3 fit trend momentum. Edges are small and in-sample.
+- week 33 [stock; stock]: [Bundle 2] C1 fits below-ma50 turn-up and C3 fits trend momentum, the two strongest rules. The call rule has a negative median, so no calls.
+- week 34 [stock; stock; stock]: [Bundle 2] C3 fires two positive rules (oversold dip, below-ma50 turning up). C2 and C6 fit trend momentum above ma50. Options rules are weak in the scorebook, so no calls.
+- week 35 [stock; stock]: [Bundle 2] C1 fits the trend-momentum rule, C7 the oversold-dip rule. Call rules scored poorly, so I avoid options. Edges are weak and in-sample.
+- week 36 [stock; stock; stock]: [Bundle 2] Oversold-plus-turning-up and oversold rules fit C5 and C7; C1 meets the oversold rule. Calm-call rule rejected.
+- week 37 [stock; stock; stock]: [Bundle 2] Below-ma50 turn-up and off-high recovery rules fit C1, C5, C2. Calls have poor medians, so I skip them.
+- week 38 [stock; stock; stock]: [Bundle 2] Oversold-dip (C4, C8) and below-ma50-turning-up (C2) rules have the best in-sample means; the rest have no rule support.
+- week 39 [stock; stock; stock]: [Bundle 2] C1 fits oversold dip and below-ma50 turn; C2 fits below-ma50 turn; C8 fits trend momentum. Calls rejected.
+- week 40 [stock; stock; stock]: [Bundle 2] Oversold dip rule fires on C1, C4, C5; C6 overbought and avoided. No calls, since the call rule is weak.
+- week 41 [stock]: [Bundle 2] C1 fits the trend-momentum rule (20d above 15, above ma50), the scorebook's most consistent winner. No other candidate fits a rule with a positive edge, and the calm-call rule loses on average.
+- week 42 [stock; stock; stock]: [Bundle 2] C8 hits two positive scorebook rules. C5 and C6 fit trend momentum. Calls scored badly, so no options. Rules are in-sample.
+- week 43 [stock; stock; stock]: [Bundle 2] C7 fits oversold-dip and below-ma50 rebound rules; C2 fits the below-ma50 rebound rule; C3 fits momentum. Calls scored poorly, so no calls.
+- week 44 [stock; stock; stock]: [Bundle 2] Trend-above-ma50 and oversold-dip rules have the strongest backed means. Overbought names are rated only lean buy. No call rule fires.
+- week 45 [stock; stock; stock]: [Bundle 2] Trend-momentum rule (20d>15, above ma50) is the best-tested signal here. Calm-call rule is negative, so no calls.
+- week 46 [stock; stock]: [Bundle 2] Trend-momentum rule fits C1 and C5, the best-supported stock rule. No calls qualify; the deep off-high rule is weak.
+- week 47 [stock; stock; stock]: [Bundle 2] Trend-momentum rule (20d>15, above ma50) is the best-supported. C4, C6, C7 fit it. Stock trades avoid option decay. Other names fit no rule.
+- week 48 [stock; stock]: [Bundle 2] C6 fits the below-ma50-turning-up rule; C1 fits trend momentum. Option rules scored poorly, so no calls.
+- week 49 [stock; stock; stock]: [Bundle 3] Below-ma50 turning-up and trend-momentum rules have the best scorebook means. Calm-stock call rule is poor, so no calls.
+- week 50 [stock; stock]: [Bundle 3] C7 fits the below-ma50 turning-up rule (+4.0% mean). C8 fits the trend-momentum rule (+2.9%). Overbought names are weak. Calls look negative.
+- week 51 [stock; stock]: [Bundle 3] Both meet the 20-day momentum-above-ma50 rule, which beat baseline in 5 of 6 bundles. C2 is too extended to add.
+- week 52 [stock; stock; stock]: [Bundle 3] Three stock picks fire the most consistent rules: below-ma50 turning up (C1, C4) and trend momentum above ma50 (C2). Calls rule is negative.
+- week 53 [stock; stock]: [Bundle 3] C8 meets the momentum rule and isn't overbought. C3 fits the off-high recovery rule. C2 hits the weak calm-call rule. C4 is overbought.
+- week 54 [stock; stock; stock]: [Bundle 3] Trend-momentum stock rule (20d>15%, above ma50) is the most consistent in-sample edge here. Calls scored poorly. Rules are unconfirmed, so sizing stays modest.
+- week 55 [stock; stock; stock]: [Bundle 3] C2 fits the below-ma50-turning-up rule (best scorebook mean). C6 and C7 fit trend momentum. Rules are in-sample and unconfirmed, so sizing stays modest.
+- week 56 [stock; stock; stock]: [Bundle 3] C5 fires the best rule (below ma50 turning up). C1 fires oversold dip. C8 fires trend momentum. C7's -89% 20d move looks like a data error.
+- week 57 [stock; stock; stock]: [Bundle 3] C5 fits the best-scoring below-ma50 turning-up rule. C3 and C7 fit trend momentum, though both are overbought.
+- week 58 [stock; stock; stock]: [Bundle 3] C2 and C3 meet the trend-momentum rule; C5 meets the below-ma50-turning-up rule. C8 is overbought. Stock rules beat calls.
+- week 59 [stock; stock]: [Bundle 3] C2 fires both the below-ma50 turn-up and near-oversold rules. C6 fires trend momentum but is extended, so smaller conviction. Calls scored poorly.
+- week 60 [stock; stock; stock]: [Bundle 3] C1 and C2 meet the oversold dip and below-ma50 turning-up rules. C6 meets trend momentum and deep off-high recovery. Calls are weak in the scorebook.
+- week 61 [stock]: [Bundle 3] C4 matches the trend-momentum rule, the strongest scorebook signal. Other matches are weak or near baseline, and no call rule fires.
+- week 62 [stock; stock]: [Bundle 3] C3 meets the 20-day momentum-above-ma50 rule without overbought RSI. C8 fits the deep off-high recovery rule. Stock trades avoid option costs.
+- week 63 [stock; stock]: [Bundle 3] Trend-above-ma50 stock rule has the strongest in-sample support. C6 and C1 fit it without overbought RSI. Overbought names are rated down. Options were skipped; the calm-call rule is poor.
+- week 64 [stock]: [Bundle 3] C1 and C8 meet the trend-momentum rule, which has a positive mean but a negative median. C1 is extended, so I keep it to one stock trade. Calm-stock calls have a poor record, so I avoid them.
+- week 65 [stock; stock]: [Bundle 3] Both fire the oversold dip rule (5d below -8, RSI below 35), the only rule with a clearly positive mean. Calls fire the weak calm-call rule, so those are avoided.
+- week 66 [stock; stock]: [Bundle 3] C2 meets the oversold-dip and below-ma50 turning-up rules. C3 meets the oversold rule but is a sub-$10 name. Avoid calls; the calm-call rule is poor.
+- week 67 [stock; stock]: [Bundle 3] C7 fits the below-ma50-turning-up rule and C8 fits trend momentum. Both rules beat baseline in 5 of 6 bundles. Calls and overbought C2 skipped.
+- week 68 [stock]: [Bundle 3] C3 meets the trend-momentum rule (20d>15%, above ma50), the only rule-supported setup. Calls scored poorly, so I skipped them.
+- week 69 [stock; stock; stock]: [Bundle 3] Trend-above-ma50 and below-ma50-turning-up rules fire on several names; stocks beat calls. Calm-call rule is negative, so no calls. In-sample evidence only.
+- week 70 [stock; stock; stock]: [Bundle 3] C4 fires two positive stock rules (deep off-high recovery, below-MA50 turn). C1 and C8 fit trend momentum. Calls rejected: calm-call rule is negative.
+- week 71 [stock; stock]: [Bundle 3] C2 fires two positive rules (oversold dip, below-ma50 turning up). C6 fits trend momentum despite overbought RSI. Calls scored poorly.
+- week 72 [stock]: [Bundle 3] C1 fits the below-ma50-turning-up rule, the best in-sample rule. Its evidence is weak and in-sample, so I buy one stock only.
+- week 73 [stock; stock; stock]: [Bundle 4] C5 hits oversold-dip and below-ma50-turning-up rules. C2 and C7 meet trend momentum. Call rules were weak, so no options.
+- week 74 [stock; stock; stock]: [Bundle 4] C8 fits the below-ma50 turning-up rule. C3 and C6 fit the oversold dip rule. Calls were poor in the scorebook, so no options.
+- week 75 [stock; stock; stock]: [Bundle 4] C5 fits the best-tested rule (below ma50, turning up). C1 fits oversold dip. C4 fits trend momentum. Calls have a poor record, so no options.
+- week 76 [stock]: [Bundle 4] Only C8 fits a positive-scoring rule (20d>15, above ma50). Calm-stock 30-day calls scored badly, so the rest get negative or neutral ratings.
+- week 77 [stock]: [Bundle 4] Only C8 fires a positive rule (20d above 15%, above ma50). Calm-call and put-heavy rules look weak, so C4-C6 rate negative.
+- week 78 [stock; stock]: [Bundle 4] Trend-momentum rule is the only well-supported signal here. C3 and C7 fit it with less extreme overbought readings. C2 is too stretched.
+- week 79 [stock; stock; stock]: [Bundle 4] Trend-momentum rule (20d>15, above ma50) has the most consistent support across bundles. Options and dip rules lack matching evidence here.
+- week 80 [stock; stock; stock]: [Bundle 4] Momentum rule (20d>15%, above ma50) is the strongest in-sample signal. C1, C4, C7 fit it. Calls look poor.
+- week 81 [stock; stock]: [Bundle 4] Trend-momentum rule (20d>15, above ma50) has the most consistent edge. Calm-call rule is negative, so I avoid those calls. Oversold rule has no qualifiers.
+- week 82 [stock]: [Bundle 4] C3 meets the trend-momentum rule (20d>15, above ma50) with RSI 64, not overbought. Its edge is modest and in-sample.
+- week 83 [stock; stock]: [Bundle 4] Trend-momentum and below-ma50 turning-up rules have the strongest scorebook means; calm 30-day calls averaged badly, so no calls.
+- week 84 [stock; stock; stock]: [Bundle 4] Trend-momentum rule (20d>15%, above ma50) has the most trades and beats baseline in 5 of 6 bundles, though its median is weak. Options rules look poor.
+- week 85 [stock]: [Bundle 4] C3 meets the trend-momentum rule (20d>15, above ma50), the strongest scorebook signal. Calls have negative medians, so I skip them.
+- week 86 [stock; stock]: [Bundle 4] Trend-momentum rule (20d>15, above ma50) has the best scorebook record. C6 and C7 fit it. No other rule fires cleanly.
+- week 87 [stock; stock; stock]: [Bundle 4] C1 fits the oversold-dip rule. C3 and C5 fit positive momentum rules. Calls scored poorly, so no options. Overbought C6 and C8 lean avoid.
+- week 88 [stock; stock; stock]: [Bundle 4] Stock rules fire on C3 (below ma50 turning up), C5 (trend momentum), C7 (oversold dip). Call rule is negative, so no calls.
+- week 89 [stock; stock; stock]: [Bundle 4] Oversold C4 and trend-momentum C2 and C8 match the best-tested rules. Calm-stock calls performed poorly, so no options.
+- week 90 [stock; stock; stock]: [Bundle 4] C5 fits oversold-dip and below-ma50-turning-up; C4 fits below-ma50 rebound; C3 fits trend momentum. Call rules scored poorly, so no calls.
+- week 91 [stock; stock]: [Bundle 4] C8 fits the oversold-dip rule; C3 fits trend momentum (20d>15%, above ma50). Calm-stock calls scored badly, so no options.
+- week 92 [stock; stock]: [Bundle 4] Trend-momentum rule has the most support. Calm-stock call rule has a terrible median, so no options. Spike-heavy C5 left out.
+- week 93 [stock]: [Bundle 4] C7 fits the trend-momentum rule, which beat baseline in 5 of 6 bundles. Other candidates fail rules or conflict with overbought signals.
+- week 94 [stock; stock]: [Bundle 4] C8 fits the below-ma50 turning-up rule (+4.0% avg). C3 fits trend momentum, though it is overbought. No option rule fires; the calm-call rule is poor.
+- week 95 [stock; stock]: [Bundle 4] C8 fits the trend-momentum rule; C4 fits the oversold-dip rule. Both are in-sample, with weak medians.
+- week 96 [stock; stock]: [Bundle 4] C2 fits the below-ma50-turning-up rule; C3 fits trend momentum. Overbought C5-C7 are rated against. Notes flag in-sample, weak medians.
+- week 97 [stock; stock; stock]: [Bundle 5] C8 and C1 are deeply oversold (5d below -8, RSI under 35), and C3 is turning up below its 50-day average. Stocks only; the call rule is weak.
+- week 98 [stock; stock]: [Bundle 5] C3 meets two positive-mean rules: oversold dip and below-ma50 turning up. C1 meets oversold dip. Calls have negative means, so no calls.
+- week 99 [stock; stock; stock]: [Bundle 5] Trend-momentum rule (20d>15, above ma50) is the strongest scorebook signal here. Options rules are weak, so I bought stocks.
+- week 100 [stock; stock; stock]: [Bundle 5] Scorebook rules: oversold dip (C3), below-ma50 turning up (C2), trend momentum (C5). Calls averaged negative, so no options.
+- week 101 [pass]: [Bundle 5] Only trend-momentum rule is positive, but C2 and C4 are also overbought, which conflicts. Calm-call rule fires on C1 and is negative. Passing.
+- week 102 [stock]: [Bundle 5] C4 fits the trend-momentum rule (20d>15%, above ma50). Extreme RSI and spike risk keep the others neutral or negative. Calls and oversold rules don't qualify.
+- week 103 [stock; stock; stock]: [Bundle 5] Buying stock on the strongest-scoring rules: below-ma50 turning up (C4, C6) and oversold dip (C3). Calm-stock 30-day calls scored badly, so I rated those names down.
+- week 104 [stock; stock]: [Bundle 5] Trend-momentum rule (20d>15, above ma50) has the strongest tested support. Calls scored poorly, so I passed on them.
+- week 105 [stock; stock]: [Bundle 5] Only the trend-momentum rule fires (C4, C6). Its in-sample edge is modest, so two stock trades. Calm-call rule is negative, so no calls.
+- week 106 [stock; stock; stock]: [Bundle 5] Scorebook rules: C6 turning up below ma50, C7 oversold dip, C5 trend momentum. Calls historically lose, so no option picks.
+- week 107 [stock; stock; stock]: [Bundle 5] Oversold dip rule fires on C1, C4, C8; C8 also meets below-ma50-turning-up. Calm-call rule is negative, so no calls.
+- week 108 [stock]: [Bundle 5] C7 fits the trend-momentum rule (20d>15%, above ma50). Calls have negative median; overbought spikes are weak.
+- week 109 [stock]: [Bundle 5] C4 meets the trend-momentum rule (20d>15, above ma50), which beat baseline in 5 of 6 bundles. Other rules are weak or unmet.
+- week 110 [stock; stock]: [Bundle 5] Trend-momentum rule fits C1 and C5, with C8 too extended. Calm-call rule doesn't fire, so no options. Bundle 6 records conflict, so confidence is low.
+- week 111 [stock; stock; stock]: [Bundle 5] Trend-momentum rule (20d>15, above ma50) has the most reliable scorebook support. Options rules are weak, so I stayed in stock.
+- week 112 [stock; stock; stock]: [Bundle 5] Oversold-dip rule (5d below -8, RSI below 35) has the best sample. Calm-stock 30-day calls rate badly, so no calls.
+- week 113 [stock; stock]: [Bundle 5] C1 fits the below-ma50 turning-up rule, the strongest tested. C4 fits trend momentum. Others match no tested rule.
+- week 114 [stock; stock]: [Bundle 5] C1 and C4 fire the oversold-dip and below-ma50-turning-up rules. Calm-stock calls fire on C2 and C5 but that rule lost money in the scorebook, so I avoid them.
+- week 115 [stock]: [Bundle 5] C6 meets the trend-momentum rule (20d above 15%, above ma50), the strongest in-sample rule. Calls scored poorly, and few others qualify.
+- week 116 [stock; stock; stock]: [Bundle 5] Trend-momentum rule (20d>15%, above ma50) has the most reliable scorebook edge. C1, C3, C4 qualify. Others don't.
+- week 117 [stock]: [Bundle 5] C5 fits the trend-momentum rule (20d and ma50 both up, RSI not overbought). Overbought C4 and C6 lean avoid. Calm-stock calls have a negative median, so no calls.
+- week 118 [stock; stock]: [Bundle 5] Below-ma50 turning-up rule is the strongest tested signal; C3 and C6 fit it. Other candidates fit no reliable rule. Calls skipped.
+- week 119 [stock]: [Bundle 5] C2 fits the oversold-dip rule, the strongest scorebook result. Calls on calm stocks lost money, so no options. Overbought names rate lower.
+- week 120 [stock]: [Bundle 5] C2 fits the best-scoring oversold-dip rule. The calm-stock 30-day call rule did badly, so no calls. Other names show no reliable edge.
+- week 121 [stock; stock]: [Bundle 6] C1 fits the best-supported rule: below ma50 and turning up. C5 fits trend momentum. Calls have weak evidence, so no calls.
+- week 122 [stock; stock; stock]: [Bundle 6] Rules trigger on C3 (oversold), C4 (deep off-high), C5 and C6 (trend). Calls have poor medians, so no options.
+- week 123 [stock; stock]: [Bundle 6] C4 fires the below-ma50-turning-up rule (+4.0% mean). C2 fires trend momentum (+2.9%). Calls lost on median, so no calls.
+- week 124 [stock; stock]: [Bundle 6] Momentum-above-ma50 and turning-up-below-ma50 rules fit C6 and C7. No oversold or call-rule setups. Scorebook edges are weak.
+- week 125 [stock; stock]: [Bundle 6] C3 meets the oversold dip rule (best-supported, +2.8% avg). C2 meets trend momentum. Calls and overbought names are weak, so no call picks.
+- week 126 [stock]: [Bundle 6] C3 meets the trend-momentum rule, the best-supported one, though its median is negative. Other candidates fit no reliable rule, and call rules scored poorly.
+- week 127 [stock; stock; stock]: [Bundle 6] C6 fits the oversold-dip rule, the strongest tested. C2 and C8 fit momentum and turning-up rules. Calls were negative in the scorebook, so none chosen.
+- week 128 [stock]: [Bundle 6] C1 matches the trend-momentum rule (20d>15, above ma50). Its median is weak and RSI is overbought, so I took one stock trade and no calls.
+- week 129 [pass]: [Bundle 6] No stock rule triggers and the calm-stock 30-day call rule has a negative record, so I pass.
+- week 130 [pass]: [Bundle 6] Only the weak trend-momentum rule fires (C5, C6). Its median is negative and in-sample edge is within noise. Options rules are negative, so I pass.
+- week 131 [stock; stock]: [Bundle 6] C5 fits trend momentum, C3 fits oversold dip reversal; the best scorebook rules, though medians are near zero.
+- week 132 [stock; stock]: [Bundle 6] C1 fits the below-ma50 turning-up rule. C5 fits trend momentum. C3 and C4 are extended or calm-call traps. Rules are in-sample and unconfirmed.
+- week 133 [stock; stock]: [Bundle 6] C4 fits the below-ma50 turning-up rule with a positive median; C3 has strong 20-day momentum above ma50. Options historically lose, so stocks only.
+- week 134 [stock; stock; stock]: [Bundle 6] Rules favor trend-above-ma50 and below-ma50 turning up; calm-stock calls scored badly, so no calls.
+- week 135 [stock; stock]: [Bundle 6] Trend-momentum rule fits C5 and C6, the most reliable scorebook rule. Calls score poorly, so no option trades.
+- week 136 [stock]: [Bundle 6] C6 fits the oversold-dip rule (5d below -8, RSI under 35). C2 and C5 are overbought. C1 and C8 are crowded put names below their averages. Calls scored poorly, so none.
+- week 137 [stock; stock]: [Bundle 6] C1 fits the above-ma50 momentum rule; C7 fits the oversold dip rule. C6 fits the weak calm-call rule, so I rated it negative and did not buy calls.
+- week 138 [stock; stock; stock]: [Bundle 6] C1 fits two rules (oversold dip, below-ma50 turning up); C2 fits the turning-up rule; C6 fits trend momentum. Calm-call rule was negative, so no options.
+- week 139 [stock; stock]: [Bundle 6] Trend momentum rule (20d>15%, above ma50) is the most consistent scorebook edge. C7 and C8 fit it. C3 is overextended. Options look weak.
+- week 140 [stock; stock]: [Bundle 6] Trend-momentum stock rule is the best-supported in the scorebook. Calm-stock calls have a negative median, so I avoid them. Notes are unreliable, so keep sizing modest.
+- week 141 [stock; stock]: [Bundle 6] C7 fits the oversold-dip rule (5d below -8, RSI 15). C1 fits trend momentum. Calls have a poor scorebook record, so no calls.
+- week 142 [stock; stock]: [Bundle 6] C8 fits trend momentum; C1 fits oversold dip. Calls scored poorly, so no option trades.
+- week 143 [stock; stock; stock]: [Bundle 6] Below-ma50 turning-up and momentum rules have the best in-sample means. Calm-stock call rule is negative, so no calls.
+- week 144 [stock; stock; stock]: [Bundle 6] Rules: turning-up below ma50 (C4, C6) and trend above ma50 (C1, C2). Calls rejected: calm-call rule has negative median. C3 overbought, extreme run-up, neutral.
 

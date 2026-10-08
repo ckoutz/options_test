@@ -821,7 +821,9 @@ def status(args):
         lines += ["", "## Ladder backtest"]
         lines += [f"- {g}: {d:,} days, {n:,} contracts ({f:,} could be bought)" for g, d, n, f in q(
             "select grp, count(distinct (ticker, signal_date)), count(*), count(*) filter (where filled='yes') "
-            "from ladder_trades group by grp order by grp")] or ["- no trades yet"]
+            "from ladder_trades group by grp order by grp")] or (
+            ["- raw trades archived to a GitHub Release; summary kept in ladder_report"]
+            if one("select count(*) from ladder_report") else ["- no trades yet"])
         rep = q("select move_pct, rule, days_fired, hit_rate_pct, lift, lift_half1, lift_half2, drop_lift, "
                 "median_fwd_return_pct, run_date from signal_report order by move_pct, lift desc")
         if rep:

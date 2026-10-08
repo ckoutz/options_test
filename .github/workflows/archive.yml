@@ -1,0 +1,82 @@
+name: Archive ladder trades
+
+# Moves the ladder_trades table out of Neon into a GitHub Release (compressed CSV), then drops it
+# to free database space. Waits for running jobs, verifies the row count and the uploaded file
+# size before dropping anything. Restore with: python archive.py restore --table ladder_trades
+# --file ladder_trades.csv.gz (after downloading the file from the release).
+
+on:
+  push:
+    paths:
+      - options-footprint/archive_request.txt
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: options-archive
+  cancel-in-progress: false
+
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    defaults:
+      run:
+        working-directory: options-footprint
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install the database driver
+        run: pip install --quiet "psycopg[binary]"
+
+      - name: Wait for other jobs that use the database to finish
+        run: |
+          for i in $(seq 1 90); do
+            busy=0
+            for wf in agents.yml ladder.yml nightly.yml; do
+              n=$(gh run list --workflow "$wf" --status in_progress --json databaseId -q 'length')
+              q=$(gh run list --workflow "$wf" --status queued --json databaseId -q 'length')
+              busy=$((busy + n + q))
+            done
+            [ "$busy" -eq 0 ] && { echo "No other jobs running."; exit 0; }
+            echo "Waiting for $busy running job(s)..."; sleep 60
+          done
+          echo "Other jobs still running after 90 minutes; not archiving."; exit 1
+
+      - name: Export and verify
+        run: python archive.py export --table ladder_trades --out "$RUNNER_TEMP/ladder_trades.csv.gz" --manifest "$RUNNER_TEMP/ladder_trades.manifest.json"
+
+      - name: Upload to a GitHub Release and verify
+        run: |
+          tag="ladder-trades-archive-$(date -u +%Y%m%d-%H%M)"
+          rows=$(python -c "import json;print(json.load(open('$RUNNER_TEMP/ladder_trades.manifest.json'))['rows'])")
+          gh release create "$tag" "$RUNNER_TEMP/ladder_trades.csv.gz" \
+            --title "Ladder trades archive ($rows rows)" \
+            --notes "Raw ladder backtest trades exported from Neon before dropping the table. Restore: python archive.py restore --table ladder_trades --file ladder_trades.csv.gz"
+          size=$(gh release view "$tag" --json assets -q '.assets[] | select(.name=="ladder_trades.csv.gz") | .size')
+          python archive.py mark-uploaded --manifest "$RUNNER_TEMP/ladder_trades.manifest.json" --asset-bytes "$size" --release "$tag"
+          gh release upload "$tag" "$RUNNER_TEMP/ladder_trades.manifest.json" --clobber
+
+      - name: Drop the table
+        run: python archive.py drop --table ladder_trades --manifest "$RUNNER_TEMP/ladder_trades.manifest.json"
+
+      - name: Status report
+        if: always()
+        run: |
+          python collector.py status || exit 0
+          git config user.name "options-footprint-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add STATUS.md
+          git diff --cached --quiet && exit 0
+          git commit -q -m "Status report after archive $(date -u '+%Y-%m-%d %H:%M')"
+          for i in 1 2 3; do git pull --rebase -q && git push -q && exit 0; sleep 5; done

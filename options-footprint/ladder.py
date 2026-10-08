@@ -241,10 +241,20 @@ def run(args):
 
 def report(args):
     st = C.db()
-    trades = [r for r in st.backend.read("ladder_trades") if r["filled"] == "yes"]
     allt = st.backend.read("ladder_trades")
+    trades = [r for r in allt if r["filled"] == "yes"]
     if not allt:
-        print("No ladder trades yet.")
+        stored = st.backend.read("ladder_report")
+        if not stored:
+            print("No ladder trades yet.")
+            return
+        print("The raw ladder trades are archived (GitHub Release); showing the saved summary from "
+              f"{stored[0]['run_date']}.")
+        rows = [{"grp": r["grp"], "target_dte": int(r["target_dte"]), "target_otm_pct": float(r["target_otm_pct"]),
+                 "exit_rule": r["exit_rule"], "trades": int(r["trades"]), "win_rate_pct": float(r["win_rate_pct"]),
+                 "mean_ret_pct": float(r["mean_ret_pct"]), "median_ret_pct": float(r["median_ret_pct"])}
+                for r in stored]
+        print_tables(rows)
         return
     fill = {g: (sum(1 for r in allt if r["grp"] == g and r["filled"] == "yes"),
                 sum(1 for r in allt if r["grp"] == g)) for g in ("flag", "control")}
@@ -271,6 +281,10 @@ def report(args):
                                  "median_ret_pct": round(statistics.median(vals), 1),
                                  "mean_peak_pct": round(statistics.mean(peaks), 1) if peaks else None})
     st.backend.replace("ladder_report", rows)
+    print_tables(rows)
+
+
+def print_tables(rows):
     for rule in ("hold10", "double_or_10", "expiry"):
         print(f"\n=== Exit rule: {rule}  (return %, flags vs control days on the same stocks) ===")
         print(f"{'expiry':<9}{'strike':<9}{'FLAG mean':>10}{'median':>8}{'win%':>6}"

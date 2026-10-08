@@ -130,6 +130,9 @@ def ladder_rows(st, picked):
 def build(args):
     st = C.db()
     days = ladder_days(st)
+    if not days:
+        sys.exit("No ladder trades in the database (they may be archived). Restore them with archive.py "
+                 "before rebuilding the arena; the current arena is untouched.")
     by_week = {}
     for t, d, g in days:
         by_week.setdefault(week_of(d), []).append((t, d, g))

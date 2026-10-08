@@ -13,6 +13,8 @@ on:
           - nightly
           - compare
           - backfill
+          - report
+          - migrate
       round:
         description: "Backfill round (set automatically; leave at 1)"
         default: "1"
@@ -35,12 +37,16 @@ jobs:
     env:
       ALPACA_KEY_ID: ${{ secrets.ALPACA_KEY_ID }}
       ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}   # Neon; if empty, falls back to the CSV files
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+
+      - name: Install the database driver
+        run: pip install --quiet "psycopg[binary]"
 
       - name: Restore Alpaca response cache
         uses: actions/cache/restore@v4
@@ -53,10 +59,15 @@ jobs:
         run: |
           case "${{ github.event.inputs.command || 'nightly' }}" in
             nightly)  python collector.py nightly
-                      python scorer.py || true ;;
+                      python scorer.py --flags-only || true
+                      # Full signal report once a week (Fridays); it reads all history.
+                      if [ "$(date -u +%u)" = "5" ]; then python scorer.py || true; fi ;;
             compare)  python collector.py compare --ticker WOLF ;;
             backfill) python collector.py backfill --round "${{ github.event.inputs.round || 1 }}"
                       python scorer.py || true ;;
+            report)   python scorer.py ;;
+            migrate)  python collector.py migrate
+                      python scorer.py ;;
           esac
 
       - name: Save Alpaca response cache (even if the run failed)

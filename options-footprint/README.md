@@ -59,6 +59,17 @@ whether early money consistently lands in longer-dated or near-the-money calls.
 `news_catalyst`, `sector_day` (3+ universe names moved together that day), `unknown`, `control`.
 After-hours moves can't be seen in daily bars, so add those by hand as `after_hours` events.
 
+## Database (Neon)
+When the GitHub secret `DATABASE_URL` is set to a Neon (Postgres) connection string, everything
+is stored there instead of the CSV files: tables `events`, `controls`, `daily`, `event_features`,
+`history_done`, `errors`, `signal_report`, and `flags`. Without it, the CSV files in `data/` are used.
+- First time: add the secret, then Run workflow → `migrate` (copies the CSV data in; safe to rerun).
+- `flags` is the daily shortlist for the investigator agent: one row per stock and rule that fired,
+  with empty `verdict` columns for the agent and the outcome filled in once 10 sessions have passed.
+- Nightly runs refresh flags only; the full signal report runs on Fridays, after a backfill, or
+  on demand with Run workflow → `report`.
+- `store.py` holds the table definitions; new columns are added to existing tables automatically.
+
 ## Scoring the signals
 `python scorer.py` (runs automatically after every nightly and backfill) uses every trading day for
 tickers with full history. For each day it computes signals from that day and earlier only, then

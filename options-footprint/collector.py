@@ -38,6 +38,9 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))  # find store.py next to this file
+from store import Store  # noqa: E402
+
 ROOT = os.path.dirname(os.path.abspath(__file__))
 DATA = os.path.join(ROOT, "data")
 CACHE = os.path.join(DATA, "cache")
@@ -317,12 +320,24 @@ def option_full_history(ticker, dates, closes, deadline):
 
 
 # ---------------------------------------------------------------- dataset plumbing
-def load_daily():
-    return read_csv(DAILY)
+_STORE = None
 
 
-def save_daily(daily):
-    write_csv(DAILY, sorted(daily, key=lambda r: (r["ticker"], r["date"])), DAILY_FIELDS)
+def db():
+    """The database (Neon, when DATABASE_URL is set) or the CSV files otherwise."""
+    global _STORE
+    if _STORE is None:
+        _STORE = Store()
+        print(f"Storage: {_STORE.kind}")
+    return _STORE
+
+
+def save(ticker, daily):
+    """Write only the rows that changed, so nightly runs stay light on the database."""
+    changed = [r for r in daily if r.pop("_dirty", False)]
+    if changed:
+        db().save_daily(ticker, changed)
+    return len(changed)
 
 
 def merge_stock_bars(daily, bars):
@@ -336,6 +351,7 @@ def merge_stock_bars(daily, bars):
                 index[(sym, b["date"])] = r
             if not r.get("stock_close"):
                 r["stock_close"], r["stock_volume"], r["source_price"] = b["close"], b["volume"], "alpaca"
+                r["_dirty"] = True
 
 
 def window_end(event):
@@ -372,14 +388,13 @@ def fill_window(ticker, dates, daily, refresh=False):
     vols = option_daily_volume(ticker, todo, closes)
     for d, v in vols.items():
         index[(ticker, d)].update(v)
+        index[(ticker, d)]["_dirty"] = True
 
 
 def log_error(event, ex):
-    rows = read_csv(ERRORS)
-    rows.append({"when": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%d %H:%M"),
-                 "ticker": event["ticker"], "event_date": event["event_date"],
-                 "error": str(ex)[:300]})
-    write_csv(ERRORS, rows[-500:], ["when", "ticker", "event_date", "error"])
+    db().log_error({"logged_at": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%d %H:%M"),
+                    "ticker": event["ticker"], "event_date": event["event_date"],
+                    "error": str(ex)[:300]})
 
 
 # ---------------------------------------------------------------- commands
@@ -410,7 +425,7 @@ def find_movers(args):
     # Extra history so the "all" mode filters have 20 days of volume to average.
     # Split-adjusted prices for spotting moves, so a reverse split doesn't look like a 3,000% rally.
     bars = stock_bars(symbols, add_days(args.start, -35), end, adjustment="split")
-    events = read_csv(EVENTS)
+    events = db().events()
     have = {(e["ticker"], e["event_date"]) for e in events}
     # Also skip the second day of an already-logged two-day move.
     have |= {(e["ticker"], add_days(e["event_date"], -1)) for e in events if e["event_type"] == "two_day"}
@@ -436,89 +451,107 @@ def find_movers(args):
     # With thousands of tickers, several 15% movers happen every day, so "many movers at once"
     # scales with the universe: at least 3 names, or 0.5% of everything scanned.
     crowd = max(3, int(0.005 * len(bars)))
-    added = 0
+    added, new_events = 0, []
     for sym, date, move, pc, c in found:
         if (sym, date) in have:
             continue
         n = len(by_date[date])
-        events.append({"ticker": sym, "event_date": date, "event_type": "close_to_close",
+        new_events.append({"ticker": sym, "event_date": date, "event_type": "close_to_close",
                        "move_pct": f"{move:.1f}", "prior_close": pc, "event_close": c,
                        "catalyst": "Unconfirmed",
                        "label": ("check_corporate_action" if move > BIG_MOVE_REVIEW
                                  else "sector_day" if n >= crowd else "unknown"),
                        "notes": f"{n} of {len(bars)} scanned names up {args.min_move:g}%+ that day"})
         added += 1
-    write_csv(EVENTS, events, EVENT_FIELDS)
-    # Only keep price history for tickers that have events; the full universe would make
-    # the file far too large for GitHub.
-    keep = {e["ticker"] for e in events}
-    daily = load_daily()
-    raw = stock_bars(sorted(keep & set(bars)), add_days(args.start, -35), end)  # raw: matches option strikes
-    merge_stock_bars(daily, raw)
-    save_daily(daily)
+    db().save_events(new_events)
+    # Store raw prices (they match option strikes) only for tickers that just got new events;
+    # everything else already has its prices.
+    keep = sorted({e["ticker"] for e in new_events} & set(bars))
+    if keep:
+        raw = stock_bars(keep, add_days(args.start, -35), end)
+        for t in keep:
+            daily = db().daily(t)
+            merge_stock_bars(daily, {t: raw.get(t, [])})
+            save(t, daily)
     flagged = sum(1 for f in found if f[2] > BIG_MOVE_REVIEW)
     print(f"Scanned {len(bars)} tickers: {len(found)} moves of {args.min_move:g}%+, {added} new events added"
           f" ({flagged} over {BIG_MOVE_REVIEW:g}% kept but flagged for review).")
 
 
 def collect(args, rows=None, label="events"):
-    """Fill pre-move windows. Stops cleanly at --max-minutes; rerun to continue where it left off."""
-    daily = load_daily()
-    rows = rows if rows is not None else read_csv(EVENTS)
+    """Fill pre-move windows, one stock at a time. Events already filled are skipped without
+    touching the database. Stops cleanly at --max-minutes; rerun to continue."""
+    st = db()
+    is_controls = rows is not None and label == "control"
+    rows = rows if rows is not None else st.events()
+    todo = [e for e in rows if e.get("window_filled") != "yes" and e["event_date"] >= ALPACA_HISTORY_START]
+    print(f"{label}: {len(rows) - len(todo)} already filled, {len(todo)} to fill.")
     deadline = time.monotonic() + 60 * getattr(args, "max_minutes", 50)
+    by_ticker = {}
+    for e in todo:
+        by_ticker.setdefault(e["ticker"], []).append(e)
     done = 0
-    for n, e in enumerate(rows, 1):
-        if e["event_date"] < ALPACA_HISTORY_START:
-            continue
+    for t, evs in by_ticker.items():
         if time.monotonic() > deadline:
             print(f"Time budget reached after {done} {label}; saved. Run it again to continue.")
-            save_daily(daily)
             return False
-        try:
-            ensure_prices(e["ticker"], add_days(e["event_date"], -60), e["event_date"], daily)
-            window = days_before(e["ticker"], e, args.lookback, daily)
-            fill_window(e["ticker"], window, daily)
-        except Exception as ex:   # log it, keep going; rerunning retries failed ones
-            log_error(e, ex)
-            print(f"{label} {n}/{len(rows)}: {e['ticker']} {e['event_date']} FAILED: {str(ex)[:150]}")
-            continue
-        done += 1
-        print(f"{label} {n}/{len(rows)}: {e['ticker']} {e['event_date']} ({len(window)} days)")
-        if done % 10 == 0:
-            save_daily(daily)  # don't lose progress if the job is cut off
-    save_daily(daily)
+        daily = st.daily(t)
+        filled = []
+        for e in evs:
+            try:
+                ensure_prices(t, add_days(e["event_date"], -60), e["event_date"], daily)
+                window = days_before(t, e, args.lookback, daily)
+                fill_window(t, window, daily)
+            except Exception as ex:   # log it, keep going; rerunning retries failed ones
+                log_error(e, ex)
+                print(f"{label}: {t} {e['event_date']} FAILED: {str(ex)[:150]}")
+                continue
+            e["window_filled"] = "yes"
+            filled.append(e)
+            done += 1
+        save(t, daily)
+        (st.save_controls if is_controls else st.save_events)(filled)
+        print(f"{label}: {t} {len(filled)}/{len(evs)} filled ({done}/{len(todo)} overall)")
     return True
 
 
 def controls(args):
-    """Random quiet dates for the same tickers, so we can measure false positives."""
-    daily, events = load_daily(), read_csv(EVENTS)
+    """Random quiet dates for the same tickers, so we can measure false positives. Only loads
+    a stock's history when it actually needs more control days."""
+    st = db()
+    events, rows = st.events(), st.controls()
     rng = random.Random(42)
-    rows = read_csv(CONTROLS)
     have = {(r["ticker"], r["event_date"]) for r in rows}
+    event_days, control_count = {}, {}
     for e in events:
-        tk = e["ticker"]
-        days = sorted(r["date"] for r in daily if r["ticker"] == tk and r.get("stock_close"))
-        closes = {r["date"]: to_float(r["stock_close"]) for r in daily if r["ticker"] == tk}
-        event_days = [x["event_date"] for x in events if x["ticker"] == tk]
+        event_days.setdefault(e["ticker"], []).append(e["event_date"])
+    for r in rows:
+        control_count[r["ticker"]] = control_count.get(r["ticker"], 0) + 1
+    new_rows = []
+    for tk, edays in sorted(event_days.items()):
+        need = args.per_event * len(edays) - control_count.get(tk, 0)
+        if need <= 0:
+            continue
+        daily = st.daily(tk)
+        days = [r["date"] for r in daily if r.get("stock_close")]
+        closes = {r["date"]: to_float(r["stock_close"]) for r in daily}
         ok = []
         for i in range(args.lookback + 1, len(days)):
             d, p = days[i], days[i - 1]
             if d < ALPACA_HISTORY_START:
                 continue
-            if any(abs((dt.date.fromisoformat(d) - dt.date.fromisoformat(x)).days) < 15 for x in event_days):
+            if any(abs((dt.date.fromisoformat(d) - dt.date.fromisoformat(x)).days) < 15 for x in edays):
                 continue
             if closes.get(d) and closes.get(p) and abs(closes[d] / closes[p] - 1) < 0.05:
                 ok.append(d)
-        existing = sum(1 for r in rows if r["ticker"] == tk)
-        need = max(0, args.per_event * len(event_days) - existing)
         for d in rng.sample(ok, min(need, len(ok))):
             if (tk, d) not in have:
-                rows.append({"ticker": tk, "event_date": d, "event_type": "control", "label": "control"})
+                new_rows.append({"ticker": tk, "event_date": d, "event_type": "control", "label": "control"})
                 have.add((tk, d))
-    write_csv(CONTROLS, rows, EVENT_FIELDS)
+    st.save_controls(new_rows)
+    rows = st.controls()
     finished = collect(args, rows, label="control")
-    print(f"{len(rows)} control dates on file.")
+    print(f"{len(rows)} control dates on file ({len(new_rows)} new).")
     return finished
 
 
@@ -582,29 +615,31 @@ FEATURE_FIELDS = ["ticker", "event_date", "label", "move_pct", "days_with_put_ca
 
 
 def features(args):
-    daily = load_daily()
-    rows = [compute(e, daily, args.lookback) for e in read_csv(EVENTS) + read_csv(CONTROLS)]
-    write_csv(FEATURES, rows, FEATURE_FIELDS)
-    ev = [r for r in rows if r["label"] != "control"]
-    ct = [r for r in rows if r["label"] == "control"]
-    print(f"{len(ev)} events, {len(ct)} controls -> {FEATURES}")
-    for group, name in ((ev, "events"), (ct, "controls")):
-        drops = [r["put_call_drop_ratio"] for r in group if "put_call_drop_ratio" in r]
-        if drops:
-            hits = sum(1 for x in drops if x >= 5)
-            print(f"  {name}: {hits}/{len(drops)} had a put/call drop of 5x or more")
+    """Event and control features. By default only rows not scored yet; --all recomputes everything."""
+    st = db()
+    rows = st.events() + st.controls()
+    done = set() if getattr(args, "all", False) else {(f["ticker"], f["event_date"]) for f in st.features()}
+    todo = [r for r in rows if (r["ticker"], r["event_date"]) not in done]
+    by_ticker = {}
+    for r in todo:
+        by_ticker.setdefault(r["ticker"], []).append(r)
+    out = []
+    for t, rs in by_ticker.items():
+        daily = st.daily(t)
+        out += [compute(r, daily, args.lookback) for r in rs]
+    st.save_features(out)
+    print(f"Features: {len(out)} computed, {len(done)} already on file.")
 
 
 def compare(args):
     """Check Alpaca-computed put/call against the Alpha Vantage values already on file."""
-    daily = load_daily()
-    rows = sorted((r for r in daily if r["ticker"] == args.ticker and r.get("put_call_ratio")),
-                  key=lambda r: r["date"])
+    daily = db().daily(args.ticker)
+    rows = [r for r in daily if r.get("put_call_ratio")]
     if not rows:
         sys.exit(f"No Alpha Vantage values on file for {args.ticker}.")
     ensure_prices(args.ticker, add_days(rows[0]["date"], -5), rows[-1]["date"], daily)
     fill_window(args.ticker, [r["date"] for r in rows], daily, refresh=True)
-    save_daily(daily)
+    save(args.ticker, daily)
     print(f"{'date':<12}{'alpha vantage':>14}{'alpaca':>10}{'calls':>10}{'puts':>10}")
     diffs = []
     for r in rows:
@@ -618,14 +653,13 @@ def compare(args):
         print("Under ~0.05 means Alpaca is good enough to replace Alpha Vantage.")
 
 
-HISTORY_DONE = os.path.join(DATA, "history_done.csv")
 HISTORY_MIN_EVENTS = 3        # tickers with this many events get their full daily history
 STATUS_FILE = os.path.join(ROOT, "backfill_status.txt")
 
 
 def history_tickers():
     counts = {}
-    for e in read_csv(EVENTS):
+    for e in db().events():
         counts[e["ticker"]] = counts.get(e["ticker"], 0) + 1
     return sorted(t for t, n in counts.items() if n >= HISTORY_MIN_EVENTS)
 
@@ -634,14 +668,14 @@ def history(args, deadline=None):
     """Full daily options history for every ticker with several events. Resumable per ticker.
     Returns True when every eligible ticker is done."""
     deadline = deadline or time.monotonic() + 60 * getattr(args, "max_minutes", 50)
-    done = {r["ticker"] for r in read_csv(HISTORY_DONE)}
+    done = {r["ticker"] for r in db().history_done()}
     todo = [t for t in history_tickers() if t not in done]
     print(f"Full history: {len(done)} tickers done, {len(todo)} to go.")
     today = dt.date.today().isoformat()
     for t in todo:
         if time.monotonic() > deadline:
             return False
-        daily = load_daily()
+        daily = db().daily(t)
         try:
             merge_stock_bars(daily, stock_bars([t], add_days(ALPACA_HISTORY_START, -5), today))
             rows = {r["date"]: r for r in daily if r["ticker"] == t and r["date"] >= ALPACA_HISTORY_START}
@@ -655,10 +689,9 @@ def history(args, deadline=None):
             return False
         for d, v in result.items():
             rows[d].update(v)
-        save_daily(daily)
-        marks = read_csv(HISTORY_DONE)
-        marks.append({"ticker": t, "completed": today})
-        write_csv(HISTORY_DONE, marks, ["ticker", "completed"])
+            rows[d]["_dirty"] = True
+        save(t, daily)
+        db().mark_history(t, today)
     return True
 
 
@@ -676,7 +709,7 @@ def backfill(args):
     if finished:
         finished = controls(argparse.Namespace(per_event=args.per_event, lookback=args.lookback,
                                                max_minutes=left()))
-    features(argparse.Namespace(lookback=args.lookback))
+    features(argparse.Namespace(lookback=args.lookback, all=False))
     with open(STATUS_FILE, "w") as f:
         f.write("done" if finished else "more")
     print("Backfill complete." if finished else "Backfill not finished yet; another round needed.")
@@ -688,19 +721,54 @@ def nightly(args):
     find_movers(argparse.Namespace(start=start, end=None, min_move=args.min_move,
                                    universe=getattr(args, "universe", None)))
     collect(argparse.Namespace(lookback=args.lookback, max_minutes=40))
-    # Keep the full-history tickers current: fill in the last few sessions.
-    daily = load_daily()
+    # Keep the full-history tickers current: fill in the last few sessions (only recent rows
+    # are loaded, so this stays cheap even with hundreds of tickers).
     today = dt.date.today().isoformat()
-    for t in sorted({r["ticker"] for r in read_csv(HISTORY_DONE)}):
+    tracked = sorted({r["ticker"] for r in db().history_done()})
+    # New trading days' prices for every tracked stock, 100 stocks per request.
+    try:
+        fresh = stock_bars(tracked, add_days(today, -10), today) if tracked else {}
+    except Exception as ex:
+        log_error({"ticker": "*", "event_date": today}, ex)
+        fresh = {}
+    for t in tracked:
         try:
-            ensure_prices(t, add_days(today, -10), today, daily)
-            recent = sorted(r["date"] for r in daily if r["ticker"] == t)[-5:]
+            daily = db().daily(t, since=add_days(today, -20))
+            merge_stock_bars(daily, {t: fresh.get(t, [])})
+            recent = sorted(r["date"] for r in daily)[-5:]
             fill_window(t, recent, daily)
+            save(t, daily)
         except Exception as ex:
             log_error({"ticker": t, "event_date": today}, ex)
-    save_daily(daily)
     controls(argparse.Namespace(per_event=args.per_event, lookback=args.lookback, max_minutes=30))
-    features(argparse.Namespace(lookback=args.lookback))
+    features(argparse.Namespace(lookback=args.lookback, all=False))
+
+
+def migrate(args):
+    """One-time copy of the CSV files in data/ into the database. Safe to rerun (it upserts)."""
+    if db().kind != "postgres":
+        sys.exit("Set DATABASE_URL to your Neon connection string first.")
+    from store import TABLES
+    src = Store(url="")   # the CSV files
+    for table in TABLES:
+        rows = src.backend.read(table)
+        if table == "events":
+            # Windows already filled in the old files don't need re-checking.
+            done = {(f["ticker"], f["event_date"]) for f in src.backend.read("event_features")
+                    if (to_float(f.get("days_with_put_call")) or 0) >= 10}
+            for r in rows:
+                if (r["ticker"], r["event_date"]) in done:
+                    r["window_filled"] = "yes"
+        if table == "controls":
+            done = {(f["ticker"], f["event_date"]) for f in src.backend.read("event_features")
+                    if (to_float(f.get("days_with_put_call")) or 0) >= 10}
+            for r in rows:
+                if (r["ticker"], r["event_date"]) in done:
+                    r["window_filled"] = "yes"
+        for i in range(0, len(rows), 5000):
+            db().backend.upsert(table, rows[i:i + 5000])
+        print(f"  {table}: {len(rows)} rows copied")
+    print("Migration complete.")
 
 
 def main():
@@ -715,19 +783,22 @@ def main():
     c.add_argument("--max-minutes", type=float, default=50)
     c.add_argument("--lookback", type=int, default=15)
     d = sub.add_parser("features"); d.add_argument("--lookback", type=int, default=15)
+    d.add_argument("--all", action="store_true", help="recompute every row, not just new ones")
     e = sub.add_parser("compare"); e.add_argument("--ticker", default="WOLF")
     n = sub.add_parser("nightly"); n.add_argument("--days-back", type=int, default=7)
     n.add_argument("--universe", choices=["core", "all"])
     n.add_argument("--min-move", type=float, default=15); n.add_argument("--lookback", type=int, default=15)
     n.add_argument("--per-event", type=int, default=2)
     h = sub.add_parser("history"); h.add_argument("--max-minutes", type=float, default=50)
+    sub.add_parser("migrate", help="copy the CSV files in data/ into the database (one time)")
     f = sub.add_parser("backfill"); f.add_argument("--max-minutes", type=float, default=100)
     f.add_argument("--round", type=int, default=1); f.add_argument("--start", default="2024-03-01")
     f.add_argument("--min-move", type=float, default=15); f.add_argument("--lookback", type=int, default=15)
     f.add_argument("--per-event", type=int, default=2); f.add_argument("--universe", choices=["core", "all"])
     args = p.parse_args()
     {"find-movers": find_movers, "collect": collect, "controls": controls, "features": features,
-     "compare": compare, "nightly": nightly, "history": history, "backfill": backfill}[args.cmd](args)
+     "compare": compare, "nightly": nightly, "history": history, "backfill": backfill,
+     "migrate": migrate}[args.cmd](args)
 
 
 if __name__ == "__main__":

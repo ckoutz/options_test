@@ -27,7 +27,7 @@ jobs:
     defaults:
       run:
         working-directory: options-footprint
-    timeout-minutes: 120
+    timeout-minutes: 150
     env:
       ALPACA_KEY_ID: ${{ secrets.ALPACA_KEY_ID }}
       ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
@@ -39,7 +39,7 @@ jobs:
           python-version: "3.12"
 
       - name: Restore Alpaca response cache
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: options-footprint/data/cache
           key: alpaca-cache-${{ github.run_id }}
@@ -56,10 +56,20 @@ jobs:
                       python collector.py features ;;
           esac
 
-      - name: Save dataset back to the repository
+      - name: Save Alpaca response cache (even if the run failed)
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: options-footprint/data/cache
+          key: alpaca-cache-${{ github.run_id }}
+
+      - name: Save dataset back to the repository (even if the run failed)
+        if: always()
         run: |
           git config user.name "options-footprint-bot"
           git config user.email "actions@users.noreply.github.com"
           git add data/*.csv
-          git diff --cached --quiet || git commit -m "Dataset update $(date -u +%Y-%m-%d)"
+          git diff --cached --quiet && exit 0
+          git commit -m "Dataset update $(date -u +%Y-%m-%d)"
+          git pull --rebase -q   # in case you edited something on GitHub during the run
           git push

@@ -70,6 +70,17 @@ is stored there instead of the CSV files: tables `events`, `controls`, `daily`, 
   on demand with Run workflow → `report`.
 - `store.py` holds the table definitions; new columns are added to existing tables automatically.
 
+## Ladder backtest (would it have made money?)
+`ladder.py` (GitHub: Actions → "Ladder backtest" → Run workflow) takes every historical flag and an
+equal number of random non-flag days on the same stocks, and pretends to buy the next day:
+5 strikes (at the money, +5%, +10%, +15%, +20%) × 3 expirations (nearest to 14, 30, 90 days).
+Each contract is followed daily and scored three ways: sell after 10 sessions, sell at 2x or
+after 10 sessions, or hold to expiration. A 5% cost is charged on each side of every trade,
+since past data has trade prices rather than bid and ask. Results: tables `ladder_trades`
+(every contract) and `ladder_report` (by expiration, strike distance, exit rule, flag vs control).
+It runs separately from the nightly job, paces itself slowly to share the Alpaca key with a
+running backfill, and re-launches itself until done. Rerun it later to add newly tracked stocks.
+
 ## Scoring the signals
 `python scorer.py` (runs automatically after every nightly and backfill) uses every trading day for
 tickers with full history. For each day it computes signals from that day and earlier only, then

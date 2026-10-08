@@ -1,3 +1,4 @@
 data/cache/
 __pycache__/
 backfill_status.txt
+ladder_status.txt

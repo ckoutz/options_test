@@ -48,6 +48,17 @@ FLAG_COLS = {"signal_date": D, "ticker": T, "rule": T, "close": F, "call_volume_
              "verdict": T, "verdict_notes": T, "reviewed_at": T,
              "fwd_return_pct": F, "fwd_max_gain_pct": F}
 
+# The ladder backtest: hypothetical call purchases across strikes and expirations after each
+# flag (and on random control days), with the result under several exit rules.
+LADDER_COLS = {"grp": T, "rules": T, "ticker": T, "signal_date": D, "entry_date": D,
+               "contract": T, "target_dte": I, "dte": I, "target_otm_pct": F, "strike": F,
+               "expiration": D, "stock_close": F, "entry_price": F, "filled": T,
+               "ret_hold10_pct": F, "ret_double_or_10_pct": F, "ret_expiry_pct": F,
+               "peak_10_pct": F}
+LADDER_REPORT_COLS = {"run_date": D, "grp": T, "target_dte": I, "target_otm_pct": F, "exit_rule": T,
+                      "trades": I, "win_rate_pct": F, "mean_ret_pct": F, "median_ret_pct": F,
+                      "mean_peak_pct": F}
+
 TABLES = {
     "events": (EVENT_COLS, ["ticker", "event_date"]),
     "controls": (EVENT_COLS, ["ticker", "event_date"]),
@@ -57,10 +68,13 @@ TABLES = {
     "errors": (ERROR_COLS, None),
     "signal_report": (REPORT_COLS, ["move_pct", "horizon_days", "rule"]),
     "flags": (FLAG_COLS, ["signal_date", "ticker", "rule"]),
+    "ladder_trades": (LADDER_COLS, ["grp", "ticker", "signal_date", "target_dte", "target_otm_pct"]),
+    "ladder_report": (LADDER_REPORT_COLS, ["grp", "target_dte", "target_otm_pct", "exit_rule"]),
 }
 CSV_FILES = {"events": "events.csv", "controls": "controls.csv", "daily": "daily_features.csv",
              "event_features": "event_features.csv", "history_done": "history_done.csv",
-             "errors": "errors.csv", "signal_report": "signal_report.csv", "flags": "flags.csv"}
+             "errors": "errors.csv", "signal_report": "signal_report.csv", "flags": "flags.csv",
+             "ladder_trades": "ladder_trades.csv", "ladder_report": "ladder_report.csv"}
 
 
 def _to_db(value, kind):

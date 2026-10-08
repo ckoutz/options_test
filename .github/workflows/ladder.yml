@@ -1,0 +1,83 @@
+name: Ladder backtest
+
+# Hypothetical call ladders after every historical flag (and random control days), to see which
+# strikes, expirations, and exit rules would have made money. Runs separately from the nightly
+# job so it can work alongside a backfill; it paces itself slowly to share the Alpaca key.
+
+on:
+  workflow_dispatch:
+    inputs:
+      round:
+        description: "Round (set automatically; leave at 1)"
+        default: "1"
+      report_only:
+        description: "Only rebuild the report from trades already recorded"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  actions: write     # lets an unfinished run launch its next round
+
+concurrency:
+  group: options-ladder
+  cancel-in-progress: false
+
+jobs:
+  ladder:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    defaults:
+      run:
+        working-directory: options-footprint
+    env:
+      ALPACA_KEY_ID: ${{ secrets.ALPACA_KEY_ID }}
+      ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install the database driver
+        run: pip install --quiet "psycopg[binary]"
+
+      - name: Restore Alpaca response cache
+        uses: actions/cache/restore@v4
+        with:
+          path: options-footprint/data/cache
+          key: ladder-cache-${{ github.run_id }}
+          restore-keys: |
+            ladder-cache-
+            alpaca-cache-
+
+      - name: Run
+        run: |
+          if [ -z "$DATABASE_URL" ]; then echo "DATABASE_URL secret is not set"; exit 1; fi
+          if [ "${{ github.event.inputs.report_only }}" = "true" ]; then
+            python ladder.py --report-only
+          else
+            python ladder.py --max-minutes 100
+          fi
+
+      - name: Save Alpaca response cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: options-footprint/data/cache
+          key: ladder-cache-${{ github.run_id }}
+
+      - name: Launch the next round if this one ran out of time
+        if: ${{ !cancelled() && github.event.inputs.report_only != 'true' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          status=$(cat ladder_status.txt 2>/dev/null || echo missing)
+          round=${{ github.event.inputs.round || 1 }}
+          echo "Ladder status after round $round: $status"
+          if [ "$status" = "more" ] && [ "$round" -lt 10 ]; then
+            gh workflow run ladder.yml --ref "${{ github.ref_name }}" -f round=$((round + 1))
+            echo "Launched round $((round + 1))."
+          fi

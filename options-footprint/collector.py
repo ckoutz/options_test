@@ -137,7 +137,7 @@ MIN_SECONDS_BETWEEN_REQUESTS = 0.35   # about 170 a minute, under Alpaca's free 
 
 
 def http_json(url, headers=None):
-    for attempt in range(5):
+    for attempt in range(8):
         try:
             wait = _last_request[0] + MIN_SECONDS_BETWEEN_REQUESTS - time.monotonic()
             if wait > 0:
@@ -147,8 +147,8 @@ def http_json(url, headers=None):
             with urllib.request.urlopen(req, timeout=60) as r:
                 return json.loads(r.read().decode("utf-8"))
         except urllib.error.HTTPError as e:
-            if e.code == 429:              # rate limited: back off and retry
-                time.sleep(2 ** attempt)
+            if e.code == 429:              # rate limited (e.g. two jobs sharing the key): back off
+                time.sleep(min(60, 2 ** attempt))
                 continue
             body = e.read().decode("utf-8", "replace")[:500]
             safe_url = url.split("?")[0]

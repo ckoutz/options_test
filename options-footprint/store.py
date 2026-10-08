@@ -87,6 +87,9 @@ BUNDLE_COLS = {"ticker": T, "bundle": I, "universe": T}
 # News headlines (Alpaca / Benzinga), one row per article per stock, with a model-scored tone.
 NEWS_COLS = {"id": T, "ticker": T, "created_at": T, "headline": T, "n_symbols": I, "sentiment": F}
 NEWS_FETCHED_COLS = {"ticker": T, "through": T, "articles": I}
+# Daily open interest per stock (Databento OPRA), by kind of call: as of each session's close.
+OI_COLS = {"ticker": T, "date": D, "call_oi": I, "put_oi": I, "call_oi_otm": I, "call_oi_long": I,
+           "call_oi_short": I, "contracts": I}
 # Short notes from jobs (counts, decisions) so they show in STATUS.md without reading GitHub logs.
 RUN_LOG_COLS = {"logged_at": T, "step": T, "message": T}
 COMMITTEE_NOTE_COLS = {"lineage": T, "generation": I, "author": T, "model": T, "text": T, "rules": T, "created": T}
@@ -117,6 +120,7 @@ TABLES = {
     "news": (NEWS_COLS, ["id", "ticker"]),
     "news_fetched": (NEWS_FETCHED_COLS, ["ticker"]),
     "run_log": (RUN_LOG_COLS, None),
+    "oi_daily": (OI_COLS, ["ticker", "date"]),
     "committee_notes": (COMMITTEE_NOTE_COLS, ["lineage", "generation", "author"]),
     "scorebook": (SCOREBOOK_COLS, ["lineage", "generation", "author", "rule_name", "period"]),
     "agent_ratings": (RATING_COLS, ["run_id", "ticker", "signal_date"]),
@@ -130,7 +134,7 @@ CSV_FILES = {"events": "events.csv", "controls": "controls.csv", "daily": "daily
              "agent_lessons": "agent_lessons.csv", "agent_weeks": "agent_weeks.csv", "pool": "pool.csv", "committee_notes": "committee_notes.csv",
              "scorebook": "scorebook.csv", "agent_ratings": "agent_ratings.csv",
              "wide_universe": "wide_universe.csv", "bundles": "bundles.csv", "news": "news.csv",
-             "news_fetched": "news_fetched.csv", "run_log": "run_log.csv"}
+             "news_fetched": "news_fetched.csv", "run_log": "run_log.csv", "oi_daily": "oi_daily.csv"}
 
 
 def _to_db(value, kind):

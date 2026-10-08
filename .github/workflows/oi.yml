@@ -9,12 +9,18 @@ on:
       command:
         description: "What to run"
         type: choice
-        default: estimate
+        default: pull-and-analyze
         options:
+          - pull-and-analyze
           - estimate
+          - analyze
+          - trades-check
+      max_cost:
+        description: "Most Databento credit to spend on this pull, in dollars"
+        default: "100"
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: options-oi
@@ -23,14 +29,13 @@ concurrency:
 jobs:
   oi:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 330
     defaults:
       run:
         working-directory: options-footprint
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
       DATABENTO_API_KEY: ${{ secrets.DATABENTO_API_KEY }}
-      DAILY_MIRROR: "off"
     steps:
       - uses: actions/checkout@v4
 
@@ -41,5 +46,37 @@ jobs:
       - name: Install libraries
         run: pip install --quiet "psycopg[binary]" databento
 
+      - name: Restore the local copy of the daily table
+        uses: actions/cache/restore@v4
+        with:
+          path: options-footprint/data/daily_mirror.sqlite
+          key: daily-mirror-${{ github.run_id }}
+          restore-keys: daily-mirror-
+
       - name: Run
-        run: python oi_test.py ${{ github.event.inputs.command }}
+        run: |
+          case "${{ github.event.inputs.command }}" in
+            pull-and-analyze)
+              python oi_test.py trades-check || true
+              python oi_test.py pull --max-cost "${{ github.event.inputs.max_cost || '100' }}"
+              python oi_test.py analyze ;;
+            *) python oi_test.py ${{ github.event.inputs.command }} ;;
+          esac
+
+      - name: Save the local copy of the daily table
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: options-footprint/data/daily_mirror.sqlite
+          key: daily-mirror-${{ github.run_id }}
+
+      - name: Commit the report
+        if: always()
+        run: |
+          [ -f OI_TEST.md ] || exit 0
+          git config user.name "options-footprint-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add OI_TEST.md
+          git diff --cached --quiet && exit 0
+          git commit -q -m "Open interest test report $(date -u '+%Y-%m-%d %H:%M')"
+          for i in 1 2 3; do git pull --rebase -q && git push -q && exit 0; sleep 5; done

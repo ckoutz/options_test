@@ -769,7 +769,10 @@ def run_generation(st, args, pool, deadline, pot):
     book += srows
     scoring = blind_run(gen, lambda: pot.llm(args.model), ed_notes, "\n".join(ed_lines), pool,
                         TRAIN_BUNDLES, ("score",), "score", deadline, "scoring")
-    # Everything finished: write the generation in one go.
+    # Everything finished: write the generation in one go, on a fresh connection (the one opened at
+    # the start may have been dropped while the agents worked; Neon closes idle connections).
+    C._STORE = None
+    st = C.db()
     now = dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")
     runs, trades, ratings, weeks = [], [], [], []
     for a, (walk, working, rules) in results.items():
@@ -818,6 +821,8 @@ def loop(args):
         if time.monotonic() + 1.3 * per_gen > deadline:
             print("Not enough time left for another generation in this round; stopping cleanly.")
             break
+        C._STORE = None              # fresh connection for every generation
+        st = C.db()
         pot = Pot(args.max_usd, spent(st))
         try:
             run_generation(st, args, pool, deadline, pot)

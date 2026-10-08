@@ -571,7 +571,11 @@ class Walk:
         return s
 
 
-def bundle_review(trades, ratings):
+def feature_line(f):
+    return ", ".join(f"{label} {A.fmt(f.get(k), '{:.1f}') if k != 'price_band' else f.get(k)}" for k, label, _ in A.FEATURES)
+
+
+def bundle_review(trades, ratings, cands=()):
     rets = [t["ret_pct"] for t in trades]
     lines = []
     if rets:
@@ -597,9 +601,22 @@ def bundle_review(trades, ratings):
         lines.append("Your worst and best trades (what you saw -> result):")
         for t in sample:
             f = t["f"]
-            lines.append(f"- {A.describe_pick(t)}: " + ", ".join(
-                f"{label} {A.fmt(f.get(k), '{:.1f}') if k != 'price_band' else f.get(k)}" for k, label, _ in A.FEATURES)
-                + f" -> {t['ret_pct']:+.1f}%")
+            lines.append(f"- {A.describe_pick(t)}: {feature_line(f)} -> {t['ret_pct']:+.1f}%")
+    # What the whole bundle looked like, traded or not: the biggest winners and losers among every
+    # candidate shown, with the numbers seen beforehand and the rating given. This is the richest
+    # evidence for finding a pattern, especially for a trader who made few trades.
+    rated = {(r["ticker"], r["signal_date"]): r["rating"] for r in ratings}
+    shown = sorted(cands, key=lambda c: c["shares"])
+    if shown:
+        base = [c["shares"] for c in shown]
+        lines.append(f"All {len(shown)} candidates in this bundle: the stock averaged {statistics.mean(base):+.1f}% "
+                     f"over the next 10 sessions (median {statistics.median(base):+.1f}%). The biggest losers and "
+                     f"winners (what was visible beforehand, your rating -> stock return):")
+        pick = shown[:12] + shown[-12:] if len(shown) > 24 else shown
+        for c in pick:
+            r = rated.get((c["ticker"], c["date"]))
+            lines.append(f"- {feature_line(c['f'])}; you rated {'not rated' if r is None else f'{r:+d}'} "
+                         f"-> stock {c['shares']:+.1f}%")
     return "\n".join(lines)
 
 
@@ -618,7 +635,7 @@ def agent_train(gen, agent, llm, notes, scorebook, pool, order, fraction, deadli
         label = f"Bundle {k} of {len(order)}"
         before = len(walk.ratings)
         trades = walk.bundle(by_week, working, scorebook, label)
-        review = bundle_review(trades, walk.ratings[before:])
+        review = bundle_review(trades, walk.ratings[before:], [c for wk in by_week.values() for c in wk])
         last = k == len(order)
         prompt = f"""You finished {label.lower()} (a fresh group of stocks you had not seen). Here is how you did.
 
@@ -632,8 +649,13 @@ Keep what held up, fix or drop what didn't, add what you learned. Write rules in
 (thresholds, combinations, instrument, expiry, strike, exit), with the evidence behind each (how many trades,
 returns, in how many bundles it held) and how confident you are. Be honest about small samples and about
 ideas that worked in one bundle and failed in another. Put your rules and conclusions first and the supporting
-detail after. No stock codes. No length limit: be as thorough as
-is useful, organized under headings. Reply with the notes only."""
+detail after. Rewrite the notes as one up-to-date document (merge what each bundle taught you into the rules)
+rather than appending a log per bundle, so they stay readable. The system already records every trade,
+rating and result for you, so spend your words on what predicts returns, not on record-keeping.
+No stock codes. No length limit: be as thorough as is useful, organized under headings. Reply with the notes only.
+
+What the columns mean:
+""" + "\n".join(f"- {label}: {meaning}" for _, label, meaning in A.FEATURES)
         working = llm.chat([{"role": "user", "content": prompt}], max_tokens=24000)
         if llm.last_finish == "length":
             working += "\n\n(The notes were cut off here by the reply limit.)"

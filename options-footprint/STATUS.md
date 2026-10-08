@@ -1,11 +1,11 @@
-# Status (2026-10-08 17:27 UTC, storage: postgres)
+# Status (2026-10-08 18:16 UTC, storage: postgres)
 
 ## Backfill
 - Big moves logged: 5,382 across 1,649 stocks
 - Pre-move windows filled: 5,382 of 5,382
 - Stocks eligible for full history (3+ moves): 649; done: 649
 - Control days: 10,754 (filled 10,754)
-- Daily rows: 1,049,473; database size: 442 MB
+- Daily rows: 1,049,473; database size: 445 MB
 
 ## Labels
 - unknown: 4,598

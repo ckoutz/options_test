@@ -55,6 +55,13 @@ jobs:
           key: alpaca-cache-${{ github.run_id }}
           restore-keys: alpaca-cache-
 
+      - name: Restore the local copy of the daily table
+        uses: actions/cache/restore@v4
+        with:
+          path: options-footprint/data/daily_mirror.sqlite
+          key: daily-mirror-${{ github.run_id }}
+          restore-keys: daily-mirror-
+
       - name: Run
         run: |
           case "${{ github.event.inputs.command || 'nightly' }}" in
@@ -70,6 +77,13 @@ jobs:
                       python scorer.py ;;
           esac
 
+
+      - name: Save the local copy of the daily table
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: options-footprint/data/daily_mirror.sqlite
+          key: daily-mirror-${{ github.run_id }}
       - name: Save Alpaca response cache (even if the run failed)
         if: always()
         uses: actions/cache/save@v4

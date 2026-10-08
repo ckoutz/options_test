@@ -53,6 +53,13 @@ jobs:
             ladder-cache-
             alpaca-cache-
 
+      - name: Restore the local copy of the daily table
+        uses: actions/cache/restore@v4
+        with:
+          path: options-footprint/data/daily_mirror.sqlite
+          key: daily-mirror-${{ github.run_id }}
+          restore-keys: daily-mirror-
+
       - name: Run
         run: |
           if [ -z "$DATABASE_URL" ]; then echo "DATABASE_URL secret is not set"; exit 1; fi
@@ -62,6 +69,13 @@ jobs:
             python ladder.py --max-minutes 100
           fi
 
+
+      - name: Save the local copy of the daily table
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: options-footprint/data/daily_mirror.sqlite
+          key: daily-mirror-${{ github.run_id }}
       - name: Save Alpaca response cache
         if: always()
         uses: actions/cache/save@v4

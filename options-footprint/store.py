@@ -11,6 +11,8 @@ so the rest of the code doesn't care which one is in use.
 import csv
 import datetime as dt
 import os
+import sqlite3
+import threading
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 DATA = os.path.join(ROOT, "data")
@@ -150,6 +152,11 @@ class PostgresStore:
             for c, k in cols.items():
                 self.conn.execute(f"alter table {name} add column if not exists {c} {k}")
         self.conn.execute("create index if not exists flags_date on flags (signal_date)")
+        # Every write to the big daily table is time-stamped, so a local copy can fetch only what
+        # changed since it last synced instead of downloading the whole table again.
+        for t in STAMPED:
+            self.conn.execute(f"alter table {t} add column if not exists updated_at timestamptz")
+            self.conn.execute(f"create index if not exists {t}_updated on {t} (updated_at)")
 
     def read(self, table, where=None, params=()):
         cols = list(TABLES[table][0])
@@ -171,11 +178,15 @@ class PostgresStore:
             groups.setdefault(names, []).append(r)
         for names, group in groups.items():
             values = [[_to_db(r.get(c), cols[c]) for c in names] for r in group]
-            sql = f"insert into {table} ({', '.join(names)}) values ({', '.join(['%s'] * len(names))})"
+            stamp = table in STAMPED
+            sql = (f"insert into {table} ({', '.join(names)}{', updated_at' if stamp else ''}) "
+                   f"values ({', '.join(['%s'] * len(names))}{', now()' if stamp else ''})")
             if key:
-                updates = [c for c in names if c not in key]
+                updates = [f"{c} = excluded.{c}" for c in names if c not in key]
+                if stamp:
+                    updates.append("updated_at = now()")
                 sql += f" on conflict ({', '.join(key)}) do " + (
-                    "update set " + ", ".join(f"{c} = excluded.{c}" for c in updates) if updates else "nothing")
+                    "update set " + ", ".join(updates) if updates else "nothing")
             with self.conn.cursor() as cur:
                 cur.executemany(sql, values)
 
@@ -253,6 +264,93 @@ class CsvStore:
         return {r["ticker"] for r in self._all("daily")}
 
 
+STAMPED = ("daily",)
+MIRROR_PATH = os.path.join(DATA, "daily_mirror.sqlite")
+MIRROR_OVERLAP = dt.timedelta(hours=2)   # re-fetch a little, in case another job's write landed late
+
+
+class DailyMirror:
+    """A local SQLite copy of the daily table (about a million rows).
+
+    The GitHub workflows keep this file in the Actions cache. On first use in a job it asks the
+    database only for rows written since the copy was last synced (plus a small overlap), so a
+    normal job downloads megabytes instead of the whole table. Every daily write goes to both the
+    database and the copy. Reads come from the copy and match what the database would return."""
+
+    def __init__(self, pg, path=MIRROR_PATH):
+        self.pg, self.path = pg, path
+        self.cols = list(DAILY_COLS)
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        self.db = sqlite3.connect(path, check_same_thread=False)
+        self.lock = threading.Lock()
+        self.db.execute(f"create table if not exists daily ({', '.join(c + ' text' for c in self.cols)}, "
+                        "primary key (ticker, date))")
+        self.db.execute("create table if not exists meta (k text primary key, v text)")
+        self.sync()
+
+    def _norm(self, value, kind):
+        """The same string the database read path would give for this value."""
+        if value is None or value == "":
+            return None
+        return _from_db(_to_db(value, kind))
+
+    def sync(self):
+        # A copy made from a different database (or one restored since) is thrown away and rebuilt.
+        ident = "|".join(str(v) for v in self.pg.conn.execute(
+            "select current_database(), (select oid from pg_class where relname = 'daily')").fetchone())
+        known = self.db.execute("select v from meta where k = 'source'").fetchone()
+        if known and known[0] != ident:
+            self.db.execute("delete from daily")
+            self.db.execute("delete from meta")
+        self.db.execute("insert or replace into meta values ('source', ?)", (ident,))
+        row = self.db.execute("select v from meta where k = 'watermark'").fetchone()
+        server_now = self.pg.conn.execute("select now()").fetchone()[0]
+        sel = ", ".join(self.cols)
+        if row:
+            since = dt.datetime.fromisoformat(row[0]) - MIRROR_OVERLAP
+            sql = f"copy (select {sel} from daily where updated_at > '{since.isoformat()}') to stdout"
+        else:
+            sql = f"copy (select {sel} from daily) to stdout"
+        kinds = [DAILY_COLS[c] for c in self.cols]
+        batch, n = [], 0
+        put = (f"insert or replace into daily ({sel}) values ({', '.join('?' * len(self.cols))})")
+        with self.pg.conn.cursor() as cur, cur.copy(sql) as copy:
+            for rec in copy.rows():
+                batch.append([self._norm(v, k) for v, k in zip(rec, kinds)])
+                if len(batch) >= 20000:
+                    self.db.executemany(put, batch)
+                    n += len(batch)
+                    batch = []
+        if batch:
+            self.db.executemany(put, batch)
+            n += len(batch)
+        self.db.execute("insert or replace into meta values ('watermark', ?)", (server_now.isoformat(),))
+        self.db.commit()
+        self.synced = n
+        print(f"Daily data: local copy {'updated with' if row else 'built from'} {n:,} rows from the database.")
+
+    def upsert(self, rows):
+        with self.lock:
+            for r in rows:
+                names = [c for c in self.cols if c in r]
+                vals = [self._norm(r.get(c), DAILY_COLS[c]) for c in names]
+                upd = [f"{c} = excluded.{c}" for c in names if c not in ("ticker", "date")]
+                self.db.execute(f"insert into daily ({', '.join(names)}) values ({', '.join('?' * len(names))}) "
+                                f"on conflict (ticker, date) do " + ("update set " + ", ".join(upd) if upd else "nothing"),
+                                vals)
+            self.db.commit()
+
+    def read(self, where="", params=()):
+        sql = f"select {', '.join(self.cols)} from daily" + (f" where {where}" if where else "")
+        with self.lock:
+            rows = self.db.execute(sql, params).fetchall()
+        return [{c: ("" if v is None else v) for c, v in zip(self.cols, r)} for r in rows]
+
+    def tickers(self):
+        with self.lock:
+            return {r[0] for r in self.db.execute("select distinct ticker from daily")}
+
+
 class Store:
     """The one object the rest of the code talks to."""
 
@@ -260,6 +358,15 @@ class Store:
         url = url if url is not None else os.environ.get("DATABASE_URL", "")
         self.backend = PostgresStore(url) if url else CsvStore()
         self.kind = "postgres" if url else "csv"
+        self._mirror = None
+
+    def mirror(self):
+        """The local copy of the daily table (Postgres only; set DAILY_MIRROR=off to read directly)."""
+        if self.kind != "postgres" or os.environ.get("DAILY_MIRROR", "on") == "off":
+            return None
+        if self._mirror is None:
+            self._mirror = DailyMirror(self.backend, os.environ.get("DAILY_MIRROR_PATH", MIRROR_PATH))
+        return self._mirror
 
     # events, controls, features, history marks, errors, report, flags
     def events(self):
@@ -310,6 +417,11 @@ class Store:
 
     # per-ticker daily options and price history
     def daily(self, ticker, since=None):
+        m = self.mirror()
+        if m:
+            rows = m.read("ticker = ? and date >= ?", (ticker, since)) if since else m.read("ticker = ?", (ticker,))
+            rows.sort(key=lambda r: r["date"])
+            return rows
         if since:
             rows = self.backend.read("daily", "ticker = %s and date >= %s", (ticker, since))
         else:
@@ -319,7 +431,11 @@ class Store:
 
     def daily_by_ticker(self, tickers=None, since=None):
         """Many tickers in one query (for the scorer). Returns {ticker: rows sorted by date}."""
-        rows = self.backend.read("daily", "date >= %s", (since,)) if since else self.backend.read("daily")
+        m = self.mirror()
+        if m:
+            rows = m.read("date >= ?", (since,)) if since else m.read()
+        else:
+            rows = self.backend.read("daily", "date >= %s", (since,)) if since else self.backend.read("daily")
         out = {}
         for r in rows:
             if tickers is None or r["ticker"] in tickers:
@@ -329,7 +445,12 @@ class Store:
         return out
 
     def save_daily(self, ticker, rows):
-        self.backend.upsert("daily", [r for r in rows if r.get("ticker") == ticker])
+        rows = [r for r in rows if r.get("ticker") == ticker]
+        self.backend.upsert("daily", rows)
+        m = self.mirror()
+        if m:
+            m.upsert(rows)
 
     def daily_tickers(self):
-        return self.backend.tickers_with_daily()
+        m = self.mirror()
+        return m.tickers() if m else self.backend.tickers_with_daily()

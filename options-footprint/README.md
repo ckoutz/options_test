@@ -69,6 +69,12 @@ is stored there instead of the CSV files: tables `events`, `controls`, `daily`, 
 - Nightly runs refresh flags only; the full signal report runs on Fridays, after a backfill, or
   on demand with Run workflow → `report`.
 - `store.py` holds the table definitions; new columns are added to existing tables automatically.
+- **Local copy of the daily table.** Neon's free plan allows only 5 GB of downloads a month, and the
+  daily table is about a million rows. So every job keeps a SQLite copy of it
+  (`data/daily_mirror.sqlite`) in the GitHub Actions cache. Each daily write is time-stamped in the
+  database, and on first use a job fetches only rows written since its copy was last synced (plus a
+  2-hour overlap), so a normal job downloads megabytes instead of the whole table. A copy made from a
+  different database is thrown away and rebuilt. Set `DAILY_MIRROR=off` to read the database directly.
 
 ## Ladder backtest (would it have made money?)
 `ladder.py` (GitHub: Actions → "Ladder backtest" → Run workflow) takes every historical flag and an

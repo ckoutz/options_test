@@ -81,6 +81,20 @@ since past data has trade prices rather than bid and ask. Results: tables `ladde
 It runs separately from the nightly job, paces itself slowly to share the Alpaca key with a
 running backfill, and re-launches itself until done. Rerun it later to add newly tracked stocks.
 
+## Trader generations (agents.py)
+Agents walk week by week through history, trade, learn, and pass on lessons. Each generation:
+1. **Training** (March 2024 to June 2025): each week it sees ~12 anonymized candidate stock-days
+   (stock codes reshuffled every run, time as week numbers, prices only as percentages) and may buy
+   the stock or one of 15 calls, up to 3 picks a week. Results show up two weeks later.
+2. **Lessons**: it rewrites the lessons document it inherited (max 400 words). Only this document
+   passes to the next generation; its trades and results never do.
+3. **Scoring** (July 2025 to January 2026): it trades blind with its new lessons, no feedback.
+Every run is compared with a random picker making the same number and kind of trades in the same
+weeks. February 2026 onward is held back as a one-time final exam (`--phase test`).
+Two lineages: `blank` (starts with nothing) and `briefed` (starts with our scorer findings).
+GitHub: Actions → "Trader generations". Needs the secret `OPENROUTER_API_KEY`. Results: AGENTS.md
+and tables `agent_runs`, `agent_trades`, `agent_lessons`. A hard spending cap stops runs at `MAX_USD`.
+
 ## Scoring the signals
 `python scorer.py` (runs automatically after every nightly and backfill) uses every trading day for
 tickers with full history. For each day it computes signals from that day and earlier only, then

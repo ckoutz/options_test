@@ -1,0 +1,94 @@
+name: Trader generations
+
+# Agents walk through history, trade, write lessons, and pass them on (see agents.py).
+# Needs the repository secret OPENROUTER_API_KEY. Spending is capped across all runs.
+
+on:
+  workflow_dispatch:
+    inputs:
+      command:
+        description: "What to run"
+        type: choice
+        default: loop
+        options:
+          - loop
+          - report
+          - rebuild-arena
+          - final-test
+      lineage:
+        description: "Lineage: blank (starts with nothing) or briefed (starts with our findings)"
+        type: choice
+        default: blank
+        options:
+          - blank
+          - briefed
+      model:
+        description: "OpenRouter model, e.g. anthropic/claude-haiku-5.5, deepseek/deepseek-v4.1-flash, anthropic/claude-sonnet-5.5"
+        default: anthropic/claude-haiku-5.5
+      generations:
+        description: "How many generations to run (loop)"
+        default: "3"
+      max_usd:
+        description: "Total spending cap across ALL runs so far, in dollars"
+        default: "25"
+      test_generation:
+        description: "Which generation takes the final test (final-test only)"
+        default: ""
+
+permissions:
+  contents: write
+
+concurrency:
+  group: options-agents
+  cancel-in-progress: false
+
+jobs:
+  agents:
+    runs-on: ubuntu-latest
+    timeout-minutes: 160
+    defaults:
+      run:
+        working-directory: options-footprint
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      LLM_BASE_URL: https://openrouter.ai/api/v1
+      MAX_USD: ${{ github.event.inputs.max_usd }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install the database driver
+        run: pip install --quiet "psycopg[binary]"
+
+      - name: Run
+        run: |
+          if [ -z "$DATABASE_URL" ]; then echo "DATABASE_URL secret is not set"; exit 1; fi
+          case "${{ github.event.inputs.command }}" in
+            loop)
+              if [ -z "$LLM_API_KEY" ]; then echo "OPENROUTER_API_KEY secret is not set"; exit 1; fi
+              python agents.py loop --lineage "${{ github.event.inputs.lineage }}" \
+                --model "${{ github.event.inputs.model }}" \
+                --generations "${{ github.event.inputs.generations }}" --max-minutes 145 ;;
+            final-test)
+              python agents.py test --lineage "${{ github.event.inputs.lineage }}" \
+                --model "${{ github.event.inputs.model }}" \
+                --generation "${{ github.event.inputs.test_generation }}" --max-minutes 145 ;;
+            rebuild-arena) python agents.py build && python agents.py report ;;
+            report)        python agents.py report ;;
+          esac
+
+      - name: Commit the report
+        if: always()
+        run: |
+          [ -f AGENTS.md ] || exit 0
+          git config user.name "options-footprint-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add AGENTS.md
+          git diff --cached --quiet && exit 0
+          git commit -q -m "Trader generations report $(date -u '+%Y-%m-%d %H:%M')"
+          for i in 1 2 3; do git pull --rebase -q && git push -q && exit 0; sleep 5; done
+          exit 1

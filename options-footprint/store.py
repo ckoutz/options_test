@@ -59,6 +59,19 @@ LADDER_REPORT_COLS = {"run_date": D, "grp": T, "target_dte": I, "target_otm_pct"
                       "trades": I, "win_rate_pct": F, "mean_ret_pct": F, "median_ret_pct": F,
                       "mean_peak_pct": F}
 
+# The agent loop ("trader generations"): a fixed, anonymized sample of candidate days; each
+# generation's runs, trades, and the lessons document it passes on.
+ARENA_COLS = {"ticker": T, "signal_date": D, "period": T, "week": D, "grp": T, "features": T,
+              "options": T, "shares_ret10": F}
+AGENT_RUN_COLS = {"run_id": T, "lineage": T, "generation": I, "phase": T, "model": T, "started": T,
+                  "finished": T, "weeks": I, "trades": I, "mean_ret": F, "median_ret": F,
+                  "win_rate": F, "baseline_mean": F, "baseline_median": F, "baseline_win": F,
+                  "prompt_tokens": I, "completion_tokens": I, "cost_usd": F, "status": T}
+AGENT_TRADE_COLS = {"run_id": T, "week_index": I, "cand_id": T, "ticker": T, "signal_date": D,
+                    "action": T, "expiry": I, "strike_pct": F, "exit_rule": T, "ret_pct": F,
+                    "reason": T}
+LESSON_COLS = {"lineage": T, "generation": I, "run_id": T, "model": T, "text": T, "created": T}
+
 TABLES = {
     "events": (EVENT_COLS, ["ticker", "event_date"]),
     "controls": (EVENT_COLS, ["ticker", "event_date"]),
@@ -70,11 +83,17 @@ TABLES = {
     "flags": (FLAG_COLS, ["signal_date", "ticker", "rule"]),
     "ladder_trades": (LADDER_COLS, ["grp", "ticker", "signal_date", "target_dte", "target_otm_pct"]),
     "ladder_report": (LADDER_REPORT_COLS, ["grp", "target_dte", "target_otm_pct", "exit_rule"]),
+    "arena": (ARENA_COLS, ["ticker", "signal_date"]),
+    "agent_runs": (AGENT_RUN_COLS, ["run_id"]),
+    "agent_trades": (AGENT_TRADE_COLS, ["run_id", "ticker", "signal_date"]),
+    "agent_lessons": (LESSON_COLS, ["lineage", "generation"]),
 }
 CSV_FILES = {"events": "events.csv", "controls": "controls.csv", "daily": "daily_features.csv",
              "event_features": "event_features.csv", "history_done": "history_done.csv",
              "errors": "errors.csv", "signal_report": "signal_report.csv", "flags": "flags.csv",
-             "ladder_trades": "ladder_trades.csv", "ladder_report": "ladder_report.csv"}
+             "ladder_trades": "ladder_trades.csv", "ladder_report": "ladder_report.csv",
+             "arena": "arena.csv", "agent_runs": "agent_runs.csv", "agent_trades": "agent_trades.csv",
+             "agent_lessons": "agent_lessons.csv"}
 
 
 def _to_db(value, kind):
@@ -122,18 +141,24 @@ class PostgresStore:
         return [{c: _from_db(v) for c, v in zip(cols, r)} for r in rows]
 
     def upsert(self, table, rows):
+        """Insert rows, or update existing ones. Only the columns a row actually carries are
+        written, so a partial row (say, just a cost) never blanks out the rest."""
         if not rows:
             return
         cols, key = TABLES[table]
-        names = list(cols)
-        values = [[_to_db(r.get(c), cols[c]) for c in names] for r in rows]
-        sql = f"insert into {table} ({', '.join(names)}) values ({', '.join(['%s'] * len(names))})"
-        if key:
-            updates = [c for c in names if c not in key]
-            sql += f" on conflict ({', '.join(key)}) do update set " + \
-                   ", ".join(f"{c} = excluded.{c}" for c in updates)
-        with self.conn.cursor() as cur:
-            cur.executemany(sql, values)
+        groups = {}
+        for r in rows:
+            names = tuple(c for c in cols if c in r)
+            groups.setdefault(names, []).append(r)
+        for names, group in groups.items():
+            values = [[_to_db(r.get(c), cols[c]) for c in names] for r in group]
+            sql = f"insert into {table} ({', '.join(names)}) values ({', '.join(['%s'] * len(names))})"
+            if key:
+                updates = [c for c in names if c not in key]
+                sql += f" on conflict ({', '.join(key)}) do " + (
+                    "update set " + ", ".join(f"{c} = excluded.{c}" for c in updates) if updates else "nothing")
+            with self.conn.cursor() as cur:
+                cur.executemany(sql, values)
 
     def replace(self, table, rows):
         with self.conn.transaction():
@@ -191,12 +216,12 @@ class CsvStore:
                            for k in key): i for i, r in enumerate(existing)}
             for r in rows:
                 k = tuple(str(r.get(c, ""))[:10] if cols[c] == D else str(r.get(c, "")) for c in key)
-                clean = {c: ("" if r.get(c) is None else r.get(c)) for c in cols}
+                given = {c: ("" if r.get(c) is None else r.get(c)) for c in cols if c in r}
                 if k in index:
-                    existing[index[k]] = clean
+                    existing[index[k]].update(given)      # partial rows only touch their own columns
                 else:
                     index[k] = len(existing)
-                    existing.append(clean)
+                    existing.append({c: given.get(c, "") for c in cols})
         else:
             existing.extend(rows)
         self._write(table)

@@ -1,4 +1,4 @@
-# Status (2026-10-08 18:18 UTC, storage: postgres)
+# Status (2026-10-08 18:31 UTC, storage: postgres)
 
 ## Backfill
 - Big moves logged: 5,382 across 1,649 stocks
@@ -19,8 +19,8 @@
 - want: 0 MB, about 1,613 rows
 - ladder_report: 0 MB, about 90 rows
 - signal_report: 0 MB, about 36 rows
-- agent_runs: 0 MB, about 3 rows
-- agent_lessons: 0 MB, about 1 rows
+- agent_runs: 0 MB, about 6 rows
+- agent_lessons: 0 MB, about 3 rows
 - errors: 0 MB, about 0 rows
 - agent_trades: 0 MB, about 0 rows
 
@@ -76,6 +76,20 @@
 
 ## Flags (daily shortlist)
 - 2,689 flags; latest signal date: 2026-10-07
+
+## Trader generations
+| lineage | gen | phase | model | trades | mean % | median % | win % | random mean | random median | random win % | cost $ | status |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| blank | 1 | train | anthropic/claude-haiku-5.5 | 0 |  |  |  |  |  |  | 0.0469 | complete |
+| blank | 1 | validation | anthropic/claude-haiku-5.5 | 0 |  |  |  |  |  |  | 0.0203 | complete |
+| blank | 2 | train | anthropic/claude-haiku-5.5 | 0 |  |  |  |  |  |  | 0.0469 | complete |
+| blank | 2 | validation | anthropic/claude-haiku-5.5 | 0 |  |  |  |  |  |  | 0.0203 | complete |
+| blank | 3 | train | anthropic/claude-haiku-5.5 | 0 |  |  |  |  |  |  | 0.0469 | complete |
+| blank | 3 | validation | anthropic/claude-haiku-5.5 |  |  |  |  |  |  |  |  | running |
+
+### Latest lessons: blank lineage, generation 3 (anthropic/claude-haiku-5.5)
+
+# Lessons Document: Generation 1 ## Status This generation made no trades, so it produced no evidence. Nothing below is a validated rule. Treat every item as a hypothesis to test, not a fact. ## What we know - **No trades, no results.** We have no data on which signals, instruments, expiries, strikes, or exits perform well or badly. - **Doing nothing is a valid baseline, not a failure.** Its score is zero. Any strategy you adopt should beat zero after costs, or it is not worth running. ## Starting principles (low confidence, untested) These are general reasoning, not findings. 1. **Start from the columns, not from a story.** Before trading, write down which columns you will use and what threshold or combination would trigger an entry. Decide this in advance, not after seeing outcomes. 2. **Prefer simple rules.** One or two conditions are easier to evaluate than many. Many conditions on a small sample mostly fit noise. 3. **Define the exit before the entry.** Set the exit rule (time-based, target, or stop) at the same time as the entry, so results are measurable. 4. **Pick one instrument and one expiry to begin.** Mixing instruments, expiries, and strikes makes results impossible to attribute. 5. **Strike choice matters, but we have no data on it.** Test at least two levels (for example, at-the-money and one step out-of-the-money) before drawing conclusions. ## How to build real lessons - **Log every decision**, including no-trade decisions and the reason for each. - **Record the columns' values at entry**, the exit reason, and the result after costs. - **Use a holdout.** Form rules on one segment of data and check them on a later segment. A rule that only works in-sample is not a lesson. - **Count trades before believing anything.** Under roughly 30 comparable trades, treat any win rate or average return as indicative only. Under 100, treat conclusions as provisional. - **Compare against doing nothing and against a simple baseline** (for example, always entering the same way with the same exit). - **Watch for overfitting:** if you tried many thresholds and kept the best, the result is likely luck. ## Confidence summary
 
 ## Errors (0 total, latest 8)
 - none

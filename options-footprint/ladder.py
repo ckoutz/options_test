@@ -23,8 +23,8 @@ Results go to the ladder_trades and ladder_report tables.
 """
 import argparse
 import datetime as dt
+import hashlib
 import os
-import random
 import statistics
 import sys
 import time
@@ -40,7 +40,8 @@ HOLD_SESSIONS = 10
 TAKE_PROFIT = 2.0
 MIN_DTE = 7
 STATUS_FILE = os.path.join(C.ROOT, "ladder_status.txt")
-MIN_SECONDS_BETWEEN_REQUESTS = 2.0   # 30 a minute, so it fits beside the backfill on one Alpaca key
+MIN_SECONDS_BETWEEN_REQUESTS = 2.0   # 30 a minute while the backfill is running (shared Alpaca key)
+FAST_SECONDS_BETWEEN_REQUESTS = 0.4  # 150 a minute once the backfill has finished
 
 
 def pick_contracts(contracts, signal_date, stock_close):
@@ -109,70 +110,130 @@ def simulate(trade, bars, dates, closes, entry_idx):
     return trade
 
 
-def choose_days(days, seed=7):
-    """Flag days (any shortlist rule fired) and the same number of random non-flag days."""
-    flags, quiet = [], []
+def stable_rank(ticker, date):
+    """A fixed pseudo-random number per stock and day, so control picks don't reshuffle when new
+    stocks or days are added (Python's built-in hash changes between runs, so use sha1)."""
+    return hashlib.sha1(f"{ticker}|{date}".encode()).hexdigest()
+
+
+def choose_days(days):
+    """Flag days (any shortlist rule fired), plus for each stock the same number of non-flag days
+    from that same stock as controls. Matching stock by stock compares like with like."""
+    flags, quiet = [], {}
     for d in days:
         fired = [name for name in S.FLAG_RULES if S.RULES[name](d)]
-        (flags if fired else quiet).append((d, fired))
-    rng = random.Random(seed)
-    controls = rng.sample(quiet, min(len(flags), len(quiet)))
-    return [(d, "flag", ", ".join(f)) for d, f in flags] + [(d, "control", "") for d, _ in controls]
+        if fired:
+            flags.append((d, "flag", ", ".join(fired)))
+        else:
+            quiet.setdefault(d["ticker"], []).append(d)
+    per_ticker = {}
+    for d, _, _ in flags:
+        per_ticker[d["ticker"]] = per_ticker.get(d["ticker"], 0) + 1
+    controls = []
+    for t, n in per_ticker.items():
+        pool = sorted(quiet.get(t, []), key=lambda d: stable_rank(t, d["date"]))
+        controls += [(d, "control", "") for d in pool[:n]]
+    return flags + controls
+
+
+def backfill_busy(st):
+    """True while the main backfill is still pulling data (so the ladder should share the key)."""
+    if st.kind != "postgres":
+        return False
+    q = lambda sql: st.backend.conn.execute(sql).fetchone()[0]
+    return (q("select count(*) from events where coalesce(window_filled, '') <> 'yes'")
+            + q("select count(*) from controls where coalesce(window_filled, '') <> 'yes'")
+            + q("select count(*) from (select ticker from events group by ticker having count(*) >= 3) x "
+                "where ticker not in (select ticker from history_done)")) > 0
+
+
+def batches(items, max_symbols=100):
+    """Group one stock's days so each Alpaca request carries up to 100 contracts."""
+    out, cur, syms = [], [], set()
+    for it in items:
+        s = {p["contract"] for p in it["picked"]}
+        if cur and len(syms | s) > max_symbols:
+            out.append(cur)
+            cur, syms = [], set()
+        cur.append(it)
+        syms |= s
+    if cur:
+        out.append(cur)
+    return out
 
 
 def run(args):
-    C.MIN_SECONDS_BETWEEN_REQUESTS = MIN_SECONDS_BETWEEN_REQUESTS
     st = C.db()
+    busy = backfill_busy(st)
+    C.MIN_SECONDS_BETWEEN_REQUESTS = MIN_SECONDS_BETWEEN_REQUESTS if busy else FAST_SECONDS_BETWEEN_REQUESTS
+    print(f"Pacing: {C.MIN_SECONDS_BETWEEN_REQUESTS}s between requests "
+          f"({'backfill still running' if busy else 'backfill finished'}).")
     deadline = time.monotonic() + 60 * args.max_minutes
     data = S.load(st)
     days = S.score_days(data, 30.0, HOLD_SESSIONS)
     plan = choose_days(days)
     done = {(r["grp"], r["ticker"], r["signal_date"]) for r in st.backend.read("ladder_trades")}
     todo = [p for p in plan if (p[1], p[0]["ticker"], p[0]["date"]) not in done]
-    todo.sort(key=lambda p: (p[0]["ticker"], p[0]["date"]))   # one stock at a time: contracts load once
+    by_ticker = {}
+    for p in todo:
+        by_ticker.setdefault(p[0]["ticker"], []).append(p)
     print(f"Ladder: {len(plan)} days planned ({sum(1 for p in plan if p[1] == 'flag')} flags), "
-          f"{len(plan) - len(todo)} done, {len(todo)} to go.")
-    contracts_cache = {}
+          f"{len(plan) - len(todo)} done, {len(todo)} to go across {len(by_ticker)} stocks.")
     today = dt.date.today().isoformat()
-    finished = True
-    for n, (d, grp, rules) in enumerate(todo, 1):
+    finished, n_done = True, 0
+    for t, items in sorted(by_ticker.items()):
         if time.monotonic() > deadline:
             finished = False
             break
-        t = d["ticker"]
         rows = data[t]
         dates = [r["date"] for r in rows]
+        index = {d: i for i, d in enumerate(dates)}
         closes = {r["date"]: C.to_float(r["stock_close"]) for r in rows}
-        i = dates.index(d["date"])
-        if i + 1 >= len(dates):
-            continue                               # no next session yet to buy in
         try:
-            if t not in contracts_cache:
-                contracts_cache = {t: C.option_contracts(t, C.ALPACA_HISTORY_START,
-                                                         C.add_days(today, C.MAX_EXPIRY_DAYS))}
-            picked = pick_contracts(contracts_cache[t], d["date"], d["close"])
-            if not picked:
+            contracts = C.option_contracts(t, C.ALPACA_HISTORY_START, C.add_days(today, C.MAX_EXPIRY_DAYS))
+        except Exception as ex:
+            C.log_error({"ticker": t, "event_date": "ladder contracts"}, ex)
+            print(f"  {t} contracts FAILED: {str(ex)[:150]}")
+            continue
+        work = []
+        for d, grp, rules in sorted(items, key=lambda p: p[0]["date"]):
+            i = index[d["date"]]
+            if i + 1 >= len(dates):
+                continue                               # no next session yet to buy in
+            picked = pick_contracts(contracts, d["date"], d["close"])
+            if picked:
+                work.append({"d": d, "grp": grp, "rules": rules, "i": i, "picked": picked})
+        for batch in batches(work):
+            if time.monotonic() > deadline:
+                finished = False
+                break
+            syms = sorted({p["contract"] for it in batch for p in it["picked"]})
+            start = dates[batch[0]["i"] + 1]
+            end = min(max(p["expiration"] for it in batch for p in it["picked"]), today)
+            try:
+                pages = C.alpaca_get("https://data.alpaca.markets", "/v1beta1/options/bars",
+                                     {"symbols": ",".join(syms), "timeframe": "1Day", "start": start,
+                                      "end": C.safe_end(end), "limit": 10000})
+            except Exception as ex:
+                C.log_error({"ticker": t, "event_date": f"ladder {start}"}, ex)
+                print(f"  {t} from {start} FAILED: {str(ex)[:150]}")
                 continue
-            last_exp = max(p["expiration"] for p in picked)
-            pages = C.alpaca_get("https://data.alpaca.markets", "/v1beta1/options/bars",
-                                 {"symbols": ",".join(sorted({p["contract"] for p in picked})),
-                                  "timeframe": "1Day", "start": dates[i + 1],
-                                  "end": C.safe_end(min(last_exp, today)), "limit": 10000})
             bars = {}
             for page in pages:
                 for sym, bs in (page.get("bars") or {}).items():
                     bars.setdefault(sym, []).extend(bs)
             out = []
-            for p in picked:
-                tr = dict(p, grp=grp, rules=rules, ticker=t, signal_date=d["date"], stock_close=d["close"])
-                out.append(simulate(tr, bars.get(p["contract"], []), dates, closes, i + 1))
+            for it in batch:
+                d = it["d"]
+                for p in it["picked"]:
+                    tr = dict(p, grp=it["grp"], rules=it["rules"], ticker=t, signal_date=d["date"],
+                              stock_close=d["close"])
+                    out.append(simulate(tr, bars.get(p["contract"], []), dates, closes, it["i"] + 1))
             st.backend.upsert("ladder_trades", out)
-        except Exception as ex:
-            C.log_error({"ticker": t, "event_date": f"ladder {d['date']}"}, ex)
-            print(f"  {t} {d['date']} FAILED: {str(ex)[:150]}")
-            continue
-        if n % 25 == 0:
-            print(f"  {n}/{len(todo)} days done")
+            n_done += len(batch)
+        if not finished:
+            break
+        print(f"  {t}: {len(work)} days ({n_done}/{len(todo)} overall)")
     with open(STATUS_FILE, "w") as f:
         f.write("done" if finished else "more")
     print("Ladder complete." if finished else "Ladder not finished; another round needed.")
@@ -211,8 +272,9 @@ def report(args):
                                  "mean_peak_pct": round(statistics.mean(peaks), 1) if peaks else None})
     st.backend.replace("ladder_report", rows)
     for rule in ("hold10", "double_or_10", "expiry"):
-        print(f"\n=== Exit rule: {rule}  (mean return %, win rate %; flags vs random control days) ===")
-        print(f"{'expiry':<8}{'strike':<10}{'flag mean':>10}{'win':>6}{'control mean':>14}{'win':>6}{'trades':>8}")
+        print(f"\n=== Exit rule: {rule}  (return %, flags vs control days on the same stocks) ===")
+        print(f"{'expiry':<9}{'strike':<9}{'FLAG mean':>10}{'median':>8}{'win%':>6}"
+              f"{'CONTROL mean':>14}{'median':>8}{'win%':>6}{'trades':>8}")
         for dte in TARGET_DTES:
             for otm in TARGET_OTM:
                 f = next((r for r in rows if r["grp"] == "flag" and r["exit_rule"] == rule
@@ -221,12 +283,15 @@ def report(args):
                           and r["target_dte"] == dte and r["target_otm_pct"] == otm), None)
                 if not f:
                     continue
-                print(f"{dte:>3} days  {('ATM' if otm == 0 else f'+{otm:g}%'):<10}"
-                      f"{f['mean_ret_pct']:>+10.1f}{f['win_rate_pct']:>6.0f}"
-                      f"{(c['mean_ret_pct'] if c else float('nan')):>+14.1f}"
-                      f"{(c['win_rate_pct'] if c else float('nan')):>6.0f}{f['trades']:>8}")
-    print("\nMean returns include a 5% cost on each side of the trade. A useful pattern beats the")
-    print("control days by a clear margin, not just zero; buying calls on random days usually loses.")
+                cv = lambda k: f"{c[k]:+.1f}" if c else "-"
+                cw = f"{c['win_rate_pct']:.0f}" if c else "-"
+                print(f"{dte:>3} days  {('at money' if otm == 0 else f'+{otm:g}%'):<9}"
+                      f"{f['mean_ret_pct']:>+10.1f}{f['median_ret_pct']:>+8.1f}{f['win_rate_pct']:>6.0f}"
+                      f"{cv('mean_ret_pct'):>14}{cv('median_ret_pct'):>8}"
+                      f"{cw:>6}{f['trades']:>8}")
+    print("\nReturns include a 5% cost on each side of the trade. Control days are non-flag days on the")
+    print("same stocks. A useful pattern beats its controls by a clear margin, in the median too, since")
+    print("a few huge winners can lift a mean on their own.")
 
 
 def main():

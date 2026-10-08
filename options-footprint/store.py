@@ -80,8 +80,8 @@ AGENT_WEEK_COLS = {"run_id": T, "week_index": I, "picks": I, "why": T, "finish":
 # generation and author, a code-kept scorebook of every rule, and every rating an agent gives.
 POOL_COLS = {"ticker": T, "signal_date": D, "bundle": I, "split": T, "week": D, "month": T, "grp": T,
              "features": T, "options": T, "shares_ret10": F}
-COMMITTEE_NOTE_COLS = {"generation": I, "author": T, "model": T, "text": T, "rules": T, "created": T}
-SCOREBOOK_COLS = {"generation": I, "author": T, "rule_name": T, "period": T, "rule": T, "trades": I,
+COMMITTEE_NOTE_COLS = {"lineage": T, "generation": I, "author": T, "model": T, "text": T, "rules": T, "created": T}
+SCOREBOOK_COLS = {"lineage": T, "generation": I, "author": T, "rule_name": T, "period": T, "rule": T, "trades": I,
                   "mean_ret": F, "median_ret": F, "win_rate": F, "ci_low": F, "ci_high": F,
                   "baseline_mean": F, "bundles_beat": I, "bundles_total": I, "half1_mean": F, "half2_mean": F}
 RATING_COLS = {"run_id": T, "ticker": T, "signal_date": D, "rating": I, "shares_ret10": F}
@@ -103,8 +103,8 @@ TABLES = {
     "agent_trades": (AGENT_TRADE_COLS, ["run_id", "ticker", "signal_date"]),
     "agent_weeks": (AGENT_WEEK_COLS, ["run_id", "week_index"]),
     "pool": (POOL_COLS, ["ticker", "signal_date"]),
-    "committee_notes": (COMMITTEE_NOTE_COLS, ["generation", "author"]),
-    "scorebook": (SCOREBOOK_COLS, ["generation", "author", "rule_name", "period"]),
+    "committee_notes": (COMMITTEE_NOTE_COLS, ["lineage", "generation", "author"]),
+    "scorebook": (SCOREBOOK_COLS, ["lineage", "generation", "author", "rule_name", "period"]),
     "agent_ratings": (RATING_COLS, ["run_id", "ticker", "signal_date"]),
     "agent_lessons": (LESSON_COLS, ["lineage", "generation"]),
 }
@@ -152,6 +152,16 @@ class PostgresStore:
             for c, k in cols.items():
                 self.conn.execute(f"alter table {name} add column if not exists {c} {k}")
         self.conn.execute("create index if not exists flags_date on flags (signal_date)")
+        # Committee tables gained a lineage column in their key; older rows belong to "committee".
+        for t in ("committee_notes", "scorebook"):
+            self.conn.execute(f"update {t} set lineage = 'committee' where lineage is null")
+            key = TABLES[t][1]
+            have = [r[0] for r in self.conn.execute(
+                "select a.attname from pg_index i join pg_attribute a on a.attrelid = i.indrelid "
+                "and a.attnum = any(i.indkey) where i.indrelid = %s::regclass and i.indisprimary", (t,)).fetchall()]
+            if set(have) != set(key):
+                self.conn.execute(f"alter table {t} drop constraint if exists {t}_pkey")
+                self.conn.execute(f"alter table {t} add primary key ({', '.join(key)})")
         # Every write to the big daily table is time-stamped, so a local copy can fetch only what
         # changed since it last synced instead of downloading the whole table again.
         for t in STAMPED:

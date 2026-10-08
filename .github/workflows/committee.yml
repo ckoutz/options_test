@@ -32,13 +32,27 @@ on:
       test_generation:
         description: "Which generation takes the final exam (final-test only)"
         default: ""
+      lineage:
+        description: "Lineage: a separate line of generations with its own notes (lowercase, e.g. options1)"
+        default: committee
+      options_only:
+        description: "Agents may only buy calls"
+        type: boolean
+        default: false
+      seed:
+        description: "What a NEW lineage's first generation starts with"
+        type: choice
+        default: none
+        options:
+          - none
+          - briefing
 
 permissions:
   contents: write
   actions: write     # lets an unfinished loop launch its next round
 
 concurrency:
-  group: options-committee
+  group: options-committee-${{ github.event.inputs.lineage }}
   cancel-in-progress: false
 
 jobs:
@@ -74,6 +88,8 @@ jobs:
       - name: Run
         run: |
           if [ -z "$DATABASE_URL" ]; then echo "DATABASE_URL secret is not set"; exit 1; fi
+          LINEAGE_ARGS="--lineage ${{ github.event.inputs.lineage || 'committee' }} --seed ${{ github.event.inputs.seed || 'none' }}"
+          if [ "${{ github.event.inputs.options_only }}" = "true" ]; then LINEAGE_ARGS="$LINEAGE_ARGS --options-only"; fi
           case "${{ github.event.inputs.command }}" in
             build-pool)
               tag=$(gh release list -R "${{ github.repository }}" --limit 50 --json tagName \
@@ -85,13 +101,13 @@ jobs:
               python committee.py report ;;
             loop)
               if [ -z "$LLM_API_KEY" ]; then echo "OPENROUTER_API_KEY secret is not set"; exit 1; fi
-              python committee.py loop --model "${{ github.event.inputs.model }}" \
+              python committee.py loop $LINEAGE_ARGS --model "${{ github.event.inputs.model }}" \
                 --generations "${{ github.event.inputs.generations }}" \
                 --weeks-fraction "${{ github.event.inputs.weeks_fraction }}" --max-minutes 140 ;;
             final-test)
-              python committee.py final-test --model "${{ github.event.inputs.model }}" \
+              python committee.py final-test $LINEAGE_ARGS --model "${{ github.event.inputs.model }}" \
                 --generation "${{ github.event.inputs.test_generation }}" --max-minutes 140 ;;
-            report) python committee.py report ;;
+            report) python committee.py report $LINEAGE_ARGS ;;
           esac
 
 
@@ -104,10 +120,10 @@ jobs:
       - name: Commit the report
         if: always()
         run: |
-          [ -f COMMITTEE.md ] || exit 0
+          ls COMMITTEE*.md >/dev/null 2>&1 || exit 0
           git config user.name "options-footprint-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add COMMITTEE.md
+          git add COMMITTEE*.md
           git diff --cached --quiet && exit 0
           git commit -q -m "Committee report $(date -u '+%Y-%m-%d %H:%M')"
           for i in 1 2 3; do git pull --rebase -q && git push -q && exit 0; sleep 5; done
@@ -122,6 +138,8 @@ jobs:
             gh workflow run committee.yml --ref "${{ github.ref_name }}" \
               -f command=loop -f model="${{ github.event.inputs.model }}" -f generations="$remaining" \
               -f weeks_fraction="${{ github.event.inputs.weeks_fraction }}" \
+              -f lineage="${{ github.event.inputs.lineage }}" -f options_only="${{ github.event.inputs.options_only }}" \
+              -f seed="${{ github.event.inputs.seed }}" \
               -f max_usd="${{ github.event.inputs.max_usd }}"
             echo "Launched the next round."
           fi

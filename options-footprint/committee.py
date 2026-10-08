@@ -62,6 +62,36 @@ N_AGENTS = 4
 MAX_PICKS = 3
 REVEAL_DAYS = 14
 LABEL_TO_KEY = {label: key for key, label, _ in A.FEATURES}
+CFG = {"lineage": "committee", "options_only": False, "seed": "none"}
+
+SEED_NOTES = """Starting briefing from the research team (not from an earlier trader). Treat it as background, not as rules.
+
+What this project is looking for: signs of informed buying before big moves. The original idea: when someone
+knows good news is coming, they buy calls quietly, so call volume jumps and the put/call ratio collapses (say
+from 0.8 to 0.08) while the stock itself is still calm. We collected options activity for hundreds of volatile
+stocks to see whether that footprint shows up before 15%+ up days and can be traded.
+
+What we have found so far:
+- Call volume spikes on their own barely predict rallies: after 5x+ normal call volume, a 30%+ rally within 10
+  sessions came about 1.1 to 1.3 times as often as on an average day, but big drops came about as often too.
+- Call spikes right after a 10%+ week predicted big moves in BOTH directions (rallies 1.8x as often, drops
+  1.6x). They flag volatility more than direction.
+- "Quiet" call buying (a big call spike while share volume and price stay calm) was followed by FEWER big
+  moves than average, the opposite of the original idea, at least in that simple form.
+- A collapse in the put/call ratio on its own predicted nothing.
+- Calls bought blindly on these stocks lose most of the time: after 10 sessions the typical (median) result
+  ranged from about -20% (90-day calls) to -80% (14-day calls 20% above the price). An options edge has to
+  beat that decay plus the 5% cost each way.
+- An earlier committee, trading mostly shares, found price setups mattered more than the flow numbers in its
+  training data: stocks more than 10% below their 50-day average but up on the day averaged +4.0% over 10
+  sessions (219 trades, versus +1.1% for buying everything), and momentum after a 15%+ month looked good at
+  first and then faded.
+
+Nobody has found an options-flow pattern that works yet. The simple versions are exhausted; any edge is
+likely in combinations: where the call buying lands (short versus long expiry, out of the money versus near
+the money), calls versus puts together, flow combined with the price setup, or which calls are cheap versus
+expensive. That is the frontier: be creative.
+"""
 OPS = {">": lambda a, b: a > b, ">=": lambda a, b: a >= b, "<": lambda a, b: a < b,
        "<=": lambda a, b: a <= b, "=": lambda a, b: a == b}
 
@@ -244,6 +274,8 @@ def clean_rules(raw):
         if not conds or len(conds) > 5:
             continue
         rule = {"name": str(r.get("name") or "rule")[:80], "when": conds}
+        if str(r.get("buy", "")).lower() == "stock" and CFG["options_only"]:
+            continue
         if str(r.get("buy", "")).lower() == "stock":
             rule["buy"] = "stock"
         else:
@@ -366,6 +398,27 @@ def system_text(phase):
                 if phase == "train" else
                 "This is a blind scoring run: you will NOT see any results. Rely on your notes.")
     defs = "\n".join(f"- {label}: {meaning}" for _, label, meaning in A.FEATURES)
+    call = """one CALL option: expiry 14, 30 or 90 days; strike at the money (0) or 5, 10, 15, 20 percent above the
+  price; exit "hold10" (sell after 10 sessions) or "double_or_10" (sell as soon as it is worth 2x,
+  otherwise after 10 sessions). Calls marked "n/a" did not trade that day and cannot be bought."""
+    if CFG["options_only"]:
+        instruments = (f"Then you may buy up to {MAX_PICKS} of them. This committee trades OPTIONS ONLY: each pick is\n"
+                       + call)
+        example = ('{"id": "C3", "buy": "call", "expiry": 30, "strike": 5, "exit": "double_or_10"}, '
+                   '{"id": "C7", "buy": "call", "expiry": 90, "strike": 0, "exit": "hold10"}')
+    else:
+        instruments = (f"Then you may buy up to {MAX_PICKS} of them. For each, either:\n"
+                       f"- the STOCK (sold 10 trading sessions later), or\n- {call}")
+        example = '{"id": "C3", "buy": "stock"}, {"id": "C7", "buy": "call", "expiry": 90, "strike": 0, "exit": "hold10"}'
+    if phase == "train":
+        explore = """TRAINING IS FOR LEARNING. Work like a strategist: hold a clear working strategy (the exact setup you
+trade and why), trade it, and change it when the results say so. You must make at least one trade every
+week: a week without a trade is a week without evidence, and your real score is the later blind run, where
+you may pass whenever the odds look poor. Be inventive: besides the strategy in your notes, test at least
+one idea of your own in every bundle (an unusual combination of columns, a different expiry or strike, a
+contrarian take). Original ideas that the code later confirms are the most valuable thing you can pass on."""
+    else:
+        explore = "Follow the strategy in your notes. Trade when you believe the odds favor you and pass when they don't."
     return f"""You are one of four independent traders on a research committee, looking for a real, repeatable edge
 in volatile US stocks with unusual options activity. Each week you see up to {PER_WEEK} candidate stock-days.
 
@@ -373,17 +426,13 @@ For EVERY candidate, give a rating: +2 strong buy, +1 lean buy, 0 no view, -1 le
 (you expect it to fall). Ratings are scored too: we check whether your higher-rated stocks did better
 over the next 10 trading sessions.
 
-Then you may buy up to {MAX_PICKS} of them. For each, either:
-- the STOCK (sold 10 trading sessions later), or
-- one CALL option: expiry 14, 30 or 90 days; strike at the money (0) or 5, 10, 15, 20 percent above the
-  price; exit "hold10" (sell after 10 sessions) or "double_or_10" (sell as soon as it is worth 2x,
-  otherwise after 10 sessions). Calls marked "n/a" did not trade that day and cannot be bought.
+{instruments}
 Every trade is ${A.TRADE_USD:,}.
 YOUR GOAL: MAKE AS MUCH MONEY AS POSSIBLE. Your score is your total profit in dollars. A pass earns $0; a
-trade earns its return on ${A.TRADE_USD:,} (+50% = +$500, -100% = -${A.TRADE_USD:,}). Trade when you believe the
-odds favor you and pass when they don't. You buy at the next session's price; a 5% cost applies to each
-side of an option trade and 0.1% to each side of a stock trade.
+trade earns its return on ${A.TRADE_USD:,} (+50% = +$500, -100% = -${A.TRADE_USD:,}). You buy at the next session's
+price; a 5% cost applies to each side of an option trade and 0.1% to each side of a stock trade.
 {feedback}
+{explore}
 
 Stocks are anonymous codes and time is shown only as week numbers, on purpose: judge only from the
 numbers. Columns:
@@ -391,8 +440,14 @@ numbers. Columns:
 - option grid: the cost of each call as a percent of the stock price
 
 Think it through silently, then reply with ONE compact JSON object and nothing else:
-{{"ratings": {{"C1": 1, "C2": -2, "C3": 0}}, "picks": [{{"id": "C3", "buy": "stock"}}, {{"id": "C7", "buy": "call", "expiry": 90, "strike": 0, "exit": "hold10"}}], "why": "under 25 words"}}
-Rate every candidate. Use "picks": [] to buy nothing this week."""
+{{"ratings": {{"C1": 1, "C2": -2, "C3": 0}}, "picks": [{example}], "why": "under 25 words"}}
+Rate every candidate.""" + ("" if phase == "train" else ' Use "picks": [] to buy nothing this week.')
+
+
+def rules_prompt():
+    extra = ("\nThis committee trades options only: every rule must buy a call (expiry, strike, exit)."
+             if CFG["options_only"] else "")
+    return RULES_PROMPT + extra
 
 
 RULES_PROMPT = f"""Now turn your strongest ideas into testable rules. Code will test each rule on every training
@@ -530,6 +585,8 @@ class Walk:
                 if not c or c["id"] in used:
                     continue
                 if str(p.get("buy", "")).lower() == "stock":
+                    if CFG["options_only"]:
+                        continue
                     spec = {"action": "stock", "expiry": None, "strike_pct": None, "exit_rule": None}
                 else:
                     try:
@@ -555,7 +612,7 @@ class Walk:
     def summary(self, generation, agent):
         rets = [t["ret_pct"] for t in self.trades]
         bm, bmed, bw = A.random_baseline(self.weeks, self.trades) if self.trades else (None, None, None)
-        s = {"run_id": self.run_id, "lineage": "committee", "generation": generation, "phase": self.phase,
+        s = {"run_id": self.run_id, "lineage": CFG["lineage"], "generation": generation, "phase": self.phase,
              "agent": agent, "model": self.llm.model, "weeks": len(self.weeks), "trades": len(rets),
              "mean_ret": round(statistics.mean(rets), 2) if rets else None,
              "median_ret": round(statistics.median(rets), 2) if rets else None,
@@ -645,6 +702,12 @@ Your working notes going into this bundle:
 {working.strip() or '(none)'}
 
 Rewrite your working notes{' as your final notes for the committee editor' if last else ' before the next bundle (new stocks)'}.
+Your notes are your trading playbook, not a report. Structure them as:
+1. MY CURRENT STRATEGY: the exact setup you trade (columns and thresholds, instrument, expiry, strike, exit)
+   and the reasoning behind it.
+2. WHAT I TESTED IN THIS BUNDLE and how it went, including the new idea you tried.
+3. WHAT I WILL TRY NEXT: the change or new idea you will test on the next stocks.
+4. Supporting evidence and ideas I have dropped (briefly).
 Keep what held up, fix or drop what didn't, add what you learned. Write rules in terms of the columns
 (thresholds, combinations, instrument, expiry, strike, exit), with the evidence behind each (how many trades,
 returns, in how many bundles it held) and how confident you are. Be honest about small samples and about
@@ -659,7 +722,7 @@ What the columns mean:
         working = llm.chat([{"role": "user", "content": prompt}], max_tokens=24000)
         if llm.last_finish == "length":
             working += "\n\n(The notes were cut off here by the reply limit.)"
-    reply = llm.chat([{"role": "user", "content": f"Your final notes:\n{working}\n\n{RULES_PROMPT}"}], max_tokens=3000)
+    reply = llm.chat([{"role": "user", "content": f"Your final notes:\n{working}\n\n{rules_prompt()}"}], max_tokens=3000)
     data = A.parse_json(reply)
     rules = clean_rules(data.get("rules") if isinstance(data, dict) else None)
     return walk, working, rules
@@ -705,16 +768,17 @@ def editor(llm, gen, prev_notes, agent_outputs, book_lines):
                      f"training candidates in all six bundles:\n" + ("\n".join(book_lines[a]) or "(no testable rules)"))
     prompt = "\n\n".join(parts) + """
 
-You are the committee editor. Four traders worked independently on the same stocks and weeks. Write the
-notes the next generation will start from; it will see ONLY your notes and the code-tested scorebook of
+You are the committee editor. Four traders worked independently on the same stocks and weeks, each
+developing its own strategy. Write the playbook the next generation will start from; it will see ONLY your notes and the code-tested scorebook of
 the rules you state next, never these traders' notes or trades.
 Weigh the evidence: trust rules the code confirmed across many trades and most bundles, and treat ideas
 that only one trader saw, or that the code did not confirm, as weak. Say where the traders agreed and
 where they disagreed. Keep useful ideas that still need testing, clearly marked as untested. No stock
 codes. No length limit: be as thorough as is useful, organized under headings. Reply with the notes only.
 
-How to organize them: start with what to DO (the rules worth trading, with their scorebook numbers),
-then what to AVOID, then untested ideas worth trying, then open questions. Spend your words on trading
+How to organize them: start with the STRATEGY to trade (the setups worth trading, with their scorebook
+numbers), then what to AVOID, then at least two promising NEW IDEAS for the next traders to test (give credit
+to original ideas the code confirmed, and keep creative ones that are untested), then open questions. Spend your words on trading
 ideas and evidence, not on bookkeeping. Things that are expected and need no comment: each trader's
 trades and rating counts differ (they chose and rated independently), traders' notes are summaries
 rather than full logs, and the scorebook's numbers supersede any figure a trader quoted.
@@ -724,7 +788,7 @@ What the columns mean:
     notes = llm.chat([{"role": "user", "content": prompt}], max_tokens=24000)
     if llm.last_finish == "length":
         notes += "\n\n(The notes were cut off here by the reply limit.)"
-    reply = llm.chat([{"role": "user", "content": f"Your notes:\n{notes}\n\n{RULES_PROMPT}"}], max_tokens=3000)
+    reply = llm.chat([{"role": "user", "content": f"Your notes:\n{notes}\n\n{rules_prompt()}"}], max_tokens=3000)
     data = A.parse_json(reply)
     return notes, clean_rules(data.get("rules") if isinstance(data, dict) else None)
 
@@ -743,14 +807,15 @@ def stats_of(row):
 def book_text(st, g):
     """The editor's rules for generation g with their TRAINING numbers only (what may be passed on)."""
     book = [r for r in st.backend.read("scorebook")
-            if int(r["generation"]) == g and r["author"] == "editor" and r["period"] == "train"]
+            if r["lineage"] == CFG["lineage"] and int(r["generation"]) == g and r["author"] == "editor"
+            and r["period"] == "train"]
     return "\n".join(scorebook_line(json.loads(r["rule"]), stats_of(r)) for r in book)
 
 
 def inherited(st):
-    rows = [r for r in st.backend.read("committee_notes") if r["author"] == "editor"]
+    rows = [r for r in st.backend.read("committee_notes") if r["author"] == "editor" and r["lineage"] == CFG["lineage"]]
     if not rows:
-        return 0, "", ""
+        return 0, (SEED_NOTES if CFG["seed"] == "briefing" else ""), ""
     last = max(rows, key=lambda r: int(r["generation"]))
     g = int(last["generation"])
     return g, last["text"], book_text(st, g)
@@ -762,7 +827,7 @@ def book_rows(gen, author, period, rules, cands):
         s = score_rule(r, cands)
         if s["trades"]:
             s["trades"] = int(s["trades"])
-        rows.append(dict(s, generation=gen, author=author, rule_name=r["name"], period=period, rule=json.dumps(r)))
+        rows.append(dict(s, lineage=CFG["lineage"], generation=gen, author=author, rule_name=r["name"], period=period, rule=json.dumps(r)))
         lines.append(scorebook_line(r, s))
     # Several rules can share a name; keep them apart in the table.
     seen = {}
@@ -825,9 +890,9 @@ def run_generation(st, args, pool, deadline, pot):
     st.backend.upsert("agent_ratings", ratings)
     st.backend.upsert("agent_weeks", weeks)
     st.backend.upsert("scorebook", book)
-    notes_rows = [{"generation": gen, "author": f"agent{a}", "model": args.model, "text": w, "rules": json.dumps(r),
+    notes_rows = [{"lineage": CFG["lineage"], "generation": gen, "author": f"agent{a}", "model": args.model, "text": w, "rules": json.dumps(r),
                    "created": now} for a, (w, r) in agent_out.items()]
-    notes_rows.append({"generation": gen, "author": "editor", "model": args.model, "text": ed_notes,
+    notes_rows.append({"lineage": CFG["lineage"], "generation": gen, "author": "editor", "model": args.model, "text": ed_notes,
                        "rules": json.dumps(ed_rules), "created": now})
     st.backend.upsert("committee_notes", notes_rows)
     print(f"Generation {gen} done: scoring run {sc['trades']} trades, profit ${sc['profit_usd']:+,.0f} "
@@ -875,7 +940,7 @@ def loop(args):
         if cost > 0:
             st.backend.upsert("agent_runs", [{
                 "run_id": f"committee-unfinished-{dt.datetime.now(dt.timezone.utc):%Y%m%d%H%M%S}",
-                "lineage": "committee", "generation": inherited(st)[0] + 1, "phase": "unfinished",
+                "lineage": CFG["lineage"], "generation": inherited(st)[0] + 1, "phase": "unfinished",
                 "agent": "all", "model": args.model, "cost_usd": round(cost, 4), "status": stop or "time limit",
                 "started": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")}])
         break
@@ -895,10 +960,10 @@ def final_test(args):
     st = C.db()
     pool = load_pool(st)
     rows = [r for r in st.backend.read("committee_notes")
-            if r["author"] == "editor" and int(r["generation"]) == args.generation]
+            if r["author"] == "editor" and r["lineage"] == CFG["lineage"] and int(r["generation"]) == args.generation]
     if not rows:
         sys.exit(f"No editor notes for generation {args.generation}.")
-    if any(r.get("phase") == "test" and r.get("lineage") == "committee" and r["generation"] == str(args.generation)
+    if any(r.get("phase") == "test" and r.get("lineage") == CFG["lineage"] and r["generation"] == str(args.generation)
            for r in st.backend.read("agent_runs")):
         print("Note: this generation already took the exam; a repeat is no longer a clean test.")
     rules = clean_rules(json.loads(rows[0]["rules"] or "[]"))
@@ -926,9 +991,9 @@ def final_test(args):
 # ---------------------------------------------------------------- report
 def report(args=None):
     st = C.db()
-    runs = [r for r in st.backend.read("agent_runs") if r["lineage"] == "committee"]
-    notes = st.backend.read("committee_notes")
-    book = st.backend.read("scorebook")
+    runs = [r for r in st.backend.read("agent_runs") if r["lineage"] == CFG["lineage"]]
+    notes = [n for n in st.backend.read("committee_notes") if n["lineage"] == CFG["lineage"]]
+    book = [b for b in st.backend.read("scorebook") if b["lineage"] == CFG["lineage"]]
     pool_counts = {}
     for r in st.backend.read("pool"):
         pool_counts[r["split"]] = pool_counts.get(r["split"], 0) + 1
@@ -966,7 +1031,8 @@ def report(args=None):
     err = os.path.join(C.ROOT, "committee_error.txt")
     if os.path.exists(err):
         L += ["", "## Last error", "", "```", open(err).read(), "```"]
-    with open(os.path.join(C.ROOT, "COMMITTEE.md"), "w") as f:
+    name = "COMMITTEE.md" if CFG["lineage"] == "committee" else f"COMMITTEE-{CFG['lineage']}.md"
+    with open(os.path.join(C.ROOT, name), "w") as f:
         f.write("\n".join(L) + "\n")
     print("\n".join(L[:40]))
 
@@ -988,7 +1054,18 @@ def main():
         else:
             a.add_argument("--generation", type=int, required=True)
     sub.add_parser("report")
+    for sp in sub.choices.values():
+        if sp.prog.split()[-1] in ("loop", "final-test", "report"):
+            sp.add_argument("--lineage", default="committee",
+                            help="a separate line of generations with its own notes (e.g. options1)")
+            sp.add_argument("--options-only", action="store_true", help="agents may only buy calls")
+            sp.add_argument("--seed", choices=["none", "briefing"], default="none",
+                            help="what a new lineage's first generation starts with")
     a = p.parse_args()
+    if hasattr(a, "lineage"):
+        if not re.fullmatch(r"[a-z0-9-]{1,30}", a.lineage):
+            sys.exit("Lineage names use lowercase letters, digits and dashes only.")
+        CFG.update(lineage=a.lineage, options_only=a.options_only, seed=a.seed)
     {"build-pool": build_pool, "loop": loop, "final-test": final_test, "report": report}[a.cmd](a)
 
 

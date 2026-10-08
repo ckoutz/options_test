@@ -40,7 +40,7 @@ HOLD_SESSIONS = 10
 TAKE_PROFIT = 2.0
 MIN_DTE = 7
 STATUS_FILE = os.path.join(C.ROOT, "ladder_status.txt")
-MIN_SECONDS_BETWEEN_REQUESTS = 1.5   # slow, so it can run beside the backfill on one Alpaca key
+MIN_SECONDS_BETWEEN_REQUESTS = 2.0   # 30 a minute, so it fits beside the backfill on one Alpaca key
 
 
 def pick_contracts(contracts, signal_date, stock_close):
@@ -129,6 +129,7 @@ def run(args):
     plan = choose_days(days)
     done = {(r["grp"], r["ticker"], r["signal_date"]) for r in st.backend.read("ladder_trades")}
     todo = [p for p in plan if (p[1], p[0]["ticker"], p[0]["date"]) not in done]
+    todo.sort(key=lambda p: (p[0]["ticker"], p[0]["date"]))   # one stock at a time: contracts load once
     print(f"Ladder: {len(plan)} days planned ({sum(1 for p in plan if p[1] == 'flag')} flags), "
           f"{len(plan) - len(todo)} done, {len(todo)} to go.")
     contracts_cache = {}

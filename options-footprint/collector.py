@@ -133,7 +133,8 @@ def safe_end(end_date):
 
 # ---------------------------------------------------------------- Alpaca
 _last_request = [0.0]
-MIN_SECONDS_BETWEEN_REQUESTS = 0.35   # about 170 a minute, under Alpaca's free limit of 200
+MIN_SECONDS_BETWEEN_REQUESTS = 0.4    # about 150 a minute, leaving room under Alpaca's free
+                                      # limit of 200 for the ladder backtest (30 a minute)
 
 
 def http_json(url, headers=None):
@@ -788,6 +789,45 @@ def migrate(args):
     print("Migration complete.")
 
 
+def status(args):
+    """Progress snapshot written to STATUS.md (the GitHub status workflow commits it)."""
+    st = db()
+    lines = [f"# Status ({dt.datetime.now(dt.timezone.utc):%Y-%m-%d %H:%M} UTC, storage: {st.kind})", ""]
+    if st.kind != "postgres":
+        lines.append("Not connected to the database (DATABASE_URL not set).")
+    else:
+        q = lambda sql: st.backend.conn.execute(sql).fetchall()
+        one = lambda sql: q(sql)[0][0]
+        ev = one("select count(*) from events")
+        ev_filled = one("select count(*) from events where window_filled = 'yes'")
+        ct_filled = one("select count(*) from controls where window_filled = 'yes'")
+        lines += [
+            "## Backfill",
+            f"- Big moves logged: {ev:,} across {one('select count(distinct ticker) from events'):,} stocks",
+            f"- Pre-move windows filled: {ev_filled:,} of {ev:,}",
+            f"- Stocks eligible for full history (3+ moves): "
+            f"{one('select count(*) from (select ticker from events group by ticker having count(*) >= 3) x'):,}; "
+            f"done: {one('select count(*) from history_done'):,}",
+            f"- Control days: {one('select count(*) from controls'):,} "
+            f"(filled {ct_filled:,})",
+            f"- Daily rows: {one('select count(*) from daily'):,}; database size: "
+            f"{one('select pg_size_pretty(pg_database_size(current_database()))')}",
+            "", "## Labels"]
+        lines += [f"- {lab or 'none'}: {n:,}" for lab, n in q("select label, count(*) from events group by label order by 2 desc")]
+        lines += ["", "## Ladder backtest"]
+        lines += [f"- {g}: {d:,} days, {n:,} contracts ({f:,} could be bought)" for g, d, n, f in q(
+            "select grp, count(distinct (ticker, signal_date)), count(*), count(*) filter (where filled='yes') "
+            "from ladder_trades group by grp order by grp")] or ["- no trades yet"]
+        lines += ["", "## Flags (daily shortlist)",
+                  f"- {one('select count(*) from flags'):,} flags; latest signal date: {one('select max(signal_date) from flags')}"]
+        lines += ["", f"## Errors ({one('select count(*) from errors'):,} total, latest 8)"]
+        lines += [f"- {w} {t} {e}: {msg[:160]}" for w, t, e, msg in q(
+            "select logged_at, ticker, event_date, error from errors order by id desc limit 8")] or ["- none"]
+    with open(os.path.join(ROOT, "STATUS.md"), "w") as f:
+        f.write("\n".join(lines) + "\n")
+    print("\n".join(lines))
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -808,6 +848,7 @@ def main():
     n.add_argument("--per-event", type=int, default=2)
     h = sub.add_parser("history"); h.add_argument("--max-minutes", type=float, default=50)
     sub.add_parser("migrate", help="copy the CSV files in data/ into the database (one time)")
+    sub.add_parser("status", help="write a progress snapshot to STATUS.md")
     f = sub.add_parser("backfill"); f.add_argument("--max-minutes", type=float, default=100)
     f.add_argument("--round", type=int, default=1); f.add_argument("--start", default="2024-03-01")
     f.add_argument("--min-move", type=float, default=15); f.add_argument("--lookback", type=int, default=15)
@@ -815,7 +856,7 @@ def main():
     args = p.parse_args()
     {"find-movers": find_movers, "collect": collect, "controls": controls, "features": features,
      "compare": compare, "nightly": nightly, "history": history, "backfill": backfill,
-     "migrate": migrate}[args.cmd](args)
+     "migrate": migrate, "status": status}[args.cmd](args)
 
 
 if __name__ == "__main__":

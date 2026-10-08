@@ -1,0 +1,52 @@
+name: Status report
+
+# Writes STATUS.md (backfill, ladder, flags, errors) and LADDER_REPORT.md from the database and
+# commits them. Runs when options-footprint/status_request.txt changes, or from the Actions tab.
+
+on:
+  push:
+    paths:
+      - options-footprint/status_request.txt
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: options-status
+  cancel-in-progress: true
+
+jobs:
+  status:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: options-footprint
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install the database driver
+        run: pip install --quiet "psycopg[binary]"
+
+      - name: Build the reports
+        run: |
+          python collector.py status
+          { echo '```'; python ladder.py --report-only; echo '```'; } > LADDER_REPORT.md
+          cat LADDER_REPORT.md
+
+      - name: Commit the reports
+        run: |
+          git config user.name "options-footprint-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add STATUS.md LADDER_REPORT.md
+          git diff --cached --quiet && exit 0
+          git commit -q -m "Status report $(date -u '+%Y-%m-%d %H:%M')"
+          for i in 1 2 3; do git pull --rebase -q && git push -q && exit 0; sleep 5; done
+          exit 1

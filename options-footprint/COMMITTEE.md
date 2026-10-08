@@ -1,6 +1,6 @@
-# Committee generations (2026-10-08 21:19 UTC)
+# Committee generations (2026-10-08 22:09 UTC)
 
-Total spent on all agent runs: $1.31. Candidate pool: {'score': 1149, 'train': 2395, 'test': 2176, 'holdout': 1600}.
+Total spent on all agent runs: $1.31. Candidate pool: {'score': 1017, 'train': 2090, 'test': 1866, 'holdout': 1542}.
 
 Four agents train independently on six stock bundles; code scores their rules; an editor writes the
 notes passed on. The scoring run trades blind months with the editor's notes. "Random" makes the same
@@ -16,6 +16,13 @@ rating go with a better 10-session stock return (0 = no skill, ranges are 95%). 
 | 1 | agent3 | train | 78 | 2431.0 | 702.0 | 3.12 | 43.6 | -0.004 (-0.059 to 0.041) | -1.12 | 0.3 | 1/151 | 0.1992 |
 | 1 | agent4 | train | 87 | -3353.8 | -1818.3 | -3.85 | 42.5 | 0.012 (-0.041 to 0.063) | -1.06 | 0.56 | 0/151 | 0.1992 |
 | 1 | scorer | score | 304 | 5214.6 | 3374.4 | 1.72 | 48.0 | -0.061 (-0.125 to -0.007) | 1.23 | 3.1 | 0/144 | 0.1995 |
+
+## Luck check
+
+- Different rules tested on training data so far: 28 (by the agents and the editor).
+- Editor rules checked on the blind months: 8; passed clearly (whole 95% range above buying everything the same way): 1.
+- Expected to pass by luck alone: about 0.2. Treat a pass as real only if it clearly beats that count and the rule keeps passing in later generations.
+  - passed: deep off-high recovering (generation 1): blind average 5.27% versus 1.25% for buying everything
 
 ## Generation 1
 

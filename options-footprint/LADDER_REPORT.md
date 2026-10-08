@@ -1,6 +1,6 @@
 ```
 Storage: postgres
-Fill rate (contract actually traded on the entry day): flag 282137/503460, control 262234/503295
+The raw ladder trades are archived (GitHub Release); showing the saved summary from 2026-10-08.
 
 === Exit rule: hold10  (return %, flags vs control days on the same stocks) ===
 expiry   strike    FLAG mean  median  win%  CONTROL mean  median  win%  trades

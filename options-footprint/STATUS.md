@@ -1,28 +1,28 @@
-# Status (2026-10-08 18:31 UTC, storage: postgres)
+# Status (2026-10-08 18:46 UTC, storage: postgres)
 
 ## Backfill
 - Big moves logged: 5,382 across 1,649 stocks
 - Pre-move windows filled: 5,382 of 5,382
 - Stocks eligible for full history (3+ moves): 649; done: 649
 - Control days: 10,754 (filled 10,754)
-- Daily rows: 1,049,473; database size: 445 MB
+- Daily rows: 1,049,473; database size: 187 MB
 
 ## Table sizes
-- ladder_trades: 274 MB, about 1,006,755 rows
 - daily: 175 MB, about 1,049,473 rows
+- arena: 5 MB, about 1,613 rows
 - event_features: 3 MB, about 16,136 rows
-- arena: 3 MB, about 1,613 rows
 - controls: 1 MB, about 10,754 rows
 - events: 1 MB, about 5,382 rows
 - flags: 1 MB, about 2,689 rows
 - history_done: 0 MB, about 649 rows
-- want: 0 MB, about 1,613 rows
 - ladder_report: 0 MB, about 90 rows
 - signal_report: 0 MB, about 36 rows
-- agent_runs: 0 MB, about 6 rows
+- agent_runs: 0 MB, about 8 rows
+- agent_trades: 0 MB, about 2 rows
 - agent_lessons: 0 MB, about 3 rows
+- ladder_trades: 0 MB, about 0 rows
 - errors: 0 MB, about 0 rows
-- agent_trades: 0 MB, about 0 rows
+- agent_weeks: 0 MB, about 0 rows
 
 ## Labels
 - unknown: 4,598
@@ -31,8 +31,7 @@
 - news_catalyst: 1
 
 ## Ladder backtest
-- control: 33,553 days, 503,295 contracts (262,234 could be bought)
-- flag: 33,564 days, 503,460 contracts (282,137 could be bought)
+- raw trades archived to a GitHub Release; summary kept in ladder_report
 
 ## Signal report (run 2026-10-08): rally within 10 sessions
 | big move | rule | fired | hit % | lift | 1st half | 2nd half | drop lift | median 10-day return % |
@@ -78,14 +77,16 @@
 - 2,689 flags; latest signal date: 2026-10-07
 
 ## Trader generations
-| lineage | gen | phase | model | trades | mean % | median % | win % | random mean | random median | random win % | cost $ | status |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| blank | 1 | train | anthropic/claude-haiku-5.5 | 0 |  |  |  |  |  |  | 0.0469 | complete |
-| blank | 1 | validation | anthropic/claude-haiku-5.5 | 0 |  |  |  |  |  |  | 0.0203 | complete |
-| blank | 2 | train | anthropic/claude-haiku-5.5 | 0 |  |  |  |  |  |  | 0.0469 | complete |
-| blank | 2 | validation | anthropic/claude-haiku-5.5 | 0 |  |  |  |  |  |  | 0.0203 | complete |
-| blank | 3 | train | anthropic/claude-haiku-5.5 | 0 |  |  |  |  |  |  | 0.0469 | complete |
-| blank | 3 | validation | anthropic/claude-haiku-5.5 |  |  |  |  |  |  |  |  | running |
+| lineage | gen | phase | model | trades | profit $ | random profit $ | mean % | median % | win % | random mean % | random win % | unreadable | cost $ | status |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| blank | 1 | train | anthropic/claude-haiku-5.5 | 0 |  |  |  |  |  |  |  |  | 0.0469 | complete |
+| blank | 1 | validation | anthropic/claude-haiku-5.5 | 0 |  |  |  |  |  |  |  |  | 0.0203 | complete |
+| blank | 2 | train | anthropic/claude-haiku-5.5 | 0 |  |  |  |  |  |  |  |  | 0.0469 | complete |
+| blank | 2 | validation | anthropic/claude-haiku-5.5 | 0 |  |  |  |  |  |  |  |  | 0.0203 | complete |
+| blank | 3 | train | anthropic/claude-haiku-5.5 | 0 |  |  |  |  |  |  |  |  | 0.0469 | complete |
+| blank | 3 | validation | anthropic/claude-haiku-5.5 | 2 |  |  | 1.71 | 1.71 | 50.0 | -0.09 | 39.5 |  | 0.022 | complete |
+| blank | 4 | train | anthropic/claude-haiku-5.5 |  |  |  |  |  |  |  |  |  |  | running |
+| blank-v2 | 1 | train | anthropic/claude-haiku-5.5 |  |  |  |  |  |  |  |  |  |  | running |
 
 ### Latest lessons: blank lineage, generation 3 (anthropic/claude-haiku-5.5)
 

@@ -84,6 +84,9 @@ POOL_COLS = {"ticker": T, "signal_date": D, "bundle": I, "split": T, "week": D, 
 # (before any of the history the agents study), whether or not they later had big moves.
 WIDE_COLS = {"ticker": T, "status": T, "avg_price": F, "avg_volume": F, "selected": T}
 BUNDLE_COLS = {"ticker": T, "bundle": I, "universe": T}
+# News headlines (Alpaca / Benzinga), one row per article per stock, with a model-scored tone.
+NEWS_COLS = {"id": T, "ticker": T, "created_at": T, "headline": T, "n_symbols": I, "sentiment": F}
+NEWS_FETCHED_COLS = {"ticker": T, "through": T, "articles": I}
 COMMITTEE_NOTE_COLS = {"lineage": T, "generation": I, "author": T, "model": T, "text": T, "rules": T, "created": T}
 SCOREBOOK_COLS = {"lineage": T, "generation": I, "author": T, "rule_name": T, "period": T, "rule": T, "trades": I,
                   "mean_ret": F, "median_ret": F, "win_rate": F, "ci_low": F, "ci_high": F,
@@ -109,6 +112,8 @@ TABLES = {
     "pool": (POOL_COLS, ["ticker", "signal_date"]),
     "wide_universe": (WIDE_COLS, ["ticker"]),
     "bundles": (BUNDLE_COLS, ["ticker"]),
+    "news": (NEWS_COLS, ["id", "ticker"]),
+    "news_fetched": (NEWS_FETCHED_COLS, ["ticker"]),
     "committee_notes": (COMMITTEE_NOTE_COLS, ["lineage", "generation", "author"]),
     "scorebook": (SCOREBOOK_COLS, ["lineage", "generation", "author", "rule_name", "period"]),
     "agent_ratings": (RATING_COLS, ["run_id", "ticker", "signal_date"]),
@@ -121,7 +126,8 @@ CSV_FILES = {"events": "events.csv", "controls": "controls.csv", "daily": "daily
              "arena": "arena.csv", "agent_runs": "agent_runs.csv", "agent_trades": "agent_trades.csv",
              "agent_lessons": "agent_lessons.csv", "agent_weeks": "agent_weeks.csv", "pool": "pool.csv", "committee_notes": "committee_notes.csv",
              "scorebook": "scorebook.csv", "agent_ratings": "agent_ratings.csv",
-             "wide_universe": "wide_universe.csv", "bundles": "bundles.csv"}
+             "wide_universe": "wide_universe.csv", "bundles": "bundles.csv", "news": "news.csv",
+             "news_fetched": "news_fetched.csv"}
 
 
 def _to_db(value, kind):

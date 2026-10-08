@@ -178,7 +178,7 @@ def market_closes():
     try:
         bars = C.stock_bars(["SPY"], "2023-12-01", dt.date.today().isoformat())
         return {b["date"]: b["close"] for b in bars.get("SPY", [])}
-    except Exception as ex:   # noqa: BLE001 - market context is a nice-to-have
+    except (Exception, SystemExit) as ex:   # noqa: BLE001 - market context is a nice-to-have (or no keys)
         print(f"Market context unavailable ({str(ex)[:100]}); those columns will be blank.")
         return {}
 
@@ -289,9 +289,13 @@ def build_pool(args):
         options.setdefault(k, {})[cell] = [
             round(float(r["entry_price"]) / float(r["stock_close"]) * 100, 2),
             C.to_float(r["ret_hold10_pct"]), C.to_float(r["ret_double_or_10_pct"])] if ok else None
+    import news as N
+    nidx = N.Index(st, {t for _, t, _ in picked}) if st.backend.read("news_fetched") else None
     out = []
     for (b, wk, s, u), t, d in picked:
         g, f, sh = feats[(t, d)]
+        if nidx:
+            f.update(nidx.features(t, d, f.get("call_volume_spike")))
         out.append({"ticker": t, "signal_date": d, "bundle": b, "split": s, "week": wk, "month": month_of(d),
                     "grp": g, "universe": u, "features": json.dumps(f, separators=(",", ":")),
                     "options": json.dumps({k: v for k, v in options.get((t, d), {}).items() if v},

@@ -141,6 +141,16 @@ stocks keep their bundles (table `bundles`); wide-list stocks are dealt into bun
 New candidate columns: the last 5 sessions of call, put and share activity (`calls 5d avg`,
 `call days 2x+`, `puts 5d avg`, `shares 5d avg`) and the whole market's 5- and 20-session change.
 
+## News (news.py)
+`python news.py update` (GitHub: "Committee generations" → `news`; also runs after every `build-pool`)
+fetches every Alpaca/Benzinga headline since February 2024 for the pool's stocks, has the cheap model
+score each needed headline's tone for the stock (-1 to +1; the cost counts toward the spending cap),
+and adds to each candidate: articles in the 1, 3 and 7 days before that day's close (roundups naming
+more than 3 stocks excluded), the average 7-day tone, and `spike, no news` (call volume 3x+ normal
+with no news in the prior 3 days, the footprint this project is looking for). Agents never see
+headline text, only these numbers, so they can't recognize a company or a date.
+Tables: `news`, `news_fetched`. Resumable; continues in another round if time runs out.
+
 ## Scoring the signals
 `python scorer.py` (runs automatically after every nightly and backfill) uses every trading day for
 tickers with full history. For each day it computes signals from that day and earlier only, then

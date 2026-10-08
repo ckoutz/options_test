@@ -81,6 +81,11 @@ FEATURES = [  # (key in the arena, label shown to the agent, meaning)
     ("vs_ma50_pct", "vs ma50 %", "price versus its 50-session average close, percent"),
     ("from_high60_pct", "off high %", "price versus the highest close of the last 60 sessions, percent (0 = at the high)"),
     ("rsi14", "rsi", "14-session RSI of closes (above 70 = overbought, below 30 = oversold)"),
+    ("news_1d", "news 1d", "news articles about this company in the 24 hours before the close (roundups excluded)"),
+    ("news_3d", "news 3d", "news articles about this company in the 3 days before the close"),
+    ("news_7d", "news 7d", "news articles about this company in the 7 days before the close"),
+    ("news_sent_7d", "news tone 7d", "average tone of those 7 days of headlines, -1 (bad for the stock) to +1 (good); blank = no news"),
+    ("quiet_spike", "spike, no news", "1 if call volume is 3x+ normal and there was no news in the prior 3 days, else 0"),
     ("mkt_5d_pct", "market 5d %", "the whole market (S&P 500 fund) over the last 5 sessions, percent"),
     ("mkt_20d_pct", "market 20d %", "the whole market (S&P 500 fund) over the last 20 sessions, percent"),
     ("price_band", "price", "share price band: under $10, $10 to $50, or over $50"),
@@ -397,7 +402,7 @@ def candidate_table(cands):
         for k, _, _ in FEATURES:
             if k == "price_band":
                 vals.append(str(f.get(k) or "-"))
-            elif k in ("rsi14", "call_days_2x"):
+            elif k in ("rsi14", "call_days_2x", "news_1d", "news_3d", "news_7d", "quiet_spike"):
                 vals.append(fmt(f.get(k), "{:.0f}"))
             elif k == "vol20_pct":
                 vals.append(fmt(f.get(k), "{:.1f}"))

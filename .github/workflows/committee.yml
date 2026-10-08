@@ -15,6 +15,7 @@ on:
         options:
           - loop
           - build-pool
+          - news
           - report
           - final-test
       model:
@@ -100,7 +101,11 @@ jobs:
               echo "Using archive release $tag"
               gh release download "$tag" -R "${{ github.repository }}" --pattern "ladder_trades.csv.gz" --dir "$RUNNER_TEMP"
               python committee.py build-pool --archive "$RUNNER_TEMP/ladder_trades.csv.gz"
+              # News for every pool stock: fetch, score the tone, add the news columns.
+              python news.py update --model "${{ github.event.inputs.model }}" --max-minutes 100 || true
               python committee.py report ;;
+            news)
+              python news.py update --model "${{ github.event.inputs.model }}" --max-minutes 140 ;;
             loop)
               if [ -z "$LLM_API_KEY" ]; then echo "OPENROUTER_API_KEY secret is not set"; exit 1; fi
               python committee.py loop $LINEAGE_ARGS --model "${{ github.event.inputs.model }}" \
@@ -130,6 +135,15 @@ jobs:
           git commit -q -m "Committee report $(date -u '+%Y-%m-%d %H:%M')"
           for i in 1 2 3; do git pull --rebase -q && git push -q && exit 0; sleep 5; done
           exit 1
+
+      - name: Finish the news in another round if needed
+        if: ${{ !cancelled() && (github.event.inputs.command == 'build-pool' || github.event.inputs.command == 'news') }}
+        run: |
+          if [ "$(cat news_status.txt 2>/dev/null)" = "more" ]; then
+            gh workflow run committee.yml --ref "${{ github.ref_name }}" -f command=news \
+              -f model="${{ github.event.inputs.model }}" -f max_usd="${{ github.event.inputs.max_usd }}"
+            echo "Launched another news round."
+          fi
 
       - name: Launch the next round if generations remain
         if: ${{ !cancelled() && github.event.inputs.command == 'loop' }}

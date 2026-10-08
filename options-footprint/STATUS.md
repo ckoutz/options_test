@@ -1,4 +1,4 @@
-# Status (2026-10-08 18:16 UTC, storage: postgres)
+# Status (2026-10-08 18:18 UTC, storage: postgres)
 
 ## Backfill
 - Big moves logged: 5,382 across 1,649 stocks
@@ -6,6 +6,23 @@
 - Stocks eligible for full history (3+ moves): 649; done: 649
 - Control days: 10,754 (filled 10,754)
 - Daily rows: 1,049,473; database size: 445 MB
+
+## Table sizes
+- ladder_trades: 274 MB, about 1,006,755 rows
+- daily: 175 MB, about 1,049,473 rows
+- event_features: 3 MB, about 16,136 rows
+- arena: 3 MB, about 1,613 rows
+- controls: 1 MB, about 10,754 rows
+- events: 1 MB, about 5,382 rows
+- flags: 1 MB, about 2,689 rows
+- history_done: 0 MB, about 649 rows
+- want: 0 MB, about 1,613 rows
+- ladder_report: 0 MB, about 90 rows
+- signal_report: 0 MB, about 36 rows
+- agent_runs: 0 MB, about 3 rows
+- agent_lessons: 0 MB, about 1 rows
+- errors: 0 MB, about 0 rows
+- agent_trades: 0 MB, about 0 rows
 
 ## Labels
 - unknown: 4,598

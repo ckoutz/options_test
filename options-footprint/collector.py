@@ -212,8 +212,68 @@ def option_contracts(ticker, exp_from, exp_to):
     return {c["symbol"]: c for c in contracts}
 
 
+def new_totals(dates):
+    return {d: {k: 0 for k in ("call", "put", "short_otm_call") + CALL_BUCKETS} for d in dates}
+
+
+def add_bars(pages, contracts, closes, totals):
+    """Add one Alpaca options-bars response into the per-day totals."""
+    for page in pages:
+        for sym, bars in (page.get("bars") or {}).items():
+            c = contracts.get(sym)
+            if c is None:          # not one we asked for; ignore
+                continue
+            kind = c["type"]       # "call" or "put"
+            expiry = dt.date.fromisoformat(c["expiration_date"])
+            strike = float(c["strike_price"])
+            for b in bars:
+                d = b["t"][:10]
+                t = totals.get(d)
+                if t is None:
+                    continue
+                v = b["v"]
+                t[kind] += v
+                if kind != "call":
+                    continue
+                days_left = (expiry - dt.date.fromisoformat(d)).days
+                # Where did the call buying land? By time to expiration...
+                if days_left <= SHORT_DATED_DAYS:
+                    t["call_vol_short"] += v
+                elif days_left <= MEDIUM_DATED_DAYS:
+                    t["call_vol_medium"] += v
+                else:
+                    t["call_vol_long"] += v
+                # ...and by strike versus the stock price.
+                close = closes.get(d)
+                if close:
+                    if strike >= close * (1 + OTM_PCT):
+                        t["call_vol_otm"] += v
+                        if days_left <= SHORT_DATED_DAYS:
+                            t["short_otm_call"] += v
+                    elif strike <= close * (1 - OTM_PCT):
+                        t["call_vol_itm"] += v
+                    else:
+                        t["call_vol_atm"] += v
+
+
+def finish_totals(totals):
+    out = {}
+    for d, t in totals.items():
+        out[d] = {"call_volume": t["call"], "put_volume": t["put"],
+                  "short_otm_call_volume": t["short_otm_call"],
+                  "put_call_alpaca": round(t["put"] / t["call"], 3) if t["call"] else ""}
+        out[d].update({k: t[k] for k in CALL_BUCKETS})
+    return out
+
+
+def standard_symbols(contracts):
+    # Contracts adjusted after a split or merger get non-standard symbols (e.g. "1CHPT...") that
+    # the bars endpoint rejects, and their strikes no longer match the stock price anyway.
+    return sorted(s for s in contracts if STANDARD_OPTION_SYMBOL.match(s))
+
+
 def option_daily_volume(ticker, dates, closes):
-    """Per day: call volume, put volume, put/call, and short-dated out-of-the-money call volume."""
+    """Per day: call and put volume, put/call, and where the call volume landed. One window."""
     if not dates:
         return {}
     start, end = min(dates), max(dates)
@@ -224,56 +284,36 @@ def option_daily_volume(ticker, dates, closes):
     near = add_days(end, MEDIUM_DATED_DAYS)
     contracts = {s: c for s, c in contracts.items()
                  if c["expiration_date"] <= near or is_monthly(c["expiration_date"])}
-    # Contracts adjusted after a split or merger get non-standard symbols (e.g. "1CHPT...") that
-    # the bars endpoint rejects, and their strikes no longer match the stock price anyway.
-    symbols = sorted(s for s in contracts if STANDARD_OPTION_SYMBOL.match(s))
-    totals = {d: {k: 0 for k in ("call", "put", "short_otm_call") + CALL_BUCKETS} for d in dates}
+    symbols = standard_symbols(contracts)
+    totals = new_totals(dates)
     for i in range(0, len(symbols), 100):
         chunk = symbols[i:i + 100]
         pages = alpaca_get("https://data.alpaca.markets", "/v1beta1/options/bars",
                            {"symbols": ",".join(chunk), "timeframe": "1Day",
                             "start": start, "end": safe_end(end), "limit": 10000},
                            cache_name=f"optbars_{ticker}_{start}_{end}_{chunk_key(chunk)}.json")
-        for page in pages:
-            for sym, bars in (page.get("bars") or {}).items():
-                c = contracts.get(sym)
-                if c is None:          # not one we asked for; ignore
-                    continue
-                for b in bars:
-                    d = b["t"][:10]
-                    if d not in totals:
-                        continue
-                    kind = c["type"]                   # "call" or "put"
-                    totals[d][kind] += b["v"]
-                    close = closes.get(d)
-                    days_left = (dt.date.fromisoformat(c["expiration_date"]) - dt.date.fromisoformat(d)).days
-                    if kind != "call":
-                        continue
-                    strike = float(c["strike_price"])
-                    # Where did the call buying land? By time to expiration...
-                    if days_left <= SHORT_DATED_DAYS:
-                        totals[d]["call_vol_short"] += b["v"]
-                    elif days_left <= MEDIUM_DATED_DAYS:
-                        totals[d]["call_vol_medium"] += b["v"]
-                    else:
-                        totals[d]["call_vol_long"] += b["v"]
-                    # ...and by strike versus the stock price.
-                    if close:
-                        if strike >= close * (1 + OTM_PCT):
-                            totals[d]["call_vol_otm"] += b["v"]
-                            if days_left <= SHORT_DATED_DAYS:
-                                totals[d]["short_otm_call"] += b["v"]
-                        elif strike <= close * (1 - OTM_PCT):
-                            totals[d]["call_vol_itm"] += b["v"]
-                        else:
-                            totals[d]["call_vol_atm"] += b["v"]
-    out = {}
-    for d, t in totals.items():
-        out[d] = {"call_volume": t["call"], "put_volume": t["put"],
-                  "short_otm_call_volume": t["short_otm_call"],
-                  "put_call_alpaca": round(t["put"] / t["call"], 3) if t["call"] else ""}
-        out[d].update({k: t[k] for k in CALL_BUCKETS})
-    return out
+        add_bars(pages, contracts, closes, totals)
+    return finish_totals(totals)
+
+
+def option_full_history(ticker, dates, closes, deadline):
+    """Every trading day since Alpaca's options history begins, in one pass over every contract.
+    Each contract is fetched once over its whole life, so this costs (contracts / 100) requests
+    no matter how many events the ticker has. Returns None if the time budget runs out."""
+    today = dt.date.today().isoformat()
+    contracts = option_contracts(ticker, ALPACA_HISTORY_START, add_days(today, MAX_EXPIRY_DAYS))
+    symbols = standard_symbols(contracts)
+    totals = new_totals(dates)
+    for i in range(0, len(symbols), 100):
+        if time.monotonic() > deadline:
+            return None
+        chunk = symbols[i:i + 100]
+        pages = alpaca_get("https://data.alpaca.markets", "/v1beta1/options/bars",
+                           {"symbols": ",".join(chunk), "timeframe": "1Day",
+                            "start": ALPACA_HISTORY_START, "end": safe_end(today), "limit": 10000})
+        add_bars(pages, contracts, closes, totals)
+    print(f"  {ticker}: {len(symbols)} contracts, {len(dates)} trading days")
+    return finish_totals(totals)
 
 
 # ---------------------------------------------------------------- dataset plumbing
@@ -432,7 +472,8 @@ def collect(args, rows=None, label="events"):
             continue
         if time.monotonic() > deadline:
             print(f"Time budget reached after {done} {label}; saved. Run it again to continue.")
-            break
+            save_daily(daily)
+            return False
         try:
             ensure_prices(e["ticker"], add_days(e["event_date"], -60), e["event_date"], daily)
             window = days_before(e["ticker"], e, args.lookback, daily)
@@ -446,6 +487,7 @@ def collect(args, rows=None, label="events"):
         if done % 10 == 0:
             save_daily(daily)  # don't lose progress if the job is cut off
     save_daily(daily)
+    return True
 
 
 def controls(args):
@@ -475,8 +517,9 @@ def controls(args):
                 rows.append({"ticker": tk, "event_date": d, "event_type": "control", "label": "control"})
                 have.add((tk, d))
     write_csv(CONTROLS, rows, EVENT_FIELDS)
-    collect(args, rows, label="control")
+    finished = collect(args, rows, label="control")
     print(f"{len(rows)} control dates on file.")
+    return finished
 
 
 def compute(row, daily, lookback, signal_window=3):
@@ -575,13 +618,88 @@ def compare(args):
         print("Under ~0.05 means Alpaca is good enough to replace Alpha Vantage.")
 
 
+HISTORY_DONE = os.path.join(DATA, "history_done.csv")
+HISTORY_MIN_EVENTS = 3        # tickers with this many events get their full daily history
+STATUS_FILE = os.path.join(ROOT, "backfill_status.txt")
+
+
+def history_tickers():
+    counts = {}
+    for e in read_csv(EVENTS):
+        counts[e["ticker"]] = counts.get(e["ticker"], 0) + 1
+    return sorted(t for t, n in counts.items() if n >= HISTORY_MIN_EVENTS)
+
+
+def history(args, deadline=None):
+    """Full daily options history for every ticker with several events. Resumable per ticker.
+    Returns True when every eligible ticker is done."""
+    deadline = deadline or time.monotonic() + 60 * getattr(args, "max_minutes", 50)
+    done = {r["ticker"] for r in read_csv(HISTORY_DONE)}
+    todo = [t for t in history_tickers() if t not in done]
+    print(f"Full history: {len(done)} tickers done, {len(todo)} to go.")
+    today = dt.date.today().isoformat()
+    for t in todo:
+        if time.monotonic() > deadline:
+            return False
+        daily = load_daily()
+        try:
+            merge_stock_bars(daily, stock_bars([t], add_days(ALPACA_HISTORY_START, -5), today))
+            rows = {r["date"]: r for r in daily if r["ticker"] == t and r["date"] >= ALPACA_HISTORY_START}
+            closes = {d: to_float(r.get("stock_close")) for d, r in rows.items()}
+            result = option_full_history(t, sorted(rows), closes, deadline)
+        except Exception as ex:
+            log_error({"ticker": t, "event_date": "full-history"}, ex)
+            print(f"  {t}: FAILED {str(ex)[:150]}")
+            continue
+        if result is None:            # ran out of time mid-ticker; it restarts next run
+            return False
+        for d, v in result.items():
+            rows[d].update(v)
+        save_daily(daily)
+        marks = read_csv(HISTORY_DONE)
+        marks.append({"ticker": t, "completed": today})
+        write_csv(HISTORY_DONE, marks, ["ticker", "completed"])
+    return True
+
+
+def backfill(args):
+    """Everything, under one time budget. Writes 'done' or 'more' to backfill_status.txt so the
+    GitHub workflow knows whether to launch another round."""
+    deadline = time.monotonic() + 60 * args.max_minutes
+    left = lambda: max(1.0, (deadline - time.monotonic()) / 60)
+    if args.round <= 1:
+        find_movers(argparse.Namespace(start=args.start, end=None, min_move=args.min_move,
+                                       universe=args.universe))
+    finished = history(args, deadline)
+    if finished:   # windows for history tickers are already filled, so these are quick
+        finished = collect(argparse.Namespace(lookback=args.lookback, max_minutes=left()))
+    if finished:
+        finished = controls(argparse.Namespace(per_event=args.per_event, lookback=args.lookback,
+                                               max_minutes=left()))
+    features(argparse.Namespace(lookback=args.lookback))
+    with open(STATUS_FILE, "w") as f:
+        f.write("done" if finished else "more")
+    print("Backfill complete." if finished else "Backfill not finished yet; another round needed.")
+
+
 def nightly(args):
     """The automatic loop: seed new movers from the past week, then collect and score."""
     start = add_days(dt.date.today().isoformat(), -args.days_back)
     find_movers(argparse.Namespace(start=start, end=None, min_move=args.min_move,
                                    universe=getattr(args, "universe", None)))
-    collect(argparse.Namespace(lookback=args.lookback, max_minutes=50))
-    controls(argparse.Namespace(per_event=args.per_event, lookback=args.lookback, max_minutes=40))
+    collect(argparse.Namespace(lookback=args.lookback, max_minutes=40))
+    # Keep the full-history tickers current: fill in the last few sessions.
+    daily = load_daily()
+    today = dt.date.today().isoformat()
+    for t in sorted({r["ticker"] for r in read_csv(HISTORY_DONE)}):
+        try:
+            ensure_prices(t, add_days(today, -10), today, daily)
+            recent = sorted(r["date"] for r in daily if r["ticker"] == t)[-5:]
+            fill_window(t, recent, daily)
+        except Exception as ex:
+            log_error({"ticker": t, "event_date": today}, ex)
+    save_daily(daily)
+    controls(argparse.Namespace(per_event=args.per_event, lookback=args.lookback, max_minutes=30))
     features(argparse.Namespace(lookback=args.lookback))
 
 
@@ -602,9 +720,14 @@ def main():
     n.add_argument("--universe", choices=["core", "all"])
     n.add_argument("--min-move", type=float, default=15); n.add_argument("--lookback", type=int, default=15)
     n.add_argument("--per-event", type=int, default=2)
+    h = sub.add_parser("history"); h.add_argument("--max-minutes", type=float, default=50)
+    f = sub.add_parser("backfill"); f.add_argument("--max-minutes", type=float, default=100)
+    f.add_argument("--round", type=int, default=1); f.add_argument("--start", default="2024-03-01")
+    f.add_argument("--min-move", type=float, default=15); f.add_argument("--lookback", type=int, default=15)
+    f.add_argument("--per-event", type=int, default=2); f.add_argument("--universe", choices=["core", "all"])
     args = p.parse_args()
     {"find-movers": find_movers, "collect": collect, "controls": controls, "features": features,
-     "compare": compare, "nightly": nightly}[args.cmd](args)
+     "compare": compare, "nightly": nightly, "history": history, "backfill": backfill}[args.cmd](args)
 
 
 if __name__ == "__main__":

@@ -80,12 +80,12 @@ checks what the stock did over the next 10 sessions. Output:
 - `data/signal_days.csv` – every scored day with its signals and what happened next.
 
 ## Universe
-- `core` (default): the 40 hand-picked volatile names in `UNIVERSE` at the top of the script.
-- `all`: every active US stock with listed options on a major exchange (several thousand),
-  skipping moves in stocks under $5 or trading under 500,000 shares a day on average.
-- To switch everything over, edit collector.py on GitHub and change
-  `DEFAULT_UNIVERSE = "core"` to `DEFAULT_UNIVERSE = "all"`. Then run `backfill` again
-  (several times; each run resumes where the last stopped) and nightly picks it up from there.
+- `all` (default): every active US stock with listed options on NYSE, Nasdaq, or NYSE American,
+  excluding ETFs and other funds (leveraged index funds move a lot, but not on inside knowledge).
+  Moves in stocks under $5 or trading under 500,000 shares a day on average are skipped.
+- `core`: the 40 hand-picked volatile names in `UNIVERSE` at the top of collector.py.
+  Switch with `DEFAULT_UNIVERSE` in collector.py.
+- Stocks with 3+ big moves get full daily options history and are tracked nightly for flags.
 
 ## Limits
 - No historical open interest from Alpaca, so "volume above open interest" needs another source later.

@@ -67,7 +67,7 @@ STANDARD_OPTION_SYMBOL = re.compile(r"^[A-Z]{1,5}\d{6}[CP]\d{8}$")
 ERRORS = os.path.join(DATA, "errors.csv")
 
 # "core" = the hand-picked list above. "all" = every active US stock with listed options.
-DEFAULT_UNIVERSE = "core"
+DEFAULT_UNIVERSE = "all"
 BIG_MOVE_REVIEW = 200.0      # one-day moves above this are kept but labeled for a quick look:
                              # usually real (buyouts, drug approvals), occasionally a share reissue
 MIN_PRICE = 5.0              # "all" mode: skip stocks under $5 (penny-stock pumps)
@@ -398,6 +398,21 @@ def log_error(event, ex):
 
 
 # ---------------------------------------------------------------- commands
+# Whole-word patterns that mark a fund rather than an operating company. Deliberately narrow:
+# real companies are often listed as "Ordinary Shares" or "Depositary Shares", so "shares" alone
+# is not used, and words like "ultra" must be whole words (so Ultragenyx stays in).
+FUND_PATTERN = re.compile(
+    r"\b(etf|etn|exchange traded|index fund|daily target|leveraged|inverse|"
+    r"[-+]?[1-5](?:\.\d+)?x|ultra(?:pro|short)?|bull \dx|bear \dx|"
+    r"proshares|direxion|ishares|spdr|invesco|vanguard|wisdomtree|graniteshares|"
+    r"t-rex|tradr|defiance|yieldmax|roundhill|volatility shares)\b", re.IGNORECASE)
+
+
+def looks_like_fund(name):
+    """ETFs and other funds: big moves in a leveraged index fund aren't anyone's inside knowledge."""
+    return bool(FUND_PATTERN.search(name or ""))
+
+
 def universe_symbols(mode):
     if mode == "core":
         return UNIVERSE
@@ -409,6 +424,8 @@ def universe_symbols(mode):
     def ok(a):
         sym = a.get("symbol", "")
         return (a.get("tradable") and a.get("exchange") in MAJOR_EXCHANGES
+                and a.get("exchange") != "ARCA"          # NYSE Arca lists mostly ETFs
+                and not looks_like_fund(a.get("name", ""))
                 and sym.isalpha() and len(sym) <= 5)
     with_options = [a["symbol"] for a in assets if ok(a) and "options_enabled" in (a.get("attributes") or [])]
     if not with_options:

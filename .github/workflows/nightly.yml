@@ -13,9 +13,13 @@ on:
           - nightly
           - compare
           - backfill
+      round:
+        description: "Backfill round (set automatically; leave at 1)"
+        default: "1"
 
 permissions:
   contents: write
+  actions: write     # lets an unfinished backfill launch its next round
 
 concurrency:
   group: options-footprint
@@ -50,10 +54,7 @@ jobs:
           case "${{ github.event.inputs.command || 'nightly' }}" in
             nightly)  python collector.py nightly ;;
             compare)  python collector.py compare --ticker WOLF ;;
-            backfill) python collector.py find-movers --start 2024-03-01 --min-move 15
-                      python collector.py collect
-                      python collector.py controls --per-event 2
-                      python collector.py features ;;
+            backfill) python collector.py backfill --round "${{ github.event.inputs.round || 1 }}" ;;
           esac
 
       - name: Save Alpaca response cache (even if the run failed)
@@ -73,3 +74,16 @@ jobs:
           git commit -m "Dataset update $(date -u +%Y-%m-%d)"
           git pull --rebase -q   # in case you edited something on GitHub during the run
           git push
+
+      - name: Launch the next backfill round if this one ran out of time
+        if: always() && github.event.inputs.command == 'backfill'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          status=$(cat backfill_status.txt 2>/dev/null || echo missing)
+          round=${{ github.event.inputs.round || 1 }}
+          echo "Backfill status after round $round: $status"
+          if [ "$status" = "more" ] && [ "$round" -lt 20 ]; then
+            gh workflow run nightly.yml --ref "${{ github.ref_name }}" -f command=backfill -f round=$((round + 1))
+            echo "Launched round $((round + 1))."
+          fi

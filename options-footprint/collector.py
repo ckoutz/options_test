@@ -25,6 +25,7 @@ Note: Alpaca options history starts February 2024, and it has no historical open
 interest, so volume-versus-open-interest has to come from another source later.
 """
 import argparse
+import re
 import csv
 import datetime as dt
 import json
@@ -59,6 +60,16 @@ RXRX UPST AFRM SOFI HIMS CLSK MARA RIOT CIFR IREN APLD CORZ WULF OPEN LCID RIVN 
 CHPT BLNK QS SLDP FCEL BE ENPH RUN""".split()
 
 ALPACA_HISTORY_START = "2024-02-01"
+STANDARD_OPTION_SYMBOL = re.compile(r"^[A-Z]{1,5}\d{6}[CP]\d{8}$")
+ERRORS = os.path.join(DATA, "errors.csv")
+
+# "core" = the hand-picked list above. "all" = every active US stock with listed options.
+DEFAULT_UNIVERSE = "core"
+BIG_MOVE_REVIEW = 200.0      # one-day moves above this are kept but labeled for a quick look:
+                             # usually real (buyouts, drug approvals), occasionally a share reissue
+MIN_PRICE = 5.0              # "all" mode: skip stocks under $5 (penny-stock pumps)
+MIN_AVG_SHARE_VOLUME = 500_000   # "all" mode: skip thinly traded stocks
+MAJOR_EXCHANGES = {"NYSE", "NASDAQ", "AMEX", "ARCA", "BATS"}
 MAX_EXPIRY_DAYS = 1100     # whole chain, including long-dated contracts (matches Alpha Vantage)
 SHORT_DATED_DAYS = 14      # "short-dated" = expires within two weeks
 OTM_PCT = 0.05             # "out of the money" = strike at least 5% above the close
@@ -93,6 +104,12 @@ def iso(d):
     return d.isoformat() if isinstance(d, dt.date) else d
 
 
+def is_monthly(date_str):
+    """Standard monthly options expire on the third Friday (Thursday if Friday is a holiday)."""
+    d = dt.date.fromisoformat(date_str)
+    return (d.weekday() == 4 and 15 <= d.day <= 21) or (d.weekday() == 3 and 14 <= d.day <= 20)
+
+
 def chunk_key(symbols):
     """Short fingerprint of a contract list, so a changed list never reuses an old cache file."""
     import hashlib
@@ -112,9 +129,17 @@ def safe_end(end_date):
 
 
 # ---------------------------------------------------------------- Alpaca
+_last_request = [0.0]
+MIN_SECONDS_BETWEEN_REQUESTS = 0.35   # about 170 a minute, under Alpaca's free limit of 200
+
+
 def http_json(url, headers=None):
     for attempt in range(5):
         try:
+            wait = _last_request[0] + MIN_SECONDS_BETWEEN_REQUESTS - time.monotonic()
+            if wait > 0:
+                time.sleep(wait)
+            _last_request[0] = time.monotonic()
             req = urllib.request.Request(url, headers=headers or {})
             with urllib.request.urlopen(req, timeout=60) as r:
                 return json.loads(r.read().decode("utf-8"))
@@ -124,7 +149,10 @@ def http_json(url, headers=None):
                 continue
             body = e.read().decode("utf-8", "replace")[:500]
             safe_url = url.split("?")[0]
-            sys.exit(f"Alpaca refused {safe_url} with HTTP {e.code}: {body}")
+            message = f"Alpaca refused {safe_url} with HTTP {e.code}: {body}"
+            if e.code in (401, 403):   # keys or plan problem: every call will fail, so stop
+                sys.exit(message)
+            raise RuntimeError(message)  # one bad request: the caller logs it and moves on
     raise RuntimeError("Alpaca kept rate-limiting; try again in a minute.")
 
 
@@ -146,7 +174,7 @@ def alpaca_get(base, path, params, cache_name=None):
             p["page_token"] = token
         data = http_json(f"{base}{path}?{urllib.parse.urlencode(p)}", headers)
         pages.append(data)
-        token = data.get("next_page_token")
+        token = data.get("next_page_token") if isinstance(data, dict) else None
         if not token:
             break
     if cache_name:
@@ -155,10 +183,13 @@ def alpaca_get(base, path, params, cache_name=None):
     return pages
 
 
-def stock_bars(symbols, start, end):
-    pages = alpaca_get("https://data.alpaca.markets", "/v2/stocks/bars",
-                       {"symbols": ",".join(symbols), "timeframe": "1Day", "start": start,
-                        "end": safe_end(end), "limit": 10000, "adjustment": "raw", "feed": "sip"})
+def stock_bars(symbols, start, end, adjustment="raw"):
+    pages = []
+    for i in range(0, len(symbols), 100):
+        pages += alpaca_get("https://data.alpaca.markets", "/v2/stocks/bars",
+                            {"symbols": ",".join(symbols[i:i + 100]), "timeframe": "1Day",
+                             "start": start, "end": safe_end(end), "limit": 10000,
+                             "adjustment": adjustment, "feed": "sip"})
     out = {}
     for page in pages:
         for sym, bars in (page.get("bars") or {}).items():
@@ -187,7 +218,15 @@ def option_daily_volume(ticker, dates, closes):
         return {}
     start, end = min(dates), max(dates)
     contracts = option_contracts(ticker, start, add_days(end, MAX_EXPIRY_DAYS))
-    symbols = sorted(contracts)
+    # Weekly expirations are only listed a few weeks ahead, so far-out weeklies didn't trade yet
+    # during the window. Keep everything near-term, and only monthly (third Friday) expirations
+    # beyond that, which covers the long-dated contracts without wasting calls.
+    near = add_days(end, MEDIUM_DATED_DAYS)
+    contracts = {s: c for s, c in contracts.items()
+                 if c["expiration_date"] <= near or is_monthly(c["expiration_date"])}
+    # Contracts adjusted after a split or merger get non-standard symbols (e.g. "1CHPT...") that
+    # the bars endpoint rejects, and their strikes no longer match the stock price anyway.
+    symbols = sorted(s for s in contracts if STANDARD_OPTION_SYMBOL.match(s))
     totals = {d: {k: 0 for k in ("call", "put", "short_otm_call") + CALL_BUCKETS} for d in dates}
     for i in range(0, len(symbols), 100):
         chunk = symbols[i:i + 100]
@@ -197,7 +236,9 @@ def option_daily_volume(ticker, dates, closes):
                            cache_name=f"optbars_{ticker}_{start}_{end}_{chunk_key(chunk)}.json")
         for page in pages:
             for sym, bars in (page.get("bars") or {}).items():
-                c = contracts[sym]
+                c = contracts.get(sym)
+                if c is None:          # not one we asked for; ignore
+                    continue
                 for b in bars:
                     d = b["t"][:10]
                     if d not in totals:
@@ -293,11 +334,42 @@ def fill_window(ticker, dates, daily, refresh=False):
         index[(ticker, d)].update(v)
 
 
+def log_error(event, ex):
+    rows = read_csv(ERRORS)
+    rows.append({"when": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%d %H:%M"),
+                 "ticker": event["ticker"], "event_date": event["event_date"],
+                 "error": str(ex)[:300]})
+    write_csv(ERRORS, rows[-500:], ["when", "ticker", "event_date", "error"])
+
+
 # ---------------------------------------------------------------- commands
+def universe_symbols(mode):
+    if mode == "core":
+        return UNIVERSE
+    today = dt.date.today().isoformat()
+    pages = alpaca_get("https://paper-api.alpaca.markets", "/v2/assets",
+                       {"status": "active", "asset_class": "us_equity"},
+                       cache_name=f"assets_{today}.json")
+    assets = [a for page in pages for a in (page if isinstance(page, list) else [])]
+    def ok(a):
+        sym = a.get("symbol", "")
+        return (a.get("tradable") and a.get("exchange") in MAJOR_EXCHANGES
+                and sym.isalpha() and len(sym) <= 5)
+    with_options = [a["symbol"] for a in assets if ok(a) and "options_enabled" in (a.get("attributes") or [])]
+    if not with_options:
+        print("Warning: Alpaca did not flag any assets as options-enabled; scanning all major-exchange stocks.")
+        with_options = [a["symbol"] for a in assets if ok(a)]
+    return sorted(set(with_options))
+
+
 def find_movers(args):
     """Scan the universe for one-day closes up at least --min-move percent."""
     end = args.end or dt.date.today().isoformat()
-    bars = stock_bars(UNIVERSE, args.start, end)
+    mode = getattr(args, "universe", None) or DEFAULT_UNIVERSE
+    symbols = universe_symbols(mode)
+    # Extra history so the "all" mode filters have 20 days of volume to average.
+    # Split-adjusted prices for spotting moves, so a reverse split doesn't look like a 3,000% rally.
+    bars = stock_bars(symbols, add_days(args.start, -35), end, adjustment="split")
     events = read_csv(EVENTS)
     have = {(e["ticker"], e["event_date"]) for e in events}
     # Also skip the second day of an already-logged two-day move.
@@ -307,11 +379,23 @@ def find_movers(args):
              if e["event_type"] == "after_hours" for n in (1, 2, 3)}
     by_date, found = {}, []
     for sym, rows in bars.items():
-        for prev, cur in zip(rows, rows[1:]):
+        for i in range(1, len(rows)):
+            prev, cur = rows[i - 1], rows[i]
+            if cur["date"] < args.start:
+                continue
             move = (cur["close"] / prev["close"] - 1) * 100
-            if move >= args.min_move:
-                found.append((sym, cur["date"], move, prev["close"], cur["close"]))
-                by_date.setdefault(cur["date"], []).append(sym)
+            if move < args.min_move:
+                continue
+            if mode != "core":
+                recent = [r["volume"] for r in rows[max(0, i - 21):i - 1]]
+                if (prev["close"] < MIN_PRICE or len(recent) < 15
+                        or statistics.mean(recent) < MIN_AVG_SHARE_VOLUME):
+                    continue
+            found.append((sym, cur["date"], move, prev["close"], cur["close"]))
+            by_date.setdefault(cur["date"], []).append(sym)
+    # With thousands of tickers, several 15% movers happen every day, so "many movers at once"
+    # scales with the universe: at least 3 names, or 0.5% of everything scanned.
+    crowd = max(3, int(0.005 * len(bars)))
     added = 0
     for sym, date, move, pc, c in found:
         if (sym, date) in have:
@@ -319,27 +403,48 @@ def find_movers(args):
         n = len(by_date[date])
         events.append({"ticker": sym, "event_date": date, "event_type": "close_to_close",
                        "move_pct": f"{move:.1f}", "prior_close": pc, "event_close": c,
-                       "catalyst": "Unconfirmed", "label": "sector_day" if n >= 3 else "unknown",
-                       "notes": f"{n} universe names up {args.min_move:g}%+ that day"})
+                       "catalyst": "Unconfirmed",
+                       "label": ("check_corporate_action" if move > BIG_MOVE_REVIEW
+                                 else "sector_day" if n >= crowd else "unknown"),
+                       "notes": f"{n} of {len(bars)} scanned names up {args.min_move:g}%+ that day"})
         added += 1
     write_csv(EVENTS, events, EVENT_FIELDS)
+    # Only keep price history for tickers that have events; the full universe would make
+    # the file far too large for GitHub.
+    keep = {e["ticker"] for e in events}
     daily = load_daily()
-    merge_stock_bars(daily, bars)
+    raw = stock_bars(sorted(keep & set(bars)), add_days(args.start, -35), end)  # raw: matches option strikes
+    merge_stock_bars(daily, raw)
     save_daily(daily)
-    print(f"Scanned {len(bars)} tickers: {len(found)} moves of {args.min_move:g}%+, {added} new events added.")
+    flagged = sum(1 for f in found if f[2] > BIG_MOVE_REVIEW)
+    print(f"Scanned {len(bars)} tickers: {len(found)} moves of {args.min_move:g}%+, {added} new events added"
+          f" ({flagged} over {BIG_MOVE_REVIEW:g}% kept but flagged for review).")
 
 
 def collect(args, rows=None, label="events"):
+    """Fill pre-move windows. Stops cleanly at --max-minutes; rerun to continue where it left off."""
     daily = load_daily()
     rows = rows if rows is not None else read_csv(EVENTS)
-    for e in rows:
+    deadline = time.monotonic() + 60 * getattr(args, "max_minutes", 50)
+    done = 0
+    for n, e in enumerate(rows, 1):
         if e["event_date"] < ALPACA_HISTORY_START:
-            print(f"skip {e['ticker']} {e['event_date']}: before Alpaca options history")
             continue
-        ensure_prices(e["ticker"], add_days(e["event_date"], -60), e["event_date"], daily)
-        window = days_before(e["ticker"], e, args.lookback, daily)
-        fill_window(e["ticker"], window, daily)
-        print(f"{label}: {e['ticker']} {e['event_date']} window filled ({len(window)} days)")
+        if time.monotonic() > deadline:
+            print(f"Time budget reached after {done} {label}; saved. Run it again to continue.")
+            break
+        try:
+            ensure_prices(e["ticker"], add_days(e["event_date"], -60), e["event_date"], daily)
+            window = days_before(e["ticker"], e, args.lookback, daily)
+            fill_window(e["ticker"], window, daily)
+        except Exception as ex:   # log it, keep going; rerunning retries failed ones
+            log_error(e, ex)
+            print(f"{label} {n}/{len(rows)}: {e['ticker']} {e['event_date']} FAILED: {str(ex)[:150]}")
+            continue
+        done += 1
+        print(f"{label} {n}/{len(rows)}: {e['ticker']} {e['event_date']} ({len(window)} days)")
+        if done % 10 == 0:
+            save_daily(daily)  # don't lose progress if the job is cut off
     save_daily(daily)
 
 
@@ -473,9 +578,10 @@ def compare(args):
 def nightly(args):
     """The automatic loop: seed new movers from the past week, then collect and score."""
     start = add_days(dt.date.today().isoformat(), -args.days_back)
-    find_movers(argparse.Namespace(start=start, end=None, min_move=args.min_move))
-    collect(argparse.Namespace(lookback=args.lookback))
-    controls(argparse.Namespace(per_event=args.per_event, lookback=args.lookback))
+    find_movers(argparse.Namespace(start=start, end=None, min_move=args.min_move,
+                                   universe=getattr(args, "universe", None)))
+    collect(argparse.Namespace(lookback=args.lookback, max_minutes=50))
+    controls(argparse.Namespace(per_event=args.per_event, lookback=args.lookback, max_minutes=40))
     features(argparse.Namespace(lookback=args.lookback))
 
 
@@ -484,12 +590,16 @@ def main():
     sub = p.add_subparsers(dest="cmd", required=True)
     a = sub.add_parser("find-movers"); a.add_argument("--start", required=True)
     a.add_argument("--end"); a.add_argument("--min-move", type=float, default=15)
+    a.add_argument("--universe", choices=["core", "all"])
     b = sub.add_parser("collect"); b.add_argument("--lookback", type=int, default=15)
+    b.add_argument("--max-minutes", type=float, default=50)
     c = sub.add_parser("controls"); c.add_argument("--per-event", type=int, default=2)
+    c.add_argument("--max-minutes", type=float, default=50)
     c.add_argument("--lookback", type=int, default=15)
     d = sub.add_parser("features"); d.add_argument("--lookback", type=int, default=15)
     e = sub.add_parser("compare"); e.add_argument("--ticker", default="WOLF")
     n = sub.add_parser("nightly"); n.add_argument("--days-back", type=int, default=7)
+    n.add_argument("--universe", choices=["core", "all"])
     n.add_argument("--min-move", type=float, default=15); n.add_argument("--lookback", type=int, default=15)
     n.add_argument("--per-event", type=int, default=2)
     args = p.parse_args()

@@ -44,6 +44,7 @@ import statistics
 import sys
 import threading
 import time
+import traceback
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import collector as C  # noqa: E402
@@ -464,7 +465,7 @@ class Walk:
     def __init__(self, run_id, llm, phase, deadline):
         self.run_id, self.llm, self.phase, self.deadline = run_id, llm, phase, deadline
         self.trades, self.ratings, self.weeks, self.week_rows = [], [], [], []
-        self.replies = self.bad = self.cut = 0
+        self.replies = self.bad = self.cut = self.errors = 0
         self.sample = ""
 
     def bundle(self, cands_by_week, notes, scorebook, label):
@@ -497,8 +498,16 @@ class Walk:
                                      f"vs ma20 {A.fmt(t['f'].get('vs_ma20_pct'), '{:+.1f}')}%, rsi {A.fmt(t['f'].get('rsi14'), '{:.0f}')} "
                                      f"-> {t['ret_pct']:+.1f}%" for t in shown[-10:]))
             parts.append(f"{label}, week {n} of {len(weeks)}. Candidates:\n{A.candidate_table(cands)}")
-            reply = self.llm.chat([{"role": "system", "content": system},
-                                   {"role": "user", "content": "\n\n".join(parts)}], max_tokens=2500)
+            try:
+                reply = self.llm.chat([{"role": "system", "content": system},
+                                       {"role": "user", "content": "\n\n".join(parts)}], max_tokens=2500)
+            except RuntimeError as ex:       # the model API kept failing for this week: count it as a pass
+                self.errors += 1
+                self.week_rows.append({"run_id": self.run_id, "week_index": wi, "picks": 0, "finish": "error",
+                                       "readable": "no", "why": f"[{label}] (model error) {str(ex)[:300]}"})
+                if self.errors >= 10 and self.errors > 0.3 * (self.replies + self.errors):
+                    raise
+                continue
             self.replies += 1
             self.cut += self.llm.last_finish == "length"
             picks, why, ok = A.parse_picks(reply)
@@ -515,6 +524,8 @@ class Walk:
                                      "rating": v, "shares_ret10": c["shares"]})
             used = set()
             for p in picks[:MAX_PICKS]:
+                if not isinstance(p, dict):
+                    continue
                 c = by_id.get(str(p.get("id", "")).strip())
                 if not c or c["id"] in used:
                     continue
@@ -730,10 +741,9 @@ def book_rows(gen, author, period, rules, cands):
     return rows, lines
 
 
-def run_generation(st, args, pool, deadline):
+def run_generation(st, args, pool, deadline, pot):
     gen_before, notes, scorebook = inherited(st)
     gen = gen_before + 1
-    pot = Pot(args.max_usd, spent(st))
     order = list(TRAIN_BUNDLES)
     random.Random(f"order-g{gen}").shuffle(order)
     print(f"Generation {gen}: bundle order {order}, {N_AGENTS} agents, {args.weeks_fraction:.0%} of training weeks.")
@@ -808,19 +818,30 @@ def loop(args):
         if time.monotonic() + 1.3 * per_gen > deadline:
             print("Not enough time left for another generation in this round; stopping cleanly.")
             break
+        pot = Pot(args.max_usd, spent(st))
         try:
-            run_generation(st, args, pool, deadline)
+            run_generation(st, args, pool, deadline, pot)
             done += 1
+            continue
         except A.Budget as b:
             stop = f"spending cap: {b}"
-            break
         except TimeUp:
             print("Ran out of time mid-generation; it will be redone from the start next round.")
-            break
-        except RuntimeError as ex:
-            stop = f"error: {ex}"
-            print(f"Stopping: {ex}")
-            break
+        except Exception as ex:   # noqa: BLE001 - record any crash where the report can show it
+            stop = f"error: {type(ex).__name__}: {ex}"
+            tb = traceback.format_exc()
+            print(tb)
+            with open(os.path.join(C.ROOT, "committee_error.txt"), "w") as f:
+                f.write(f"{dt.datetime.now(dt.timezone.utc):%Y-%m-%d %H:%M} UTC\n{tb[-3000:]}")
+        # The generation did not finish: still count what it spent, so the cap stays honest.
+        cost = pot.total() - pot.spent_before
+        if cost > 0:
+            st.backend.upsert("agent_runs", [{
+                "run_id": f"committee-unfinished-{dt.datetime.now(dt.timezone.utc):%Y%m%d%H%M%S}",
+                "lineage": "committee", "generation": inherited(st)[0] + 1, "phase": "unfinished",
+                "agent": "all", "model": args.model, "cost_usd": round(cost, 4), "status": stop or "time limit",
+                "started": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")}])
+        break
     remaining = 0 if stop else max(0, args.generations - done)
     if done == 0 and remaining and not stop:
         # A generation that can't finish in one round would repeat forever.
@@ -905,6 +926,9 @@ def report(args=None):
             who = "Editor's notes (passed to the next generation)" if n["author"] == "editor" else \
                 f"Agent {n['author'][-1]}'s final notes (not passed on)"
             L += [f"### {who}", "", n["text"] or "(empty)", ""]
+    err = os.path.join(C.ROOT, "committee_error.txt")
+    if os.path.exists(err):
+        L += ["", "## Last error", "", "```", open(err).read(), "```"]
     with open(os.path.join(C.ROOT, "COMMITTEE.md"), "w") as f:
         f.write("\n".join(L) + "\n")
     print("\n".join(L[:40]))

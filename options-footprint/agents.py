@@ -41,6 +41,7 @@ import re
 import statistics
 import sys
 import time
+import http.client
 import urllib.error
 import urllib.request
 
@@ -280,11 +281,12 @@ class LLM:
                     time.sleep(min(60, 5 * 2 ** attempt))
                     continue
                 raise RuntimeError(f"model API refused with HTTP {e.code}: {msg}")
-            except (urllib.error.URLError, TimeoutError):
+            except (urllib.error.URLError, OSError, http.client.HTTPException, ValueError) as e:
+                # Network drops, resets, timeouts, half-read or non-JSON replies: wait and retry.
                 if attempt < 5:
-                    time.sleep(10)
+                    time.sleep(10 * (attempt + 1))
                     continue
-                raise
+                raise RuntimeError(f"model API unreachable: {type(e).__name__}: {str(e)[:200]}")
             if "error" in data:
                 if attempt < 5:
                     time.sleep(10)
@@ -296,6 +298,11 @@ class LLM:
             self.completion_tokens += ct
             self.cost += float(u["cost"]) if u.get("cost") is not None else \
                 (pt * self.in_price + ct * self.out_price) / 1e6
+            if not data.get("choices"):
+                if attempt < 5:
+                    time.sleep(10)
+                    continue
+                raise RuntimeError(f"model API returned no choices: {str(data)[:300]}")
             choice = data["choices"][0]
             self.last_finish = choice.get("finish_reason")
             return (choice["message"].get("content") or "").strip()

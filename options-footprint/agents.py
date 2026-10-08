@@ -71,6 +71,12 @@ FEATURES = [  # (key in the arena, label shown to the agent, meaning)
     ("stock_volume_spike", "shares", "share volume today ÷ its 20-session median"),
     ("calls_5d_avg", "calls 5d avg", "the calls ratio averaged over the last 5 sessions (buying that builds over several days)"),
     ("call_days_2x", "call days 2x+", "how many of the last 5 sessions had call volume at least 2x normal (0 to 5)"),
+    ("calls_20d", "calls 20d", "call volume over the last 20 sessions ÷ normal for the 40 sessions before (slow, sustained buying)"),
+    ("long_calls_20d", "long calls 20d", "the same for calls expiring beyond 60 days"),
+    ("otm_calls_20d", "otm calls 20d", "the same for calls 5%+ above the price"),
+    ("puts_20d", "puts 20d", "the same for puts"),
+    ("call_days_2x_20d", "call days 2x+ 20d", "how many of the last 20 sessions had call volume at least 2x normal"),
+    ("days_since_spike", "days since spike", "sessions since call volume was last 3x+ normal (0 = today, 60 = none in 60 sessions)"),
     ("puts_5d_avg", "puts 5d avg", "the puts ratio averaged over the last 5 sessions"),
     ("shares_5d_avg", "shares 5d avg", "the shares ratio averaged over the last 5 sessions"),
     ("ret_1d_pct", "1d %", "stock price change today, percent"),
@@ -402,7 +408,8 @@ def candidate_table(cands):
         for k, _, _ in FEATURES:
             if k == "price_band":
                 vals.append(str(f.get(k) or "-"))
-            elif k in ("rsi14", "call_days_2x", "news_1d", "news_3d", "news_7d", "quiet_spike"):
+            elif k in ("rsi14", "call_days_2x", "news_1d", "news_3d", "news_7d", "quiet_spike",
+                       "call_days_2x_20d", "days_since_spike"):
                 vals.append(fmt(f.get(k), "{:.0f}"))
             elif k == "vol20_pct":
                 vals.append(fmt(f.get(k), "{:.1f}"))

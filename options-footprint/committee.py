@@ -183,6 +183,18 @@ def market_closes():
         return {}
 
 
+def runway(values, i, recent=20, before=40):
+    """Average over the last `recent` sessions ÷ the median of the `before` sessions ahead of them."""
+    if i < recent + before - 1:
+        return None
+    now = [v for v in values[i - recent + 1:i + 1] if v is not None]
+    base = [v for v in values[i - recent - before + 1:i - recent + 1] if v is not None]
+    if len(now) < recent // 2 or len(base) < before // 2:
+        return None
+    med = statistics.median(base)
+    return round(statistics.mean(now) / med, 2) if med > 0 else None
+
+
 def build_pool(args):
     st = C.db()
     paths = ladder_files(st, args.archive)
@@ -220,6 +232,7 @@ def build_pool(args):
         s_pos = {d["date"]: k for k, d in enumerate(scored_list)}
         dates = [r["date"] for r in rows]
         closes = [C.to_float(r["stock_close"]) for r in rows]
+        series = {k: [C.to_float(r.get(k)) for r in rows] for k in ("call_volume", "call_vol_long", "call_vol_otm", "put_volume")}
         index = {d: i for i, d in enumerate(dates)}
         rets_all = [closes[k] / closes[k - 1] - 1 for k in range(1, len(closes)) if closes[k] and closes[k - 1]]
         stats[t] = (moves.get(t, 0), statistics.pstdev(rets_all) if len(rets_all) > 20 else 0.0)
@@ -241,6 +254,16 @@ def build_pool(args):
             f["puts_5d_avg"] = avg("put_volume_spike")
             f["shares_5d_avg"] = avg("stock_volume_spike")
             f["call_days_2x"] = sum(1 for x in last5 if (C.to_float(x.get("call_volume_spike")) or 0) >= 2)
+            # The last 20 sessions against the 40 before them: slow, sustained buying that a one-day
+            # spike measure misses.
+            for key, name in (("call_volume", "calls_20d"), ("call_vol_long", "long_calls_20d"),
+                              ("call_vol_otm", "otm_calls_20d"), ("put_volume", "puts_20d")):
+                f[name] = runway(series[key], i)
+            last20 = scored_list[max(0, s_pos[d] - 19):s_pos[d] + 1]
+            f["call_days_2x_20d"] = sum(1 for x in last20 if (C.to_float(x.get("call_volume_spike")) or 0) >= 2)
+            back = scored_list[max(0, s_pos[d] - 60):s_pos[d] + 1][::-1]
+            f["days_since_spike"] = next((k for k, x in enumerate(back)
+                                          if (C.to_float(x.get("call_volume_spike")) or 0) >= 3), 60)
             f["mkt_5d_pct"], f["mkt_20d_pct"] = mkt(d, 5), mkt(d, 20)
             price = closes[i]
             f["price_band"] = "<$10" if price < 10 else "$10-50" if price <= 50 else ">$50"

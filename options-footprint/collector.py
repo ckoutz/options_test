@@ -696,6 +696,15 @@ WIDE_N = 300                                         # how many stocks the wide 
 WIDE_SELECT_START, WIDE_SELECT_END = "2024-01-02", "2024-01-31"   # known before the history begins
 
 
+def run_log(step, message):
+    print(f"[{step}] {message}")
+    try:
+        db().backend.upsert("run_log", [{"logged_at": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
+                                         "step": step, "message": message[:1000]}])
+    except Exception as ex:   # noqa: BLE001 - logging must never break a job
+        print(f"(could not save the log line: {ex})")
+
+
 def select_wide(args):
     """Pick the wide list once: a random sample of liquid stocks with options, using ONLY January 2024
     data (price and share volume), so whether a stock later moved plays no part in choosing it.
@@ -704,12 +713,14 @@ def select_wide(args):
         print(f"Wide list already chosen ({len(wide_tickers())} stocks).")
         return
     today = dt.date.today().isoformat()
-    status_of = {}
+    status_of, seen = {}, {"active": 0, "inactive": 0, "active_with_options": 0}
     for status in ("active", "inactive"):
         pages = alpaca_get("https://paper-api.alpaca.markets", "/v2/assets",
                            {"status": status, "asset_class": "us_equity"},
                            cache_name=f"assets_{status}_{today}.json")
         for a in (a for page in pages for a in (page if isinstance(page, list) else [])):
+            seen[status] += 1
+            seen["active_with_options"] += status == "active" and "options_enabled" in (a.get("attributes") or [])
             sym = a.get("symbol", "")
             if (a.get("exchange") in MAJOR_EXCHANGES and a.get("exchange") != "ARCA"
                     and not looks_like_fund(a.get("name", "")) and sym.isalpha() and len(sym) <= 5):
@@ -720,11 +731,12 @@ def select_wide(args):
     symbols = sorted(status_of)
     print(f"Wide list: {len(symbols):,} candidate stocks (active with options, plus delisted).")
     bars = stock_bars(symbols, WIDE_SELECT_START, WIDE_SELECT_END)
-    eligible = []
+    eligible, with_bars = [], 0
     for sym in symbols:
         b = bars.get(sym) or []
         if len(b) < 15:
             continue
+        with_bars += 1
         price = sum(x["close"] for x in b) / len(b)
         volume = sum(x["volume"] for x in b) / len(b)
         if price >= MIN_PRICE and volume >= MIN_AVG_SHARE_VOLUME:
@@ -734,9 +746,24 @@ def select_wide(args):
     db().backend.upsert("wide_universe", [{"ticker": s, "status": status_of[s], "avg_price": round(p, 2),
                                             "avg_volume": round(v), "selected": today} for s, p, v in chosen])
     overlap = len({s for s, _, _ in chosen} & set(mover_tickers()))
+    run_log("wide-select", f"assets listed: {seen['active']:,} active ({seen['active_with_options']:,} with options), "
+            f"{seen['inactive']:,} delisted; after exchange/fund filters: {len(symbols):,} "
+            f"({sum(1 for v in status_of.values() if v == 'active'):,} active); with 15+ January 2024 bars: "
+            f"{with_bars:,}; met price and volume bar: {len(eligible):,}; chosen: {len(chosen)}; "
+            f"already big movers: {overlap}.")
     print(f"Wide list: {len(eligible):,} stocks met the January 2024 bar (price ${MIN_PRICE:.0f}+, "
           f"{MIN_AVG_SHARE_VOLUME:,}+ shares a day); sampled {len(chosen)} at random, {overlap} of them already "
           f"in the big-movers list.")
+
+
+def select_only(args):
+    """Choose (or with --reselect, re-choose) the wide list without pulling any history."""
+    if getattr(args, "reselect", False):
+        old = wide_tickers()
+        if old and db().kind == "postgres":
+            db().backend.conn.execute("delete from wide_universe")
+        run_log("wide-select", f"re-choosing the wide list (it had {len(old)} stocks).")
+    select_wide(argparse.Namespace(n=args.n, reselect=False))
 
 
 def wide(args):
@@ -955,6 +982,15 @@ def status(args):
         for lin, (gen, model, text) in sorted(latest.items()):
             lines += ["", f"### Latest lessons: {lin} lineage, generation {gen} ({model})", "", text]
         write_lessons_page(q, has, lessons)
+        if has("wide_universe"):
+            n_w = one("select count(*) from wide_universe")
+            n_wd = one("select count(*) from wide_universe w join history_done h using (ticker)")
+            lines += ["", "## Wide list (chosen without hindsight)",
+                      f"- {n_w} stocks chosen; full options history done for {n_wd}"]
+        if has("run_log"):
+            lines += ["", "## Job notes (latest 8)"]
+            lines += [f"- {w} {s_}: {m}" for w, s_, m in q(
+                "select logged_at, step, message from run_log order by id desc limit 8")] or ["- none"]
         lines += ["", f"## Errors ({one('select count(*) from errors'):,} total, latest 8)"]
         lines += [f"- {w} {t} {e}: {msg[:160]}" for w, t, e, msg in q(
             "select logged_at, ticker, event_date, error from errors order by id desc limit 8")] or ["- none"]
@@ -986,6 +1022,9 @@ def main():
     w.add_argument("--max-minutes", type=float, default=100)
     w.add_argument("--n", type=int, default=WIDE_N)
     w.add_argument("--reselect", action="store_true")
+    sw = sub.add_parser("select-wide", help="choose the wide list only (no history)")
+    sw.add_argument("--n", type=int, default=WIDE_N)
+    sw.add_argument("--reselect", action="store_true")
     sub.add_parser("migrate", help="copy the CSV files in data/ into the database (one time)")
     sub.add_parser("status", help="write a progress snapshot to STATUS.md")
     f = sub.add_parser("backfill"); f.add_argument("--max-minutes", type=float, default=100)
@@ -995,7 +1034,7 @@ def main():
     args = p.parse_args()
     {"find-movers": find_movers, "collect": collect, "controls": controls, "features": features,
      "compare": compare, "nightly": nightly, "history": history, "backfill": backfill,
-     "migrate": migrate, "status": status, "wide": wide}[args.cmd](args)
+     "migrate": migrate, "status": status, "wide": wide, "select-wide": select_only}[args.cmd](args)
 
 
 if __name__ == "__main__":

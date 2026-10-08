@@ -87,6 +87,8 @@ BUNDLE_COLS = {"ticker": T, "bundle": I, "universe": T}
 # News headlines (Alpaca / Benzinga), one row per article per stock, with a model-scored tone.
 NEWS_COLS = {"id": T, "ticker": T, "created_at": T, "headline": T, "n_symbols": I, "sentiment": F}
 NEWS_FETCHED_COLS = {"ticker": T, "through": T, "articles": I}
+# Short notes from jobs (counts, decisions) so they show in STATUS.md without reading GitHub logs.
+RUN_LOG_COLS = {"logged_at": T, "step": T, "message": T}
 COMMITTEE_NOTE_COLS = {"lineage": T, "generation": I, "author": T, "model": T, "text": T, "rules": T, "created": T}
 SCOREBOOK_COLS = {"lineage": T, "generation": I, "author": T, "rule_name": T, "period": T, "rule": T, "trades": I,
                   "mean_ret": F, "median_ret": F, "win_rate": F, "ci_low": F, "ci_high": F,
@@ -114,6 +116,7 @@ TABLES = {
     "bundles": (BUNDLE_COLS, ["ticker"]),
     "news": (NEWS_COLS, ["id", "ticker"]),
     "news_fetched": (NEWS_FETCHED_COLS, ["ticker"]),
+    "run_log": (RUN_LOG_COLS, None),
     "committee_notes": (COMMITTEE_NOTE_COLS, ["lineage", "generation", "author"]),
     "scorebook": (SCOREBOOK_COLS, ["lineage", "generation", "author", "rule_name", "period"]),
     "agent_ratings": (RATING_COLS, ["run_id", "ticker", "signal_date"]),
@@ -127,7 +130,7 @@ CSV_FILES = {"events": "events.csv", "controls": "controls.csv", "daily": "daily
              "agent_lessons": "agent_lessons.csv", "agent_weeks": "agent_weeks.csv", "pool": "pool.csv", "committee_notes": "committee_notes.csv",
              "scorebook": "scorebook.csv", "agent_ratings": "agent_ratings.csv",
              "wide_universe": "wide_universe.csv", "bundles": "bundles.csv", "news": "news.csv",
-             "news_fetched": "news_fetched.csv"}
+             "news_fetched": "news_fetched.csv", "run_log": "run_log.csv"}
 
 
 def _to_db(value, kind):

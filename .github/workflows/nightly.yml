@@ -14,6 +14,7 @@ on:
           - compare
           - backfill
           - wide
+          - select-wide
           - report
           - migrate
       round:
@@ -27,7 +28,7 @@ permissions:
 concurrency:
   # Wide-list rounds get their own queue, so the nightly run can't bump a waiting round (GitHub
   # keeps only one waiting run per queue). They share the Alpaca key; rate limits are retried.
-  group: options-footprint-${{ github.event.inputs.command == 'wide' && 'wide' || 'main' }}
+  group: options-footprint-${{ (github.event.inputs.command == 'wide' || github.event.inputs.command == 'select-wide') && 'wide' || 'main' }}
   cancel-in-progress: false
 
 jobs:
@@ -78,6 +79,7 @@ jobs:
             wide)     python collector.py wide
                       # Flags for the new stocks once their history is all in (reads the local copy).
                       if [ "$(cat backfill_status.txt 2>/dev/null)" = "done" ]; then python scorer.py || true; fi ;;
+            select-wide) python collector.py select-wide --reselect ;;
             report)   python scorer.py ;;
             migrate)  python collector.py migrate
                       python scorer.py ;;

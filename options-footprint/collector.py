@@ -834,6 +834,16 @@ def status(args):
                       for m, r, n, h, l, l1, l2, dl, md, _ in rep]
         lines += ["", "## Flags (daily shortlist)",
                   f"- {one('select count(*) from flags'):,} flags; latest signal date: {one('select max(signal_date) from flags')}"]
+        runs = q("select lineage, generation, phase, model, trades, mean_ret, median_ret, win_rate, baseline_mean, "
+                 "baseline_median, baseline_win, cost_usd, status from agent_runs order by started")
+        if runs:
+            lines += ["", "## Trader generations",
+                      "| lineage | gen | phase | model | trades | mean % | median % | win % | random mean | random median | random win % | cost $ | status |",
+                      "|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
+            lines += ["| " + " | ".join("" if v is None else str(v) for v in r) + " |" for r in runs]
+        for lin, gen, model, text in q("select distinct on (lineage) lineage, generation, model, text "
+                                       "from agent_lessons order by lineage, generation desc"):
+            lines += ["", f"### Latest lessons: {lin} lineage, generation {gen} ({model})", "", text]
         lines += ["", f"## Errors ({one('select count(*) from errors'):,} total, latest 8)"]
         lines += [f"- {w} {t} {e}: {msg[:160]}" for w, t, e, msg in q(
             "select logged_at, ticker, event_date, error from errors order by id desc limit 8")] or ["- none"]

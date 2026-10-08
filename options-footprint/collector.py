@@ -28,6 +28,7 @@ import argparse
 import re
 import csv
 import datetime as dt
+import hashlib
 import json
 import os
 import random
@@ -675,11 +676,78 @@ HISTORY_MIN_EVENTS = 3        # tickers with this many events get their full dai
 STATUS_FILE = os.path.join(ROOT, "backfill_status.txt")
 
 
-def history_tickers():
+def mover_tickers():
+    """Stocks with several big moves: the original, hindsight-chosen list."""
     counts = {}
     for e in db().events():
         counts[e["ticker"]] = counts.get(e["ticker"], 0) + 1
     return sorted(t for t, n in counts.items() if n >= HISTORY_MIN_EVENTS)
+
+
+def wide_tickers():
+    return sorted(r["ticker"] for r in db().backend.read("wide_universe"))
+
+
+def history_tickers():
+    return sorted(set(mover_tickers()) | set(wide_tickers()))
+
+
+WIDE_N = 300                                         # how many stocks the wide list samples
+WIDE_SELECT_START, WIDE_SELECT_END = "2024-01-02", "2024-01-31"   # known before the history begins
+
+
+def select_wide(args):
+    """Pick the wide list once: a random sample of liquid stocks with options, using ONLY January 2024
+    data (price and share volume), so whether a stock later moved plays no part in choosing it.
+    Delisted stocks are included too, so later failures aren't quietly left out."""
+    if wide_tickers() and not getattr(args, "reselect", False):
+        print(f"Wide list already chosen ({len(wide_tickers())} stocks).")
+        return
+    today = dt.date.today().isoformat()
+    status_of = {}
+    for status in ("active", "inactive"):
+        pages = alpaca_get("https://paper-api.alpaca.markets", "/v2/assets",
+                           {"status": status, "asset_class": "us_equity"},
+                           cache_name=f"assets_{status}_{today}.json")
+        for a in (a for page in pages for a in (page if isinstance(page, list) else [])):
+            sym = a.get("symbol", "")
+            if (a.get("exchange") in MAJOR_EXCHANGES and a.get("exchange") != "ARCA"
+                    and not looks_like_fund(a.get("name", "")) and sym.isalpha() and len(sym) <= 5):
+                # Active stocks must have listed options; for delisted ones the history step finds out.
+                if status == "active" and "options_enabled" not in (a.get("attributes") or []):
+                    continue
+                status_of.setdefault(sym, status)
+    symbols = sorted(status_of)
+    print(f"Wide list: {len(symbols):,} candidate stocks (active with options, plus delisted).")
+    bars = stock_bars(symbols, WIDE_SELECT_START, WIDE_SELECT_END)
+    eligible = []
+    for sym in symbols:
+        b = bars.get(sym) or []
+        if len(b) < 15:
+            continue
+        price = sum(x["close"] for x in b) / len(b)
+        volume = sum(x["volume"] for x in b) / len(b)
+        if price >= MIN_PRICE and volume >= MIN_AVG_SHARE_VOLUME:
+            eligible.append((sym, price, volume))
+    rank = lambda s: hashlib.sha1(f"wide-v1|{s}".encode()).hexdigest()
+    chosen = sorted(eligible, key=lambda e: rank(e[0]))[:args.n]
+    db().backend.upsert("wide_universe", [{"ticker": s, "status": status_of[s], "avg_price": round(p, 2),
+                                            "avg_volume": round(v), "selected": today} for s, p, v in chosen])
+    overlap = len({s for s, _, _ in chosen} & set(mover_tickers()))
+    print(f"Wide list: {len(eligible):,} stocks met the January 2024 bar (price ${MIN_PRICE:.0f}+, "
+          f"{MIN_AVG_SHARE_VOLUME:,}+ shares a day); sampled {len(chosen)} at random, {overlap} of them already "
+          f"in the big-movers list.")
+
+
+def wide(args):
+    """Choose the wide list (once) and pull each stock's full daily options history. Resumable;
+    writes 'done' or 'more' to backfill_status.txt for the workflow."""
+    select_wide(args)
+    finished = history(args, time.monotonic() + 60 * args.max_minutes)
+    with open(STATUS_FILE, "w") as f:
+        f.write("done" if finished else "more")
+    left = [t for t in history_tickers() if t not in {r["ticker"] for r in db().history_done()}]
+    print("Wide history complete." if finished else f"Wide history: {len(left)} stocks to go; another round needed.")
 
 
 def history(args, deadline=None):
@@ -914,6 +982,10 @@ def main():
     n.add_argument("--min-move", type=float, default=15); n.add_argument("--lookback", type=int, default=15)
     n.add_argument("--per-event", type=int, default=2)
     h = sub.add_parser("history"); h.add_argument("--max-minutes", type=float, default=50)
+    w = sub.add_parser("wide", help="choose the hindsight-free wide list and pull its options history")
+    w.add_argument("--max-minutes", type=float, default=100)
+    w.add_argument("--n", type=int, default=WIDE_N)
+    w.add_argument("--reselect", action="store_true")
     sub.add_parser("migrate", help="copy the CSV files in data/ into the database (one time)")
     sub.add_parser("status", help="write a progress snapshot to STATUS.md")
     f = sub.add_parser("backfill"); f.add_argument("--max-minutes", type=float, default=100)
@@ -923,7 +995,7 @@ def main():
     args = p.parse_args()
     {"find-movers": find_movers, "collect": collect, "controls": controls, "features": features,
      "compare": compare, "nightly": nightly, "history": history, "backfill": backfill,
-     "migrate": migrate, "status": status}[args.cmd](args)
+     "migrate": migrate, "status": status, "wide": wide}[args.cmd](args)
 
 
 if __name__ == "__main__":

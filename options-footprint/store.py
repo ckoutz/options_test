@@ -79,7 +79,11 @@ AGENT_WEEK_COLS = {"run_id": T, "week_index": I, "picks": I, "why": T, "finish":
 # Committee version: a larger candidate pool split into stock bundles and month blocks, notes per
 # generation and author, a code-kept scorebook of every rule, and every rating an agent gives.
 POOL_COLS = {"ticker": T, "signal_date": D, "bundle": I, "split": T, "week": D, "month": T, "grp": T,
-             "features": T, "options": T, "shares_ret10": F}
+             "features": T, "options": T, "shares_ret10": F, "universe": T}
+# Stocks chosen without hindsight: liquid, optionable stocks picked using only January 2024 data
+# (before any of the history the agents study), whether or not they later had big moves.
+WIDE_COLS = {"ticker": T, "status": T, "avg_price": F, "avg_volume": F, "selected": T}
+BUNDLE_COLS = {"ticker": T, "bundle": I, "universe": T}
 COMMITTEE_NOTE_COLS = {"lineage": T, "generation": I, "author": T, "model": T, "text": T, "rules": T, "created": T}
 SCOREBOOK_COLS = {"lineage": T, "generation": I, "author": T, "rule_name": T, "period": T, "rule": T, "trades": I,
                   "mean_ret": F, "median_ret": F, "win_rate": F, "ci_low": F, "ci_high": F,
@@ -103,6 +107,8 @@ TABLES = {
     "agent_trades": (AGENT_TRADE_COLS, ["run_id", "ticker", "signal_date"]),
     "agent_weeks": (AGENT_WEEK_COLS, ["run_id", "week_index"]),
     "pool": (POOL_COLS, ["ticker", "signal_date"]),
+    "wide_universe": (WIDE_COLS, ["ticker"]),
+    "bundles": (BUNDLE_COLS, ["ticker"]),
     "committee_notes": (COMMITTEE_NOTE_COLS, ["lineage", "generation", "author"]),
     "scorebook": (SCOREBOOK_COLS, ["lineage", "generation", "author", "rule_name", "period"]),
     "agent_ratings": (RATING_COLS, ["run_id", "ticker", "signal_date"]),
@@ -114,7 +120,8 @@ CSV_FILES = {"events": "events.csv", "controls": "controls.csv", "daily": "daily
              "ladder_trades": "ladder_trades.csv", "ladder_report": "ladder_report.csv",
              "arena": "arena.csv", "agent_runs": "agent_runs.csv", "agent_trades": "agent_trades.csv",
              "agent_lessons": "agent_lessons.csv", "agent_weeks": "agent_weeks.csv", "pool": "pool.csv", "committee_notes": "committee_notes.csv",
-             "scorebook": "scorebook.csv", "agent_ratings": "agent_ratings.csv"}
+             "scorebook": "scorebook.csv", "agent_ratings": "agent_ratings.csv",
+             "wide_universe": "wide_universe.csv", "bundles": "bundles.csv"}
 
 
 def _to_db(value, kind):

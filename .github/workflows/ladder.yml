@@ -10,6 +10,13 @@ on:
       round:
         description: "Round (set automatically; leave at 1)"
         default: "1"
+      universe:
+        description: "all = every tracked stock; wide = only the hindsight-free wide-list stocks"
+        type: choice
+        default: all
+        options:
+          - all
+          - wide
       report_only:
         description: "Only rebuild the report from trades already recorded"
         type: boolean
@@ -66,7 +73,7 @@ jobs:
           if [ "${{ github.event.inputs.report_only }}" = "true" ]; then
             python ladder.py --report-only
           else
-            python ladder.py --max-minutes 100
+            python ladder.py --max-minutes 100 --universe "${{ github.event.inputs.universe || 'all' }}"
           fi
 
 
@@ -91,7 +98,12 @@ jobs:
           status=$(cat ladder_status.txt 2>/dev/null || echo missing)
           round=${{ github.event.inputs.round || 1 }}
           echo "Ladder status after round $round: $status"
+          universe="${{ github.event.inputs.universe || 'all' }}"
           if [ "$status" = "more" ] && [ "$round" -lt 10 ]; then
-            gh workflow run ladder.yml --ref "${{ github.ref_name }}" -f round=$((round + 1))
+            gh workflow run ladder.yml --ref "${{ github.ref_name }}" -f round=$((round + 1)) -f universe=$universe
             echo "Launched round $((round + 1))."
+          elif [ "$status" = "done" ] && [ "$universe" = "wide" ]; then
+            # Last step: rebuild the agents' candidate pool with the wide-list stocks in it.
+            gh workflow run committee.yml --ref "${{ github.ref_name }}" -f command=build-pool
+            echo "Wide-list ladder done; launched the pool rebuild."
           fi

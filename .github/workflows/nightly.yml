@@ -13,6 +13,7 @@ on:
           - nightly
           - compare
           - backfill
+          - wide
           - report
           - migrate
       round:
@@ -24,7 +25,9 @@ permissions:
   actions: write     # lets an unfinished backfill launch its next round
 
 concurrency:
-  group: options-footprint
+  # Wide-list rounds get their own queue, so the nightly run can't bump a waiting round (GitHub
+  # keeps only one waiting run per queue). They share the Alpaca key; rate limits are retried.
+  group: options-footprint-${{ github.event.inputs.command == 'wide' && 'wide' || 'main' }}
   cancel-in-progress: false
 
 jobs:
@@ -72,6 +75,9 @@ jobs:
             compare)  python collector.py compare --ticker WOLF ;;
             backfill) python collector.py backfill --round "${{ github.event.inputs.round || 1 }}"
                       python scorer.py || true ;;
+            wide)     python collector.py wide
+                      # Flags for the new stocks once their history is all in (reads the local copy).
+                      if [ "$(cat backfill_status.txt 2>/dev/null)" = "done" ]; then python scorer.py || true; fi ;;
             report)   python scorer.py ;;
             migrate)  python collector.py migrate
                       python scorer.py ;;
@@ -103,14 +109,19 @@ jobs:
           git push
 
       - name: Launch the next backfill round if this one ran out of time
-        if: ${{ !cancelled() && github.event.inputs.command == 'backfill' }}
+        if: ${{ !cancelled() && (github.event.inputs.command == 'backfill' || github.event.inputs.command == 'wide') }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           status=$(cat backfill_status.txt 2>/dev/null || echo missing)
           round=${{ github.event.inputs.round || 1 }}
           echo "Backfill status after round $round: $status"
+          cmd="${{ github.event.inputs.command }}"
           if [ "$status" = "more" ] && [ "$round" -lt 20 ]; then
-            gh workflow run nightly.yml --ref "${{ github.ref_name }}" -f command=backfill -f round=$((round + 1))
+            gh workflow run nightly.yml --ref "${{ github.ref_name }}" -f command=$cmd -f round=$((round + 1))
             echo "Launched round $((round + 1))."
+          elif [ "$status" = "done" ] && [ "$cmd" = "wide" ]; then
+            # Next step: price the wide-list stocks' option contracts.
+            gh workflow run ladder.yml --ref "${{ github.ref_name }}" -f universe=wide
+            echo "Wide history done; launched the wide-list ladder."
           fi

@@ -57,7 +57,7 @@ TRAIN_BUNDLES = (1, 2, 3, 4, 5, 6)
 TEST_START = "2026-02-01"
 FIRST_MONTH = "2024-03"
 BUFFER_DAYS = 15                  # about 10 trading sessions
-PER_WEEK = 8                      # candidates per bundle per week
+PER_WEEK = 10                     # candidates per bundle per week (up to 6 big movers + 4 wide-list)
 N_AGENTS = 4
 MAX_PICKS = 3
 REVEAL_DAYS = 14
@@ -144,20 +144,69 @@ def deal_bundles(stats):
     return bundle
 
 
+def ladder_files(st, archive):
+    """Where priced option ladders live: the archive release file, plus any rows still in the
+    database's ladder table (the wide-list ladder), exported once to a temporary file."""
+    paths = []
+    if archive:
+        if not os.path.exists(archive):
+            sys.exit(f"Archive file {archive} not found (download it from the ladder-trades-archive release).")
+        paths.append(archive)
+    if st.kind == "postgres":
+        conn = st.backend.conn
+        if conn.execute("select to_regclass('public.ladder_trades') is not null").fetchone()[0] and \
+                conn.execute("select exists (select 1 from ladder_trades)").fetchone()[0]:
+            tmp = os.path.join(C.DATA, "ladder_live.csv.gz")
+            with gzip.open(tmp, "wb") as gz, conn.cursor() as cur:
+                with cur.copy("COPY ladder_trades TO STDOUT WITH (FORMAT csv, HEADER true)") as copy:
+                    for chunk in copy:
+                        gz.write(chunk)
+            paths.append(tmp)
+    if not paths:
+        sys.exit("No ladder data: pass --archive or run the ladder first.")
+    return paths
+
+
+def ladder_rows(paths):
+    for path in paths:
+        with gzip.open(path, "rt", newline="") as f:
+            yield from csv.DictReader(f)
+
+
+def market_closes():
+    """Daily closes of the S&P 500 fund (SPY), for market context. Empty if Alpaca isn't set up."""
+    try:
+        bars = C.stock_bars(["SPY"], "2023-12-01", dt.date.today().isoformat())
+        return {b["date"]: b["close"] for b in bars.get("SPY", [])}
+    except Exception as ex:   # noqa: BLE001 - market context is a nice-to-have
+        print(f"Market context unavailable ({str(ex)[:100]}); those columns will be blank.")
+        return {}
+
+
 def build_pool(args):
     st = C.db()
-    path = args.archive
-    if not os.path.exists(path):
-        sys.exit(f"Archive file {path} not found (download it from the ladder-trades-archive release).")
+    paths = ladder_files(st, args.archive)
     days = {}
-    with gzip.open(path, "rt", newline="") as f:
-        for r in csv.DictReader(f):
-            if r.get("ret_hold10_pct") not in (None, ""):
-                days[(r["ticker"], r["signal_date"])] = r["grp"]
+    for r in ladder_rows(paths):
+        if r.get("ret_hold10_pct") not in (None, ""):
+            days[(r["ticker"], r["signal_date"])] = r["grp"]
     by_ticker = {}
     for (t, d), g in days.items():
         by_ticker.setdefault(t, {})[d] = g
-    print(f"Archive: {len(days):,} stock-days across {len(by_ticker):,} stocks.")
+    wide_only = set(C.wide_tickers()) - set(C.mover_tickers())
+    universe = {t: ("wide" if t in wide_only else "movers") for t in by_ticker}
+    print(f"Ladder data: {len(days):,} stock-days across {len(by_ticker):,} stocks "
+          f"({sum(1 for u in universe.values() if u == 'wide')} from the wide list).")
+    spy = market_closes()
+    spy_dates = sorted(spy)
+    spy_idx = {d: i for i, d in enumerate(spy_dates)}
+
+    def mkt(d, n):
+        i = spy_idx.get(d)
+        if i is None or i < n:
+            return None
+        return round((spy[d] / spy[spy_dates[i - n]] - 1) * 100, 1)
+
     moves = {}
     for e in st.events():
         moves[e["ticker"]] = moves.get(e["ticker"], 0) + 1
@@ -166,7 +215,9 @@ def build_pool(args):
         rows = [r for r in st.daily(t) if r.get("put_call_alpaca") not in (None, "")]
         if not rows:
             continue
-        scored = {d["date"]: d for d in S.score_days({t: rows}, 30.0, 10)}
+        scored_list = S.score_days({t: rows}, 30.0, 10)
+        scored = {d["date"]: d for d in scored_list}
+        s_pos = {d["date"]: k for k, d in enumerate(scored_list)}
         dates = [r["date"] for r in rows]
         closes = [C.to_float(r["stock_close"]) for r in rows]
         index = {d: i for i, d in enumerate(dates)}
@@ -180,13 +231,34 @@ def build_pool(args):
             f = {k: scored[d].get(k) for k, _, _ in A.FEATURES if k in scored[d]}
             f["vol20_pct"] = round(statistics.pstdev(rets) * 100, 2) if len(rets) > 5 else None
             f.update(A.technicals(closes, i))
+            # The last 5 sessions, so buildup over several days is visible, not just today.
+            last5 = scored_list[max(0, s_pos[d] - 4):s_pos[d] + 1]
+
+            def avg(key):
+                v = [C.to_float(x.get(key)) for x in last5 if C.to_float(x.get(key)) is not None]
+                return round(statistics.mean(v), 2) if v else None
+            f["calls_5d_avg"] = avg("call_volume_spike")
+            f["puts_5d_avg"] = avg("put_volume_spike")
+            f["shares_5d_avg"] = avg("stock_volume_spike")
+            f["call_days_2x"] = sum(1 for x in last5 if (C.to_float(x.get("call_volume_spike")) or 0) >= 2)
+            f["mkt_5d_pct"], f["mkt_20d_pct"] = mkt(d, 5), mkt(d, 20)
             price = closes[i]
             f["price_band"] = "<$10" if price < 10 else "$10-50" if price <= 50 else ">$50"
             shares = (closes[i + 11] * (1 - A.SHARE_COST)) / (closes[i + 1] * (1 + A.SHARE_COST)) - 1
             feats[(t, d)] = (g, f, round(shares * 100, 2))
         if n % 100 == 0:
             print(f"  {n}/{len(by_ticker)} stocks")
-    bundle = deal_bundles(stats)
+    # Bundles are kept stable: a stock keeps its bundle across rebuilds (the first time, the
+    # assignments are read from the existing pool), and only new stocks are dealt, each list on its own.
+    bundle = {r["ticker"]: int(r["bundle"]) for r in st.backend.read("bundles")}
+    if not bundle:
+        bundle = {r["ticker"]: int(r["bundle"]) for r in st.backend.read("pool")}
+    for u in ("movers", "wide"):
+        fresh = {t: v for t, v in stats.items() if t not in bundle and universe[t] == u}
+        if fresh:
+            bundle.update(deal_bundles(fresh))
+    st.backend.upsert("bundles", [{"ticker": t, "bundle": b, "universe": universe.get(t, "movers")}
+                                  for t, b in bundle.items() if t in stats])
     month_split = split_months(sorted({month_of(d) for _, d in feats}))
     groups = {}
     for (t, d), (g, f, sh) in feats.items():
@@ -194,7 +266,8 @@ def build_pool(args):
         s = "holdout" if b in HOLDOUT_BUNDLES and month_split.get(month_of(d)) != "test" else split_of(d, month_split)
         if s in ("skip", "buffer"):
             continue
-        groups.setdefault((b, A.week_of(d), s), []).append((t, d))
+        groups.setdefault((b, A.week_of(d), s, universe[t]), []).append((t, d))
+    quota = {"movers": args.per_week_movers, "wide": args.per_week_wide}
     picked = []
     for key, items in groups.items():
         seen = set()
@@ -203,33 +276,33 @@ def build_pool(args):
                 continue
             seen.add(t)
             picked.append((key, t, d))
-            if len(seen) >= args.per_week:
+            if len(seen) >= quota[key[3]]:
                 break
     want = {(t, d) for _, t, d in picked}
     options = {}
-    with gzip.open(path, "rt", newline="") as f:
-        for r in csv.DictReader(f):
-            k = (r["ticker"], r["signal_date"])
-            if k not in want:
-                continue
-            ok = r["filled"] == "yes" and r["entry_price"] and r["stock_close"]
-            cell = f"{int(float(r['target_dte']))}d+{float(r['target_otm_pct']):g}"
-            options.setdefault(k, {})[cell] = [
-                round(float(r["entry_price"]) / float(r["stock_close"]) * 100, 2),
-                C.to_float(r["ret_hold10_pct"]), C.to_float(r["ret_double_or_10_pct"])] if ok else None
+    for r in ladder_rows(paths):
+        k = (r["ticker"], r["signal_date"])
+        if k not in want:
+            continue
+        ok = r["filled"] == "yes" and r["entry_price"] and r["stock_close"]
+        cell = f"{int(float(r['target_dte']))}d+{float(r['target_otm_pct']):g}"
+        options.setdefault(k, {})[cell] = [
+            round(float(r["entry_price"]) / float(r["stock_close"]) * 100, 2),
+            C.to_float(r["ret_hold10_pct"]), C.to_float(r["ret_double_or_10_pct"])] if ok else None
     out = []
-    for (b, wk, s), t, d in picked:
+    for (b, wk, s, u), t, d in picked:
         g, f, sh = feats[(t, d)]
         out.append({"ticker": t, "signal_date": d, "bundle": b, "split": s, "week": wk, "month": month_of(d),
-                    "grp": g, "features": json.dumps(f, separators=(",", ":")),
+                    "grp": g, "universe": u, "features": json.dumps(f, separators=(",", ":")),
                     "options": json.dumps({k: v for k, v in options.get((t, d), {}).items() if v},
                                           separators=(",", ":")),
                     "shares_ret10": sh})
     st.backend.replace("pool", out)
     counts = {}
     for r in out:
-        counts[r["split"]] = counts.get(r["split"], 0) + 1
-    print(f"Pool built: {len(out):,} candidates {counts}; scoring months: "
+        key = f"{r['split']}/{r['universe']}"
+        counts[key] = counts.get(key, 0) + 1
+    print(f"Pool built: {len(out):,} candidates {dict(sorted(counts.items()))}; scoring months: "
           f"{sorted(m for m, s in month_split.items() if s == 'score')}")
     per_bundle = {b: sum(1 for r in out if r["bundle"] == b) for b in range(1, N_BUNDLES + 1)}
     print(f"Candidates per bundle: {per_bundle}")
@@ -420,7 +493,8 @@ contrarian take). Original ideas that the code later confirms are the most valua
     else:
         explore = "Follow the strategy in your notes. Trade when you believe the odds favor you and pass when they don't."
     return f"""You are one of four independent traders on a research committee, looking for a real, repeatable edge
-in volatile US stocks with unusual options activity. Each week you see up to {PER_WEEK} candidate stock-days.
+in US stocks with unusual options activity (some very volatile, some ordinary). Each week you see up to
+{PER_WEEK} candidate stock-days.
 
 For EVERY candidate, give a rating: +2 strong buy, +1 lean buy, 0 no view, -1 lean avoid, -2 strong avoid
 (you expect it to fall). Ratings are scored too: we check whether your higher-rated stocks did better
@@ -1012,6 +1086,21 @@ def report(args=None):
                  f"{r['baseline_profit_usd'] or '-'} | {r['mean_ret'] or '-'} | {r['win_rate'] or '-'} | {corr} | "
                  f"{r.get('top_rated_ret') or '-'} | {r.get('bottom_rated_ret') or '-'} | "
                  f"{r.get('bad_replies') or 0}/{r.get('replies')} | {r['cost_usd']} |")
+    # Luck check: every rule ever tested, and how many passed the blind months clearly (the bottom of
+    # the 95% range above buying everything the same way). About 1 in 40 would do that by chance.
+    tested = {b["rule"] for b in book if b["period"] == "train"}
+    blind = [b for b in book if b["period"] == "score"]
+    passed = [b for b in blind if b["ci_low"] not in (None, "") and b["baseline_mean"] not in (None, "")
+              and float(b["ci_low"]) > float(b["baseline_mean"])]
+    L += ["", "## Luck check", "",
+          f"- Different rules tested on training data so far: {len(tested)} (by the agents and the editor).",
+          f"- Editor rules checked on the blind months: {len(blind)}; passed clearly (whole 95% range above "
+          f"buying everything the same way): {len(passed)}.",
+          f"- Expected to pass by luck alone: about {len(blind) * 0.025:.1f}. Treat a pass as real only if it "
+          f"clearly beats that count and the rule keeps passing in later generations."]
+    if passed:
+        L += [f"  - passed: {b['rule_name']} (generation {b['generation']}): blind average {b['mean_ret']}% "
+              f"versus {b['baseline_mean']}% for buying everything" for b in passed]
     gens = sorted({int(n["generation"]) for n in notes})
     for g in reversed(gens):
         L += ["", f"## Generation {g}", ""]
@@ -1041,8 +1130,9 @@ def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = p.add_subparsers(dest="cmd", required=True)
     b = sub.add_parser("build-pool")
-    b.add_argument("--archive", required=True)
-    b.add_argument("--per-week", type=int, default=PER_WEEK)
+    b.add_argument("--archive", help="the ladder archive file (rows still in the database are added)")
+    b.add_argument("--per-week-movers", type=int, default=6)
+    b.add_argument("--per-week-wide", type=int, default=4)
     for name in ("loop", "final-test"):
         a = sub.add_parser(name)
         a.add_argument("--model", default=os.environ.get("LLM_MODEL", "anthropic/claude-haiku-5.5"))

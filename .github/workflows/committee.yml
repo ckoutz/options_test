@@ -64,6 +64,8 @@ jobs:
         working-directory: options-footprint
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      ALPACA_KEY_ID: ${{ secrets.ALPACA_KEY_ID }}        # market context (S&P 500 fund) when building the pool
+      ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
       LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
       LLM_BASE_URL: https://openrouter.ai/api/v1
       MAX_USD: ${{ github.event.inputs.max_usd }}

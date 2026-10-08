@@ -123,6 +123,23 @@ The bigger version of the agent loop. GitHub: Actions → "Committee generations
   `weeks_fraction` 0.5 uses half the training weeks per bundle per generation (cheaper, more
   generations). Results: COMMITTEE.md, tables `pool`, `committee_notes`, `scorebook`, `agent_ratings`.
 - **Final exam:** `final-test` with a generation number, once, at the very end.
+- **Lineages and options:** `lineage` names a separate line of generations with its own notes and report
+  (`COMMITTEE-<lineage>.md`); `options_only` limits agents to calls; `seed: briefing` starts a new lineage
+  from what we have found so far. Training requires at least one trade a week and one original idea per
+  bundle; notes are strategy playbooks. The report's "Luck check" counts every rule tested and how many
+  would pass the blind months by chance.
+
+## Wide list (stocks chosen without hindsight)
+The original stocks were chosen because they had 3+ big moves, which tilts everything toward explosive
+names. The wide list fixes that: `python collector.py wide` (GitHub: "Options footprint" → `wide`) picks
+300 liquid stocks with options at random, using ONLY January 2024 data (price $5+, 500,000+ shares a
+day), including stocks delisted since, then pulls each one's full daily options history (several rounds,
+chained automatically). When done it launches the ladder for just those stocks (`ladder.py --universe
+wide`, which leaves the archived big-movers ladder and its summary alone), and that launches the committee
+`build-pool`, which mixes up to 6 big-mover and 4 wide-list candidates per bundle per week. Big-mover
+stocks keep their bundles (table `bundles`); wide-list stocks are dealt into bundles separately.
+New candidate columns: the last 5 sessions of call, put and share activity (`calls 5d avg`,
+`call days 2x+`, `puts 5d avg`, `shares 5d avg`) and the whole market's 5- and 20-session change.
 
 ## Scoring the signals
 `python scorer.py` (runs automatically after every nightly and backfill) uses every trading day for

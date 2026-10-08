@@ -69,6 +69,10 @@ FEATURES = [  # (key in the arena, label shown to the agent, meaning)
     ("call_vol_long_spike", "long", "calls expiring beyond 60 days, ÷ their 20-session median"),
     ("call_vol_otm_spike", "otm", "calls with strikes 5%+ above the price, ÷ their 20-session median"),
     ("stock_volume_spike", "shares", "share volume today ÷ its 20-session median"),
+    ("calls_5d_avg", "calls 5d avg", "the calls ratio averaged over the last 5 sessions (buying that builds over several days)"),
+    ("call_days_2x", "call days 2x+", "how many of the last 5 sessions had call volume at least 2x normal (0 to 5)"),
+    ("puts_5d_avg", "puts 5d avg", "the puts ratio averaged over the last 5 sessions"),
+    ("shares_5d_avg", "shares 5d avg", "the shares ratio averaged over the last 5 sessions"),
     ("ret_1d_pct", "1d %", "stock price change today, percent"),
     ("ret_5d_pct", "5d %", "stock price change over the last 5 sessions, percent"),
     ("vol20_pct", "vol20 %", "typical daily move over the last 20 sessions (standard deviation), percent"),
@@ -77,6 +81,8 @@ FEATURES = [  # (key in the arena, label shown to the agent, meaning)
     ("vs_ma50_pct", "vs ma50 %", "price versus its 50-session average close, percent"),
     ("from_high60_pct", "off high %", "price versus the highest close of the last 60 sessions, percent (0 = at the high)"),
     ("rsi14", "rsi", "14-session RSI of closes (above 70 = overbought, below 30 = oversold)"),
+    ("mkt_5d_pct", "market 5d %", "the whole market (S&P 500 fund) over the last 5 sessions, percent"),
+    ("mkt_20d_pct", "market 20d %", "the whole market (S&P 500 fund) over the last 20 sessions, percent"),
     ("price_band", "price", "share price band: under $10, $10 to $50, or over $50"),
 ]
 TECHNICALS = ("ret_20d_pct", "vs_ma20_pct", "vs_ma50_pct", "from_high60_pct", "rsi14")
@@ -391,7 +397,7 @@ def candidate_table(cands):
         for k, _, _ in FEATURES:
             if k == "price_band":
                 vals.append(str(f.get(k) or "-"))
-            elif k == "rsi14":
+            elif k in ("rsi14", "call_days_2x"):
                 vals.append(fmt(f.get(k), "{:.0f}"))
             elif k == "vol20_pct":
                 vals.append(fmt(f.get(k), "{:.1f}"))

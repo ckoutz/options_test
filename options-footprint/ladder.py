@@ -144,7 +144,8 @@ def backfill_busy(st):
     return (q("select count(*) from events where coalesce(window_filled, '') <> 'yes'")
             + q("select count(*) from controls where coalesce(window_filled, '') <> 'yes'")
             + q("select count(*) from (select ticker from events group by ticker having count(*) >= 3) x "
-                "where ticker not in (select ticker from history_done)")) > 0
+                "where ticker not in (select ticker from history_done)")
+            + q("select count(*) from wide_universe where ticker not in (select ticker from history_done)")) > 0
 
 
 def batches(items, max_symbols=100):
@@ -172,6 +173,12 @@ def run(args):
     data = S.load(st)
     days = S.score_days(data, 30.0, HOLD_SESSIONS)
     plan = choose_days(days)
+    if getattr(args, "universe", "all") == "wide":
+        # Only the wide-list stocks that aren't big movers: the movers' ladder is already in the
+        # archive release, and redoing it would take many hours.
+        new = set(C.wide_tickers()) - set(C.mover_tickers())
+        plan = [p for p in plan if p[0]["ticker"] in new]
+        print(f"Wide list only: {len(new)} stocks not in the big-movers list.")
     done = {(r["grp"], r["ticker"], r["signal_date"]) for r in st.backend.read("ladder_trades")}
     todo = [p for p in plan if (p[1], p[0]["ticker"], p[0]["date"]) not in done]
     by_ticker = {}
@@ -280,7 +287,10 @@ def report(args):
                                  "mean_ret_pct": round(statistics.mean(vals), 1),
                                  "median_ret_pct": round(statistics.median(vals), 1),
                                  "mean_peak_pct": round(statistics.mean(peaks), 1) if peaks else None})
-    st.backend.replace("ladder_report", rows)
+    if getattr(args, "universe", "all") == "wide":
+        print("(Wide-list ladder: the saved summary of the big-movers ladder is left unchanged.)")
+    else:
+        st.backend.replace("ladder_report", rows)
     print_tables(rows)
 
 
@@ -312,6 +322,8 @@ def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--max-minutes", type=float, default=100)
     p.add_argument("--report-only", action="store_true")
+    p.add_argument("--universe", choices=["all", "wide"], default="all",
+                   help="wide = only the hindsight-free wide-list stocks not already in the archive")
     a = p.parse_args()
     if not a.report_only:
         run(a)

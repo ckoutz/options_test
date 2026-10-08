@@ -474,6 +474,7 @@ def run_phase(st, llm, lineage, generation, phase, lessons, deadline):
     system = rules_text(phase)
     trades, revealed, status = [], [], "complete"
     replies, bad_replies, cut_off, sample_reply = 0, 0, 0, ""
+    week_notes = []
     print(f"{run_id}: {len(weeks)} weeks")
     for wi, cands in enumerate(weeks):
         if time.monotonic() > deadline:
@@ -515,6 +516,9 @@ def run_phase(st, llm, lineage, generation, phase, lessons, deadline):
         replies += 1
         cut_off += llm.last_finish == "length"
         picks, why, ok = parse_picks(reply)
+        week_notes.append({"run_id": run_id, "week_index": wi, "picks": len(picks), "finish": llm.last_finish,
+                           "readable": "yes" if ok else "no",
+                           "why": (why if ok else "(unreadable) " + (reply or ""))[:500]})
         if not ok:
             bad_replies += 1
             if not sample_reply:
@@ -554,6 +558,8 @@ def run_phase(st, llm, lineage, generation, phase, lessons, deadline):
     st.backend.upsert("agent_trades", [{k: t.get(k) for k in
                                         ("run_id", "week_index", "cand_id", "ticker", "signal_date", "action",
                                          "expiry", "strike_pct", "exit_rule", "ret_pct", "reason")} for t in trades])
+    if week_notes:
+        st.backend.upsert("agent_weeks", week_notes)
     rets = [t["ret_pct"] for t in trades]
     bm, bmed, bw = random_baseline(weeks, trades)
     summary = {"run_id": run_id, "lineage": lineage, "generation": generation, "phase": phase,

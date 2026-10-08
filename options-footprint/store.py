@@ -72,6 +72,7 @@ AGENT_RUN_COLS = {"run_id": T, "lineage": T, "generation": I, "phase": T, "model
 AGENT_TRADE_COLS = {"run_id": T, "week_index": I, "cand_id": T, "ticker": T, "signal_date": D,
                     "action": T, "expiry": I, "strike_pct": F, "exit_rule": T, "ret_pct": F,
                     "reason": T}
+AGENT_WEEK_COLS = {"run_id": T, "week_index": I, "picks": I, "why": T, "finish": T, "readable": T}
 LESSON_COLS = {"lineage": T, "generation": I, "run_id": T, "model": T, "text": T, "created": T}
 
 TABLES = {
@@ -88,6 +89,7 @@ TABLES = {
     "arena": (ARENA_COLS, ["ticker", "signal_date"]),
     "agent_runs": (AGENT_RUN_COLS, ["run_id"]),
     "agent_trades": (AGENT_TRADE_COLS, ["run_id", "ticker", "signal_date"]),
+    "agent_weeks": (AGENT_WEEK_COLS, ["run_id", "week_index"]),
     "agent_lessons": (LESSON_COLS, ["lineage", "generation"]),
 }
 CSV_FILES = {"events": "events.csv", "controls": "controls.csv", "daily": "daily_features.csv",
@@ -95,7 +97,7 @@ CSV_FILES = {"events": "events.csv", "controls": "controls.csv", "daily": "daily
              "errors": "errors.csv", "signal_report": "signal_report.csv", "flags": "flags.csv",
              "ladder_trades": "ladder_trades.csv", "ladder_report": "ladder_report.csv",
              "arena": "arena.csv", "agent_runs": "agent_runs.csv", "agent_trades": "agent_trades.csv",
-             "agent_lessons": "agent_lessons.csv"}
+             "agent_lessons": "agent_lessons.csv", "agent_weeks": "agent_weeks.csv"}
 
 
 def _to_db(value, kind):

@@ -789,6 +789,41 @@ def migrate(args):
     print("Migration complete.")
 
 
+def write_lessons_page(q, has, lessons):
+    """LESSONS.md: every generation's lessons document, plus the weekly reasoning of each lineage's
+    latest runs (what the agent said each week, including weeks it passed)."""
+    out = [f"# Agent notes ({dt.datetime.now(dt.timezone.utc):%Y-%m-%d %H:%M} UTC)", "",
+           "Every lessons document each generation passed on, oldest first, then what the agents wrote",
+           "week by week in their latest runs. Lineages without -v2 are the first test, whose weekly",
+           "replies were cut off (no trades) and were not saved.", ""]
+    for lin, gen, model, created, text in lessons:
+        out += [f"## {lin}, generation {gen} ({model}, {created})", "", text or "(empty)", ""]
+    if has("agent_runs"):
+        latest = q("select distinct on (lineage, phase) run_id, lineage, generation, phase from agent_runs "
+                   "where replies is not null order by lineage, phase, started desc")
+        for run_id, lin, gen, phase in sorted(latest, key=lambda r: (r[1], r[3] != "train")):
+            out += [f"## Weekly notes: {lin}, generation {gen}, {phase}", ""]
+            trades = {}
+            reasons = {}
+            for wi, action, exp, strike, ex, ret, why in q(
+                    f"select week_index, action, expiry, strike_pct, exit_rule, ret_pct, reason from agent_trades "
+                    f"where run_id = '{run_id}' order by week_index"):
+                what = "stock" if action == "stock" else f"call {exp}d +{strike:g}% {ex}"
+                trades.setdefault(wi, []).append(f"{what} {ret:+.0f}%" if phase == "train" else what)
+                reasons[wi] = why
+            weeks = q(f"select week_index, why from agent_weeks where run_id = '{run_id}' order by week_index") \
+                if has("agent_weeks") else []
+            if not weeks:   # runs from before weekly notes were saved: weeks with trades only
+                weeks = sorted(reasons.items())
+                out.append("(weeks the agent passed were not recorded for this run)")
+            for wi, why in weeks:
+                bought = "; ".join(trades.get(wi, [])) or "pass"
+                out.append(f"- week {wi + 1} [{bought}]: {why}")
+            out.append("")
+    with open(os.path.join(ROOT, "LESSONS.md"), "w") as f:
+        f.write("\n".join(out) + "\n")
+
+
 def status(args):
     """Progress snapshot written to STATUS.md (the GitHub status workflow commits it)."""
     st = db()
@@ -819,9 +854,10 @@ def status(args):
         lines += ["", "## Labels"]
         lines += [f"- {lab or 'none'}: {n:,}" for lab, n in q("select label, count(*) from events group by label order by 2 desc")]
         lines += ["", "## Ladder backtest"]
-        lines += [f"- {g}: {d:,} days, {n:,} contracts ({f:,} could be bought)" for g, d, n, f in q(
+        has = lambda t: one(f"select to_regclass('public.{t}') is not null")
+        lines += [f"- {g}: {d:,} days, {n:,} contracts ({f:,} could be bought)" for g, d, n, f in (q(
             "select grp, count(distinct (ticker, signal_date)), count(*), count(*) filter (where filled='yes') "
-            "from ladder_trades group by grp order by grp")] or (
+            "from ladder_trades group by grp order by grp") if has("ladder_trades") else [])] or (
             ["- raw trades archived to a GitHub Release; summary kept in ladder_report"]
             if one("select count(*) from ladder_report") else ["- no trades yet"])
         rep = q("select move_pct, rule, days_fired, hit_rate_pct, lift, lift_half1, lift_half2, drop_lift, "
@@ -834,16 +870,23 @@ def status(args):
                       for m, r, n, h, l, l1, l2, dl, md, _ in rep]
         lines += ["", "## Flags (daily shortlist)",
                   f"- {one('select count(*) from flags'):,} flags; latest signal date: {one('select max(signal_date) from flags')}"]
-        runs = q("select lineage, generation, phase, model, trades, mean_ret, median_ret, win_rate, baseline_mean, "
-                 "baseline_median, baseline_win, cost_usd, status from agent_runs order by started")
+        runs = q("select lineage, generation, phase, model, trades, profit_usd, baseline_profit_usd, mean_ret, "
+                 "median_ret, win_rate, baseline_mean, baseline_win, "
+                 "case when replies is null then '' else coalesce(bad_replies, 0) || '/' || replies end, "
+                 "cost_usd, status from agent_runs order by started") if has("agent_runs") else []
         if runs:
             lines += ["", "## Trader generations",
-                      "| lineage | gen | phase | model | trades | mean % | median % | win % | random mean | random median | random win % | cost $ | status |",
-                      "|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
+                      "| lineage | gen | phase | model | trades | profit $ | random profit $ | mean % | median % | win % | random mean % | random win % | unreadable | cost $ | status |",
+                      "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
             lines += ["| " + " | ".join("" if v is None else str(v) for v in r) + " |" for r in runs]
-        for lin, gen, model, text in q("select distinct on (lineage) lineage, generation, model, text "
-                                       "from agent_lessons order by lineage, generation desc"):
+        lessons = q("select lineage, generation, model, created, text from agent_lessons "
+                    "order by lineage, generation") if has("agent_lessons") else []
+        latest = {}
+        for lin, gen, model, created, text in lessons:
+            latest[lin] = (gen, model, text)
+        for lin, (gen, model, text) in sorted(latest.items()):
             lines += ["", f"### Latest lessons: {lin} lineage, generation {gen} ({model})", "", text]
+        write_lessons_page(q, has, lessons)
         lines += ["", f"## Errors ({one('select count(*) from errors'):,} total, latest 8)"]
         lines += [f"- {w} {t} {e}: {msg[:160]}" for w, t, e, msg in q(
             "select logged_at, ticker, event_date, error from errors order by id desc limit 8")] or ["- none"]

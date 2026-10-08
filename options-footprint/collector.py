@@ -818,6 +818,14 @@ def status(args):
         lines += [f"- {g}: {d:,} days, {n:,} contracts ({f:,} could be bought)" for g, d, n, f in q(
             "select grp, count(distinct (ticker, signal_date)), count(*), count(*) filter (where filled='yes') "
             "from ladder_trades group by grp order by grp")] or ["- no trades yet"]
+        rep = q("select move_pct, rule, days_fired, hit_rate_pct, lift, lift_half1, lift_half2, drop_lift, "
+                "median_fwd_return_pct, run_date from signal_report order by move_pct, lift desc")
+        if rep:
+            lines += ["", f"## Signal report (run {rep[0][9]}): rally within 10 sessions",
+                      "| big move | rule | fired | hit % | lift | 1st half | 2nd half | drop lift | median 10-day return % |",
+                      "|---|---|---|---|---|---|---|---|---|"]
+            lines += [f"| {m:g}% | {r} | {n:,} | {h} | {l} | {l1} | {l2} | {dl} | {md} |"
+                      for m, r, n, h, l, l1, l2, dl, md, _ in rep]
         lines += ["", "## Flags (daily shortlist)",
                   f"- {one('select count(*) from flags'):,} flags; latest signal date: {one('select max(signal_date) from flags')}"]
         lines += ["", f"## Errors ({one('select count(*) from errors'):,} total, latest 8)"]

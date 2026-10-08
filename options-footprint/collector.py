@@ -812,7 +812,11 @@ def status(args):
             f"(filled {ct_filled:,})",
             f"- Daily rows: {one('select count(*) from daily'):,}; database size: "
             f"{one('select pg_size_pretty(pg_database_size(current_database()))')}",
-            "", "## Labels"]
+            ""]
+        sizes = q("select relname, pg_total_relation_size(relid), n_live_tup from pg_stat_user_tables "
+                  "order by 2 desc")
+        lines += ["## Table sizes"] + [f"- {n}: {b / 1e6:.0f} MB, about {r:,} rows" for n, b, r in sizes]
+        lines += ["", "## Labels"]
         lines += [f"- {lab or 'none'}: {n:,}" for lab, n in q("select label, count(*) from events group by label order by 2 desc")]
         lines += ["", "## Ladder backtest"]
         lines += [f"- {g}: {d:,} days, {n:,} contracts ({f:,} could be bought)" for g, d, n, f in q(

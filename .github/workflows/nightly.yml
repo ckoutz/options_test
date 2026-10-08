@@ -52,9 +52,11 @@ jobs:
       - name: Run
         run: |
           case "${{ github.event.inputs.command || 'nightly' }}" in
-            nightly)  python collector.py nightly ;;
+            nightly)  python collector.py nightly
+                      python scorer.py || true ;;
             compare)  python collector.py compare --ticker WOLF ;;
-            backfill) python collector.py backfill --round "${{ github.event.inputs.round || 1 }}" ;;
+            backfill) python collector.py backfill --round "${{ github.event.inputs.round || 1 }}"
+                      python scorer.py || true ;;
           esac
 
       - name: Save Alpaca response cache (even if the run failed)
@@ -76,7 +78,7 @@ jobs:
           git push
 
       - name: Launch the next backfill round if this one ran out of time
-        if: always() && github.event.inputs.command == 'backfill'
+        if: ${{ !cancelled() && github.event.inputs.command == 'backfill' }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: |

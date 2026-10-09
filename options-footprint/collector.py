@@ -125,11 +125,16 @@ def add_days(d, n):
 
 
 def safe_end(end_date):
-    """Alpaca's free tier refuses the most recent 15 minutes; stop the range 20 minutes ago."""
+    """Alpaca's free tier refuses the most recent 15 minutes; stop the range 20 minutes ago.
+
+    Alpaca reads a date-only end ("2026-10-08") as the END of that day in New York, which is 04:00 or
+    05:00 UTC the next morning. So a date is only safe once that moment is more than 20 minutes past;
+    until then (for example a job running at 8 PM Pacific) send an exact time instead."""
     now = dt.datetime.now(dt.timezone.utc)
-    end_of_day = dt.datetime.fromisoformat(end_date).replace(tzinfo=dt.timezone.utc) + dt.timedelta(days=1)
+    day = dt.datetime.fromisoformat(end_date[:10]).replace(tzinfo=dt.timezone.utc)
+    end_of_day_new_york = day + dt.timedelta(days=1, hours=5)     # the later of daylight and standard time
     cutoff = now - dt.timedelta(minutes=20)
-    return end_date if end_of_day <= cutoff else cutoff.strftime("%Y-%m-%dT%H:%M:%SZ")
+    return end_date if end_of_day_new_york <= cutoff else cutoff.strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 # ---------------------------------------------------------------- Alpaca

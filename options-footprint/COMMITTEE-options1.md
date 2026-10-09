@@ -1,6 +1,6 @@
-# Committee generations (2026-10-08 22:19 UTC)
+# Committee generations (2026-10-09 19:08 UTC)
 
-Total spent on all agent runs: $2.66. Candidate pool: {'score': 1017, 'train': 2090, 'test': 1866, 'holdout': 1542}.
+Total spent on all agent runs: $2.99. Candidate pool: {'train': 2998, 'score': 1439, 'holdout': 2000, 'test': 2720}.
 
 Four agents train independently on six stock bundles; code scores their rules; an editor writes the
 notes passed on. The scoring run trades blind months with the editor's notes. "Random" makes the same
@@ -17,29 +17,45 @@ rating go with a better 10-session stock return (0 = no skill, ranges are 95%). 
 | 1 | agent4 | train | 213 | 69348.1 | 36060.9 | 32.56 | 31.0 | 0.045 (-0.012 to 0.096) | -0.35 | -0.19 | 0/151 | 0.2744 |
 | 1 | scorer | score | 271 | 15275.1 | 14905.0 | 5.64 | 31.7 | -0.031 (-0.089 to 0.018) | 1.38 | 1.64 | 5/144 | 0.2811 |
 
+## Luck check
+
+- Different rules tested on training data so far: 28 (by the agents and the editor).
+- Editor rules checked on the blind months: 8; passed clearly (whole 95% range above buying everything the same way): 0.
+- Expected to pass by luck alone: about 0.2. Treat a pass as real only if it clearly beats that count and the rule keeps passing in later generations.
+
+## Blind scoring trades by list (hindsight check)
+
+The big-mover list was chosen for stocks that later had 3+ days up 15%, so results there can come
+from hindsight alone. The wide list (chosen from January 2024 data only) is the honest test.
+Random = the same kind of trades on random candidates from the same list in the same weeks.
+
+| gen | list | trades | mean % | random mean % | profit $ | random profit $ |
+|---|---|---|---|---|---|---|
+| 1 | big movers (hindsight) | 202 | +7.36 | -6.12 | +14,858 | -12,366 |
+
 ## Generation 1
 
 ### Editor's rules, tested on all training months and bundles
 
-- under10_90d_10otm (when price = <$10: buy the 90-day call 10% above the price, exit hold10): 159 trades, average +54.9% (95% range -2.8% to +163.9%), median -18.6%, 36% winners. Buying every candidate the same way: +16.0%. Beat that in 6 of 6 bundles; first half of the months +108.5%, second half +4.7%.
-- callspike3_5d_up (when calls >= 3 and 5d % > 0: buy the 30-day call 0% above the price, exit hold10): 467 trades, average +24.1% (95% range -7.8% to +82.6%), median -39.0%, 33% winners. Buying every candidate the same way: +4.0%. Beat that in 4 of 6 bundles; first half of the months +36.4%, second half +11.1%.
-- ma20_runup15_30d_5otm (when vs ma20 % > 0 and 20d % > 15: buy the 30-day call 5% above the price, exit hold10): 446 trades, average +13.9% (95% range -5.0% to +33.6%), median -48.8%, 29% winners. Buying every candidate the same way: +7.7%. Beat that in 4 of 6 bundles; first half of the months +10.9%, second half +16.7%.
-- extended_runup_90d_10otm (when 20d % >= 7 and vs ma50 % >= 10: buy the 90-day call 10% above the price, exit hold10): 121 trades, average +60.5% (95% range -9.9% to +188.2%), median -18.6%, 36% winners. Buying every candidate the same way: +16.0%. Beat that in 5 of 6 bundles; first half of the months +204.7%, second half -3.0%.
-- fiveday_surge_90d_5otm (when 5d % > 10: buy the 90-day call 5% above the price, exit hold10): 100 trades, average +69.8% (95% range -16.0% to +229.4%), median -24.9%, 34% winners. Buying every candidate the same way: +11.5%. Beat that in 4 of 6 bundles; first half of the months +146.7%, second half -10.3%.
-- under10_callspike3_30d_5otm (when price = <$10 and calls >= 3: buy the 30-day call 5% above the price, exit hold10): 282 trades, average +40.0% (95% range -11.9% to +125.2%), median -47.2%, 30% winners. Buying every candidate the same way: +7.7%. Beat that in 4 of 6 bundles; first half of the months +63.5%, second half +15.8%.
-- combo_spike5_up_ma20_runup (when calls >= 5 and 5d % > 0 and vs ma20 % > 0 and 20d % > 15: buy the 30-day call 5% above the price, exit hold10): 155 trades, average -10.0% (95% range -32.4% to +21.9%), median -55.9%, 25% winners. Buying every candidate the same way: +7.7%. Beat that in 2 of 6 bundles; first half of the months -31.4%, second half +12.3%.
-- crash_knife_90d_10otm (when 5d % <= -10 and 1d % <= -5: buy the 90-day call 10% above the price, exit hold10): 24 trades, average +36.8% (95% range -15.8% to +115.2%), median -27.8%, 46% winners. Buying every candidate the same way: +16.0%. Beat that in 2 of 4 bundles; first half of the months +79.9%, second half +10.9%.
+- under10_90d_10otm (when price = <$10: buy the 90-day call 10% above the price, exit hold10): 159 trades, average +54.9% (95% range -2.8% to +163.9%, resampling whole weeks), median -18.6%, 36% winners. Buying every candidate the same way: +16.0%. Beat that in 6 of 6 bundles; first half of the months +108.5%, second half +4.7%.
+- callspike3_5d_up (when calls >= 3 and 5d % > 0: buy the 30-day call 0% above the price, exit hold10): 467 trades, average +24.1% (95% range -7.8% to +82.6%, resampling whole weeks), median -39.0%, 33% winners. Buying every candidate the same way: +4.0%. Beat that in 4 of 6 bundles; first half of the months +36.4%, second half +11.1%.
+- ma20_runup15_30d_5otm (when vs ma20 % > 0 and 20d % > 15: buy the 30-day call 5% above the price, exit hold10): 446 trades, average +13.9% (95% range -5.0% to +33.6%, resampling whole weeks), median -48.8%, 29% winners. Buying every candidate the same way: +7.7%. Beat that in 4 of 6 bundles; first half of the months +10.9%, second half +16.7%.
+- extended_runup_90d_10otm (when 20d % >= 7 and vs ma50 % >= 10: buy the 90-day call 10% above the price, exit hold10): 121 trades, average +60.5% (95% range -9.9% to +188.2%, resampling whole weeks), median -18.6%, 36% winners. Buying every candidate the same way: +16.0%. Beat that in 5 of 6 bundles; first half of the months +204.7%, second half -3.0%.
+- fiveday_surge_90d_5otm (when 5d % > 10: buy the 90-day call 5% above the price, exit hold10): 100 trades, average +69.8% (95% range -16.0% to +229.4%, resampling whole weeks), median -24.9%, 34% winners. Buying every candidate the same way: +11.5%. Beat that in 4 of 6 bundles; first half of the months +146.7%, second half -10.3%.
+- under10_callspike3_30d_5otm (when price = <$10 and calls >= 3: buy the 30-day call 5% above the price, exit hold10): 282 trades, average +40.0% (95% range -11.9% to +125.2%, resampling whole weeks), median -47.2%, 30% winners. Buying every candidate the same way: +7.7%. Beat that in 4 of 6 bundles; first half of the months +63.5%, second half +15.8%.
+- combo_spike5_up_ma20_runup (when calls >= 5 and 5d % > 0 and vs ma20 % > 0 and 20d % > 15: buy the 30-day call 5% above the price, exit hold10): 155 trades, average -10.0% (95% range -32.4% to +21.9%, resampling whole weeks), median -55.9%, 25% winners. Buying every candidate the same way: +7.7%. Beat that in 2 of 6 bundles; first half of the months -31.4%, second half +12.3%.
+- crash_knife_90d_10otm (when 5d % <= -10 and 1d % <= -5: buy the 90-day call 10% above the price, exit hold10): 24 trades, average +36.8% (95% range -15.8% to +115.2%, resampling whole weeks), median -27.8%, 46% winners. Buying every candidate the same way: +16.0%. Beat that in 2 of 4 bundles; first half of the months +79.9%, second half +10.9%.
 
 ### The same rules on the blind scoring months (never shown to agents)
 
-- under10_90d_10otm (when price = <$10: buy the 90-day call 10% above the price, exit hold10): 99 trades, average -5.5% (95% range -19.8% to +15.4%), median -19.1%, 30% winners. Buying every candidate the same way: +2.9%. Beat that in 2 of 6 bundles; first half of the months -6.7%, second half -3.7%.
-- callspike3_5d_up (when calls >= 3 and 5d % > 0: buy the 30-day call 0% above the price, exit hold10): 287 trades, average -4.8% (95% range -19.0% to +11.8%), median -40.0%, 30% winners. Buying every candidate the same way: -1.6%. Beat that in 4 of 6 bundles; first half of the months -11.4%, second half +3.4%.
-- ma20_runup15_30d_5otm (when vs ma20 % > 0 and 20d % > 15: buy the 30-day call 5% above the price, exit hold10): 280 trades, average -2.3% (95% range -19.0% to +16.1%), median -48.3%, 30% winners. Buying every candidate the same way: -1.4%. Beat that in 2 of 6 bundles; first half of the months -4.7%, second half +0.1%.
-- extended_runup_90d_10otm (when 20d % >= 7 and vs ma50 % >= 10: buy the 90-day call 10% above the price, exit hold10): 83 trades, average -2.1% (95% range -19.1% to +22.9%), median -20.4%, 31% winners. Buying every candidate the same way: +2.9%. Beat that in 1 of 6 bundles; first half of the months -15.2%, second half +11.4%.
-- fiveday_surge_90d_5otm (when 5d % > 10: buy the 90-day call 5% above the price, exit hold10): 68 trades, average -3.6% (95% range -24.0% to +25.9%), median -22.0%, 25% winners. Buying every candidate the same way: -1.4%. Beat that in 2 of 6 bundles; first half of the months -12.1%, second half +5.0%.
-- under10_callspike3_30d_5otm (when price = <$10 and calls >= 3: buy the 30-day call 5% above the price, exit hold10): 179 trades, average -3.6% (95% range -20.4% to +15.0%), median -43.3%, 30% winners. Buying every candidate the same way: -1.4%. Beat that in 3 of 6 bundles; first half of the months -0.9%, second half -7.6%.
-- combo_spike5_up_ma20_runup (when calls >= 5 and 5d % > 0 and vs ma20 % > 0 and 20d % > 15: buy the 30-day call 5% above the price, exit hold10): 118 trades, average -0.7% (95% range -27.7% to +36.0%), median -49.1%, 30% winners. Buying every candidate the same way: -1.4%. Beat that in 2 of 6 bundles; first half of the months -16.7%, second half +14.7%.
-- crash_knife_90d_10otm (when 5d % <= -10 and 1d % <= -5: buy the 90-day call 10% above the price, exit hold10): 9 trades, average -5.9% (95% range -31.5% to +21.9%), median -10.3%, 44% winners. Buying every candidate the same way: +2.9%. Beat that in 0 of 1 bundles; first half of the months +1.6%, second half -11.9%.
+- under10_90d_10otm (when price = <$10: buy the 90-day call 10% above the price, exit hold10): 99 trades, average -5.5% (95% range -19.8% to +15.4%, resampling whole weeks), median -19.1%, 30% winners. Buying every candidate the same way: +2.9%. Beat that in 2 of 6 bundles; first half of the months -6.7%, second half -3.7%.
+- callspike3_5d_up (when calls >= 3 and 5d % > 0: buy the 30-day call 0% above the price, exit hold10): 287 trades, average -4.8% (95% range -19.0% to +11.8%, resampling whole weeks), median -40.0%, 30% winners. Buying every candidate the same way: -1.6%. Beat that in 4 of 6 bundles; first half of the months -11.4%, second half +3.4%.
+- ma20_runup15_30d_5otm (when vs ma20 % > 0 and 20d % > 15: buy the 30-day call 5% above the price, exit hold10): 280 trades, average -2.3% (95% range -19.0% to +16.1%, resampling whole weeks), median -48.3%, 30% winners. Buying every candidate the same way: -1.4%. Beat that in 2 of 6 bundles; first half of the months -4.7%, second half +0.1%.
+- extended_runup_90d_10otm (when 20d % >= 7 and vs ma50 % >= 10: buy the 90-day call 10% above the price, exit hold10): 83 trades, average -2.1% (95% range -19.1% to +22.9%, resampling whole weeks), median -20.4%, 31% winners. Buying every candidate the same way: +2.9%. Beat that in 1 of 6 bundles; first half of the months -15.2%, second half +11.4%.
+- fiveday_surge_90d_5otm (when 5d % > 10: buy the 90-day call 5% above the price, exit hold10): 68 trades, average -3.6% (95% range -24.0% to +25.9%, resampling whole weeks), median -22.0%, 25% winners. Buying every candidate the same way: -1.4%. Beat that in 2 of 6 bundles; first half of the months -12.1%, second half +5.0%.
+- under10_callspike3_30d_5otm (when price = <$10 and calls >= 3: buy the 30-day call 5% above the price, exit hold10): 179 trades, average -3.6% (95% range -20.4% to +15.0%, resampling whole weeks), median -43.3%, 30% winners. Buying every candidate the same way: -1.4%. Beat that in 3 of 6 bundles; first half of the months -0.9%, second half -7.6%.
+- combo_spike5_up_ma20_runup (when calls >= 5 and 5d % > 0 and vs ma20 % > 0 and 20d % > 15: buy the 30-day call 5% above the price, exit hold10): 118 trades, average -0.7% (95% range -27.7% to +36.0%, resampling whole weeks), median -49.1%, 30% winners. Buying every candidate the same way: -1.4%. Beat that in 2 of 6 bundles; first half of the months -16.7%, second half +14.7%.
+- crash_knife_90d_10otm (when 5d % <= -10 and 1d % <= -5: buy the 90-day call 10% above the price, exit hold10): 9 trades, average -5.9% (95% range -31.5% to +21.9%, resampling whole weeks), median -10.3%, 44% winners. Buying every candidate the same way: +2.9%. Beat that in 0 of 1 bundles; first half of the months +1.6%, second half -11.9%.
 
 ### Editor's notes (passed to the next generation)
 

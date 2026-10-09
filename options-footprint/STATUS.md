@@ -1,38 +1,38 @@
-# Status (2026-10-09 04:51 UTC, storage: postgres)
+# Status (2026-10-09 20:58 UTC, storage: postgres)
 
 ## Backfill
 - Big moves logged: 5,384 across 1,650 stocks
 - Pre-move windows filled: 5,384 of 5,384
 - Stocks eligible for full history (3+ moves): 650; done: 920
 - Control days: 10,758 (filled 10,758)
-- Daily rows: 1,174,576; database size: 484 MB
+- Daily rows: 1,174,576; database size: 490 MB
 
 ## Table sizes
 - daily: 272 MB, about 1,174,576 rows
 - ladder_trades: 141 MB, about 564,225 rows
 - news: 47 MB, about 225,612 rows
-- pool: 20 MB, about 9,157 rows
+- pool: 21 MB, about 9,157 rows
 - arena: 5 MB, about 1,613 rows
+- agent_ratings: 5 MB, about 25,590 rows
 - event_features: 3 MB, about 16,142 rows
-- agent_ratings: 2 MB, about 11,851 rows
 - flags: 2 MB, about 3,918 rows
+- agent_trades: 2 MB, about 4,257 rows
 - controls: 1 MB, about 10,758 rows
 - events: 1 MB, about 5,384 rows
-- agent_trades: 1 MB, about 2,042 rows
-- agent_weeks: 1 MB, about 1,496 rows
+- agent_weeks: 1 MB, about 2,992 rows
 - oi_daily: 1 MB, about 3,653 rows
+- committee_notes: 0 MB, about 20 rows
 - bundles: 0 MB, about 766 rows
-- committee_notes: 0 MB, about 10 rows
 - history_done: 0 MB, about 920 rows
+- scorebook: 0 MB, about 146 rows
 - news_fetched: 0 MB, about 742 rows
 - ladder_report: 0 MB, about 90 rows
-- scorebook: 0 MB, about 72 rows
 - wide_universe: 0 MB, about 300 rows
 - errors: 0 MB, about 151 rows
 - signal_report: 0 MB, about 36 rows
-- agent_runs: 0 MB, about 21 rows
+- agent_runs: 0 MB, about 32 rows
+- run_log: 0 MB, about 36 rows
 - agent_lessons: 0 MB, about 4 rows
-- run_log: 0 MB, about 26 rows
 
 ## Labels
 - unknown: 4,600
@@ -111,6 +111,17 @@
 | options1 | 1 | score | anthropic/claude-haiku-5.5 | 271 | 15275.1 | 14905.0 | 5.64 | -31.28 | 31.7 | 5.5 | 32.1 | 5/144 | 0.2811 | complete |
 | news |  | scoring | anthropic/claude-haiku-5.5 |  |  |  |  |  |  |  |  |  | 0.2049 | complete |
 | news |  | scoring | anthropic/claude-haiku-5.5 |  |  |  |  |  |  |  |  |  | 0.1216 | complete |
+| news |  | scoring | anthropic/claude-haiku-5.5 |  |  |  |  |  |  |  |  |  | 0.0022 | complete |
+| gen10 | 1 | train | anthropic/claude-haiku-5.5 | 222 | -36788.3 | -27594.6 | -16.57 | -46.42 | 31.1 | -12.43 | 31.1 | 3/151 | 0.2907 | complete |
+| gen10 | 1 | train | anthropic/claude-haiku-5.5 | 293 | -47796.0 | -43686.3 | -16.31 | -58.77 | 30.0 | -14.91 | 29.6 | 16/151 | 0.3067 | complete |
+| gen10 | 1 | train | anthropic/claude-haiku-5.5 | 264 | -44071.2 | -38992.8 | -16.69 | -37.88 | 29.2 | -14.77 | 30.1 | 12/151 | 0.3117 | complete |
+| gen10 | 1 | train | anthropic/claude-haiku-5.5 | 217 | -34204.3 | -33418.0 | -15.76 | -35.08 | 31.3 | -15.4 | 29.8 | 1/151 | 0.2927 | complete |
+| gen10 | 1 | score | anthropic/claude-haiku-5.5 | 156 | -29176.1 | -36457.2 | -18.7 | -34.74 | 28.2 | -23.37 | 27.1 | 14/144 | 0.4717 | complete |
+| gen10 | 2 | train | anthropic/claude-haiku-5.5 | 222 | -31222.8 | -21711.6 | -14.06 | -30.35 | 31.5 | -9.78 | 35.6 | 7/151 | 0.358 | complete |
+| gen10 | 2 | train | anthropic/claude-haiku-5.5 | 208 | -31898.2 | -20612.8 | -15.34 | -32.62 | 26.0 | -9.91 | 32.6 | 14/151 | 0.3485 | complete |
+| gen10 | 2 | train | anthropic/claude-haiku-5.5 | 217 | -49754.9 | -39168.5 | -22.93 | -41.66 | 25.3 | -18.05 | 28.4 | 16/151 | 0.3598 | complete |
+| gen10 | 2 | train | anthropic/claude-haiku-5.5 | 237 | -50255.2 | -22443.9 | -21.2 | -36.32 | 27.8 | -9.47 | 33.7 | 12/151 | 0.3613 | complete |
+| gen10 | 2 | score | anthropic/claude-haiku-5.5 | 179 | -21569.5 | -23771.2 | -12.05 | -24.75 | 30.7 | -13.28 | 29.9 | 42/144 | 0.5312 | complete |
 
 ### Latest lessons: blank lineage, generation 3 (anthropic/claude-haiku-5.5)
 
@@ -124,38 +135,14 @@
 - 300 stocks chosen; full options history done for 300
 
 ## Job notes (latest 8)
-- 2026-10-09T03:16:14+00:00 vwap: volume-weighted average price filled for 592,077 stock-days across 920 stocks.
-- 2026-10-09T02:29:38+00:00 nightly FAILED: ls = option_daily_volume(ticker, todo, closes)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/work/options_test/options_test/options-footprint/collector.py", line 296, in option_daily_volume
-    pages = alpaca_get("https://data.alpaca.markets", "/v1beta1/options/bars",
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/work/options_test/options_test/options-footprint/collector.py", line 180, in alpaca_get
-    data = http_json(f"{base}{path}?{urllib.parse.urlencode(p)}", headers)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/work/options_test/options_test/options-footprint/collector.py", line 159, in http_json
-    sys.exit(message)
-SystemExit: Alpaca refused https://data.alpaca.markets/v1beta1/options/bars with HTTP 403: {"message":"OPRA agreement is not signed"}
-
-
-- 2026-10-09T02:25:30+00:00 benchmark: model (stock or calls) on blind months: 388 trades, average 1.49%, range (-5.08, 9.1), random same-trades -2.06%.
-- 2026-10-09T02:24:48+00:00 nightly FAILED: ls = option_daily_volume(ticker, todo, closes)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/work/options_test/options_test/options-footprint/collector.py", line 296, in option_daily_volume
-    pages = alpaca_get("https://data.alpaca.markets", "/v1beta1/options/bars",
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/work/options_test/options_test/options-footprint/collector.py", line 180, in alpaca_get
-    data = http_json(f"{base}{path}?{urllib.parse.urlencode(p)}", headers)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/work/options_test/options_test/options-footprint/collector.py", line 159, in http_json
-    sys.exit(message)
-SystemExit: Alpaca refused https://data.alpaca.markets/v1beta1/options/bars with HTTP 403: {"message":"OPRA agreement is not signed"}
-
-
-- 2026-10-09T01:03:58+00:00 oi-analyze: OI_TEST.md written: 1,010 candidate days from 134 stocks.
-- 2026-10-09T01:03:33+00:00 oi-pull: done: 134 stocks, about $53.31 of credit used.
-- 2026-10-09T00:48:01+00:00 build-pool: pool rebuilt: 9,157 candidates (3,663 from the wide list).
-- 2026-10-09T00:46:15+00:00 ladder-wide: priced 34,841 new stock-days for the wide list.
+- 2026-10-09T13:47:23+00:00 focused: Options flow: blind rank correlation +0.009, top tenth +2.67%; Technical analysis: blind rank correlation +0.028, top tenth +2.91%; Market: blind rank correlation +0.015, top tenth -0.23%; News: blind rank correlation +0.017, top tenth -0.21%; Flow + technical: blind rank correlation +0.021, top tenth +2.64%; Everything: blind rank correlation +0.021, top tenth +2.91%
+- 2026-10-09T13:47:23+00:00 focused-hindsight: wide-list passed: none
+- 2026-10-09T13:47:10+00:00 focused-volatility: passed: Options flow, Technical analysis, Flow + technical, Everything; volatility-only top tenth +3.01%
+- 2026-10-09T13:42:50+00:00 focused: Options flow: blind rank correlation +0.009, top tenth +2.67%; Technical analysis: blind rank correlation +0.028, top tenth +2.91%; Market: blind rank correlation +0.015, top tenth -0.23%; News: blind rank correlation +0.017, top tenth -0.21%; Flow + technical: blind rank correlation +0.021, top tenth +2.64%; Everything: blind rank correlation +0.021, top tenth +2.91%
+- 2026-10-09T13:42:50+00:00 focused-volatility: passed: Options flow, Technical analysis, Flow + technical, Everything; volatility-only top tenth +3.01%
+- 2026-10-09T05:33:11+00:00 focused: Options flow: blind rank correlation +0.009, top tenth +2.67%; Technical analysis: blind rank correlation +0.028, top tenth +2.91%; Market: blind rank correlation +0.015, top tenth -0.23%; News: blind rank correlation +0.018, top tenth -0.21%; Flow + technical: blind rank correlation +0.021, top tenth +2.64%; Everything: blind rank correlation +0.021, top tenth +2.91%
+- 2026-10-09T05:30:45+00:00 benchmark: model (stock or calls) on blind months: 401 trades, average -4.35%, range (-9.13, -0.26), random same-trades -2.13%.
+- 2026-10-09T05:30:45+00:00 benchmark-runs: 74 of 120 model runs beat the random same-trades picker.
 
 ## Errors (151 total, latest 8)
 - 2026-10-09 01:03 IAC oi 2026-01-13: 504 The remote gateway timed out.

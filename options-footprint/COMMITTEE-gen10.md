@@ -1,6 +1,6 @@
-# Committee generations (2026-10-09 20:59 UTC)
+# Committee generations (2026-10-09 21:31 UTC)
 
-Total spent on all agent runs: $6.62. Candidate pool: {'train': 2998, 'score': 1439, 'holdout': 2000, 'test': 2720}.
+Total spent on all agent runs: $7.79. Candidate pool: {'train': 2998, 'score': 1439, 'holdout': 2000, 'test': 2720}.
 
 Four agents train independently on six stock bundles; code scores their rules; an editor writes the
 notes passed on. The scoring run trades blind months with the editor's notes. "Random" makes the same
@@ -21,6 +21,7 @@ rating go with a better 10-session stock return (0 = no skill, ranges are 95%). 
 | 2 | agent3 | train | 217 | -49754.9 | -39168.5 | -22.93 | 25.3 | -0.034 (-0.089 to 0.021) | -0.46 | 1.56 | 16/151 | 0.3598 |
 | 2 | agent4 | train | 237 | -50255.2 | -22443.9 | -21.2 | 27.8 | -0.035 (-0.087 to 0.017) | -1.49 | 1.32 | 12/151 | 0.3613 |
 | 2 | scorer | score | 179 | -21569.5 | -23771.2 | -12.05 | 30.7 | -0.034 (-0.097 to 0.036) | 0.04 | 2.29 | 42/144 | 0.5312 |
+| 3 | all | unfinished |  |  | - | - | - | - | - | - | 0/ | 1.1656 |
 
 ## Luck check
 
@@ -1562,3 +1563,30 @@ Every entry must meet all of these rules. Trades outside them are logged separat
 - Does the double-or-10 median turn positive on common entries, or does it only look better on average?
 - Does the -50% stop cut more winners than losers once recoveries are counted?
 
+
+## Last error
+
+```
+2026-10-09 21:31 UTC
+Traceback (most recent call last):
+  File "/home/runner/work/options_test/options_test/options-footprint/committee.py", line 1118, in loop
+    run_generation(st, args, pool, deadline, pot)
+  File "/home/runner/work/options_test/options_test/options-footprint/committee.py", line 1032, in run_generation
+    results = {a: f.result() for a, f in futs.items()}
+                  ^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/concurrent/futures/_base.py", line 449, in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/concurrent/futures/_base.py", line 401, in __get_result
+    raise self._exception
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/concurrent/futures/thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/options_test/options_test/options-footprint/committee.py", line 876, in agent_train
+    trades = walk.bundle(by_week, working, scorebook, label)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/options_test/options_test/options-footprint/committee.py", line 756, in bundle
+    raise RuntimeError(f"model replies unreadable ({self.bad}/{self.replies}): {self.sample[:200]!r}")
+RuntimeError: model replies unreadable (4/6): '(empty reply)'
+
+```

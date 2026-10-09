@@ -1,22 +1,22 @@
-# Status (2026-10-09 02:25 UTC, storage: postgres)
+# Status (2026-10-09 04:51 UTC, storage: postgres)
 
 ## Backfill
 - Big moves logged: 5,384 across 1,650 stocks
 - Pre-move windows filled: 5,384 of 5,384
 - Stocks eligible for full history (3+ moves): 650; done: 920
-- Control days: 10,754 (filled 10,754)
-- Daily rows: 1,173,926; database size: 426 MB
+- Control days: 10,758 (filled 10,758)
+- Daily rows: 1,174,576; database size: 484 MB
 
 ## Table sizes
-- daily: 210 MB, about 1,173,933 rows
+- daily: 272 MB, about 1,174,576 rows
 - ladder_trades: 141 MB, about 564,225 rows
 - news: 47 MB, about 225,612 rows
 - pool: 20 MB, about 9,157 rows
 - arena: 5 MB, about 1,613 rows
-- event_features: 3 MB, about 16,136 rows
+- event_features: 3 MB, about 16,142 rows
 - agent_ratings: 2 MB, about 11,851 rows
-- flags: 1 MB, about 3,822 rows
-- controls: 1 MB, about 10,754 rows
+- flags: 2 MB, about 3,918 rows
+- controls: 1 MB, about 10,758 rows
 - events: 1 MB, about 5,384 rows
 - agent_trades: 1 MB, about 2,042 rows
 - agent_weeks: 1 MB, about 1,496 rows
@@ -32,7 +32,7 @@
 - signal_report: 0 MB, about 36 rows
 - agent_runs: 0 MB, about 21 rows
 - agent_lessons: 0 MB, about 4 rows
-- run_log: 0 MB, about 24 rows
+- run_log: 0 MB, about 26 rows
 
 ## Labels
 - unknown: 4,600
@@ -47,45 +47,45 @@
 ## Signal report (run 2026-10-09): rally within 10 sessions
 | big move | rule | fired | hit % | lift | 1st half | 2nd half | drop lift | median 10-day return % |
 |---|---|---|---|---|---|---|---|---|
-| 15% | Momentum: calls 3x+ after 10%+ week | 13,418 | 28.9 | 1.69 | 1.78 | 1.62 | 1.53 | -0.23 |
-| 15% | Call volume 5x+ | 26,853 | 18.7 | 1.1 | 1.13 | 1.07 | 1.07 | -0.1 |
-| 15% | Short out-of-the-money calls 3x+ | 47,844 | 18.7 | 1.09 | 1.15 | 1.04 | 1.06 | 0.18 |
-| 15% | Call volume 3x+ | 50,785 | 18.6 | 1.09 | 1.11 | 1.07 | 1.06 | -0.08 |
-| 15% | Medium-dated calls 3x+ | 66,480 | 18.2 | 1.06 | 1.1 | 1.03 | 1.05 | -0.07 |
-| 15% | Long-dated calls 3x+ | 61,984 | 17.7 | 1.04 | 1.04 | 1.04 | 1.0 | 0.08 |
-| 15% | Long-dated calls 5x+ | 35,277 | 17.7 | 1.04 | 1.04 | 1.04 | 1.0 | 0.12 |
-| 15% | Short-dated calls 3x+ | 56,836 | 17.7 | 1.04 | 1.11 | 0.98 | 0.97 | 0.3 |
-| 15% | Out-of-the-money calls 3x+ | 59,407 | 17.6 | 1.03 | 1.05 | 1.01 | 1.0 | 0.0 |
-| 15% | Any day (baseline) | 371,829 | 17.1 | 1.0 | 1.0 | 1.0 | 1.0 | 0.0 |
-| 15% | Calls outpacing shares 2x+ | 55,068 | 15.9 | 0.93 | 0.93 | 0.94 | 0.95 | -0.1 |
-| 15% | Put/call drop 3x+ | 56,046 | 15.6 | 0.92 | 0.94 | 0.9 | 0.91 | 0.08 |
-| 15% | Calls outpacing shares 3x+ | 30,156 | 15.3 | 0.9 | 0.89 | 0.9 | 0.92 | -0.08 |
-| 15% | Put/call drop 5x+ | 32,658 | 15.2 | 0.89 | 0.93 | 0.86 | 0.9 | 0.12 |
-| 15% | Calls 3x+ and puts flat (put/call drop 3x+) | 19,315 | 15.0 | 0.88 | 0.87 | 0.88 | 0.89 | 0.0 |
-| 15% | Calls 3x+ while price quiet | 14,890 | 9.2 | 0.54 | 0.53 | 0.56 | 0.62 | -0.11 |
-| 15% | Long-dated 3x+ while price quiet | 19,114 | 8.8 | 0.52 | 0.49 | 0.55 | 0.6 | -0.03 |
-| 15% | Stealth: calls 3x+, shares normal, price quiet | 11,250 | 8.4 | 0.49 | 0.47 | 0.53 | 0.58 | -0.13 |
-| 30% | Momentum: calls 3x+ after 10%+ week | 13,418 | 12.7 | 2.37 | 2.6 | 2.14 | 2.04 | -0.23 |
-| 30% | Call volume 5x+ | 26,853 | 7.2 | 1.33 | 1.43 | 1.24 | 1.18 | -0.1 |
-| 30% | Call volume 3x+ | 50,785 | 6.9 | 1.29 | 1.35 | 1.22 | 1.16 | -0.08 |
-| 30% | Medium-dated calls 3x+ | 66,480 | 6.5 | 1.2 | 1.25 | 1.15 | 1.13 | -0.07 |
-| 30% | Out-of-the-money calls 3x+ | 59,407 | 6.3 | 1.18 | 1.24 | 1.11 | 1.07 | 0.0 |
-| 30% | Short out-of-the-money calls 3x+ | 47,844 | 6.3 | 1.17 | 1.25 | 1.09 | 1.12 | 0.18 |
-| 30% | Long-dated calls 5x+ | 35,277 | 6.3 | 1.17 | 1.22 | 1.12 | 1.01 | 0.12 |
-| 30% | Short-dated calls 3x+ | 56,836 | 6.1 | 1.13 | 1.21 | 1.04 | 1.01 | 0.3 |
-| 30% | Long-dated calls 3x+ | 61,984 | 6.1 | 1.13 | 1.18 | 1.09 | 1.02 | 0.08 |
-| 30% | Any day (baseline) | 371,829 | 5.4 | 1.0 | 1.0 | 1.0 | 1.0 | 0.0 |
-| 30% | Calls outpacing shares 2x+ | 55,068 | 5.3 | 0.98 | 1.0 | 0.97 | 0.93 | -0.1 |
-| 30% | Calls outpacing shares 3x+ | 30,156 | 5.0 | 0.94 | 0.95 | 0.93 | 0.88 | -0.08 |
-| 30% | Put/call drop 3x+ | 56,046 | 4.8 | 0.9 | 0.91 | 0.89 | 0.8 | 0.08 |
-| 30% | Calls 3x+ and puts flat (put/call drop 3x+) | 19,315 | 4.7 | 0.88 | 0.87 | 0.89 | 0.79 | 0.0 |
-| 30% | Put/call drop 5x+ | 32,658 | 4.4 | 0.82 | 0.87 | 0.77 | 0.75 | 0.12 |
-| 30% | Calls 3x+ while price quiet | 14,890 | 2.5 | 0.46 | 0.46 | 0.46 | 0.5 | -0.11 |
-| 30% | Long-dated 3x+ while price quiet | 19,114 | 2.3 | 0.43 | 0.43 | 0.45 | 0.45 | -0.03 |
-| 30% | Stealth: calls 3x+, shares normal, price quiet | 11,250 | 2.2 | 0.4 | 0.38 | 0.43 | 0.45 | -0.13 |
+| 15% | Momentum: calls 3x+ after 10%+ week | 13,430 | 28.9 | 1.7 | 1.77 | 1.63 | 1.53 | -0.23 |
+| 15% | Call volume 5x+ | 26,881 | 18.7 | 1.1 | 1.13 | 1.07 | 1.07 | -0.11 |
+| 15% | Short out-of-the-money calls 3x+ | 47,863 | 18.7 | 1.09 | 1.16 | 1.04 | 1.05 | 0.18 |
+| 15% | Call volume 3x+ | 50,834 | 18.6 | 1.09 | 1.11 | 1.07 | 1.06 | -0.08 |
+| 15% | Medium-dated calls 3x+ | 66,561 | 18.1 | 1.06 | 1.1 | 1.04 | 1.05 | -0.08 |
+| 15% | Long-dated calls 3x+ | 62,050 | 17.7 | 1.04 | 1.04 | 1.04 | 1.0 | 0.08 |
+| 15% | Long-dated calls 5x+ | 35,304 | 17.7 | 1.04 | 1.04 | 1.04 | 1.0 | 0.12 |
+| 15% | Short-dated calls 3x+ | 56,848 | 17.7 | 1.04 | 1.11 | 0.98 | 0.97 | 0.3 |
+| 15% | Out-of-the-money calls 3x+ | 59,464 | 17.6 | 1.03 | 1.05 | 1.02 | 1.0 | 0.0 |
+| 15% | Any day (baseline) | 372,279 | 17.0 | 1.0 | 1.0 | 1.0 | 1.0 | 0.0 |
+| 15% | Calls outpacing shares 2x+ | 55,108 | 15.9 | 0.93 | 0.93 | 0.94 | 0.95 | -0.11 |
+| 15% | Put/call drop 3x+ | 56,112 | 15.6 | 0.92 | 0.94 | 0.9 | 0.91 | 0.08 |
+| 15% | Calls outpacing shares 3x+ | 30,184 | 15.3 | 0.9 | 0.89 | 0.91 | 0.92 | -0.08 |
+| 15% | Put/call drop 5x+ | 32,702 | 15.2 | 0.89 | 0.93 | 0.86 | 0.9 | 0.11 |
+| 15% | Calls 3x+ and puts flat (put/call drop 3x+) | 19,334 | 14.9 | 0.88 | 0.87 | 0.89 | 0.89 | 0.0 |
+| 15% | Calls 3x+ while price quiet | 14,899 | 9.2 | 0.54 | 0.53 | 0.56 | 0.62 | -0.11 |
+| 15% | Long-dated 3x+ while price quiet | 19,130 | 8.8 | 0.52 | 0.49 | 0.55 | 0.6 | -0.03 |
+| 15% | Stealth: calls 3x+, shares normal, price quiet | 11,258 | 8.4 | 0.49 | 0.47 | 0.53 | 0.58 | -0.14 |
+| 30% | Momentum: calls 3x+ after 10%+ week | 13,430 | 12.7 | 2.37 | 2.58 | 2.16 | 2.04 | -0.23 |
+| 30% | Call volume 5x+ | 26,881 | 7.2 | 1.33 | 1.42 | 1.25 | 1.18 | -0.11 |
+| 30% | Call volume 3x+ | 50,834 | 6.9 | 1.29 | 1.35 | 1.23 | 1.16 | -0.08 |
+| 30% | Medium-dated calls 3x+ | 66,561 | 6.5 | 1.2 | 1.25 | 1.16 | 1.13 | -0.08 |
+| 30% | Out-of-the-money calls 3x+ | 59,464 | 6.3 | 1.18 | 1.24 | 1.11 | 1.07 | 0.0 |
+| 30% | Short out-of-the-money calls 3x+ | 47,863 | 6.3 | 1.17 | 1.25 | 1.09 | 1.12 | 0.18 |
+| 30% | Long-dated calls 5x+ | 35,304 | 6.3 | 1.17 | 1.22 | 1.12 | 1.01 | 0.12 |
+| 30% | Short-dated calls 3x+ | 56,848 | 6.1 | 1.13 | 1.21 | 1.05 | 1.0 | 0.3 |
+| 30% | Long-dated calls 3x+ | 62,050 | 6.1 | 1.13 | 1.18 | 1.09 | 1.02 | 0.08 |
+| 30% | Any day (baseline) | 372,279 | 5.4 | 1.0 | 1.0 | 1.0 | 1.0 | 0.0 |
+| 30% | Calls outpacing shares 2x+ | 55,108 | 5.3 | 0.98 | 1.0 | 0.97 | 0.93 | -0.11 |
+| 30% | Calls outpacing shares 3x+ | 30,184 | 5.0 | 0.94 | 0.95 | 0.93 | 0.88 | -0.08 |
+| 30% | Put/call drop 3x+ | 56,112 | 4.8 | 0.9 | 0.91 | 0.89 | 0.8 | 0.08 |
+| 30% | Calls 3x+ and puts flat (put/call drop 3x+) | 19,334 | 4.7 | 0.88 | 0.88 | 0.89 | 0.79 | 0.0 |
+| 30% | Put/call drop 5x+ | 32,702 | 4.4 | 0.82 | 0.87 | 0.77 | 0.76 | 0.11 |
+| 30% | Calls 3x+ while price quiet | 14,899 | 2.4 | 0.46 | 0.46 | 0.46 | 0.5 | -0.11 |
+| 30% | Long-dated 3x+ while price quiet | 19,130 | 2.3 | 0.43 | 0.43 | 0.45 | 0.45 | -0.03 |
+| 30% | Stealth: calls 3x+, shares normal, price quiet | 11,258 | 2.2 | 0.4 | 0.38 | 0.44 | 0.45 | -0.14 |
 
 ## Flags (daily shortlist)
-- 3,822 flags; latest signal date: 2026-10-08
+- 3,918 flags; latest signal date: 2026-10-08
 
 ## Trader generations
 | lineage | gen | phase | model | trades | profit $ | random profit $ | mean % | median % | win % | random mean % | random win % | unreadable | cost $ | status |
@@ -124,6 +124,20 @@
 - 300 stocks chosen; full options history done for 300
 
 ## Job notes (latest 8)
+- 2026-10-09T03:16:14+00:00 vwap: volume-weighted average price filled for 592,077 stock-days across 920 stocks.
+- 2026-10-09T02:29:38+00:00 nightly FAILED: ls = option_daily_volume(ticker, todo, closes)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/options_test/options_test/options-footprint/collector.py", line 296, in option_daily_volume
+    pages = alpaca_get("https://data.alpaca.markets", "/v1beta1/options/bars",
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/options_test/options_test/options-footprint/collector.py", line 180, in alpaca_get
+    data = http_json(f"{base}{path}?{urllib.parse.urlencode(p)}", headers)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/options_test/options_test/options-footprint/collector.py", line 159, in http_json
+    sys.exit(message)
+SystemExit: Alpaca refused https://data.alpaca.markets/v1beta1/options/bars with HTTP 403: {"message":"OPRA agreement is not signed"}
+
+
 - 2026-10-09T02:25:30+00:00 benchmark: model (stock or calls) on blind months: 388 trades, average 1.49%, range (-5.08, 9.1), random same-trades -2.06%.
 - 2026-10-09T02:24:48+00:00 nightly FAILED: ls = option_daily_volume(ticker, todo, closes)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -142,8 +156,6 @@ SystemExit: Alpaca refused https://data.alpaca.markets/v1beta1/options/bars with
 - 2026-10-09T01:03:33+00:00 oi-pull: done: 134 stocks, about $53.31 of credit used.
 - 2026-10-09T00:48:01+00:00 build-pool: pool rebuilt: 9,157 candidates (3,663 from the wide list).
 - 2026-10-09T00:46:15+00:00 ladder-wide: priced 34,841 new stock-days for the wide list.
-- 2026-10-09T00:27:44+00:00 wide: full options history done for all 300 wide-list stocks.
-- 2026-10-08T23:23:24+00:00 oi-pull: plan: 134 stocks, 3,804 stock-days, estimated $53.31 (cap $100).
 
 ## Errors (151 total, latest 8)
 - 2026-10-09 01:03 IAC oi 2026-01-13: 504 The remote gateway timed out.

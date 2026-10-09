@@ -68,6 +68,7 @@ jobs:
           restore-keys: daily-mirror-
 
       - name: Run
+        id: run
         run: |
           set -o pipefail
           {
@@ -114,11 +115,12 @@ jobs:
           git add data/*.csv LAST_RUN.md
           git diff --cached --quiet && exit 0
           git commit -m "Dataset update $(date -u +%Y-%m-%d)"
-          git pull --rebase -q   # in case you edited something on GitHub during the run
-          git push
+          # Two jobs can finish at once (both write LAST_RUN.md): on a clash, keep this run's version.
+          for i in 1 2 3; do git pull --rebase -q -X theirs && git push -q && exit 0; sleep 5; done
+          exit 1
 
       - name: Rebuild the agents' pool after adding the volume-weighted price
-        if: ${{ success() && github.event.inputs.command == 'vwap' }}
+        if: ${{ !cancelled() && steps.run.outcome == 'success' && github.event.inputs.command == 'vwap' }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh workflow run committee.yml --ref "${{ github.ref_name }}" -f command=build-pool

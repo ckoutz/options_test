@@ -125,6 +125,77 @@ def spearman(a, b):
     return num / den if den else 0.0
 
 
+def make_model(kind, seed):
+    from sklearn.ensemble import HistGradientBoostingRegressor, RandomForestRegressor
+    from sklearn.impute import SimpleImputer
+    from sklearn.linear_model import Ridge
+    from sklearn.pipeline import make_pipeline
+    from sklearn.preprocessing import StandardScaler
+    if kind == "gradient boosting":
+        return HistGradientBoostingRegressor(max_iter=200, learning_rate=0.05, max_leaf_nodes=15, min_samples_leaf=50,
+                                             l2_regularization=1.0, max_features=0.7, random_state=seed)
+    if kind == "random forest":
+        return RandomForestRegressor(n_estimators=100, max_depth=8, min_samples_leaf=50, max_features=0.5,
+                                     n_jobs=-1, random_state=seed)
+    return make_pipeline(SimpleImputer(strategy="median"), StandardScaler(), Ridge(alpha=10.0))
+
+
+def multi_runs(train, blind, runs):
+    """Many versions of each model: each trained on a different random resample of the training WEEKS
+    (and, for the tree models, a different random subset of columns per split). A real edge should show
+    up in most versions; luck shows up as a wide spread around the random picker."""
+    import numpy as np
+    out = ["", f"## Multiple runs ({runs} per model)", "",
+           "Each run trains on a different random resample of the training weeks (whole weeks, with repeats).",
+           "The blind months and the random comparison are the same for every run.", "",
+           "| model | instruments | runs | median average % | lowest to highest | beat random same-trades | made money | median stock ranking |",
+           "|---|---|---|---|---|---|---|---|"]
+    total_beat = total_runs = 0
+    for label, options_only in (("stock or calls", False), ("calls only", True)):
+        insts = instruments(options_only)
+        X, y, keys = dataset(train, insts)
+        keep = [j for j in range(len(X[0])) if any(row[j] == row[j] for row in X)]
+        X = np.array([[row[j] for j in keep] for row in X], dtype=float)
+        y = np.clip(np.array(y, dtype=float), -100.0, 300.0)
+        week_rows = {}
+        for i, (c, _) in enumerate(keys):
+            week_rows.setdefault(c["week"], []).append(i)
+        weeks = sorted(week_rows)
+        Xb, _, bkeys = dataset(blind, insts)
+        Xb = np.array([[row[j] for j in keep] for row in Xb], dtype=float)
+        for kind in ("gradient boosting", "random forest", "linear"):
+            avgs, beats, profits, ranks = [], 0, 0, []
+            for r in range(runs):
+                rng = random.Random(f"run-{r}")
+                idx = [i for w in (rng.choice(weeks) for _ in weeks) for i in week_rows[w]]
+                model = make_model(kind, r)
+                model.fit(X[idx], y[idx])
+                preds = model.predict(Xb)
+                trades, wks = trade_weeks(bkeys, preds)
+                s = summarize("", trades, wks)
+                if not s["trades"]:
+                    avgs.append(0.0)
+                    continue
+                avgs.append(s["mean"])
+                beats += s["random_mean"] is not None and s["mean"] > s["random_mean"]
+                profits += s["mean"] > 0
+                if not options_only:
+                    sk = [(c, p) for (c, inst), p in zip(bkeys, preds) if inst[0] == "stock"]
+                    if sk:
+                        ranks.append(spearman([p for _, p in sk], [c["shares"] for c, _ in sk]))
+            total_beat += beats
+            total_runs += runs
+            med_rank = f"{statistics.median(ranks):+.3f}" if ranks else "-"
+            out.append(f"| {kind} | {label} | {runs} | {statistics.median(avgs):+.1f} | {min(avgs):+.1f} to "
+                       f"{max(avgs):+.1f} | {beats} of {runs} | {profits} of {runs} | {med_rank} |")
+            print(out[-1])
+    out += ["", f"Across all {total_runs} runs, {total_beat} beat the random picker making the same trades. With no edge",
+            "at all, about half would by chance. A real edge would show most runs of every model beating random AND",
+            "making money, with stock rankings clearly above zero."]
+    C.run_log("benchmark-runs", f"{total_beat} of {total_runs} model runs beat the random same-trades picker.")
+    return out
+
+
 def run(args):
     from sklearn.ensemble import HistGradientBoostingRegressor
     st = C.db()
@@ -202,6 +273,8 @@ def run(args):
     lines += ["", "Read it this way: the model has an edge only if its average beats the random same-trades",
               "picker AND the bottom of its 95% range is above that. The agents' blind runs should be compared",
               "with the model's line for the same instruments."]
+    if getattr(args, "runs", 0):
+        lines += multi_runs(train, blind, args.runs)
     with open(os.path.join(C.ROOT, "BENCHMARK.md"), "w") as f:
         f.write("\n".join(lines) + "\n")
     print("\n".join(lines))
@@ -212,6 +285,7 @@ def run(args):
 
 def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    p.add_argument("--runs", type=int, default=20, help="versions of each model to train (0 = the single run only)")
     run(p.parse_args())
 
 

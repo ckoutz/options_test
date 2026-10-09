@@ -114,7 +114,23 @@ def build_rows(st):
             if nidx:
                 f.update(nidx.features(t, day, d.get("call_volume_spike")))
             ret = (closes[i + 11] / closes[i + 1] - 1) * 100
-            rows.append({"ticker": t, "date": day, "week": A.week_of(day), "split": split, "ret": ret, "f": f})
+            # Market sensitivity (beta) over the previous 60 sessions, and the market's return over the
+            # same 10 sessions the stock is held.
+            pairs = [(closes[k] / closes[k - 1] - 1, spy[dates[k]] / spy[dates[k - 1]] - 1)
+                     for k in range(max(1, i - 59), i + 1)
+                     if closes[k] and closes[k - 1] and dates[k] in spy and dates[k - 1] in spy]
+            beta = 1.0
+            if len(pairs) >= 30:
+                ms = statistics.mean(p[1] for p in pairs)
+                mv = statistics.mean((p[1] - ms) ** 2 for p in pairs)
+                if mv > 0:
+                    ss = statistics.mean(p[0] for p in pairs)
+                    beta = statistics.mean((p[0] - ss) * (p[1] - ms) for p in pairs) / mv
+                    beta = max(-1.0, min(4.0, beta))
+            m0, m1 = spy.get(dates[i + 1]), spy.get(dates[i + 11])
+            mret = (m1 / m0 - 1) * 100 if m0 and m1 else None
+            rows.append({"ticker": t, "date": day, "week": A.week_of(day), "split": split, "ret": ret, "f": f,
+                         "beta": beta, "mret": mret})
         if n % 100 == 0:
             print(f"  {n}/{len(tickers)} stocks, {len(rows):,} stock-days")
     # The outcome: the stock's return minus the average stock's return the same day.
@@ -124,7 +140,35 @@ def build_rows(st):
     mean_day = {d: statistics.mean(v) for d, v in by_day.items()}
     for r in rows:
         r["excess"] = r["ret"] - mean_day[r["date"]]
+    add_yardsticks(rows)
     return rows
+
+
+def add_yardsticks(rows):
+    """Two stricter yardsticks than 'beat the average stock':
+    vol_excess: return minus the average stock of the SAME volatility (same tenth by 20-day volatility,
+                same day). Picking jumpy stocks in a rising market earns nothing here.
+    beta_excess: return minus what the stock's market sensitivity (beta) predicts from the market's move,
+                 then minus the same-day average of that."""
+    by_day = {}
+    for r in rows:
+        by_day.setdefault(r["date"], []).append(r)
+    for items in by_day.values():
+        have = sorted((r for r in items if r["f"].get("vol20_pct") is not None), key=lambda r: r["f"]["vol20_pct"])
+        groups = {}
+        for k, r in enumerate(have):
+            groups.setdefault(min(9, k * 10 // len(have)), []).append(r)
+        missing = [r for r in items if r["f"].get("vol20_pct") is None]
+        if missing:
+            groups[-1] = missing
+        for g in groups.values():
+            m = statistics.mean(r["ret"] for r in g)
+            for r in g:
+                r["vol_excess"] = r["ret"] - m
+        b = [r["ret"] - r["beta"] * (r["mret"] if r["mret"] is not None else 0) for r in items]
+        mb = statistics.mean(b)
+        for r, v in zip(items, b):
+            r["beta_excess"] = v - mb
 
 
 def rank_corr(a, b):
@@ -137,11 +181,12 @@ def rank_corr(a, b):
     return None if c != c else float(c)
 
 
-def daily_scores(rows, preds):
+def daily_scores(rows, preds, target="excess"):
     """Per day: rank correlation of prediction vs excess return; top tenth's excess and raw return."""
     by_day = {}
     for r, p in zip(rows, preds):
-        by_day.setdefault(r["date"], []).append((p, r["excess"], r["ret"], r["week"]))
+        by_day.setdefault(r["date"], []).append((p, r[target], r["ret"], r["week"], r["vol_excess"],
+                                                 r["beta_excess"], r["f"].get("vol20_pct"), r["beta"]))
     out = []
     for d, items in sorted(by_day.items()):
         if len(items) < 20:
@@ -149,6 +194,11 @@ def daily_scores(rows, preds):
         items.sort(key=lambda x: -x[0])
         top = items[:max(2, len(items) // 10)]
         out.append({"date": d, "week": items[0][3],
+                    "top_vol_excess": statistics.mean(x[4] for x in top),
+                    "top_beta_excess": statistics.mean(x[5] for x in top),
+                    "top_vol": statistics.mean(x[6] for x in top if x[6] is not None) if any(x[6] is not None for x in top) else None,
+                    "all_vol": statistics.mean(x[6] for x in items if x[6] is not None) if any(x[6] is not None for x in items) else None,
+                    "top_beta": statistics.mean(x[7] for x in top),
                     "ic": rank_corr([x[0] for x in items], [x[1] for x in items]),
                     "top_excess": statistics.mean(x[1] for x in top),
                     "top_ret": statistics.mean(x[2] for x in top),
@@ -214,6 +264,7 @@ def run(args):
              "blind days it was positive | top tenth vs average stock, % per 10 sessions (range) | top tenth raw return % |",
              "|---|---|---|---|---|---|---|"]
     summary = []
+    kept = {}
     for name, cols in GROUPS:
         cols = [c for c in cols if any(r["f"].get(c) is not None for r in fit_part[:5000])]
         if not cols:
@@ -239,6 +290,7 @@ def run(args):
         lines.append(f"| {name} ({len(cols)}) | {leaves} leaves, {trees} trees | {ic_check:+.3f} | {ic:+.3f} "
                      f"({lo:+.3f} to {hi:+.3f}) | {pos} of {len(days)} | {top:+.2f} ({tlo:+.2f} to {thi:+.2f}) | {raw:+.2f} |")
         summary.append((name, ic, lo, hi, top, tlo))
+        kept[name] = (cols, leaves, trees, days)
         print(lines[-1])
     allr = statistics.mean(o["all_ret"] for o in days)
     real = [s for s in summary if s[2] is not None and s[2] > 0 and s[5] is not None and s[5] > 0]
@@ -253,11 +305,78 @@ def run(args):
         lines += ["- No column group's blind ranking skill was clearly above zero (whole 95% range above zero for both",
                   "  the rank correlation and the top tenth's excess return). With this much data, that is a strong",
                   "  sign these columns don't predict which stocks beat others over 10 sessions."]
+    lines += volatility_check(train, blind, kept, clip)
     with open(os.path.join(C.ROOT, "FOCUSED.md"), "w") as f:
         f.write("\n".join(lines) + "\n")
     print("\n".join(lines))
     C.run_log("focused", "; ".join(f"{s[0]}: blind rank correlation {s[1]:+.3f}, top tenth {s[4]:+.2f}%"
                                    for s in summary))
+
+
+def volatility_check(train, blind, kept, clip):
+    """Is the top tenth's advantage just 'buy the jumpiest stocks in a rising market'?"""
+    import numpy as np
+
+    def rng(days, key):
+        v = statistics.mean(o[key] for o in days)
+        lo, hi = week_ci(days, key)
+        if lo is None:
+            return f"{v:+.2f}", v, None
+        return f"{v:+.2f} ({lo:+.2f} to {hi:+.2f})", v, lo
+
+    def vol_of(days, key):
+        v = [o[key] for o in days if o[key] is not None]
+        return f"{statistics.mean(v):.2f}" if v else "?"
+
+    vol_only = daily_scores(blind, np.array([r["f"].get("vol20_pct") if r["f"].get("vol20_pct") is not None
+                                             else -1.0 for r in blind]))
+    out = ["", "## Is it just volatility?", "",
+           "A model can beat the average stock in a rising market just by picking jumpy stocks. Three checks:",
+           "",
+           "1. **Volatility only:** each day, buy the tenth of stocks with the highest 20-day volatility. No model.",
+           "2. **Same-volatility yardstick:** compare each pick with the average stock of the *same* volatility "
+           "(same tenth by 20-day volatility, same day). Picking jumpy stocks earns nothing here.",
+           "3. **Market-sensitivity yardstick:** subtract what the stock's market sensitivity (beta, from the "
+           "previous 60 sessions) predicts from the market's move over the same 10 sessions.", "",
+           "| top tenth chosen by | its 20-day volatility, % a day (all stocks) | its beta | vs average stock | "
+           "vs same-volatility stocks | after market sensitivity |", "|---|---|---|---|---|---|"]
+    rows_ = [("Volatility only (no model)", vol_only)] + [(n, k[3]) for n, k in kept.items()]
+    for name, days in rows_:
+        out.append(f"| {name} | {vol_of(days, 'top_vol')} ({vol_of(days, 'all_vol')}) | "
+                   f"{statistics.mean(o['top_beta'] for o in days):.2f} | {rng(days, 'top_excess')[0]} | "
+                   f"{rng(days, 'top_vol_excess')[0]} | {rng(days, 'top_beta_excess')[0]} |")
+    out += ["", "All figures are % per 10 sessions, with 95% ranges resampling whole weeks.", "",
+            "### Retrained to ignore volatility", "",
+            "The same models trained on the same-volatility yardstick, so they get no credit for picking jumpy "
+            "stocks and have to find something else. Same settings as above.", "",
+            "| columns | BLIND rank correlation (range) | blind days positive | top tenth vs same-volatility stocks (range) |",
+            "|---|---|---|---|"]
+    passed = []
+    for name in ("Options flow", "Technical analysis", "Flow + technical", "Everything"):
+        if name not in kept:
+            continue
+        cols, leaves, trees, _ = kept[name]
+        model = fit(matrix(train, cols), np.array([clip(r["vol_excess"]) for r in train]), leaves, trees)
+        days = daily_scores(blind, model.predict(matrix(blind, cols)), target="vol_excess")
+        ic = statistics.mean(o["ic"] for o in days)
+        lo, hi = week_ci(days, "ic")
+        top, tv, tlo = rng(days, "top_excess")
+        pos = sum(1 for o in days if o["ic"] > 0)
+        out.append(f"| {name} | {ic:+.3f} ({lo:+.3f} to {hi:+.3f}) | {pos} of {len(days)} | {top} |")
+        print(out[-1])
+        if lo is not None and tlo is not None and lo > 0 and tlo > 0:
+            passed.append(name)
+    out += ["", "### What this means", ""]
+    base = rng(vol_only, "top_excess")[1]
+    out.append(f"- Buying the most volatile tenth with no model beat the average stock by {base:+.2f}% per 10 sessions.")
+    if passed:
+        out.append(f"- After removing volatility, {', '.join(passed)} still ranked stocks better than chance with the "
+                   "whole range above zero. That leftover is a real lead worth testing with options.")
+    else:
+        out.append("- After removing volatility, no column group could rank stocks with its whole range above zero. "
+                   "The top tenth's advantage was volatility, not information.")
+    C.run_log("focused-volatility", "passed: " + (", ".join(passed) or "none") + f"; volatility-only top tenth {base:+.2f}%")
+    return out
 
 
 def main():

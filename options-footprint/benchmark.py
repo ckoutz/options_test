@@ -285,7 +285,7 @@ def run(args):
 
 def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("--runs", type=int, default=20, help="versions of each model to train (0 = the single run only)")
+    p.add_argument("--runs", type=int, default=0, help="versions of each model to train (0 = the single run only)")
     run(p.parse_args())
 
 

@@ -399,7 +399,8 @@ def load_pool(st):
                 o[k] = {"cost_pct": v[0], "hold10": v[1], "double_or_10": v[2]}
         pool.append({"ticker": r["ticker"], "date": r["signal_date"], "bundle": int(r["bundle"]),
                      "split": r["split"], "week": r["week"], "month": r["month"],
-                     "f": json.loads(r["features"]), "o": o, "shares": float(r["shares_ret10"])})
+                     "f": json.loads(r["features"]), "o": o, "shares": float(r["shares_ret10"]),
+                     "universe": r.get("universe") or "movers"})
     return pool
 
 
@@ -1209,6 +1210,7 @@ def report(args=None):
     if passed:
         L += [f"  - passed: {b['rule_name']} (generation {b['generation']}): blind average {b['mean_ret']}% "
               f"versus {b['baseline_mean']}% for buying everything" for b in passed]
+    L += by_list_section(st, runs)
     gens = sorted({int(n["generation"]) for n in notes})
     for g in reversed(gens):
         L += ["", f"## Generation {g}", ""]
@@ -1232,6 +1234,60 @@ def report(args=None):
     with open(os.path.join(C.ROOT, name), "w") as f:
         f.write("\n".join(L) + "\n")
     print("\n".join(L[:40]))
+
+
+def by_list_section(st, runs):
+    """Blind scoring trades split by list. The big-mover list was chosen for stocks that LATER had 3+ days
+    up 15%, so a strategy can look good there through hindsight alone. The wide list (chosen from January
+    2024 data only) is the honest test. Random = same number and kind of trades on random candidates
+    from the same list in the same weeks."""
+    score_runs = {r["run_id"]: r for r in runs if r["phase"] == "score"}
+    if not score_runs:
+        return []
+    pool = load_pool(st)
+    by_key = {(c["ticker"], str(c["date"])[:10]): c for c in pool}
+    by_week = {}
+    for c in pool:
+        by_week.setdefault((c["week"], c["universe"]), []).append(c)
+    trades = [t for t in st.backend.read("agent_trades") if t["run_id"] in score_runs]
+    rng = random.Random(17)
+    L = ["", "## Blind scoring trades by list (hindsight check)", "",
+         "The big-mover list was chosen for stocks that later had 3+ days up 15%, so results there can come",
+         "from hindsight alone. The wide list (chosen from January 2024 data only) is the honest test.",
+         "Random = the same kind of trades on random candidates from the same list in the same weeks.", "",
+         "| gen | list | trades | mean % | random mean % | profit $ | random profit $ |", "|---|---|---|---|---|---|---|"]
+    rows = {}
+    for t in trades:
+        c = by_key.get((t["ticker"], str(t["signal_date"])[:10]))
+        if not c or t.get("ret_pct") in (None, ""):
+            continue
+        g = int(score_runs[t["run_id"]]["generation"])
+        rows.setdefault((g, c["universe"]), []).append((t, c))
+    for (g, u), items in sorted(rows.items()):
+        rets = [float(t["ret_pct"]) for t, _ in items]
+        sims = []
+        for _ in range(200):
+            r_ = []
+            for t, c in items:
+                cands = by_week.get((c["week"], u), [])
+                for _try in range(10):
+                    if not cands:
+                        break
+                    x = rng.choice(cands)
+                    exp = int(t["expiry"]) if t.get("expiry") not in (None, "") else None
+                    strike = float(t["strike_pct"]) if t.get("strike_pct") not in (None, "") else None
+                    v = A.trade_return(x, t["action"], exp, strike, t.get("exit_rule") or None)
+                    if v is not None:
+                        r_.append(v)
+                        break
+            if r_:
+                sims.append(statistics.mean(r_))
+        rm = statistics.mean(sims) if sims else None
+        name = "wide (honest)" if u == "wide" else "big movers (hindsight)"
+        L.append(f"| {g} | {name} | {len(rets)} | {statistics.mean(rets):+.2f} | "
+                 f"{f'{rm:+.2f}' if rm is not None else '-'} | {sum(rets) * A.TRADE_USD / 100:+,.0f} | "
+                 f"{f'{rm * len(rets) * A.TRADE_USD / 100:+,.0f}' if rm is not None else '-'} |")
+    return L
 
 
 def main():

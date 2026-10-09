@@ -15,6 +15,7 @@ on:
           - backfill
           - wide
           - select-wide
+          - vwap
           - report
           - migrate
       round:
@@ -82,6 +83,7 @@ jobs:
                       # Flags for the new stocks once their history is all in (reads the local copy).
                       if [ "$(cat backfill_status.txt 2>/dev/null)" = "done" ]; then python scorer.py || true; fi ;;
             select-wide) python collector.py select-wide --reselect ;;
+            vwap)     python collector.py vwap ;;
             report)   python scorer.py ;;
             migrate)  python collector.py migrate
                       python scorer.py ;;
@@ -114,6 +116,12 @@ jobs:
           git commit -m "Dataset update $(date -u +%Y-%m-%d)"
           git pull --rebase -q   # in case you edited something on GitHub during the run
           git push
+
+      - name: Rebuild the agents' pool after adding the volume-weighted price
+        if: ${{ success() && github.event.inputs.command == 'vwap' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run committee.yml --ref "${{ github.ref_name }}" -f command=build-pool
 
       - name: Launch the next backfill round if this one ran out of time
         if: ${{ !cancelled() && (github.event.inputs.command == 'backfill' || github.event.inputs.command == 'wide') }}

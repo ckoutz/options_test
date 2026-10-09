@@ -204,7 +204,7 @@ def stock_bars(symbols, start, end, adjustment="raw"):
     for page in pages:
         for sym, bars in (page.get("bars") or {}).items():
             out.setdefault(sym, []).extend(
-                {"date": b["t"][:10], "close": b["c"], "volume": b["v"]} for b in bars)
+                {"date": b["t"][:10], "close": b["c"], "volume": b["v"], "vwap": b.get("vw")} for b in bars)
     return out
 
 
@@ -358,6 +358,9 @@ def merge_stock_bars(daily, bars):
                 index[(sym, b["date"])] = r
             if not r.get("stock_close"):
                 r["stock_close"], r["stock_volume"], r["source_price"] = b["close"], b["volume"], "alpaca"
+                r["_dirty"] = True
+            if b.get("vwap") and not r.get("stock_vwap"):
+                r["stock_vwap"] = b["vwap"]
                 r["_dirty"] = True
 
 
@@ -795,6 +798,26 @@ def select_only(args):
     select_wide(argparse.Namespace(n=args.n, reselect=False))
 
 
+def vwap_backfill(args):
+    """Fill in each day's volume-weighted average price for every tracked stock (one-time; the nightly
+    run keeps it current). 100 stocks per request, raw prices like the stored closes."""
+    tickers = sorted({r["ticker"] for r in db().history_done()})
+    today = dt.date.today().isoformat()
+    filled = 0
+    for i in range(0, len(tickers), 100):
+        chunk = tickers[i:i + 100]
+        bars = stock_bars(chunk, add_days(ALPACA_HISTORY_START, -45), today)
+        for t in chunk:
+            have = {r["date"] for r in db().daily(t)}
+            rows = [{"ticker": t, "date": b["date"], "stock_vwap": b["vwap"]}
+                    for b in bars.get(t, []) if b.get("vwap") and b["date"] in have]
+            if rows:
+                db().save_daily(t, rows)
+                filled += len(rows)
+        print(f"  {min(i + 100, len(tickers))}/{len(tickers)} stocks")
+    run_log("vwap", f"volume-weighted average price filled for {filled:,} stock-days across {len(tickers)} stocks.")
+
+
 def wide(args):
     """Choose the wide list (once) and pull each stock's full daily options history. Resumable;
     writes 'done' or 'more' to backfill_status.txt for the workflow."""
@@ -1064,6 +1087,7 @@ def main():
     sw = sub.add_parser("select-wide", help="choose the wide list only (no history)")
     sw.add_argument("--n", type=int, default=WIDE_N)
     sw.add_argument("--reselect", action="store_true")
+    sub.add_parser("vwap", help="fill in each day's volume-weighted average price (one time)")
     sub.add_parser("migrate", help="copy the CSV files in data/ into the database (one time)")
     sub.add_parser("status", help="write a progress snapshot to STATUS.md")
     f = sub.add_parser("backfill"); f.add_argument("--max-minutes", type=float, default=100)
@@ -1086,7 +1110,8 @@ def main():
 def _dispatch(args):
     {"find-movers": find_movers, "collect": collect, "controls": controls, "features": features,
      "compare": compare, "nightly": nightly, "history": history, "backfill": backfill,
-     "migrate": migrate, "status": status, "wide": wide, "select-wide": select_only}[args.cmd](args)
+     "migrate": migrate, "status": status, "wide": wide, "select-wide": select_only,
+     "vwap": vwap_backfill}[args.cmd](args)
 
 
 if __name__ == "__main__":

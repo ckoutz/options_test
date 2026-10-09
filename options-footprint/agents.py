@@ -85,6 +85,8 @@ FEATURES = [  # (key in the arena, label shown to the agent, meaning)
     ("ret_20d_pct", "20d %", "stock price change over the last 20 sessions, percent"),
     ("vs_ma20_pct", "vs ma20 %", "price versus its 20-session average close, percent (above 0 = above the average)"),
     ("vs_ma50_pct", "vs ma50 %", "price versus its 50-session average close, percent"),
+    ("close_vs_vwap_pct", "close vs vwap %", "today's close versus today's volume-weighted average price, percent (above 0 = buyers paid up into the close)"),
+    ("vs_vwap20_pct", "vs vwap20 %", "price versus the 20-session volume-weighted average price, percent (where recent volume traded)"),
     ("from_high60_pct", "off high %", "price versus the highest close of the last 60 sessions, percent (0 = at the high)"),
     ("rsi14", "rsi", "14-session RSI of closes (above 70 = overbought, below 30 = oversold)"),
     ("news_1d", "news 1d", "news articles about this company in the 24 hours before the close (roundups excluded)"),

@@ -205,6 +205,20 @@ def realistic_cell(entry, stock_close, ret_hold, ret_double):
     return [round(new_in / stock_close * 100, 2), redo(ret_hold), redo(ret_double)]
 
 
+def vwap_features(closes, vwaps, volumes, i, n=20):
+    """Close versus the day's volume-weighted average price (buyers paying up into the close), and
+    versus the 20-session volume-weighted average (where recent volume actually traded)."""
+    out = {"close_vs_vwap_pct": None, "vs_vwap20_pct": None}
+    c = closes[i]
+    if c and vwaps[i]:
+        out["close_vs_vwap_pct"] = round((c / vwaps[i] - 1) * 100, 2)
+    pairs = [(w, v) for w, v in zip(vwaps[max(0, i - n + 1):i + 1], volumes[max(0, i - n + 1):i + 1]) if w and v]
+    if c and len(pairs) >= n // 2:
+        avg = sum(w * v for w, v in pairs) / sum(v for _, v in pairs)
+        out["vs_vwap20_pct"] = round((c / avg - 1) * 100, 1)
+    return out
+
+
 def runway(values, i, recent=20, before=40):
     """Average over the last `recent` sessions ÷ the median of the `before` sessions ahead of them."""
     if i < recent + before - 1:
@@ -258,7 +272,8 @@ def build_pool(args):
         s_pos = {d["date"]: k for k, d in enumerate(scored_list)}
         dates = [r["date"] for r in rows]
         closes = [C.to_float(r["stock_close"]) for r in rows]
-        series = {k: [C.to_float(r.get(k)) for r in rows] for k in ("call_volume", "call_vol_long", "call_vol_otm", "put_volume")}
+        series = {k: [C.to_float(r.get(k)) for r in rows] for k in ("call_volume", "call_vol_long", "call_vol_otm", "put_volume",
+                                                                 "stock_vwap", "stock_volume")}
         index = {d: i for i, d in enumerate(dates)}
         rets_all = [closes[k] / closes[k - 1] - 1 for k in range(1, len(closes)) if closes[k] and closes[k - 1]]
         stats[t] = (moves.get(t, 0), statistics.pstdev(rets_all) if len(rets_all) > 20 else 0.0)
@@ -270,6 +285,7 @@ def build_pool(args):
             f = {k: scored[d].get(k) for k, _, _ in A.FEATURES if k in scored[d]}
             f["vol20_pct"] = round(statistics.pstdev(rets) * 100, 2) if len(rets) > 5 else None
             f.update(A.technicals(closes, i))
+            f.update(vwap_features(closes, series["stock_vwap"], series["stock_volume"], i))
             # The last 5 sessions, so buildup over several days is visible, not just today.
             last5 = scored_list[max(0, s_pos[d] - 4):s_pos[d] + 1]
 

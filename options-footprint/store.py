@@ -26,7 +26,8 @@ DAILY_COLS = {"ticker": T, "date": D, "put_call_ratio": F, "put_call_alpaca": F,
               "call_volume": I, "put_volume": I, "short_otm_call_volume": I,
               "call_vol_short": I, "call_vol_medium": I, "call_vol_long": I,
               "call_vol_otm": I, "call_vol_atm": I, "call_vol_itm": I,
-              "stock_close": F, "stock_volume": I, "source_put_call": T, "source_price": T}
+              "stock_close": F, "stock_volume": I, "source_put_call": T, "source_price": T,
+              "stock_vwap": F}   # the day's volume-weighted average price
 FEATURE_COLS = {"ticker": T, "event_date": D, "label": T, "move_pct": F, "days_with_put_call": I,
                 "baseline_put_call_median": F, "recent_put_call_min": F, "put_call_drop_ratio": F,
                 "window_put_call_min": F, "sessions_from_low_to_event": I,
@@ -316,6 +317,12 @@ class DailyMirror:
         self.db.execute(f"create table if not exists daily ({', '.join(c + ' text' for c in self.cols)}, "
                         "primary key (ticker, date))")
         self.db.execute("create table if not exists meta (k text primary key, v text)")
+        # A copy cached by an older version may lack newer columns: add them (their values arrive as
+        # rows are rewritten in the database, which stamps them for the next sync).
+        have = {r[1] for r in self.db.execute("pragma table_info(daily)")}
+        for c in self.cols:
+            if c not in have:
+                self.db.execute(f"alter table daily add column {c} text")
         self.sync()
 
     def _norm(self, value, kind):

@@ -1,17 +1,17 @@
-# Status (2026-10-09 02:21 UTC, storage: postgres)
+# Status (2026-10-09 02:25 UTC, storage: postgres)
 
 ## Backfill
 - Big moves logged: 5,384 across 1,650 stocks
 - Pre-move windows filled: 5,384 of 5,384
 - Stocks eligible for full history (3+ moves): 650; done: 920
 - Control days: 10,754 (filled 10,754)
-- Daily rows: 1,173,926; database size: 422 MB
+- Daily rows: 1,173,926; database size: 426 MB
 
 ## Table sizes
 - daily: 210 MB, about 1,173,933 rows
 - ladder_trades: 141 MB, about 564,225 rows
 - news: 47 MB, about 225,612 rows
-- pool: 17 MB, about 9,157 rows
+- pool: 20 MB, about 9,157 rows
 - arena: 5 MB, about 1,613 rows
 - event_features: 3 MB, about 16,136 rows
 - agent_ratings: 2 MB, about 11,851 rows
@@ -32,7 +32,7 @@
 - signal_report: 0 MB, about 36 rows
 - agent_runs: 0 MB, about 21 rows
 - agent_lessons: 0 MB, about 4 rows
-- run_log: 0 MB, about 22 rows
+- run_log: 0 MB, about 24 rows
 
 ## Labels
 - unknown: 4,600
@@ -124,14 +124,26 @@
 - 300 stocks chosen; full options history done for 300
 
 ## Job notes (latest 8)
+- 2026-10-09T02:25:30+00:00 benchmark: model (stock or calls) on blind months: 388 trades, average 1.49%, range (-5.08, 9.1), random same-trades -2.06%.
+- 2026-10-09T02:24:48+00:00 nightly FAILED: ls = option_daily_volume(ticker, todo, closes)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/options_test/options_test/options-footprint/collector.py", line 296, in option_daily_volume
+    pages = alpaca_get("https://data.alpaca.markets", "/v1beta1/options/bars",
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/options_test/options_test/options-footprint/collector.py", line 180, in alpaca_get
+    data = http_json(f"{base}{path}?{urllib.parse.urlencode(p)}", headers)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/options_test/options_test/options-footprint/collector.py", line 159, in http_json
+    sys.exit(message)
+SystemExit: Alpaca refused https://data.alpaca.markets/v1beta1/options/bars with HTTP 403: {"message":"OPRA agreement is not signed"}
+
+
 - 2026-10-09T01:03:58+00:00 oi-analyze: OI_TEST.md written: 1,010 candidate days from 134 stocks.
 - 2026-10-09T01:03:33+00:00 oi-pull: done: 134 stocks, about $53.31 of credit used.
 - 2026-10-09T00:48:01+00:00 build-pool: pool rebuilt: 9,157 candidates (3,663 from the wide list).
 - 2026-10-09T00:46:15+00:00 ladder-wide: priced 34,841 new stock-days for the wide list.
 - 2026-10-09T00:27:44+00:00 wide: full options history done for all 300 wide-list stocks.
 - 2026-10-08T23:23:24+00:00 oi-pull: plan: 134 stocks, 3,804 stock-days, estimated $53.31 (cap $100).
-- 2026-10-08T23:22:41+00:00 oi-pull: cost check failed for SPCE: 504 The remote gateway timed out.
-- 2026-10-08T23:21:14+00:00 oi-pull: cost check failed for DPRO: 504 The remote gateway timed out.
 
 ## Errors (151 total, latest 8)
 - 2026-10-09 01:03 IAC oi 2026-01-13: 504 The remote gateway timed out.

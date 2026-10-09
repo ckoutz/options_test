@@ -1,4 +1,4 @@
-# Focused test (2026-10-09 13:42 UTC)
+# Focused test (2026-10-09 13:46 UTC)
 
 Every stock-day with options data for bundles 1 to 6: **88,937 training** and **39,415 blind** stock-days, 545 stocks. The question: will the stock beat the average stock over the next 10 sessions (bought at the next session's close)?
 Settings were chosen on the latest fifth of the training weeks only; blind months were used once, to judge. Ranges are 95%, resampling whole weeks.
@@ -60,3 +60,40 @@ The same models trained on the same-volatility yardstick, so they get no credit 
 
 - Buying the most volatile tenth with no model beat the average stock by +3.01% per 10 sessions.
 - After removing volatility, Options flow, Technical analysis, Flow + technical, Everything still ranked stocks better than chance with the whole range above zero. That leftover is a real lead worth testing with options.
+
+## Hindsight check
+
+The big-mover list was chosen for stocks that *later* had 3 or more days up 15%+. A model trained on them can learn 'beaten-down jumpy stocks bounce' simply because only the ones that bounced were included. The wide list was chosen from January 2024 price and volume only, so it carries no hindsight. Each list is tested on its own (trained and judged within that list), on the same-volatility yardstick.
+
+| stocks | columns | training / blind stock-days | BLIND rank correlation (range) | top tenth vs same-volatility stocks (range) |
+|---|---|---|---|---|
+| Wide list only (chosen Jan 2024, no hindsight) | Options flow | 30,199 / 13,066 | +0.010 (-0.015 to +0.035) | +0.11 (-0.33 to +0.58) |
+| Wide list only (chosen Jan 2024, no hindsight) | Technical analysis | 30,199 / 13,066 | +0.023 (-0.019 to +0.064) | +0.30 (-0.25 to +0.89) |
+| Wide list only (chosen Jan 2024, no hindsight) | Everything | 30,199 / 13,066 | +0.022 (-0.006 to +0.054) | +0.65 (+0.15 to +1.25) |
+| Wide list, price $5+ that day | Options flow | 29,307 / 12,626 | -0.001 (-0.024 to +0.022) | -0.10 (-0.61 to +0.44) |
+| Wide list, price $5+ that day | Technical analysis | 29,307 / 12,626 | +0.032 (-0.009 to +0.071) | +0.39 (-0.12 to +0.90) |
+| Wide list, price $5+ that day | Everything | 29,307 / 12,626 | +0.011 (-0.019 to +0.042) | +0.54 (-0.01 to +1.11) |
+| Big-mover list only (chosen with hindsight) | Options flow | 57,751 / 25,898 | +0.050 (+0.020 to +0.079) | +2.00 (+0.46 to +3.58) |
+| Big-mover list only (chosen with hindsight) | Technical analysis | 57,751 / 25,898 | +0.048 (+0.017 to +0.079) | +2.09 (+0.52 to +3.64) |
+| Big-mover list only (chosen with hindsight) | Everything | 57,751 / 25,898 | +0.051 (+0.025 to +0.083) | +1.82 (+0.07 to +4.01) |
+
+### What the wide-list model leans on
+
+How much the blind rank correlation drops when each column is scrambled (bigger = more important):
+
+| column | drop |
+|---|---|
+| from_high60_pct | +0.0255 |
+| long_calls_20d | +0.0103 |
+| ret_20d_pct | +0.0064 |
+| vol20_pct | +0.0054 |
+| rsi14 | +0.0038 |
+| shares_5d_avg | +0.0022 |
+| news_sent_7d | +0.0019 |
+| otm_calls_20d | +0.0013 |
+| puts_20d | +0.0009 |
+| ret_1d_pct | +0.0006 |
+
+### Hindsight verdict
+
+- On the wide list alone (no hindsight), nothing passed. The lead came from how the big-mover list was chosen, not from anything a trader could have known.

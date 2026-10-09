@@ -306,6 +306,7 @@ def run(args):
                   "  the rank correlation and the top tenth's excess return). With this much data, that is a strong",
                   "  sign these columns don't predict which stocks beat others over 10 sessions."]
     lines += volatility_check(train, blind, kept, clip)
+    lines += hindsight_check(rows, kept, clip)
     with open(os.path.join(C.ROOT, "FOCUSED.md"), "w") as f:
         f.write("\n".join(lines) + "\n")
     print("\n".join(lines))
@@ -376,6 +377,85 @@ def volatility_check(train, blind, kept, clip):
         out.append("- After removing volatility, no column group could rank stocks with its whole range above zero. "
                    "The top tenth's advantage was volatility, not information.")
     C.run_log("focused-volatility", "passed: " + (", ".join(passed) or "none") + f"; volatility-only top tenth {base:+.2f}%")
+    return out
+
+
+def resubset(rows):
+    """Copies of rows with the outcome and yardsticks recomputed within just these stocks."""
+    out = [dict(r) for r in rows]
+    by_day = {}
+    for r in out:
+        by_day.setdefault(r["date"], []).append(r["ret"])
+    mean_day = {d: statistics.mean(v) for d, v in by_day.items()}
+    for r in out:
+        r["excess"] = r["ret"] - mean_day[r["date"]]
+    add_yardsticks(out)
+    return out
+
+
+def hindsight_check(rows, kept, clip):
+    """The big-mover list was chosen for stocks that LATER had 3+ days up 15%. A model trained on them can
+    learn 'these beaten-down jumpy stocks bounce' because only ones that did were included. The wide list
+    was chosen from January 2024 data only. Test each list on its own."""
+    import numpy as np
+    wide = set(C.wide_tickers())
+    movers = set(C.mover_tickers())
+    subsets = [("Wide list only (chosen Jan 2024, no hindsight)", lambda r: r["ticker"] in wide and r["ticker"] not in movers),
+               ("Wide list, price $5+ that day", lambda r: r["ticker"] in wide and r["ticker"] not in movers
+                and (r["f"].get("log_price") or 0) >= math.log(5)),
+               ("Big-mover list only (chosen with hindsight)", lambda r: r["ticker"] in movers)]
+    out = ["", "## Hindsight check", "",
+           "The big-mover list was chosen for stocks that *later* had 3 or more days up 15%+. A model trained on "
+           "them can learn 'beaten-down jumpy stocks bounce' simply because only the ones that bounced were "
+           "included. The wide list was chosen from January 2024 price and volume only, so it carries no "
+           "hindsight. Each list is tested on its own (trained and judged within that list), on the "
+           "same-volatility yardstick.", "",
+           "| stocks | columns | training / blind stock-days | BLIND rank correlation (range) | "
+           "top tenth vs same-volatility stocks (range) |", "|---|---|---|---|---|"]
+    verdict = {}
+    importance = None
+    for label, keep in subsets:
+        sub = resubset([r for r in rows if keep(r)])
+        tr = [r for r in sub if r["split"] == "train"]
+        bl = [r for r in sub if r["split"] == "score"]
+        if len(tr) < 2000 or len(bl) < 1000:
+            out.append(f"| {label} | | {len(tr):,} / {len(bl):,} | too few | |")
+            continue
+        for name in ("Options flow", "Technical analysis", "Everything"):
+            cols, leaves, trees, _ = kept[name]
+            model = fit(matrix(tr, cols), np.array([clip(r["vol_excess"]) for r in tr]), leaves, trees)
+            Xb = matrix(bl, cols)
+            days = daily_scores(bl, model.predict(Xb), target="vol_excess")
+            ic = statistics.mean(o["ic"] for o in days)
+            lo, hi = week_ci(days, "ic")
+            top = statistics.mean(o["top_excess"] for o in days)
+            tlo, thi = week_ci(days, "top_excess")
+            out.append(f"| {label} | {name} | {len(tr):,} / {len(bl):,} | {ic:+.3f} ({lo:+.3f} to {hi:+.3f}) | "
+                       f"{top:+.2f} ({tlo:+.2f} to {thi:+.2f}) |")
+            print(out[-1])
+            verdict[(label, name)] = lo is not None and lo > 0 and tlo is not None and tlo > 0
+            if label.startswith("Wide list only") and name == "Everything":
+                base = ic
+                rng_ = np.random.default_rng(0)
+                imp = []
+                for j, c in enumerate(cols):
+                    Xp = Xb.copy()
+                    Xp[:, j] = rng_.permutation(Xp[:, j])
+                    d2 = daily_scores(bl, model.predict(Xp), target="vol_excess")
+                    imp.append((base - statistics.mean(o["ic"] for o in d2), c))
+                importance = sorted(imp, reverse=True)[:10]
+    if importance:
+        out += ["", "### What the wide-list model leans on", "",
+                "How much the blind rank correlation drops when each column is scrambled (bigger = more important):", "",
+                "| column | drop |", "|---|---|"] + [f"| {c} | {v:+.4f} |" for v, c in importance]
+    out += ["", "### Hindsight verdict", ""]
+    clean = [n for (l, n), ok in verdict.items() if l.startswith("Wide list only") and ok]
+    if clean:
+        out.append(f"- On the wide list alone (no hindsight), {', '.join(clean)} still passed. The lead survives.")
+    else:
+        out.append("- On the wide list alone (no hindsight), nothing passed. The lead came from how the big-mover "
+                   "list was chosen, not from anything a trader could have known.")
+    C.run_log("focused-hindsight", "wide-list passed: " + (", ".join(clean) or "none"))
     return out
 
 

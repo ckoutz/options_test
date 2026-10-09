@@ -1066,6 +1066,19 @@ def main():
     f.add_argument("--min-move", type=float, default=15); f.add_argument("--lookback", type=int, default=15)
     f.add_argument("--per-event", type=int, default=2); f.add_argument("--universe", choices=["core", "all"])
     args = p.parse_args()
+    try:
+        _dispatch(args)
+    except BaseException as ex:   # noqa: BLE001 - put the reason where STATUS.md shows it, then fail as before
+        if not (isinstance(ex, SystemExit) and ex.code in (0, None)):
+            import traceback
+            try:
+                run_log(f"{args.cmd} FAILED", traceback.format_exc()[-900:])
+            except Exception:   # noqa: BLE001
+                pass
+        raise
+
+
+def _dispatch(args):
     {"find-movers": find_movers, "collect": collect, "controls": controls, "features": features,
      "compare": compare, "nightly": nightly, "history": history, "backfill": backfill,
      "migrate": migrate, "status": status, "wide": wide, "select-wide": select_only}[args.cmd](args)

@@ -1101,10 +1101,20 @@ def loop(args):
         if time.monotonic() + 1.3 * per_gen > deadline:
             print("Not enough time left for another generation in this round; stopping cleanly.")
             break
-        C._STORE = None              # fresh connection for every generation
-        st = C.db()
-        pot = Pot(args.max_usd, spent(st))
+        pot = None
         try:
+            # Fresh connection for every generation; a database hiccup here gets a few retries.
+            for attempt in range(4):
+                try:
+                    C._STORE = None
+                    st = C.db()
+                    pot = Pot(args.max_usd, spent(st))
+                    break
+                except Exception as ex:   # noqa: BLE001
+                    if attempt == 3:
+                        raise
+                    print(f"Database connection failed ({type(ex).__name__}: {ex}); retrying in 30 seconds.")
+                    time.sleep(30)
             run_generation(st, args, pool, deadline, pot)
             done += 1
             continue
@@ -1118,12 +1128,13 @@ def loop(args):
             print(tb)
             with open(os.path.join(C.ROOT, "committee_error.txt"), "w") as f:
                 f.write(f"{dt.datetime.now(dt.timezone.utc):%Y-%m-%d %H:%M} UTC\n{tb[-3000:]}")
+            save_crash(stop)
         # The generation did not finish: still count what it spent, so the cap stays honest.
-        cost = pot.total() - pot.spent_before
-        if cost > 0:
-            st.backend.upsert("agent_runs", [{
+        cost = pot.total() - pot.spent_before if pot else 0
+        if cost > 0 and _safe_db():
+            C.db().backend.upsert("agent_runs", [{
                 "run_id": f"committee-unfinished-{dt.datetime.now(dt.timezone.utc):%Y%m%d%H%M%S}",
-                "lineage": CFG["lineage"], "generation": inherited(st)[0] + 1, "phase": "unfinished",
+                "lineage": CFG["lineage"], "generation": inherited(C.db())[0] + 1, "phase": "unfinished",
                 "agent": "all", "model": args.model, "cost_usd": round(cost, 4), "status": stop or "time limit",
                 "started": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")}])
         break
@@ -1135,7 +1146,29 @@ def loop(args):
     with open(os.path.join(C.ROOT, "committee_status.txt"), "w") as f:
         f.write(str(remaining))
     print(f"This round: {done} generation(s). Remaining: {remaining}" + (f" ({stop})" if stop else ""))
-    report(args)
+    try:
+        report(args)
+    except Exception as ex:   # noqa: BLE001
+        save_crash(f"report failed: {type(ex).__name__}: {ex}")
+
+
+def _safe_db():
+    try:
+        C._STORE = None
+        C.db()
+        return True
+    except Exception:   # noqa: BLE001
+        return False
+
+
+def save_crash(stop):
+    """Write any crash to a file the workflow commits (logs aren't readable from outside)."""
+    if not stop:
+        return
+    tb = traceback.format_exc()
+    name = f"COMMITTEE-{CFG['lineage']}-ERROR.md"
+    with open(os.path.join(C.ROOT, name), "w") as f:
+        f.write(f"# Last crash ({dt.datetime.now(dt.timezone.utc):%Y-%m-%d %H:%M} UTC)\n\n{stop}\n\n```\n{tb[-4000:]}\n```\n")
 
 
 def final_test(args):
@@ -1323,7 +1356,13 @@ def main():
         if not re.fullmatch(r"[a-z0-9-]{1,30}", a.lineage):
             sys.exit("Lineage names use lowercase letters, digits and dashes only.")
         CFG.update(lineage=a.lineage, options_only=a.options_only, seed=a.seed)
-    {"build-pool": build_pool, "loop": loop, "final-test": final_test, "report": report}[a.cmd](a)
+    try:
+        {"build-pool": build_pool, "loop": loop, "final-test": final_test, "report": report}[a.cmd](a)
+    except SystemExit:
+        raise
+    except BaseException as ex:   # noqa: BLE001 - save it where it can be read, then fail the job
+        save_crash(f"{a.cmd} crashed: {type(ex).__name__}: {ex}")
+        raise
 
 
 if __name__ == "__main__":

@@ -177,11 +177,16 @@ def ladder_rows(paths):
 def market_closes():
     """Daily closes of the S&P 500 fund (SPY), for market context. Empty if Alpaca isn't set up."""
     try:
-        bars = C.stock_bars(["SPY"], "2023-12-01", dt.date.today().isoformat())
+        # End yesterday: the free data plan refuses very recent prices, and nothing recent is needed.
+        bars = C.stock_bars(["SPY"], "2023-12-01", (dt.date.today() - dt.timedelta(days=1)).isoformat())
         return {b["date"]: b["close"] for b in bars.get("SPY", [])}
-    except (Exception, SystemExit) as ex:   # noqa: BLE001 - market context is a nice-to-have (or no keys)
-        print(f"Market context unavailable ({str(ex)[:100]}); those columns will be blank.")
+    except (Exception, SystemExit) as ex:   # noqa: BLE001 - reported to the caller, which decides
+        print(f"Market context unavailable ({str(ex)[:300]}); those columns will be blank.")
+        MARKET_ERROR.append(f"{type(ex).__name__}: {str(ex)[:300]}")
         return {}
+
+
+MARKET_ERROR = []
 
 
 LADDER_COST = 0.05          # what the ladder charged on each side
@@ -422,11 +427,15 @@ def build_pool(args):
                     "options": json.dumps({k: v for k, v in options.get((t, d), {}).items() if v},
                                           separators=(",", ":")),
                     "shares_ret10": sh})
-    # Sanity check before replacing anything: a much smaller pool, or a missing wide list, means
-    # something upstream went wrong. Keep the old pool and say so.
+    # Sanity check before replacing anything: a much smaller pool, a missing wide list, or missing
+    # market columns means something upstream went wrong. Keep the old pool and say so.
     old_n = len(st.backend.read("pool"))
     n_wide = sum(1 for r in out if r["universe"] == "wide")
     problems = []
+    n_mkt = sum(1 for r in out if json.loads(r["features"]).get("mkt_20d_pct") is not None)
+    if out and n_mkt < 0.9 * len(out):
+        problems.append(f"market columns filled for only {n_mkt:,} of {len(out):,} candidates"
+                        + (f" ({MARKET_ERROR[-1]})" if MARKET_ERROR else ""))
     if old_n and len(out) < 0.7 * old_n:
         problems.append(f"new pool has {len(out):,} candidates versus {old_n:,} before")
     if wide_only and n_wide == 0:
@@ -435,7 +444,9 @@ def build_pool(args):
         C.run_log("build-pool", "STOPPED, old pool kept: " + "; ".join(problems) + ". Rerun with --force if intended.")
         sys.exit("Pool not replaced: " + "; ".join(problems))
     st.backend.replace("pool", out)
-    C.run_log("build-pool", f"pool rebuilt: {len(out):,} candidates ({n_wide:,} from the wide list).")
+    n_iv = sum(1 for r in out if any(len(v) > 4 and v[4] for v in json.loads(r["options"]).values()))
+    C.run_log("build-pool", f"pool rebuilt: {len(out):,} candidates ({n_wide:,} from the wide list); market columns "
+                            f"filled for {n_mkt:,}; implied volatility for {n_iv:,}.")
     counts = {}
     for r in out:
         key = f"{r['split']}/{r['universe']}"

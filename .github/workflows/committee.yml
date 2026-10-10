@@ -49,12 +49,8 @@ on:
         type: boolean
         default: false
       seed:
-        description: "What a NEW lineage's first generation starts with"
-        type: choice
+        description: "What a NEW lineage's first generation starts with: none, briefing, or from:LINEAGE:GENERATION"
         default: none
-        options:
-          - none
-          - briefing
 
 permissions:
   contents: write

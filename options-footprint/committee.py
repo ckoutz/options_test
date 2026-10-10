@@ -1158,10 +1158,11 @@ def stats_of(row):
     return out
 
 
-def book_text(st, g):
+def book_text(st, g, lineage=None):
     """The editor's rules for generation g with their TRAINING numbers only (what may be passed on)."""
+    lineage = lineage or CFG["lineage"]
     book = [r for r in st.backend.read("scorebook")
-            if r["lineage"] == CFG["lineage"] and int(r["generation"]) == g and r["author"] == "editor"
+            if r["lineage"] == lineage and int(r["generation"]) == g and r["author"] == "editor"
             and r["period"] == "train"]
     return "\n".join(scorebook_line(json.loads(r["rule"]), stats_of(r)) for r in book)
 
@@ -1169,6 +1170,16 @@ def book_text(st, g):
 def inherited(st):
     rows = [r for r in st.backend.read("committee_notes") if r["author"] == "editor" and r["lineage"] == CFG["lineage"]]
     if not rows:
+        m = re.fullmatch(r"from:([a-z0-9-]+):(\d+)", CFG["seed"] or "")
+        if m:
+            # Branch from another lineage: start from its editor notes and scorebook for that generation,
+            # and continue its numbering (branching from generation 7 makes this lineage's first one 8).
+            src, g = m.group(1), int(m.group(2))
+            base = [r for r in st.backend.read("committee_notes") if r["author"] == "editor"
+                    and r["lineage"] == src and int(r["generation"]) == g]
+            if not base:
+                sys.exit(f"No editor notes for lineage {src} generation {g} to branch from.")
+            return g, base[0]["text"], book_text(st, g, src)
         return 0, (SEED_NOTES if CFG["seed"] == "briefing" else ""), ""
     last = max(rows, key=lambda r: int(r["generation"]))
     g = int(last["generation"])
@@ -1814,12 +1825,15 @@ def main():
             sp.add_argument("--lineage", default="committee",
                             help="a separate line of generations with its own notes (e.g. options1)")
             sp.add_argument("--options-only", action="store_true", help="agents may only buy calls")
-            sp.add_argument("--seed", choices=["none", "briefing"], default="none",
-                            help="what a new lineage's first generation starts with")
+            sp.add_argument("--seed", default="none",
+                            help="what a new lineage's first generation starts with: none, briefing, or "
+                                 "from:LINEAGE:GENERATION to branch from another lineage's notes")
     a = p.parse_args()
     if hasattr(a, "lineage"):
         if not re.fullmatch(r"[a-z0-9-]{1,30}", a.lineage):
             sys.exit("Lineage names use lowercase letters, digits and dashes only.")
+        if not re.fullmatch(r"none|briefing|from:[a-z0-9-]+:\d+", a.seed):
+            sys.exit("--seed must be none, briefing, or from:LINEAGE:GENERATION")
         CFG.update(lineage=a.lineage, options_only=a.options_only, seed=a.seed)
     try:
         {"build-pool": build_pool, "loop": loop, "final-test": final_test, "report": report,

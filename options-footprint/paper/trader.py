@@ -148,6 +148,9 @@ def chat(messages, tools, cost_so_far):
             raise RuntimeError(f"model API error: {str(data)[:300]}")
         u = data.get("usage") or {}
         cost = float(u.get("cost") or 0)
+        if not cost:
+            # Some responses omit the cost: estimate from tokens (Haiku-class prices, a little high on purpose).
+            cost = (int(u.get("prompt_tokens") or 0) * 1.2 + int(u.get("completion_tokens") or 0) * 6.0) / 1e6
         msg = data["choices"][0]["message"]
         if not (msg.get("content") or msg.get("tool_calls")) and attempt < 5:
             time.sleep(5)
@@ -253,7 +256,8 @@ def briefing(n, view, snap, notes):
                 f"the S&P 500 fund {100 * (spy_now / TL.fnum(start['spy_close']) - 1):+.2f}%.")
     spy = snap["rows"].get("SPY") or {}
     parts = [f"TODAY: {dt.date.today():%A %Y-%m-%d}. Next sessions: {', '.join(str(d) for d in TL.next_sessions(3))}.",
-             f"MARKET: S&P 500 fund {spy.get('price')} (1 month {spy.get('r1m')}%, 3 months {spy.get('r3m')}%, "
+             f"MARKET: S&P 500 fund {spy.get('price')} (5 sessions {spy.get('r5d')}%, 20 sessions {spy.get('r1m')}%, "
+             f"3 months {spy.get('r3m')}%, "
              f"12 months {spy.get('r12m')}%); {snap['meta']['breadth_pct_above_ma50']}% of {snap['meta']['stocks']} "
              f"liquid US stocks are above their 50-day average.",
              f"YOUR ACCOUNT: {json.dumps(view)}",
@@ -379,7 +383,7 @@ def report():
               "phase; they are computed from the saved trades, so they will cover these first days too.", ""]
     pend = [r for r in reqs if r["status"] == "pending"]
     L += ["## Requests waiting for you", ""]
-    L += [f"- **{r['id']}** (agent {r['agent'][-1]}, {r['kind']}, {r['created'][:10]}): {r['text']}" for r in pend] or ["- none"]
+    L += [f"- **{r['id']}** (agent {r['agent'].replace('agent', '')}, {r['kind']}, {r['created'][:10]}): {r['text']}" for r in pend] or ["- none"]
     done = [r for r in reqs if r["status"] != "pending"]
     if done:
         L += ["", "## Answered requests", ""] + [f"- {r['id']} {r['status']}: {r['text'][:150]} — {r['response']}"
@@ -390,7 +394,7 @@ def report():
         L += [f"### Agent {n}", ""] + [f"- **{d['day']}** ({d['steps']} steps, {d['orders']} order attempts, "
                                        f"${TL.fnum(d['cost_usd']):.2f}): {d['summary']}" for d in mine] + [""]
     L += ["## Open experiments", ""]
-    L += [f"- agent {e['agent'][-1]} **{e['name']}** ({e['id']}): {e['hypothesis'][:200]} Expect: {e['expected'][:150]}. "
+    L += [f"- agent {e['agent'].replace('agent', '').replace('-dry', ' (dry run)')} **{e['name']}** ({e['id']}): {e['hypothesis'][:200]} Expect: {e['expected'][:150]}. "
           f"Judge by {e['judge_by']}." for e in exps if e["status"] == "open"] or ["- none"]
     with open(os.path.join(C.ROOT, "PAPER.md"), "w") as f:
         f.write("\n".join(L) + "\n")

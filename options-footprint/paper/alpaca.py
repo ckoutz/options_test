@@ -106,7 +106,7 @@ def daily_bars(symbols, days=400):
         for page in pages:
             for sym, bars in page.items():
                 out.setdefault(sym, []).extend({"date": b["t"][:10], "close": b["c"], "volume": b["v"],
-                                                "high": b["h"], "low": b["l"]} for b in bars)
+                                                "high": b["h"], "low": b["l"], "vwap": b.get("vw")} for b in bars)
     return out
 
 
@@ -152,8 +152,12 @@ def market_snapshot(force=False):
                 beta = round(statistics.mean((p[0] - ss) * (p[1] - ms) for p in pairs) / mv, 2)
         ma50 = statistics.mean(closes[-50:]) if len(closes) >= 50 else None
         hi52 = max(closes[-252:])
-        rows[s] = {"price": round(c, 2), "r1m": ret(21), "r3m": ret(63), "r6m": ret(126), "r12m": ret(252),
+        ma20 = statistics.mean(closes[-20:])
+        vw = b[-1].get("vwap")
+        rows[s] = {"price": round(c, 2), "r1d": ret(1), "r5d": ret(5), "r1m": ret(21), "r3m": ret(63), "r6m": ret(126), "r12m": ret(252),
+                   "vs_ma20": round((c / ma20 - 1) * 100, 1),
                    "vs_ma50": round((c / ma50 - 1) * 100, 1) if ma50 else None,
+                   "close_vs_vwap": round((c / vw - 1) * 100, 2) if vw else None,
                    "off_52w_high": round((c / hi52 - 1) * 100, 1),
                    "vol20_ann": round(statistics.pstdev(rets) * math.sqrt(252) * 100, 1) if len(rets) > 10 else None,
                    "beta": beta,

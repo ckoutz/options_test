@@ -352,8 +352,9 @@ SCHEMAS = [
     S("price_history", "Daily closes and volume for one stock, up to 750 sessions back.",
       {"symbol": STR, "days": INT}, ["symbol"]),
     S("leaders", "Rank every liquid US stock ($5+, 500k+ shares/day) by return over a period. Includes each "
-                 "stock's 1/3/6/12-month returns and market-wide percentile ranks, trend, volatility, beta, "
-                 "dollar volume, and today's market breadth.",
+                 "stock's 1-day, 5-day, 1/3/6/12-month returns and market-wide percentile ranks, distance from "
+                 "its 20- and 50-day averages and 52-week high, close vs the day's VWAP, volatility, beta, "
+                 "dollar volume, and today's market breadth. SPY is the S&P 500 fund.",
       {"period": {"type": "string", "enum": ["1m", "3m", "6m", "12m"]}, "count": INT,
        "order": {"type": "string", "enum": ["top", "bottom"]}, "min_price": NUM, "min_dollar_vol_m": NUM}),
     S("stock_stats", "The same statistics as leaders, for specific stocks (up to 40).",

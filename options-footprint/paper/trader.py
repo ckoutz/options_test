@@ -324,7 +324,10 @@ def run_agent(n, snap):
             except ValueError:
                 args = {}
             if name == "finish_day":
-                if not wrote_journal:
+                if len(calls) > 1:
+                    result = {"error": "call finish_day on its own, after you have read the results of your other "
+                                       "tool calls"}
+                elif not wrote_journal:
                     result = {"error": "update your journal with journal_write first, then call finish_day again"}
                 else:
                     summary, done = str(args.get("summary", ""))[:3000], True

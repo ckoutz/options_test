@@ -19,6 +19,7 @@ on:
           - benchmark
           - focused
           - playoff
+          - bakeoff
           - report
           - final-test
       model:
@@ -113,6 +114,8 @@ jobs:
               python committee.py report ;;
             benchmark) python benchmark.py ;;
             focused) python focused.py ;;
+            bakeoff)
+              python committee.py bakeoff --options-only --max-usd "${{ github.event.inputs.max_usd }}" --max-minutes 140 ;;
             playoff)
               python committee.py playoff --finalists 5 --model "${{ github.event.inputs.model }}" \
                 --max-usd "${{ github.event.inputs.max_usd }}" --max-minutes 140 ;;
@@ -140,10 +143,10 @@ jobs:
       - name: Commit the report
         if: always()
         run: |
-          ls COMMITTEE*.md BENCHMARK.md FOCUSED.md PLAYOFF.md 2>/dev/null | grep -q . || exit 0
+          ls COMMITTEE*.md BENCHMARK.md FOCUSED.md PLAYOFF.md BAKEOFF.md 2>/dev/null | grep -q . || exit 0
           git config user.name "options-footprint-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add COMMITTEE*.md; for f in BENCHMARK.md FOCUSED.md PLAYOFF.md; do if [ -f $f ]; then git add $f; fi; done
+          git add COMMITTEE*.md; for f in BENCHMARK.md FOCUSED.md PLAYOFF.md BAKEOFF.md; do if [ -f $f ]; then git add $f; fi; done
           git diff --cached --quiet && exit 0
           git commit -q -m "Committee report $(date -u '+%Y-%m-%d %H:%M')"
           for i in 1 2 3; do git pull --rebase -q && git push -q && exit 0; sleep 5; done

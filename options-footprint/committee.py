@@ -1204,6 +1204,120 @@ def final_test(args):
     report(args)
 
 
+# ---------------------------------------------------------------- model bake-off
+def openrouter_models():
+    import urllib.request
+    base = os.environ.get("LLM_BASE_URL", "https://openrouter.ai/api/v1").rstrip("/")
+    req = urllib.request.Request(f"{base}/models", headers={"Authorization": f"Bearer {os.environ.get('LLM_API_KEY', '')}"})
+    with urllib.request.urlopen(req, timeout=60) as r:
+        return json.loads(r.read().decode())["data"]
+
+
+def resolve_model(want, catalog):
+    """An exact OpenRouter id, or the best match for a short name like 'kimi-k2.6'."""
+    ids = {m["id"]: m for m in catalog}
+    if want in ids:
+        return ids[want]
+    w = want.lower()
+    hits = [m for m in catalog if w in m["id"].lower() and ":" not in m["id"]]
+    hits.sort(key=lambda m: len(m["id"]))
+    return hits[0] if hits else None
+
+
+def bakeoff(args):
+    """The same blind scoring run (same notes, same months, same rules) with different models."""
+    st = C.db()
+    pool = load_pool(st)
+    CFG.update(lineage=args.source_lineage, options_only=args.options_only)
+    notes = [r for r in st.backend.read("committee_notes") if r["author"] == "editor"
+             and r["lineage"] == args.source_lineage and int(r["generation"]) == args.generation]
+    if not notes:
+        sys.exit(f"No editor notes for {args.source_lineage} generation {args.generation}.")
+    book = book_text(st, args.generation)
+    catalog = openrouter_models()
+    entries = []
+    # The reference: the lineage's own scoring run for that generation (already paid for).
+    ref = [r for r in st.backend.read("agent_runs") if r["lineage"] == args.source_lineage
+           and int(r["generation"] or 0) == args.generation and r["phase"] == "score"]
+    if ref:
+        r = ref[-1]
+        entries.append((r["model"] + " (from the lineage's own run)", r,
+                        [t for t in st.backend.read("agent_trades") if t["run_id"] == r["run_id"]], None))
+    done = {r["agent"]: r for r in st.backend.read("agent_runs") if r["lineage"] == "bakeoff"
+            and r.get("model") and int(r["generation"] or 0) == args.generation}
+    pot = Pot(args.max_usd, spent(st))
+    deadline = time.monotonic() + 60 * args.max_minutes
+    for want in [m.strip() for m in args.models.split(",") if m.strip()]:
+        m = resolve_model(want, catalog)
+        if not m:
+            near = [x["id"] for x in catalog if want.split("-")[0].lower() in x["id"].lower()][:8]
+            print(f"{want}: not found on OpenRouter. Close: {near}")
+            entries.append((f"{want} (not found)", None, [], None))
+            continue
+        mid = m["id"]
+        price = m.get("pricing") or {}
+        price_txt = f"${float(price.get('prompt') or 0) * 1e6:.2f} / ${float(price.get('completion') or 0) * 1e6:.2f}"
+        name = f"bakeoff-{args.source_lineage}-g{args.generation}-{mid}"
+        if name in done and not args.redo:
+            r = done[name]
+            entries.append((mid, r, [t for t in st.backend.read("agent_trades") if t["run_id"] == r["run_id"]], price_txt))
+            continue
+        print(f"Running {mid} ({price_txt} per million tokens in / out)...")
+        started = time.monotonic()
+        CFG.update(lineage="bakeoff")
+        try:
+            w = blind_run(args.generation, lambda: pot.llm(mid), notes[0]["text"], book, pool, TRAIN_BUNDLES,
+                          ("score",), "score", deadline, f"bakeoff-{mid.replace('/', '-')}")
+        except Exception as ex:   # noqa: BLE001 - a model that can't finish is itself a result
+            print(f"{mid}: failed: {type(ex).__name__}: {ex}")
+            entries.append((f"{mid} (failed: {type(ex).__name__}: {str(ex)[:120]})", None, [], price_txt))
+            CFG.update(lineage=args.source_lineage)
+            continue
+        CFG.update(lineage=args.source_lineage)
+        s = dict(w.summary(args.generation, name), lineage="bakeoff",
+                 started=dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"))
+        s["sample_reply"] = (s.get("sample_reply") or "")[:600]
+        C._STORE = None
+        st = C.db()
+        st.backend.upsert("agent_runs", [s])
+        keep = ("run_id", "week_index", "cand_id", "ticker", "signal_date", "action", "expiry", "strike_pct",
+                "exit_rule", "ret_pct", "reason")
+        st.backend.upsert("agent_trades", [{k: t.get(k) for k in keep} for t in w.trades])
+        print(f"{mid}: {s['trades']} trades, {s['bad_replies']}/{s['replies']} unreadable, ${s['cost_usd']}, "
+              f"{(time.monotonic() - started) / 60:.0f} minutes")
+        entries.append((mid, s, w.trades, price_txt))
+    write_bakeoff(args, pool, entries)
+
+
+def write_bakeoff(args, pool, entries):
+    L = [f"# Model bake-off ({dt.datetime.now(dt.timezone.utc):%Y-%m-%d %H:%M} UTC)", "",
+         f"Every model traded the same blind scoring months with the same notes ({args.source_lineage}, generation "
+         f"{args.generation}'s editor notes and scorebook), the same candidates and the same rules"
+         f"{' (calls only)' if args.options_only else ''}. One run each, so the money results are noisy; the",
+         "reliability columns (unreadable replies, replies cut off) are the most dependable comparison.", "",
+         "| model | price per million tokens (in / out) | replies unreadable | cut off | cost $ | trades | average % | "
+         "random same trades % | WIDE list: agent vs random % (range of the difference) | rating correlation |",
+         "|---|---|---|---|---|---|---|---|---|---|"]
+    for name, s, trades, price in entries:
+        if not s:
+            L.append(f"| {name} | {price or '-'} | | | | | | | | |")
+            continue
+        wd = list_stats(pool, trades).get("wide")
+        if wd:
+            rng_ = "no range" if wd["lo"] is None else f"{wd['lo']:+.1f} to {wd['hi']:+.1f}"
+            wide = f"{wd['mean']:+.1f} vs {wd['random']:+.1f} ({wd['excess']:+.1f}; {rng_})"
+        else:
+            wide = "-"
+        corr = f"{s.get('rating_corr')}" if s.get("rating_corr") not in (None, "") else "-"
+        L.append(f"| {name} | {price or 'see OpenRouter'} | {s.get('bad_replies')}/{s.get('replies')} | {s.get('cut_off') or 0} | "
+                 f"{s.get('cost_usd')} | {s.get('trades')} | {s.get('mean_ret')} | {s.get('baseline_mean')} | {wide} | {corr} |")
+    with open(os.path.join(C.ROOT, "BAKEOFF.md"), "w") as f:
+        f.write("\n".join(L) + "\n")
+    print("\n".join(L))
+    C.run_log("bakeoff", "; ".join(f"{n}: {s.get('bad_replies')}/{s.get('replies')} unreadable, ${s.get('cost_usd')}"
+                                   for n, s, _, _ in entries if s))
+
+
 # ---------------------------------------------------------------- playoff
 def agent_strength(book_rows_, min_trades=30):
     """An agent's best rule, as tested by code on all training months: the bottom of its 95% range
@@ -1496,6 +1610,14 @@ def main():
         else:
             a.add_argument("--generation", type=int, required=True)
     sub.add_parser("report")
+    bo = sub.add_parser("bakeoff")
+    bo.add_argument("--models", default="deepseek/deepseek-v4-pro,kimi-k2.6,glm-5.2")
+    bo.add_argument("--source-lineage", default="gen10")
+    bo.add_argument("--generation", type=int, default=5)
+    bo.add_argument("--options-only", action="store_true")
+    bo.add_argument("--max-usd", type=float, default=float(os.environ.get("MAX_USD", "25")))
+    bo.add_argument("--max-minutes", type=float, default=140)
+    bo.add_argument("--redo", action="store_true")
     po = sub.add_parser("playoff")
     po.add_argument("--finalists", type=int, default=5)
     po.add_argument("--model", default=os.environ.get("LLM_MODEL", "anthropic/claude-haiku-5.5"))
@@ -1516,7 +1638,7 @@ def main():
         CFG.update(lineage=a.lineage, options_only=a.options_only, seed=a.seed)
     try:
         {"build-pool": build_pool, "loop": loop, "final-test": final_test, "report": report,
-         "playoff": playoff}[a.cmd](a)
+         "playoff": playoff, "bakeoff": bakeoff}[a.cmd](a)
     except SystemExit:
         raise
     except BaseException as ex:   # noqa: BLE001 - save it where it can be read, then fail the job

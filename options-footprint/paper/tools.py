@@ -23,6 +23,11 @@ MAX_HOLD_DAYS = 60
 DRY_RUN = os.environ.get("PAPER_DRY_RUN") == "1"
 
 
+def me(n):
+    """The agent's name in the database (dry runs are kept apart so they never touch the real season)."""
+    return f"agent{n}" + ("-dry" if DRY_RUN else "")
+
+
 def now():
     return dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")
 
@@ -35,6 +40,14 @@ def fnum(x, default=0.0):
 
 
 # ---------------------------------------------------------------- account
+def granted(kind):
+    """True once a request of this kind (margin or short_selling) has been approved; applies to all agents."""
+    try:
+        return any(r["status"] == "approved" and r["kind"] == kind for r in st().backend.read("paper_requests"))
+    except Exception:   # noqa: BLE001
+        return False
+
+
 def account_view(n):
     acct, positions, orders = AP.account(n)
     eq = fnum(acct.get("equity"))
@@ -138,13 +151,13 @@ def t_journal_write(n, a):
     text = str(a.get("text", "")).strip()
     if len(text) < 50:
         return {"error": "journal text too short; write the whole journal (it replaces the old one)"}
-    st().backend.upsert("paper_journal", [{"agent": f"agent{n}", "text": text, "updated": now()}])
+    st().backend.upsert("paper_journal", [{"agent": me(n), "text": text, "updated": now()}])
     return {"saved": True, "chars": len(text)}
 
 
 def t_memory_search(n, a):
     q = str(a.get("query", "")).lower().split()
-    days = [d for d in st().backend.read("paper_days") if d["agent"] == f"agent{n}"]
+    days = [d for d in st().backend.read("paper_days") if d["agent"] == me(n)]
     hits = []
     for d in days:
         text = f"{d['summary']}\n{d['transcript']}"
@@ -159,7 +172,7 @@ def t_memory_search(n, a):
 
 def t_watchlist_save(n, a):
     syms = sorted({str(s).upper() for s in (a.get("symbols") or [])})[:100]
-    st().backend.upsert("paper_watchlists", [{"agent": f"agent{n}", "name": str(a.get("name", "main"))[:60],
+    st().backend.upsert("paper_watchlists", [{"agent": me(n), "name": str(a.get("name", "main"))[:60],
                                                "symbols": json.dumps(syms), "note": str(a.get("note", ""))[:500],
                                                "updated": now()}])
     return {"saved": True, "symbols": len(syms)}
@@ -167,7 +180,7 @@ def t_watchlist_save(n, a):
 
 def t_watchlists(n, a):
     return [{"name": w["name"], "symbols": json.loads(w["symbols"] or "[]"), "note": w["note"], "updated": w["updated"]}
-            for w in st().backend.read("paper_watchlists") if w["agent"] == f"agent{n}"]
+            for w in st().backend.read("paper_watchlists") if w["agent"] == me(n)]
 
 
 def t_request(n, a):
@@ -176,7 +189,7 @@ def t_request(n, a):
     if len(text) < 20:
         return {"error": "say what you need and why (at least a sentence)"}
     rid = f"R{dt.date.today():%m%d}-{n}-{uuid.uuid4().hex[:4]}"
-    st().backend.upsert("paper_requests", [{"id": rid, "agent": f"agent{n}", "created": now(), "kind": kind,
+    st().backend.upsert("paper_requests", [{"id": rid, "agent": me(n), "created": now(), "kind": kind,
                                              "text": text[:2000], "status": "pending", "response": ""}])
     return {"request_id": rid, "status": "pending",
             "note": "A human reviews requests. Free requests built from existing data are usually approved; "
@@ -191,7 +204,7 @@ def t_experiment_register(n, a):
     except ValueError:
         judge = dt.date.today() + dt.timedelta(days=30)
     st().backend.upsert("paper_experiments", [{
-        "id": eid, "agent": f"agent{n}", "created": now(), "name": str(a.get("name", ""))[:100],
+        "id": eid, "agent": me(n), "created": now(), "name": str(a.get("name", ""))[:100],
         "hypothesis": str(a.get("hypothesis", ""))[:1500], "expected": str(a.get("expected", ""))[:800],
         "trades_needed": int(fnum(a.get("trades_needed"), 10)), "judge_by": judge.isoformat(),
         "status": "open", "result": ""}])
@@ -199,7 +212,7 @@ def t_experiment_register(n, a):
 
 
 def t_experiment_update(n, a):
-    rows = [e for e in st().backend.read("paper_experiments") if e["id"] == a.get("id") and e["agent"] == f"agent{n}"]
+    rows = [e for e in st().backend.read("paper_experiments") if e["id"] == a.get("id") and e["agent"] == me(n)]
     if not rows:
         return {"error": "no such experiment of yours"}
     status = a.get("status", "open")
@@ -230,7 +243,7 @@ def next_sessions(k=2):
 
 def log_order(n, a, status, rejected="", order_id=None):
     st().backend.upsert("paper_orders", [{
-        "id": order_id or f"rejected-{uuid.uuid4().hex[:10]}", "agent": f"agent{n}", "created": now(),
+        "id": order_id or f"rejected-{uuid.uuid4().hex[:10]}", "agent": me(n), "created": now(),
         "symbol": a.get("symbol"), "asset": a.get("asset"), "side": a.get("side"), "qty": fnum(a.get("qty")),
         "order_type": a.get("order_type"), "limit_price": fnum(a.get("limit_price"), None),
         "status": status, "strategy": str(a.get("strategy", ""))[:100], "reason": str(a.get("reason", ""))[:1500],
@@ -258,7 +271,7 @@ def t_place_order(n, a):
     held = next((p for p in view["positions"] if p["symbol"] == sym), None)
     held_qty = held["qty"] if held else 0.0
     opening = side == "buy" or (side == "sell" and qty > held_qty + 1e-9)
-    if side == "sell" and qty > held_qty + 1e-9 and not view["shorting_enabled"]:
+    if side == "sell" and qty > held_qty + 1e-9 and not (view["shorting_enabled"] and granted("short_selling")):
         return reject(n, a, f"you hold {held_qty:g} and short selling is not enabled (request it if you need it)")
     if occ:
         if otype != "limit" or not a.get("limit_price"):
@@ -289,6 +302,13 @@ def t_place_order(n, a):
         if existing + cost > cap + 1e-6:
             return reject(n, a, f"this position would cost ${existing + cost:,.0f}; the Experiment-level limit is "
                                 f"${cap:,.0f} (5% of the account, or one contract up to 10%)")
+        if side == "buy" and not granted("margin"):
+            # A cash account: buys must fit in cash after the orders already waiting to fill.
+            pending = sum(fnum(o.get("limit_price")) * fnum(o.get("qty")) * (100 if parse_occ(o["symbol"]) else 1)
+                          for o in view["open_orders"] if o["side"] == "buy")
+            if cost > view["cash"] - pending + 1e-6:
+                return reject(n, a, f"not enough cash: ${cost:,.0f} needed, ${view['cash'] - pending:,.0f} available "
+                                    "after your open orders (this is a cash account; request margin if you need it)")
         if existing + cost < EXPERIMENT_MIN * equity and side == "buy":
             return reject(n, a, f"too small: ${existing + cost:,.0f} is under the 1% minimum (${EXPERIMENT_MIN * equity:,.0f})")
     body = {"symbol": sym, "qty": str(int(qty)) if occ or qty == int(qty) else str(qty), "side": side,

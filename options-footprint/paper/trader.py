@@ -164,14 +164,14 @@ def housekeeping(n, snap, notes):
     spy = (snap["rows"].get("SPY") or {}).get("price")
     long_v = sum(p["market_value"] for p in view["positions"] if p["market_value"] > 0)
     short_v = sum(-p["market_value"] for p in view["positions"] if p["market_value"] < 0)
-    st.backend.upsert("paper_equity", [{"agent": f"agent{n}", "day": dt.date.today().isoformat(),
+    st.backend.upsert("paper_equity", [{"agent": TL.me(n), "day": dt.date.today().isoformat(),
                                         "equity": view["equity"], "cash": view["cash"], "long_value": long_v,
                                         "short_value": short_v, "positions": len(view["positions"]),
                                         "spy_close": spy}])
     nxt = TL.next_sessions(1)
     first_buy = {}
     for o in st.backend.read("paper_orders"):
-        if o["agent"] == f"agent{n}" and o["side"] == "buy" and o["status"] not in ("rejected", "dry-run"):
+        if o["agent"] == TL.me(n) and o["side"] == "buy" and o["status"] not in ("rejected", "dry-run"):
             first_buy[o["symbol"]] = min(first_buy.get(o["symbol"], o["created"]), o["created"])
     for p in view["positions"]:
         occ = TL.parse_occ(p["symbol"])
@@ -203,7 +203,7 @@ def housekeeping(n, snap, notes):
 
 
 def cash_streak(n):
-    rows = sorted((r for r in C.db().backend.read("paper_equity") if r["agent"] == f"agent{n}"),
+    rows = sorted((r for r in C.db().backend.read("paper_equity") if r["agent"] == TL.me(n)),
                   key=lambda r: r["day"])[-10:]
     return len(rows) == 10 and all(TL.fnum(r["cash"]) > 0.75 * TL.fnum(r["equity"], 1) for r in rows)
 
@@ -211,7 +211,7 @@ def cash_streak(n):
 # ---------------------------------------------------------------- the briefing
 def seed_journal(n):
     st = C.db()
-    if any(j["agent"] == f"agent{n}" for j in st.backend.read("paper_journal")):
+    if any(j["agent"] == TL.me(n) for j in st.backend.read("paper_journal")):
         return
     seed = SEEDS.get(n)
     text = "(empty: you start fresh. Build your own approach.)"
@@ -226,12 +226,12 @@ def seed_journal(n):
                     "dates, anonymous stocks, a fixed menu of calls and a 10-session hold. You now trade live, "
                     "with real names, dates, any instrument and any holding period. Keep what holds up on live "
                     "data, change what doesn't, and rewrite this journal as your own.\n\n" + rows[0]["text"])
-    st.backend.upsert("paper_journal", [{"agent": f"agent{n}", "text": text, "updated": TL.now()}])
+    st.backend.upsert("paper_journal", [{"agent": TL.me(n), "text": text, "updated": TL.now()}])
 
 
 def briefing(n, view, snap, notes):
     st = C.db()
-    me = f"agent{n}"
+    me = TL.me(n)
     journal = next((j["text"] for j in st.backend.read("paper_journal") if j["agent"] == me), "")
     days = sorted((d for d in st.backend.read("paper_days") if d["agent"] == me), key=lambda d: d["day"])[-4:]
     since = (dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=7)).isoformat()
@@ -337,7 +337,7 @@ def run_agent(n, snap):
         if cost >= MAX_USD_DAY * 1.5:
             transcript.append("STOPPED: spending cap")
             break
-    st.backend.upsert("paper_days", [{"agent": f"agent{n}", "day": dt.date.today().isoformat(),
+    st.backend.upsert("paper_days", [{"agent": TL.me(n), "day": dt.date.today().isoformat(),
                                       "summary": summary or "(no summary: the session ended early)",
                                       "transcript": "\n".join(transcript)[:200000], "cost_usd": round(cost, 4),
                                       "steps": steps, "orders": n_orders, "finished": TL.now()}])
@@ -360,7 +360,7 @@ def report():
          "| agent | equity $ | return since start | S&P 500 since start | cash % | positions | orders sent | "
          "rejected | open experiments | model cost $ |", "|---|---|---|---|---|---|---|---|---|---|"]
     for n in (1, 2, 3):
-        me = f"agent{n}"
+        me = TL.me(n)
         e = sorted((r for r in eq if r["agent"] == me), key=lambda r: r["day"])
         if not e:
             L.append(f"| {n} | not started | | | | | | | | |")
@@ -386,7 +386,7 @@ def report():
                                                  for r in done[-15:]]
     L += ["", "## Latest days", ""]
     for n in (1, 2, 3):
-        mine = sorted((d for d in days if d["agent"] == f"agent{n}"), key=lambda d: d["day"])[-3:]
+        mine = sorted((d for d in days if d["agent"] == TL.me(n)), key=lambda d: d["day"])[-3:]
         L += [f"### Agent {n}", ""] + [f"- **{d['day']}** ({d['steps']} steps, {d['orders']} order attempts, "
                                        f"${TL.fnum(d['cost_usd']):.2f}): {d['summary']}" for d in mine] + [""]
     L += ["## Open experiments", ""]

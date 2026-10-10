@@ -100,6 +100,13 @@ FEATURES = [  # (key in the arena, label shown to the agent, meaning)
     ("iv30_atm", "iv %", "implied volatility of the ~30-day at-the-money call, annualized percent (how big a move the option price assumes)"),
     ("rv20_ann", "realized vol %", "the stock's actual volatility over the last 20 sessions, annualized percent"),
     ("iv_rv", "iv/realized", "implied ÷ realized volatility: above 1 = options priced for bigger moves than the stock has been making (expensive), below 1 = cheap"),
+    ("iv_rv1y", "iv/1y realized", "implied volatility ÷ the stock's realized volatility over the last year (a longer-run 'is it expensive' measure)"),
+    ("iv_term", "iv 90d/30d", "90-day at-the-money implied volatility ÷ 30-day (below 1 = near-term options priced for an event or a big move)"),
+    ("cost_drag", "option cost %", "round-trip trading cost of the 30-day at-the-money call, as a percent of its price"),
+    ("beta60", "beta", "how much the stock moves with the market over the last 60 sessions (1 = like the market, 2 = twice as much)"),
+    ("dollar_vol_m", "dollar volume $M", "average daily dollar volume over the last 20 sessions, in millions (a size and liquidity measure)"),
+    ("mkt_vol20", "market vol %", "the whole market's (S&P 500 fund's) realized volatility over the last 20 sessions, annualized percent"),
+    ("breadth", "breadth %", "percent of the roughly 550 tracked stocks above their 50-session average that day"),
 ]
 TECHNICALS = ("ret_20d_pct", "vs_ma20_pct", "vs_ma50_pct", "from_high60_pct", "rsi14")
 HOLD_SESSIONS = 10              # every option trade is held 10 sessions (or less with double_or_10)
@@ -426,8 +433,10 @@ def candidate_table(cands):
             elif k in ("rsi14", "call_days_2x", "news_1d", "news_3d", "news_7d", "quiet_spike",
                        "call_days_2x_20d", "days_since_spike"):
                 vals.append(fmt(f.get(k), "{:.0f}"))
-            elif k in ("iv30_atm", "rv20_ann"):
+            elif k in ("iv30_atm", "rv20_ann", "breadth", "mkt_vol20", "cost_drag"):
                 vals.append(fmt(f.get(k), "{:.0f}"))
+            elif k == "dollar_vol_m":
+                vals.append(fmt(f.get(k), "{:.1f}"))
             elif k == "vol20_pct":
                 vals.append(fmt(f.get(k), "{:.1f}"))
             elif k.endswith("_pct"):
@@ -454,14 +463,50 @@ def candidate_table(cands):
 
 def describe_pick(p):
     if p["action"] == "stock":
-        return "stock"
+        return "stock" + (f" {p['exit_rule']}" if p.get("exit_rule") in ("hold5", "hold20") else "")
+    if p["action"] == "spread":
+        return f"call spread {p['expiry']}d +{p['strike_pct']:g}%/+{str(p['exit_rule']).replace('short', '')}%"
     return f"call {p['expiry']}d +{p['strike_pct']:g}% {p['exit_rule']}"
 
 
 # ---------------------------------------------------------------- one run
+def half_spread(x):
+    return max(0.05 * x, 0.05) if x > 0 else 0.0
+
+
+def spread_return(cand, expiry, long_strike, short_strike):
+    """A call spread: buy the call at long_strike, sell the one at short_strike, same expiry, held 10
+    sessions. Each leg pays its own trading cost (5% or $0.05 a share, whichever is larger)."""
+    lo = cand["o"].get(f"{expiry}d+{float(long_strike):g}") or {}
+    hi = cand["o"].get(f"{expiry}d+{float(short_strike):g}") or {}
+    px = (cand.get("f") or {}).get("_price")
+    if not (lo.get("raw_in") and hi.get("raw_in") and px) or lo.get("raw_out") is None or hi.get("raw_out") is None:
+        return None
+    for o in (lo, hi):
+        if o.get("sessions") is not None and o["sessions"] <= HOLD_SESSIONS:
+            return None
+    px = float(px)
+    a_in, b_in = lo["raw_in"] / 100 * px, hi["raw_in"] / 100 * px
+    a_out, b_out = lo["raw_out"] / 100 * px, hi["raw_out"] / 100 * px
+    debit = (a_in + half_spread(a_in)) - (b_in - half_spread(b_in))
+    if debit <= 0.01:
+        return None
+    credit = max(0.0, (a_out - half_spread(a_out)) - (b_out + half_spread(b_out)))
+    return round((credit - debit) / debit * 100, 2)
+
+
 def trade_return(cand, action, expiry=None, strike=None, exit_rule=None):
     if action == "stock":
+        if exit_rule in ("hold5", "hold20"):
+            v = (cand.get("f") or {}).get(f"_ret{exit_rule[4:]}")
+            return float(v) if v not in (None, "") else None
         return cand["shares"]
+    if action == "spread":
+        try:
+            short = float(str(exit_rule).replace("short", ""))
+        except ValueError:
+            return None
+        return spread_return(cand, expiry, strike, short)
     o = cand["o"].get(f"{expiry}d+{float(strike):g}") or {}
     if not o.get("cost_pct"):
         return None

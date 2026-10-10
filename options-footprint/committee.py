@@ -253,6 +253,19 @@ def implied_vol(price, S, K, T, r=RATE):
     return round((lo + hi) / 2 * 100, 1)
 
 
+def raw_prices(row):
+    """The option's traded price at entry and its value after 10 sessions, before any trading cost,
+    as a percent of the stock price (for pricing spreads leg by leg)."""
+    try:
+        entry, stock = float(row["entry_price"]), float(row["stock_close"])
+        raw_in = entry / (1 + LADDER_COST)
+        ret = C.to_float(row["ret_hold10_pct"])
+        raw_out = (ret / 100 + 1) * entry / (1 - LADDER_COST) if ret is not None else None
+        return [round(raw_in / stock * 100, 4), round(raw_out / stock * 100, 4) if raw_out is not None else None]
+    except (KeyError, ValueError, TypeError, ZeroDivisionError):
+        return [None, None]
+
+
 def option_detail(row):
     """Sessions from entry to expiration, and implied volatility at entry (from the raw traded price)."""
     try:
@@ -320,6 +333,14 @@ def build_pool(args):
             return None
         return round((spy[d] / spy[spy_dates[i - n]] - 1) * 100, 1)
 
+    def mkt_vol(d):
+        i = spy_idx.get(d)
+        if i is None or i < 21:
+            return None
+        r = [spy[spy_dates[k]] / spy[spy_dates[k - 1]] - 1 for k in range(i - 19, i + 1)]
+        return round(statistics.pstdev(r) * math.sqrt(252) * 100, 1)
+
+    breadth_count = {}          # date -> [stocks above their 50-session average, stocks counted]
     moves = {}
     for e in st.events():
         moves[e["ticker"]] = moves.get(e["ticker"], 0) + 1
@@ -338,6 +359,12 @@ def build_pool(args):
         index = {d: i for i, d in enumerate(dates)}
         rets_all = [closes[k] / closes[k - 1] - 1 for k in range(1, len(closes)) if closes[k] and closes[k - 1]]
         stats[t] = (moves.get(t, 0), statistics.pstdev(rets_all) if len(rets_all) > 20 else 0.0)
+        for k in range(50, len(closes)):
+            win = [x for x in closes[k - 49:k + 1] if x]
+            if closes[k] and len(win) >= 40:
+                bc = breadth_count.setdefault(dates[k], [0, 0])
+                bc[0] += closes[k] > statistics.mean(win)
+                bc[1] += 1
         for d, g in by_ticker[t].items():
             i = index.get(d)
             if i is None or d not in scored or i + 11 >= len(dates) or not closes[i + 1] or not closes[i + 11]:
@@ -371,6 +398,14 @@ def build_pool(args):
             price = closes[i]
             f["price_band"] = "<$10" if price < 10 else "$10-50" if price <= 50 else ">$50"
             shares = (closes[i + 11] * (1 - A.SHARE_COST)) / (closes[i + 1] * (1 + A.SHARE_COST)) - 1
+            f.update(extra_columns(closes, series["stock_volume"], dates, i, spy))
+            f["mkt_vol20"] = mkt_vol(d)
+            f["_price"] = price
+            for h in (5, 20):           # the stock's return over other holding periods (hidden from agents)
+                j = i + 1 + h
+                if j < len(dates) and closes[j] and closes[i + 1]:
+                    f[f"_ret{h}"] = round(((closes[j] * (1 - A.SHARE_COST)) / (closes[i + 1] * (1 + A.SHARE_COST)) - 1) * 100, 2)
+                    f[f"_exit{h}"] = dates[j]
             feats[(t, d)] = (g, f, round(shares * 100, 2))
         if n % 100 == 0:
             print(f"  {n}/{len(by_ticker)} stocks")
@@ -392,6 +427,13 @@ def build_pool(args):
         s = "holdout" if b in HOLDOUT_BUNDLES and month_split.get(month_of(d)) != "test" else split_of(d, month_split)
         if s in ("skip", "buffer"):
             continue
+        bc = breadth_count.get(d)
+        f["breadth"] = round(100 * bc[0] / bc[1], 1) if bc and bc[1] >= 50 else None
+        for h in (5, 20):
+            ex = f.pop(f"_exit{h}", None)
+            # An outcome that ends in a different kind of month (training vs blind) would leak; drop it.
+            if ex is None or split_of(ex, month_split) != split_of(d, month_split):
+                f.pop(f"_ret{h}", None)
         groups.setdefault((b, A.week_of(d), s, universe[t]), []).append((t, d))
     quota = {"movers": args.per_week_movers, "wide": args.per_week_wide}
     picked = []
@@ -414,7 +456,7 @@ def build_pool(args):
         cell = f"{int(float(r['target_dte']))}d+{float(r['target_otm_pct']):g}"
         options.setdefault(k, {})[cell] = realistic_cell(
             float(r["entry_price"]), float(r["stock_close"]), C.to_float(r["ret_hold10_pct"]),
-            C.to_float(r["ret_double_or_10_pct"])) + option_detail(r) if ok else None
+            C.to_float(r["ret_double_or_10_pct"])) + option_detail(r) + raw_prices(r) if ok else None
     import news as N
     nidx = N.Index(st, {t for _, t, _ in picked}) if st.backend.read("news_fetched") else None
     out = []
@@ -445,8 +487,12 @@ def build_pool(args):
         sys.exit("Pool not replaced: " + "; ".join(problems))
     st.backend.replace("pool", out)
     n_iv = sum(1 for r in out if any(len(v) > 4 and v[4] for v in json.loads(r["options"]).values()))
+    n_raw = sum(1 for r in out if any(len(v) > 6 and v[5] for v in json.loads(r["options"]).values()))
+    cov = {k: sum(1 for r in out if json.loads(r["features"]).get(k) is not None)
+           for k in ("beta60", "dollar_vol_m", "rv252_ann", "mkt_vol20", "breadth", "_ret5", "_ret20")}
     C.run_log("build-pool", f"pool rebuilt: {len(out):,} candidates ({n_wide:,} from the wide list); market columns "
-                            f"filled for {n_mkt:,}; implied volatility for {n_iv:,}.")
+                            f"filled for {n_mkt:,}; implied volatility for {n_iv:,}; spread prices for {n_raw:,}; "
+                            + ", ".join(f"{k} {v:,}" for k, v in cov.items()) + ".")
     counts = {}
     for r in out:
         key = f"{r['split']}/{r['universe']}"
@@ -455,6 +501,28 @@ def build_pool(args):
           f"{sorted(m for m, s in month_split.items() if s == 'score')}")
     per_bundle = {b: sum(1 for r in out if r["bundle"] == b) for b in range(1, N_BUNDLES + 1)}
     print(f"Candidates per bundle: {per_bundle}")
+
+
+def extra_columns(closes, volumes, dates, i, spy):
+    """Beta to the market (60 sessions), average dollar volume (20 sessions, $ millions), and the
+    stock's realized volatility over the last year (annualized %)."""
+    out = {"beta60": None, "dollar_vol_m": None, "rv252_ann": None}
+    pairs = [(closes[k] / closes[k - 1] - 1, spy[dates[k]] / spy[dates[k - 1]] - 1)
+             for k in range(max(1, i - 59), i + 1)
+             if closes[k] and closes[k - 1] and dates[k] in spy and dates[k - 1] in spy]
+    if len(pairs) >= 40:
+        ms = statistics.mean(p[1] for p in pairs)
+        mv = statistics.mean((p[1] - ms) ** 2 for p in pairs)
+        if mv > 0:
+            ss = statistics.mean(p[0] for p in pairs)
+            out["beta60"] = round(statistics.mean((p[0] - ss) * (p[1] - ms) for p in pairs) / mv, 2)
+    dv = [closes[k] * volumes[k] for k in range(max(0, i - 19), i + 1) if closes[k] and volumes[k]]
+    if dv:
+        out["dollar_vol_m"] = round(statistics.mean(dv) / 1e6, 1)
+    rets = [closes[k] / closes[k - 1] - 1 for k in range(max(1, i - 251), i + 1) if closes[k] and closes[k - 1]]
+    if len(rets) >= 120:
+        out["rv252_ann"] = round(statistics.pstdev(rets) * math.sqrt(252) * 100, 1)
+    return out
 
 
 def add_vol_columns(f, o):
@@ -467,6 +535,19 @@ def add_vol_columns(f, o):
     f["iv30_atm"] = iv
     f["rv20_ann"] = rv
     f["iv_rv"] = round(iv / rv, 2) if iv and rv else None
+    iv90 = (o.get("90d+0") or {}).get("iv")
+    iv30 = (o.get("30d+0") or {}).get("iv")
+    f["iv_term"] = round(iv90 / iv30, 2) if iv90 and iv30 else None
+    rv1y = f.get("rv252_ann")
+    f["iv_rv1y"] = round(iv / float(rv1y), 2) if iv and rv1y else None
+    # Round-trip trading cost of the 30-day at-the-money call, as a percent of its price.
+    raw = (o.get("30d+0") or {}).get("raw_in")
+    px = f.get("_price")
+    if raw and px:
+        per_share = raw / 100 * float(px)
+        f["cost_drag"] = round(2 * max(LADDER_COST, MIN_HALF_SPREAD / per_share) * 100, 1) if per_share > 0 else None
+    else:
+        f["cost_drag"] = None
 
 
 def load_pool(st):
@@ -476,7 +557,8 @@ def load_pool(st):
         for k, v in json.loads(r["options"]).items():
             if v:
                 o[k] = {"cost_pct": v[0], "hold10": v[1], "double_or_10": v[2],
-                        "sessions": v[3] if len(v) > 3 else None, "iv": v[4] if len(v) > 4 else None}
+                        "sessions": v[3] if len(v) > 3 else None, "iv": v[4] if len(v) > 4 else None,
+                        "raw_in": v[5] if len(v) > 5 else None, "raw_out": v[6] if len(v) > 6 else None}
         f = json.loads(r["features"])
         add_vol_columns(f, o)
         pool.append({"ticker": r["ticker"], "date": r["signal_date"], "bundle": int(r["bundle"]),
@@ -512,10 +594,20 @@ def clean_rules(raw):
         if not conds or len(conds) > 5:
             continue
         rule = {"name": str(r.get("name") or "rule")[:80], "when": conds}
-        if str(r.get("buy", "")).lower() == "stock" and CFG["options_only"]:
-            continue
-        if str(r.get("buy", "")).lower() == "stock":
-            rule["buy"] = "stock"
+        buy = str(r.get("buy", "")).lower()
+        if buy == "stock":
+            # Stock rules are always allowed as evidence (what the stock itself did), even when the
+            # committee trades options only.
+            hold = r.get("hold", 10)
+            rule.update(buy="stock", hold=int(hold) if str(hold) in ("5", "10", "20") else 10)
+        elif buy == "spread":
+            try:
+                e, s, sh = int(r.get("expiry")), float(r.get("strike")), float(r.get("short"))
+            except (TypeError, ValueError):
+                continue
+            if e not in A.EXPIRIES or s not in A.STRIKES or sh not in A.STRIKES or sh <= s:
+                continue
+            rule.update(buy="spread", expiry=e, strike=s, short=sh)
         else:
             try:
                 e, s = int(r.get("expiry")), float(r.get("strike"))
@@ -542,7 +634,10 @@ def rule_matches(rule, f):
 
 def rule_return(rule, cand):
     if rule["buy"] == "stock":
-        return cand["shares"]
+        h = rule.get("hold", 10)
+        return A.trade_return(cand, "stock", exit_rule=f"hold{h}") if h != 10 else cand["shares"]
+    if rule["buy"] == "spread":
+        return A.trade_return(cand, "spread", rule["expiry"], rule["strike"], f"short{rule['short']:g}")
     return A.trade_return(cand, "call", rule["expiry"], rule["strike"], rule["exit"])
 
 
@@ -587,7 +682,21 @@ def score_rule(rule, cands):
             (h1 if c["month"] < half else h2).append(r)
     lo, hi = boot_ci(pairs)
     beat = [b for b, v in by_b.items() if len(v) >= 3]
-    return {"trades": len(rets),
+    wide = {"n": 0, "rets": [], "base": []}
+    for c in cands:
+        if c.get("universe") != "wide":
+            continue
+        r = rule_return(rule, c)
+        if r is None:
+            continue
+        wide["base"].append(r)
+        if rule_matches(rule, c["f"]):
+            wide["rets"].append(r)
+    return {"wide_trades": len(wide["rets"]),
+            "wide_mean": round(statistics.mean(wide["rets"]), 2) if wide["rets"] else None,
+            "wide_median": round(statistics.median(wide["rets"]), 2) if wide["rets"] else None,
+            "wide_base": round(statistics.mean(wide["base"]), 2) if wide["base"] else None,
+            "trades": len(rets),
             "mean_ret": round(statistics.mean(rets), 2) if rets else None,
             "median_ret": round(statistics.median(rets), 2) if rets else None,
             "win_rate": round(100 * sum(r > 0 for r in rets) / len(rets), 1) if rets else None,
@@ -603,8 +712,13 @@ def describe_rule(rule):
     def val(v):
         return v if isinstance(v, str) else f"{v:g}"
     cond = " and ".join(f"{c['col']} {c['op']} {val(c['value'])}" for c in rule["when"])
-    what = "buy the stock" if rule["buy"] == "stock" else \
-        f"buy the {rule['expiry']}-day call {rule['strike']:g}% above the price, exit {rule['exit']}"
+    if rule["buy"] == "stock":
+        what = f"buy the stock, hold {rule.get('hold', 10)} sessions"
+    elif rule["buy"] == "spread":
+        what = (f"buy the {rule['expiry']}-day call spread: long {rule['strike']:g}%, short {rule['short']:g}% "
+                f"above the price, hold 10 sessions")
+    else:
+        what = f"buy the {rule['expiry']}-day call {rule['strike']:g}% above the price, exit {rule['exit']}"
     return f"when {cond}: {what}"
 
 
@@ -617,7 +731,18 @@ def scorebook_line(rule, s):
         if s["half1_mean"] is not None and s["half2_mean"] is not None else ""
     return (f"- {rule['name']} ({describe_rule(rule)}): {s['trades']} trades, average {s['mean_ret']:+.1f}%{rng}, "
             f"median {s['median_ret']:+.1f}%, {s['win_rate']:.0f}% winners. Buying every candidate the same way: "
-            f"{s['baseline_mean']:+.1f}%. Beat that in {s['bundles_beat']} of {s['bundles_total']} bundles{halves}.")
+            f"{s['baseline_mean']:+.1f}%. Beat that in {s['bundles_beat']} of {s['bundles_total']} bundles{halves}."
+            + wide_part(s))
+
+
+def wide_part(s):
+    """The wide list on its own: stocks chosen without hindsight, the honest test of a rule."""
+    if s.get("wide_trades") is None:
+        return ""
+    if not s["wide_trades"]:
+        return " WIDE LIST ONLY (no hindsight): no trades."
+    return (f" WIDE LIST ONLY (no hindsight): {s['wide_trades']} trades, average {s['wide_mean']:+.1f}%, "
+            f"median {s['wide_median']:+.1f}%, versus {s['wide_base']:+.1f}% for every wide-list candidate.")
 
 
 # ---------------------------------------------------------------- the model, with a shared budget
@@ -657,10 +782,20 @@ ANSWERS = """ANSWERS TO QUESTIONS EARLIER TRADERS RAISED (facts about this test,
   shows what the option cost, its implied volatility, its expiry and the stock's own move.
 - The market columns ("market 5d %", "market 20d %") are filled for every candidate.
 - At each bundle review you get the full-bundle tables (every column in fifths, with how the stocks did,
-  and how calls did by implied volatility), and you can submit up to 3 rules for the code to check on
+  and how calls did by implied volatility), and you can submit up to 5 rules for the code to check on
   every candidate in the bundles you have finished.
-- Puts, short selling, spreads and in-the-money calls are not available in this test. Data is daily
-  closing data only; there are no earnings dates and no daily option price path.
+- Call spreads are now available (buy one strike, sell a higher one, same expiry), for trades and rules.
+- Stock rules can be scored over 5, 10 or 20 sessions ("buy": "stock", "hold": 20), even in a calls-only
+  committee, so you can measure the stock edge separately from the option.
+- Every rule result now also shows the WIDE LIST ONLY. About 60% of candidates come from a list chosen
+  because those stocks LATER had several days up 15%+ (hindsight): rules that pick strong-momentum stocks
+  look good there partly for that reason. The wide list (chosen from early-2024 data only) is the honest test.
+- New columns: "iv/1y realized", "iv 90d/30d", "option cost %", "beta", "dollar volume $M",
+  "market vol %", "breadth %".
+- Up to 5 rule checks per bundle review.
+- NOT available, and not coming in this test: earnings dates, sector, market cap, option bid/ask or
+  volume, daily option price paths, in-the-money calls, puts, short selling, holds other than 10 sessions
+  for options. Data is daily closing data only.
 """
 
 COLUMN_LIST = ", ".join(f'"{label}"' for _, label, _ in A.FEATURES)
@@ -673,7 +808,10 @@ def system_text(phase):
     defs = "\n".join(f"- {label}: {meaning}" for _, label, meaning in A.FEATURES)
     call = """one CALL option: expiry 14, 30 or 90 days; strike at the money (0) or 5, 10, 15, 20 percent above the
   price; exit "hold10" (sell after 10 sessions) or "double_or_10" (sell as soon as it is worth 2x,
-  otherwise after 10 sessions). Calls marked "n/a" did not trade that day and cannot be bought."""
+  otherwise after 10 sessions). Calls marked "n/a" did not trade that day and cannot be bought.
+- or a CALL SPREAD: buy the call at "strike" and sell the call at "short" (a higher strike), same expiry,
+  held 10 sessions. Cheaper than a call, with capped gain; each leg pays its own trading cost. Example:
+  {"id": "C2", "buy": "spread", "expiry": 30, "strike": 0, "short": 10}"""
     if CFG["options_only"]:
         instruments = (f"Then you may buy up to {MAX_PICKS} of them. This committee trades OPTIONS ONLY: each pick is\n"
                        + call)
@@ -721,12 +859,14 @@ Rate every candidate.""" + ("" if phase == "train" else ' Use "picks": [] to buy
 
 
 def rules_prompt():
-    extra = ("\nThis committee trades options only: every rule must buy a call (expiry, strike, exit)."
-             if CFG["options_only"] else "")
+    extra = ("\nThis committee trades options only: rules you want traded must buy a call or a call spread; "
+             "stock rules are scored as evidence." if CFG["options_only"] else "")
     return RULES_PROMPT + extra
 
 
-RULES_PROMPT = f"""Now turn your strongest ideas into testable rules. Code will test each rule on every training
+RULES_PROMPT = f"""Now turn your strongest ideas into testable rules. Rules may buy a call, a call spread
+({{"buy": "spread", "expiry": 30, "strike": 0, "short": 10}}), or the stock ({{"buy": "stock", "hold": 5, 10 or 20}})
+to show what the stock itself does. Stock rules are evidence only in a calls-only committee. Code will test each rule on every training
 candidate in all bundles, including stocks you never saw, and report the real numbers to the editor and
 the next generation. A rule that only fit what you saw will be exposed, so state what you actually believe.
 
@@ -870,6 +1010,14 @@ class Walk:
                     if CFG["options_only"]:
                         continue
                     spec = {"action": "stock", "expiry": None, "strike_pct": None, "exit_rule": None}
+                elif str(p.get("buy", "")).lower() == "spread":
+                    try:
+                        e, s_, sh = int(p.get("expiry")), float(p.get("strike")), float(p.get("short"))
+                    except (TypeError, ValueError):
+                        continue
+                    if e not in A.EXPIRIES or s_ not in A.STRIKES or sh not in A.STRIKES or sh <= s_:
+                        continue
+                    spec = {"action": "spread", "expiry": e, "strike_pct": s_, "exit_rule": f"short{sh:g}"}
                 else:
                     try:
                         e, s = int(p.get("expiry")), float(p.get("strike"))
@@ -883,7 +1031,7 @@ class Walk:
                 if r is None:
                     continue
                 used.add(c["id"])
-                cell = c["o"].get(f"{spec['expiry']}d+{spec['strike_pct']:g}") if spec["action"] == "call" else None
+                cell = c["o"].get(f"{spec['expiry']}d+{spec['strike_pct']:g}") if spec["action"] in ("call", "spread") else None
                 self.trades.append(dict(spec, run_id=self.run_id, week_index=wi, week=wk, cand_id=c["id"],
                                         code=c["code"], ticker=c["ticker"], signal_date=c["date"],
                                         ret_pct=round(r, 2), f=c["f"], reason=why[:300], bundle=c["bundle"],
@@ -1014,11 +1162,11 @@ def bundle_review(trades, ratings, cands=()):
     return "\n".join(lines)
 
 
-CHECKS_PER_BUNDLE = 3
+CHECKS_PER_BUNDLE = 5
 
 
 def rule_checks(llm, walk, review, working, finished):
-    """Let the trader test up to 3 rules of its own on every candidate in the bundles it has finished
+    """Let the trader test up to 5 rules of its own on every candidate in the bundles it has finished
     (never on stocks it has not reached, never on blind months). Every check is counted."""
     prompt = f"""You just finished a bundle. Your review:
 
@@ -1036,7 +1184,9 @@ many checks on the same data make lucky rules more likely, so check what you wou
 Reply with JSON only (use "rules": [] to skip):
 {{"rules": [{{"name": "short name", "when": [{{"col": "calls 20d", "op": ">", "value": 1.5}}], "buy": "stock"}},
            {{"name": "short name", "when": [{{"col": "rsi", "op": ">", "value": 70}}], "buy": "call", "expiry": 90, "strike": 0, "exit": "hold10"}}]}}
-"buy": "stock" shows the stock's own 10-session return for the passers (useful even when you trade calls).
+"buy": "stock" shows the stock's own return for the passers (add "hold": 5, 10 or 20 sessions); "buy": "spread"
+with "expiry", "strike" and "short" scores a call spread. Every result is also shown for the WIDE LIST ONLY
+(stocks chosen without hindsight): a rule that only works on the big-mover list is probably hindsight.
 Columns (exact names): {COLUMN_LIST}. Operators: >, >=, <, <=. The "price" column uses "=" with "<$10",
 "$10-50" or ">$50". Each rule has 1 to 4 conditions."""
     try:
@@ -1571,6 +1721,8 @@ def agent_strength(book_rows_, min_trades=30):
     for b in book_rows_:
         if b["ci_low"] in (None, "") or b["baseline_mean"] in (None, "") or int(b["trades"] or 0) < min_trades:
             continue
+        if json.loads(b["rule"]).get("buy") == "stock":
+            continue          # stock rules are evidence in a calls-only committee, not a tradable strategy
         edge = float(b["ci_low"]) - float(b["baseline_mean"])
         if best is None or edge > best[0]:
             best = (edge, b)

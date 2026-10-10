@@ -1,0 +1,54 @@
+name: Paper traders
+
+on:
+  workflow_dispatch:
+    inputs:
+      command:
+        description: "What to run"
+        type: choice
+        default: check
+        options:
+          - check
+
+permissions:
+  contents: write
+
+concurrency:
+  group: paper-traders
+  cancel-in-progress: false
+
+jobs:
+  paper:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: options-footprint
+    env:
+      PAPER1_KEY_ID: ${{ secrets.PAPER1_KEY_ID }}
+      PAPER1_SECRET: ${{ secrets.PAPER1_SECRET }}
+      PAPER2_KEY_ID: ${{ secrets.PAPER2_KEY_ID }}
+      PAPER2_SECRET: ${{ secrets.PAPER2_SECRET }}
+      PAPER3_KEY_ID: ${{ secrets.PAPER3_KEY_ID }}
+      PAPER3_SECRET: ${{ secrets.PAPER3_SECRET }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run
+        run: |
+          case "${{ github.event.inputs.command }}" in
+            check) python paper/check.py ;;
+          esac
+      - name: Commit the report
+        if: always()
+        run: |
+          [ -f PAPER_CHECK.md ] || exit 0
+          git config user.name "options-footprint-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add PAPER_CHECK.md
+          git diff --cached --quiet && exit 0
+          git commit -q -m "Paper account check $(date -u '+%Y-%m-%d %H:%M')"
+          for i in 1 2 3; do git pull --rebase -q && git push -q && exit 0; sleep 5; done
+          exit 1

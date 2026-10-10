@@ -15,6 +15,7 @@ on:
         options:
           - loop
           - build-pool
+          - pool-only
           - news
           - benchmark
           - focused
@@ -101,13 +102,14 @@ jobs:
           LINEAGE_ARGS="--lineage ${{ github.event.inputs.lineage || 'committee' }} --seed ${{ github.event.inputs.seed || 'none' }}"
           if [ "${{ github.event.inputs.options_only }}" = "true" ]; then LINEAGE_ARGS="$LINEAGE_ARGS --options-only"; fi
           case "${{ github.event.inputs.command }}" in
-            build-pool)
+            build-pool|pool-only)
               tag=$(gh release list -R "${{ github.repository }}" --limit 50 --json tagName \
                     -q '[.[] | select(.tagName | startswith("ladder-trades-archive"))][0].tagName')
               if [ -z "$tag" ]; then echo "No ladder-trades-archive release found"; exit 1; fi
               echo "Using archive release $tag"
               gh release download "$tag" -R "${{ github.repository }}" --pattern "ladder_trades.csv.gz" --dir "$RUNNER_TEMP"
               python committee.py build-pool --archive "$RUNNER_TEMP/ladder_trades.csv.gz"
+              if [ "${{ github.event.inputs.command }}" = "pool-only" ]; then exit 0; fi
               # News for every pool stock: fetch, score the tone, add the news columns.
               python news.py update --model "${{ github.event.inputs.model }}" --max-minutes 100 || true
               python benchmark.py || true

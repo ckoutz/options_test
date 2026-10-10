@@ -97,6 +97,9 @@ FEATURES = [  # (key in the arena, label shown to the agent, meaning)
     ("mkt_5d_pct", "market 5d %", "the whole market (S&P 500 fund) over the last 5 sessions, percent"),
     ("mkt_20d_pct", "market 20d %", "the whole market (S&P 500 fund) over the last 20 sessions, percent"),
     ("price_band", "price", "share price band: under $10, $10 to $50, or over $50"),
+    ("iv30_atm", "iv %", "implied volatility of the ~30-day at-the-money call, annualized percent (how big a move the option price assumes)"),
+    ("rv20_ann", "realized vol %", "the stock's actual volatility over the last 20 sessions, annualized percent"),
+    ("iv_rv", "iv/realized", "implied ÷ realized volatility: above 1 = options priced for bigger moves than the stock has been making (expensive), below 1 = cheap"),
 ]
 TECHNICALS = ("ret_20d_pct", "vs_ma20_pct", "vs_ma50_pct", "from_high60_pct", "rsi14")
 TRADE_USD = 1000                  # every trade is the same size, so profit = return x $10
@@ -422,6 +425,8 @@ def candidate_table(cands):
             elif k in ("rsi14", "call_days_2x", "news_1d", "news_3d", "news_7d", "quiet_spike",
                        "call_days_2x_20d", "days_since_spike"):
                 vals.append(fmt(f.get(k), "{:.0f}"))
+            elif k in ("iv30_atm", "rv20_ann"):
+                vals.append(fmt(f.get(k), "{:.0f}"))
             elif k == "vol20_pct":
                 vals.append(fmt(f.get(k), "{:.1f}"))
             elif k.endswith("_pct"):
@@ -432,10 +437,13 @@ def candidate_table(cands):
         grid = []
         for e in EXPIRIES:
             cells = []
+            sess = None
             for s in STRIKES:
                 o = c["o"].get(f"{e}d+{s:g}") or {}
+                sess = sess or o.get("sessions")
                 cells.append(f"+{s:g}%:{fmt(o.get('cost_pct'), '{:.1f}') if o.get('cost_pct') else 'n/a'}")
-            grid.append(f"{e}d " + " ".join(cells))
+            when = f" [expires in {sess} sessions]" if sess else ""
+            grid.append(f"{e}d{when} " + " ".join(cells))
         lines.append("     option grid (cost % of price): " + " / ".join(grid))
     return "\n".join(lines)
 

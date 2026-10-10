@@ -37,6 +37,7 @@ import csv
 import datetime as dt
 import gzip
 import json
+import math
 import os
 import random
 import re
@@ -205,6 +206,61 @@ def realistic_cell(entry, stock_close, ret_hold, ret_double):
     return [round(new_in / stock_close * 100, 2), redo(ret_hold), redo(ret_double)]
 
 
+RATE = 0.045                 # risk-free rate for implied volatility (close enough for 2024-2026)
+US_HOLIDAYS = ["2024-01-01", "2024-01-15", "2024-02-19", "2024-03-29", "2024-05-27", "2024-06-19", "2024-07-04",
+               "2024-09-02", "2024-11-28", "2024-12-25", "2025-01-01", "2025-01-09", "2025-01-20", "2025-02-17",
+               "2025-04-18", "2025-05-26", "2025-06-19", "2025-07-04", "2025-09-01", "2025-11-27", "2025-12-25",
+               "2026-01-01", "2026-01-19", "2026-02-16", "2026-04-03", "2026-05-25", "2026-06-19", "2026-07-03",
+               "2026-09-07", "2026-11-26", "2026-12-25"]
+
+
+def sessions_until(start, end):
+    """Trading sessions after `start` up to and including `end` (the expiration day)."""
+    import numpy as np
+    d0 = (dt.date.fromisoformat(start[:10]) + dt.timedelta(days=1)).isoformat()
+    d1 = (dt.date.fromisoformat(end[:10]) + dt.timedelta(days=1)).isoformat()
+    return int(np.busday_count(d0, d1, holidays=US_HOLIDAYS))
+
+
+def call_price(S, K, T, vol, r=RATE):
+    if T <= 0 or vol <= 0:
+        return max(0.0, S - K)
+    d1 = (math.log(S / K) + (r + vol * vol / 2) * T) / (vol * math.sqrt(T))
+    d2 = d1 - vol * math.sqrt(T)
+    n = lambda x: 0.5 * (1 + math.erf(x / math.sqrt(2)))
+    return S * n(d1) - K * math.exp(-r * T) * n(d2)
+
+
+def implied_vol(price, S, K, T, r=RATE):
+    """Annualized implied volatility (percent) from a call price, or None when the price is outside
+    what any volatility could produce (stale or odd prints)."""
+    if not (price and S and K and T and T > 0):
+        return None
+    lo, hi = 0.01, 6.0
+    if price <= call_price(S, K, T, lo, r) or price >= call_price(S, K, T, hi, r):
+        return None
+    for _ in range(60):
+        mid = (lo + hi) / 2
+        if call_price(S, K, T, mid, r) > price:
+            hi = mid
+        else:
+            lo = mid
+    return round((lo + hi) / 2 * 100, 1)
+
+
+def option_detail(row):
+    """Sessions from entry to expiration, and implied volatility at entry (from the raw traded price)."""
+    try:
+        entry_date, expiration = row["entry_date"], row["expiration"]
+        sess = sessions_until(entry_date, expiration)
+        raw = float(row["entry_price"]) / (1 + LADDER_COST)
+        days = (dt.date.fromisoformat(expiration[:10]) - dt.date.fromisoformat(entry_date[:10])).days
+        iv = implied_vol(raw, float(row["stock_close"]), float(row["strike"]), max(days, 0.5) / 365)
+        return [sess, iv]
+    except (KeyError, ValueError, TypeError):
+        return [None, None]
+
+
 def vwap_features(closes, vwaps, volumes, i, n=20):
     """Close versus the day's volume-weighted average price (buyers paying up into the close), and
     versus the 20-session volume-weighted average (where recent volume actually traded)."""
@@ -353,7 +409,7 @@ def build_pool(args):
         cell = f"{int(float(r['target_dte']))}d+{float(r['target_otm_pct']):g}"
         options.setdefault(k, {})[cell] = realistic_cell(
             float(r["entry_price"]), float(r["stock_close"]), C.to_float(r["ret_hold10_pct"]),
-            C.to_float(r["ret_double_or_10_pct"])) if ok else None
+            C.to_float(r["ret_double_or_10_pct"])) + option_detail(r) if ok else None
     import news as N
     nidx = N.Index(st, {t for _, t, _ in picked}) if st.backend.read("news_fetched") else None
     out = []
@@ -390,16 +446,31 @@ def build_pool(args):
     print(f"Candidates per bundle: {per_bundle}")
 
 
+def add_vol_columns(f, o):
+    """Implied volatility of the ~30-day at-the-money call, realized volatility (both annualized), and
+    their ratio: above 1 means options are priced for bigger moves than the stock has been making."""
+    atm = o.get("30d+0") or o.get("90d+0") or {}
+    iv = atm.get("iv")
+    rv = f.get("vol20_pct")
+    rv = round(float(rv) * math.sqrt(252), 1) if rv not in (None, "") else None
+    f["iv30_atm"] = iv
+    f["rv20_ann"] = rv
+    f["iv_rv"] = round(iv / rv, 2) if iv and rv else None
+
+
 def load_pool(st):
     pool = []
     for r in st.backend.read("pool"):
         o = {}
         for k, v in json.loads(r["options"]).items():
             if v:
-                o[k] = {"cost_pct": v[0], "hold10": v[1], "double_or_10": v[2]}
+                o[k] = {"cost_pct": v[0], "hold10": v[1], "double_or_10": v[2],
+                        "sessions": v[3] if len(v) > 3 else None, "iv": v[4] if len(v) > 4 else None}
+        f = json.loads(r["features"])
+        add_vol_columns(f, o)
         pool.append({"ticker": r["ticker"], "date": r["signal_date"], "bundle": int(r["bundle"]),
                      "split": r["split"], "week": r["week"], "month": r["month"],
-                     "f": json.loads(r["features"]), "o": o, "shares": float(r["shares_ret10"]),
+                     "f": f, "o": o, "shares": float(r["shares_ret10"]),
                      "universe": r.get("universe") or "movers"})
     return pool
 
@@ -612,7 +683,20 @@ price; a 5% cost applies to each side of an option trade and 0.1% to each side o
 Stocks are anonymous codes and time is shown only as week numbers, on purpose: judge only from the
 numbers. Columns:
 {defs}
-- option grid: the cost of each call as a percent of the stock price
+- option grid: the cost of each call as a percent of the stock price, and how many trading sessions
+  until that expiration ("14d", "30d", "90d" are the nearest listed expirations, which can be shorter)
+
+ANSWERS TO QUESTIONS EARLIER TRADERS RAISED:
+- The -100% results on stocks that rose: those calls expired during the 10-session hold. An option that
+  expires at or before session 10 is settled at its exercise value (zero if the stock is below the strike),
+  even if it was worth a lot a few days earlier. The grid now shows sessions until expiration; check it.
+- Trading costs ARE included everywhere, including the scorebook: each side of an option trade costs 5%
+  or $0.05 a share, whichever is larger (much more than 5% on cheap options).
+- Implied volatility is now provided (columns "iv %", "realized vol %", "iv/realized"), and each trade
+  result shows what the option cost, its implied volatility, its expiry and the stock's own move.
+- At each bundle review you now get the full-bundle tables: every column split into fifths, with how the
+  stocks did, and how calls did by implied volatility.
+- Puts and short selling are not available in this test. Data is daily closing data only.
 
 Think it through silently, then reply with ONE compact JSON object and nothing else:
 {{"ratings": {{"C1": 1, "C2": -2, "C3": 0}}, "picks": [{example}], "why": "under 25 words"}}
@@ -732,7 +816,7 @@ class Walk:
                                      f"- {t['code']} {A.describe_pick(t)}: calls {A.fmt(t['f'].get('call_volume_spike'))}x, "
                                      f"shares {A.fmt(t['f'].get('stock_volume_spike'))}x, 5d {A.fmt(t['f'].get('ret_5d_pct'), '{:+.1f}')}%, "
                                      f"vs ma20 {A.fmt(t['f'].get('vs_ma20_pct'), '{:+.1f}')}%, rsi {A.fmt(t['f'].get('rsi14'), '{:.0f}')} "
-                                     f"-> {t['ret_pct']:+.1f}%" for t in shown[-10:]))
+                                     f"-> {t['ret_pct']:+.1f}%{trade_detail(t)}" for t in shown[-10:]))
             parts.append(f"{label}, week {n} of {len(weeks)}. Candidates:\n{A.candidate_table(cands)}")
             try:
                 reply = self.llm.chat([{"role": "system", "content": system},
@@ -782,9 +866,11 @@ class Walk:
                 if r is None:
                     continue
                 used.add(c["id"])
+                cell = c["o"].get(f"{spec['expiry']}d+{spec['strike_pct']:g}") if spec["action"] == "call" else None
                 self.trades.append(dict(spec, run_id=self.run_id, week_index=wi, week=wk, cand_id=c["id"],
                                         code=c["code"], ticker=c["ticker"], signal_date=c["date"],
-                                        ret_pct=round(r, 2), f=c["f"], reason=why[:300], bundle=c["bundle"]))
+                                        ret_pct=round(r, 2), f=c["f"], reason=why[:300], bundle=c["bundle"],
+                                        stock_ret=c["shares"], opt=cell or {}))
             self.week_rows.append({"run_id": self.run_id, "week_index": wi, "picks": len(used),
                                    "finish": self.llm.last_finish, "readable": "yes" if ok else "no",
                                    "why": (f"[{label}] " + (why if ok else "(unreadable) " + (reply or "")))[:500]})
@@ -814,6 +900,57 @@ def feature_line(f):
     return ", ".join(f"{label} {A.fmt(f.get(k), '{:.1f}') if k != 'price_band' else f.get(k)}" for k, label, _ in A.FEATURES)
 
 
+def trade_detail(t):
+    """What the option cost and assumed, and what the stock itself did, for one trade."""
+    o, bits = t.get("opt") or {}, []
+    if o.get("cost_pct"):
+        bits.append(f"paid {o['cost_pct']:.1f}% of the price")
+    if o.get("iv"):
+        bits.append(f"iv {o['iv']:.0f}%")
+    if o.get("sessions") is not None:
+        s = o["sessions"]
+        bits.append(f"expired at session {s}, settled at exercise value" if s <= 10 else f"{s} sessions to expiry")
+    if t.get("stock_ret") is not None:
+        bits.append(f"stock {t['stock_ret']:+.1f}%")
+    return f" ({'; '.join(bits)})" if bits else ""
+
+
+def bundle_tables(cands):
+    """The full-bundle view earlier traders asked for, computed by code: for each column, how the
+    stocks in each fifth did over the next 10 sessions; and how 30-day at-the-money calls did by
+    implied volatility and by implied/realized ratio."""
+    if len(cands) < 50:
+        return []
+    out = [f"All {len(cands)} candidates in this bundle, split into fifths by each column (lowest to highest). "
+           "Each cell: the column's range, then the stock's median 10-session return and % of stocks that rose:"]
+    for key, label, _ in A.FEATURES:
+        if key == "price_band":
+            continue
+        vals = [(float(c["f"][key]), c["shares"]) for c in cands if c["f"].get(key) not in (None, "")]
+        if len(vals) < 50 or len({v for v, _ in vals}) < 5:
+            continue
+        vals.sort()
+        cells = []
+        for q in range(5):
+            part = vals[q * len(vals) // 5:(q + 1) * len(vals) // 5]
+            r = [x for _, x in part]
+            cells.append(f"{part[0][0]:.4g} to {part[-1][0]:.4g}: {statistics.median(r):+.1f}%, {100 * sum(x > 0 for x in r) / len(r):.0f}% up")
+        out.append(f"- {label}: " + " | ".join(cells))
+    for key, label in (("iv30_atm", "implied volatility"), ("iv_rv", "implied/realized ratio")):
+        pts = [(float(c["f"][key]), c["o"]["30d+0"]["hold10"]) for c in cands
+               if c["f"].get(key) not in (None, "") and (c["o"].get("30d+0") or {}).get("hold10") is not None]
+        if len(pts) < 50:
+            continue
+        pts.sort()
+        cells = []
+        for q in range(5):
+            part = pts[q * len(pts) // 5:(q + 1) * len(pts) // 5]
+            r = [x for _, x in part]
+            cells.append(f"{part[0][0]:.3g} to {part[-1][0]:.3g}: avg {statistics.mean(r):+.0f}%, median {statistics.median(r):+.0f}%")
+        out.append(f"30-day at-the-money call, held 10 sessions, by {label}: " + " | ".join(cells))
+    return out
+
+
 def bundle_review(trades, ratings, cands=()):
     rets = [t["ret_pct"] for t in trades]
     lines = []
@@ -840,7 +977,7 @@ def bundle_review(trades, ratings, cands=()):
         lines.append("Your worst and best trades (what you saw -> result):")
         for t in sample:
             f = t["f"]
-            lines.append(f"- {A.describe_pick(t)}: {feature_line(f)} -> {t['ret_pct']:+.1f}%")
+            lines.append(f"- {A.describe_pick(t)}: {feature_line(f)} -> {t['ret_pct']:+.1f}%{trade_detail(t)}")
     # What the whole bundle looked like, traded or not: the biggest winners and losers among every
     # candidate shown, with the numbers seen beforehand and the rating given. This is the richest
     # evidence for finding a pattern, especially for a trader who made few trades.
@@ -856,6 +993,7 @@ def bundle_review(trades, ratings, cands=()):
             r = rated.get((c["ticker"], c["date"]))
             lines.append(f"- {feature_line(c['f'])}; you rated {'not rated' if r is None else f'{r:+d}'} "
                          f"-> stock {c['shares']:+.1f}%")
+    lines += bundle_tables(list(cands))
     return "\n".join(lines)
 
 
@@ -943,6 +1081,29 @@ def blind_run(gen, llm_for, notes, scorebook, pool, bundles, split, phase, deadl
 
 
 # ---------------------------------------------------------------- one generation
+def redesign(llm, gen, agent_outputs, ed_notes):
+    """Ask the editor, with every trader's notes in view, how it would remake the test itself."""
+    parts = [f"=== Agent {a}'s final notes ===\n{notes.strip()}" for a, (notes, _) in sorted(agent_outputs.items())]
+    parts.append(f"=== Your playbook for the next generation ===\n{ed_notes.strip()}")
+    prompt = "\n\n".join(parts) + """
+
+Step outside the game. You and these traders have been working inside a test built by humans: anonymous
+stocks, hidden dates, weekly batches of about 10 candidates, calls only (14, 30 or 90 days; at the money to
+20% above), a fixed 10-session hold, daily data, the columns you were given, and a code scorebook.
+
+The humans will run a few more generations with whatever changes you recommend. Write a redesign proposal:
+1. WHAT BLOCKED YOU: the specific limits of this test that most stopped the traders from finding or
+   proving an edge. Quote the traders' own complaints where they apply.
+2. DATA TO ADD: columns or information you need, and exactly what each would let you test.
+3. TOOLS AND INSTRUMENTS: trade types, exits, holding periods, or analysis tools you need.
+4. CHANGES TO THE TEST ITSELF: how candidates are chosen, how much is shown, how results are fed back,
+   how rules are scored.
+5. THE FIRST THREE EXPERIMENTS you would run in the redesigned test, each stated as a testable rule.
+Rank items by how much they would help. Be concrete and brief; say what is realistic from daily US stock
+and options data. Plain prose and lists."""
+    return llm.chat([{"role": "user", "content": prompt}], max_tokens=4000) or ""
+
+
 def editor(llm, gen, prev_notes, agent_outputs, book_lines):
     parts = [f"Notes the committee started this generation with:\n{prev_notes.strip() or '(none: first generation)'}"]
     for a, (notes, rules) in sorted(agent_outputs.items()):
@@ -1042,6 +1203,10 @@ def run_generation(st, args, pool, deadline, pot):
               f"{len(rules)} rules, {walk.bad}/{walk.replies} unreadable")
     ed = pot.llm(getattr(args, "editor_model", None) or args.model)   # the editor's judgment matters most
     ed_notes, ed_rules = editor(ed, gen, notes, agent_out, lines)
+    try:
+        proposal = redesign(ed, gen, agent_out, ed_notes)
+    except Exception as ex:   # noqa: BLE001 - a nice-to-have; never lose a generation over it
+        proposal = f"(redesign proposal failed: {type(ex).__name__}: {str(ex)[:200]})"
     rows, ed_lines = book_rows(gen, "editor", "train", ed_rules, train_cands)
     book += rows
     srows, s_lines = book_rows(gen, "editor", "score", ed_rules, score_cands)
@@ -1077,6 +1242,9 @@ def run_generation(st, args, pool, deadline, pot):
     notes_rows.append({"lineage": CFG["lineage"], "generation": gen, "author": "editor",
                        "model": getattr(args, "editor_model", None) or args.model, "text": ed_notes,
                        "rules": json.dumps(ed_rules), "created": now})
+    notes_rows.append({"lineage": CFG["lineage"], "generation": gen, "author": "redesign",
+                       "model": getattr(args, "editor_model", None) or args.model, "text": proposal,
+                       "rules": "[]", "created": now})
     st.backend.upsert("committee_notes", notes_rows)
     print(f"Generation {gen} done: scoring run {sc['trades']} trades, profit ${sc['profit_usd']:+,.0f} "
           f"(random ${sc['baseline_profit_usd'] or 0:+,.0f}), rating correlation {sc.get('rating_corr')} "
@@ -1470,10 +1638,12 @@ def report(args=None):
                 L += [f"### {title}", ""]
                 L += [scorebook_line(json.loads(b["rule"]), stats_of(b)) for b in rows]
                 L.append("")
+        order = {"editor": 0, "redesign": 1}
         for n in sorted((n for n in notes if int(n["generation"]) == g),
-                        key=lambda n: (n["author"] != "editor", n["author"])):
-            who = "Editor's notes (passed to the next generation)" if n["author"] == "editor" else \
-                f"Agent {n['author'][-1]}'s final notes (not passed on)"
+                        key=lambda n: (order.get(n["author"], 2), n["author"])):
+            who = {"editor": "Editor's notes (passed to the next generation)",
+                   "redesign": "How the committee would remake the test (not passed on)"}.get(
+                n["author"], f"Agent {n['author'][-1]}'s final notes (not passed on)")
             L += [f"### {who}", "", n["text"] or "(empty)", ""]
     err = os.path.join(C.ROOT, "committee_error.txt")
     if os.path.exists(err):

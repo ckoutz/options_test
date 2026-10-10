@@ -411,11 +411,15 @@ def smoke(n):
               ("place_order", {"symbol": "AAPL", "side": "buy", "qty": 1, "order_type": "limit", "limit_price": 1.0,
                                "strategy": "smoke", "reason": "smoke test", "exit_plan": "smoke test"})]
     ok = True
+    out = [f"# Paper tools smoke test ({dt.datetime.now(dt.timezone.utc):%Y-%m-%d %H:%M} UTC)", "",
+           f"Market snapshot: {snap['meta']}", ""]
     for name, args in checks:
         res = TL.call(n, name, args)
         bad = isinstance(res, dict) and ("error" in res)
         ok &= not bad
-        print(f"{'FAIL' if bad else 'ok  '} {name}: {json.dumps(res, default=str)[:400]}")
+        line = f"{'FAIL' if bad else 'ok'} **{name}**: `{json.dumps(res, default=str)[:600]}`"
+        print(line)
+        out.append("- " + line)
     chain = TL.call(n, "option_chain", {"symbol": "AAPL", "min_days": 30, "max_days": 60, "strike_range_pct": 3})
     rows = chain.get("rows") or []
     if rows:
@@ -424,7 +428,12 @@ def smoke(n):
                                          "limit_price": c.get("mid") or 1.0, "strategy": "smoke",
                                          "reason": "smoke test", "exit_plan": "smoke test"})
         print(f"option order check: {json.dumps(res)[:400]}")
-    C.run_log("paper-smoke", "all tools answered" if ok else "some tools failed (see the job output)")
+        out.append(f"- option order check ({c['contract']}): `{json.dumps(res)[:600]}`")
+    out.append("")
+    out.append("ALL OK" if ok else "SOME FAILED")
+    with open(os.path.join(C.ROOT, "PAPER_SMOKE.md"), "w") as f:
+        f.write("\n".join(out) + "\n")
+    C.run_log("paper-smoke", "all tools answered" if ok else "some tools failed")
     print("ALL OK" if ok else "SOME FAILED")
 
 

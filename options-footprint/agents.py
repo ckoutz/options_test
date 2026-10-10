@@ -102,6 +102,7 @@ FEATURES = [  # (key in the arena, label shown to the agent, meaning)
     ("iv_rv", "iv/realized", "implied ÷ realized volatility: above 1 = options priced for bigger moves than the stock has been making (expensive), below 1 = cheap"),
 ]
 TECHNICALS = ("ret_20d_pct", "vs_ma20_pct", "vs_ma50_pct", "from_high60_pct", "rsi14")
+HOLD_SESSIONS = 10              # every option trade is held 10 sessions (or less with double_or_10)
 TRADE_USD = 1000                  # every trade is the same size, so profit = return x $10
 LINEAGE_VERSION = "-v2"           # v1 runs (truncated replies, no trades) stay in the tables, kept apart
 
@@ -442,6 +443,9 @@ def candidate_table(cands):
                 o = c["o"].get(f"{e}d+{s:g}") or {}
                 sess = sess or o.get("sessions")
                 cells.append(f"+{s:g}%:{fmt(o.get('cost_pct'), '{:.1f}') if o.get('cost_pct') else 'n/a'}")
+            if sess is not None and sess <= HOLD_SESSIONS:
+                grid.append(f"{e}d [expires in {sess} sessions, during the hold: not offered]")
+                continue
             when = f" [expires in {sess} sessions]" if sess else ""
             grid.append(f"{e}d{when} " + " ".join(cells))
         lines.append("     option grid (cost % of price): " + " / ".join(grid))
@@ -461,6 +465,8 @@ def trade_return(cand, action, expiry=None, strike=None, exit_rule=None):
     o = cand["o"].get(f"{expiry}d+{float(strike):g}") or {}
     if not o.get("cost_pct"):
         return None
+    if o.get("sessions") is not None and o["sessions"] <= HOLD_SESSIONS:
+        return None          # it would expire during the 10-session hold: not offered
     return o.get(exit_rule)
 
 

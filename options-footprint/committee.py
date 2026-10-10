@@ -646,6 +646,23 @@ class TimeUp(Exception):
 
 
 # ---------------------------------------------------------------- prompts
+ANSWERS = """ANSWERS TO QUESTIONS EARLIER TRADERS RAISED (facts about this test, from the people who run it):
+- The -100% results on stocks that rose: those calls expired during the 10-session hold and were settled
+  at exercise value (zero if the stock was below the strike). Contracts that expire during the hold are
+  now NOT OFFERED at all (the grid marks them), and the scorebook skips them too. Old results that
+  included them are history.
+- Trading costs ARE included everywhere, including the scorebook and every benchmark: each side of an
+  option trade costs 5% or $0.05 a share, whichever is larger (much more than 5% on cheap options).
+- Implied volatility is provided (columns "iv %", "realized vol %", "iv/realized"), and each trade result
+  shows what the option cost, its implied volatility, its expiry and the stock's own move.
+- The market columns ("market 5d %", "market 20d %") are filled for every candidate.
+- At each bundle review you get the full-bundle tables (every column in fifths, with how the stocks did,
+  and how calls did by implied volatility), and you can submit up to 3 rules for the code to check on
+  every candidate in the bundles you have finished.
+- Puts, short selling, spreads and in-the-money calls are not available in this test. Data is daily
+  closing data only; there are no earnings dates and no daily option price path.
+"""
+
 COLUMN_LIST = ", ".join(f'"{label}"' for _, label, _ in A.FEATURES)
 
 
@@ -697,18 +714,7 @@ numbers. Columns:
 - option grid: the cost of each call as a percent of the stock price, and how many trading sessions
   until that expiration ("14d", "30d", "90d" are the nearest listed expirations, which can be shorter)
 
-ANSWERS TO QUESTIONS EARLIER TRADERS RAISED:
-- The -100% results on stocks that rose: those calls expired during the 10-session hold. An option that
-  expires at or before session 10 is settled at its exercise value (zero if the stock is below the strike),
-  even if it was worth a lot a few days earlier. The grid now shows sessions until expiration; check it.
-- Trading costs ARE included everywhere, including the scorebook: each side of an option trade costs 5%
-  or $0.05 a share, whichever is larger (much more than 5% on cheap options).
-- Implied volatility is now provided (columns "iv %", "realized vol %", "iv/realized"), and each trade
-  result shows what the option cost, its implied volatility, its expiry and the stock's own move.
-- At each bundle review you now get the full-bundle tables: every column split into fifths, with how the
-  stocks did, and how calls did by implied volatility.
-- Puts and short selling are not available in this test. Data is daily closing data only.
-
+{ANSWERS}
 Think it through silently, then reply with ONE compact JSON object and nothing else:
 {{"ratings": {{"C1": 1, "C2": -2, "C3": 0}}, "picks": [{example}], "why": "under 25 words"}}
 Rate every candidate.""" + ("" if phase == "train" else ' Use "picks": [] to buy nothing this week.')
@@ -1008,10 +1014,54 @@ def bundle_review(trades, ratings, cands=()):
     return "\n".join(lines)
 
 
+CHECKS_PER_BUNDLE = 3
+
+
+def rule_checks(llm, walk, review, working, finished):
+    """Let the trader test up to 3 rules of its own on every candidate in the bundles it has finished
+    (never on stocks it has not reached, never on blind months). Every check is counted."""
+    prompt = f"""You just finished a bundle. Your review:
+
+{review}
+
+Your working notes:
+{working.strip() or '(none)'}
+
+Before you rewrite your notes, you may ask the code to check up to {CHECKS_PER_BUNDLE} rules. Each is scored on
+EVERY candidate in all the bundles you have finished so far ({len(finished)} stock-days), not just the ones you
+traded: how many passed, their average and median return, the range, and how buying every candidate the
+same way did. Use checks to test a gate you are unsure of. Each check is counted and reported to the editor:
+many checks on the same data make lucky rules more likely, so check what you would actually trade.
+
+Reply with JSON only (use "rules": [] to skip):
+{{"rules": [{{"name": "short name", "when": [{{"col": "calls 20d", "op": ">", "value": 1.5}}], "buy": "stock"}},
+           {{"name": "short name", "when": [{{"col": "rsi", "op": ">", "value": 70}}], "buy": "call", "expiry": 90, "strike": 0, "exit": "hold10"}}]}}
+"buy": "stock" shows the stock's own 10-session return for the passers (useful even when you trade calls).
+Columns (exact names): {COLUMN_LIST}. Operators: >, >=, <, <=. The "price" column uses "=" with "<$10",
+"$10-50" or ">$50". Each rule has 1 to 4 conditions."""
+    try:
+        data = A.parse_json(llm.chat([{"role": "user", "content": prompt}], max_tokens=2000))
+    except RuntimeError:
+        return ""
+    saved = CFG["options_only"]
+    CFG["options_only"] = False          # stock checks are allowed even in a calls-only committee
+    try:
+        rules = clean_rules(data.get("rules") if isinstance(data, dict) else None)[:CHECKS_PER_BUNDLE]
+    finally:
+        CFG["options_only"] = saved
+    if not rules:
+        return ""
+    walk.checks = getattr(walk, "checks", 0) + len(rules)
+    lines = [scorebook_line(r, score_rule(r, finished)) for r in rules]
+    return (f"\n\nRULE CHECKS YOU ASKED FOR (scored by code on all {len(finished)} candidates in the bundles you have "
+            f"finished; {walk.checks} checks so far this generation):\n" + "\n".join(lines))
+
+
 def agent_train(gen, agent, llm, notes, scorebook, pool, order, fraction, deadline):
     run_id = f"committee-g{gen}-agent{agent}-train-{dt.datetime.now(dt.timezone.utc):%Y%m%d%H%M%S}"
     walk = Walk(run_id, llm, "train", deadline)
     working = notes
+    finished = []
     for k, b in enumerate(order, 1):
         cands = [c for c in pool if c["bundle"] == b and c["split"] == "train"]
         weeks = sorted({c["week"] for c in cands})
@@ -1024,6 +1074,8 @@ def agent_train(gen, agent, llm, notes, scorebook, pool, order, fraction, deadli
         before = len(walk.ratings)
         trades = walk.bundle(by_week, working, scorebook, label)
         review = bundle_review(trades, walk.ratings[before:], [c for wk in by_week.values() for c in wk])
+        finished += cands
+        review += rule_checks(llm, walk, review, working, finished)
         last = k == len(order)
         prompt = f"""You finished {label.lower()} (a fresh group of stocks you had not seen). Here is how you did.
 
@@ -1056,6 +1108,8 @@ What the columns mean:
     reply = llm.chat([{"role": "user", "content": f"Your final notes:\n{working}\n\n{rules_prompt()}"}], max_tokens=3000)
     data = A.parse_json(reply)
     rules = clean_rules(data.get("rules") if isinstance(data, dict) else None)
+    working += (f"\n\n(Recorded by the system: this trader ran {getattr(walk, 'checks', 0)} rule checks on its "
+                "finished bundles during this generation. More checks mean more chances for a lucky rule.)")
     return walk, working, rules
 
 
@@ -1096,8 +1150,7 @@ def redesign(llm, gen, agent_outputs, ed_notes):
     """Ask the editor, with every trader's notes in view, how it would remake the test itself."""
     parts = [f"=== Agent {a}'s final notes ===\n{notes.strip()}" for a, (notes, _) in sorted(agent_outputs.items())]
     parts.append(f"=== Your playbook for the next generation ===\n{ed_notes.strip()}")
-    prompt = "\n\n".join(parts) + """
-
+    prompt = "\n\n".join(parts) + "\n\n" + ANSWERS + """
 Step outside the game. You and these traders have been working inside a test built by humans: anonymous
 stocks, hidden dates, weekly batches of about 10 candidates, calls only (14, 30 or 90 days; at the money to
 20% above), a fixed 10-session hold, daily data, the columns you were given, and a code scorebook.
@@ -1120,8 +1173,7 @@ def editor(llm, gen, prev_notes, agent_outputs, book_lines):
     for a, (notes, rules) in sorted(agent_outputs.items()):
         parts.append(f"=== Agent {a}'s final notes ===\n{notes.strip()}\n\nAgent {a}'s rules, as tested by code on ALL "
                      f"training candidates in all six bundles:\n" + ("\n".join(book_lines[a]) or "(no testable rules)"))
-    prompt = "\n\n".join(parts) + """
-
+    prompt = "\n\n".join(parts) + "\n\n" + ANSWERS + """
 You are the committee editor. Four traders worked independently on the same stocks and weeks, each
 developing its own strategy. Write the playbook the next generation will start from; it will see ONLY your notes and the code-tested scorebook of
 the rules you state next, never these traders' notes or trades.

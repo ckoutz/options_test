@@ -1,14 +1,34 @@
 name: Paper traders
 
+# Three AI agents trade Alpaca paper accounts once a day, after the nightly data job (see paper/trader.py).
 on:
+  schedule:
+    - cron: "15 3 * * 2-6"     # 03:15 UTC Tuesday-Saturday = after each weekday's close and nightly data
   workflow_dispatch:
     inputs:
       command:
         description: "What to run"
         type: choice
-        default: check
+        default: smoke
         options:
+          - smoke
           - check
+          - dry-run
+          - day
+          - report
+          - respond
+      agents:
+        description: "Which agents (day / dry-run), e.g. 1,2,3"
+        default: "1,2,3"
+      request_id:
+        description: "respond: the request id"
+        default: ""
+      status:
+        description: "respond: approved, denied or pending"
+        default: approved
+      response:
+        description: "respond: your answer to the agent"
+        default: ""
 
 permissions:
   contents: write
@@ -20,35 +40,63 @@ concurrency:
 jobs:
   paper:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 120
     defaults:
       run:
         working-directory: options-footprint
     env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      ALPACA_KEY_ID: ${{ secrets.ALPACA_KEY_ID }}
+      ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
       PAPER1_KEY_ID: ${{ secrets.PAPER1_KEY_ID }}
       PAPER1_SECRET: ${{ secrets.PAPER1_SECRET }}
       PAPER2_KEY_ID: ${{ secrets.PAPER2_KEY_ID }}
       PAPER2_SECRET: ${{ secrets.PAPER2_SECRET }}
       PAPER3_KEY_ID: ${{ secrets.PAPER3_KEY_ID }}
       PAPER3_SECRET: ${{ secrets.PAPER3_SECRET }}
+      LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      LLM_BASE_URL: https://openrouter.ai/api/v1
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Install the database driver
+        run: pip install --quiet "psycopg[binary]"
+      - name: Restore the local copy of the daily table
+        uses: actions/cache/restore@v4
+        with:
+          path: options-footprint/data/daily_mirror.sqlite
+          key: daily-mirror-${{ github.run_id }}
+          restore-keys: daily-mirror-
       - name: Run
+        id: run
         run: |
-          case "${{ github.event.inputs.command }}" in
+          CMD="${{ github.event.inputs.command }}"
+          if [ -z "$CMD" ]; then CMD=day; fi          # the schedule runs the trading day
+          case "$CMD" in
             check) python paper/check.py ;;
+            smoke) python paper/trader.py smoke --agent 3 ;;
+            dry-run) python paper/trader.py day --agents "${{ github.event.inputs.agents || '1,2,3' }}" --dry-run ;;
+            day) python paper/trader.py day --agents "${{ github.event.inputs.agents || '1,2,3' }}" ;;
+            report) python paper/trader.py report ;;
+            respond) python paper/trader.py respond --id "${{ github.event.inputs.request_id }}" \
+                       --status "${{ github.event.inputs.status }}" --response "${{ github.event.inputs.response }}" ;;
           esac
-      - name: Commit the report
+      - name: Save the local copy of the daily table
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: options-footprint/data/daily_mirror.sqlite
+          key: daily-mirror-${{ github.run_id }}
+      - name: Commit the reports
         if: always()
         run: |
-          [ -f PAPER_CHECK.md ] || exit 0
+          ls PAPER.md PAPER_CHECK.md 2>/dev/null | grep -q . || exit 0
           git config user.name "options-footprint-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add PAPER_CHECK.md
+          for f in PAPER.md PAPER_CHECK.md; do if [ -f $f ]; then git add $f; fi; done
           git diff --cached --quiet && exit 0
-          git commit -q -m "Paper account check $(date -u '+%Y-%m-%d %H:%M')"
-          for i in 1 2 3; do git pull --rebase -q && git push -q && exit 0; sleep 5; done
+          git commit -q -m "Paper traders $(date -u '+%Y-%m-%d %H:%M')"
+          for i in 1 2 3; do git pull --rebase -q -X theirs && git push -q && exit 0; sleep 5; done
           exit 1

@@ -100,7 +100,28 @@ SCOREBOOK_COLS = {"lineage": T, "generation": I, "author": T, "rule_name": T, "p
 RATING_COLS = {"run_id": T, "ticker": T, "signal_date": D, "rating": I, "shares_ret10": F}
 LESSON_COLS = {"lineage": T, "generation": I, "run_id": T, "model": T, "text": T, "created": T}
 
+# Paper traders: three AI agents trading Alpaca paper accounts (see paper/).
+PAPER_JOURNAL_COLS = {"agent": T, "text": T, "updated": T}
+PAPER_DAY_COLS = {"agent": T, "day": D, "summary": T, "transcript": T, "cost_usd": F, "steps": I, "orders": I,
+                  "finished": T}
+PAPER_REQUEST_COLS = {"id": T, "agent": T, "created": T, "kind": T, "text": T, "status": T, "response": T}
+PAPER_EXPERIMENT_COLS = {"id": T, "agent": T, "created": T, "name": T, "hypothesis": T, "expected": T,
+                         "trades_needed": I, "judge_by": D, "status": T, "result": T}
+PAPER_WATCHLIST_COLS = {"agent": T, "name": T, "symbols": T, "note": T, "updated": T}
+PAPER_EQUITY_COLS = {"agent": T, "day": D, "equity": F, "cash": F, "long_value": F, "short_value": F,
+                     "positions": I, "spy_close": F}
+PAPER_ORDER_COLS = {"id": T, "agent": T, "created": T, "symbol": T, "asset": T, "side": T, "qty": F,
+                    "order_type": T, "limit_price": F, "status": T, "strategy": T, "reason": T,
+                    "exit_plan": T, "rejected": T}
+
 TABLES = {
+    "paper_journal": (PAPER_JOURNAL_COLS, ["agent"]),
+    "paper_days": (PAPER_DAY_COLS, ["agent", "day"]),
+    "paper_requests": (PAPER_REQUEST_COLS, ["id"]),
+    "paper_experiments": (PAPER_EXPERIMENT_COLS, ["id"]),
+    "paper_watchlists": (PAPER_WATCHLIST_COLS, ["agent", "name"]),
+    "paper_equity": (PAPER_EQUITY_COLS, ["agent", "day"]),
+    "paper_orders": (PAPER_ORDER_COLS, ["id"]),
     "events": (EVENT_COLS, ["ticker", "event_date"]),
     "controls": (EVENT_COLS, ["ticker", "event_date"]),
     "daily": (DAILY_COLS, ["ticker", "date"]),
@@ -135,7 +156,11 @@ CSV_FILES = {"events": "events.csv", "controls": "controls.csv", "daily": "daily
              "agent_lessons": "agent_lessons.csv", "agent_weeks": "agent_weeks.csv", "pool": "pool.csv", "committee_notes": "committee_notes.csv",
              "scorebook": "scorebook.csv", "agent_ratings": "agent_ratings.csv",
              "wide_universe": "wide_universe.csv", "bundles": "bundles.csv", "news": "news.csv",
-             "news_fetched": "news_fetched.csv", "run_log": "run_log.csv", "oi_daily": "oi_daily.csv"}
+             "news_fetched": "news_fetched.csv", "run_log": "run_log.csv", "oi_daily": "oi_daily.csv",
+             "paper_journal": "paper_journal.csv", "paper_days": "paper_days.csv",
+             "paper_requests": "paper_requests.csv", "paper_experiments": "paper_experiments.csv",
+             "paper_watchlists": "paper_watchlists.csv", "paper_equity": "paper_equity.csv",
+             "paper_orders": "paper_orders.csv"}
 
 
 def _to_db(value, kind):

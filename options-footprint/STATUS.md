@@ -1,4 +1,4 @@
-# Status (2026-10-09 20:58 UTC, storage: postgres)
+# Status (2026-10-10 01:11 UTC, storage: postgres)
 
 ## Backfill
 - Big moves logged: 5,384 across 1,650 stocks
@@ -30,7 +30,7 @@
 - wide_universe: 0 MB, about 300 rows
 - errors: 0 MB, about 151 rows
 - signal_report: 0 MB, about 36 rows
-- agent_runs: 0 MB, about 32 rows
+- agent_runs: 0 MB, about 33 rows
 - run_log: 0 MB, about 36 rows
 - agent_lessons: 0 MB, about 4 rows
 
@@ -122,6 +122,7 @@
 | gen10 | 2 | train | anthropic/claude-haiku-5.5 | 217 | -49754.9 | -39168.5 | -22.93 | -41.66 | 25.3 | -18.05 | 28.4 | 16/151 | 0.3598 | complete |
 | gen10 | 2 | train | anthropic/claude-haiku-5.5 | 237 | -50255.2 | -22443.9 | -21.2 | -36.32 | 27.8 | -9.47 | 33.7 | 12/151 | 0.3613 | complete |
 | gen10 | 2 | score | anthropic/claude-haiku-5.5 | 179 | -21569.5 | -23771.2 | -12.05 | -24.75 | 30.7 | -13.28 | 29.9 | 42/144 | 0.5312 | complete |
+| gen10 | 3 | unfinished | anthropic/claude-haiku-5.5 |  |  |  |  |  |  |  |  |  | 1.1656 | error: RuntimeError: model replies unreadable (4/6): '(empty reply)' |
 
 ### Latest lessons: blank lineage, generation 3 (anthropic/claude-haiku-5.5)
 

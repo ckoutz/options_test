@@ -1,6 +1,6 @@
-# Committee generations (2026-10-10 05:34 UTC)
+# Committee generations (2026-10-10 06:51 UTC)
 
-Total spent on all agent runs: $24.97. Candidate pool: {'train': 2998, 'score': 1439, 'holdout': 2000, 'test': 2720}.
+Total spent on all agent runs: $28.36. Candidate pool: {'train': 2998, 'score': 1439, 'holdout': 2000, 'test': 2720}.
 
 Four agents train independently on six stock bundles; code scores their rules; an editor writes the
 notes passed on. The scoring run trades blind months with the editor's notes. "Random" makes the same
@@ -47,12 +47,17 @@ rating go with a better 10-session stock return (0 = no skill, ranges are 95%). 
 | 7 | agent3 | train | 249 | -34650.1 | -31896.9 | -13.92 | 27.3 | -0.005 (-0.066 to 0.057) | 0.11 | 0.17 | 5/151 | 0.5417 |
 | 7 | agent4 | train | 275 | 863.7 | -14437.5 | 0.31 | 30.9 | 0.027 (-0.04 to 0.097) | 0.64 | -0.15 | 4/151 | 0.4951 |
 | 7 | scorer | score | 306 | -39772.9 | -69768.0 | -13.0 | 28.1 | -0.042 (-0.095 to 0.027) | -0.19 | 1.55 | 6/144 | 1.507 |
+| 8 | agent1 | train | 217 | -35128.0 | -28904.4 | -16.19 | 27.2 | 0.02 (-0.027 to 0.065) | 0.47 | 1.29 | 4/151 | 0.5699 |
+| 8 | agent2 | train | 216 | -35580.8 | -23565.6 | -16.47 | 32.9 | 0.006 (-0.039 to 0.05) | -0.38 | 1.29 | 6/151 | 0.5341 |
+| 8 | agent3 | train | 221 | -23813.0 | -26497.9 | -10.78 | 31.2 | 0.001 (-0.045 to 0.047) | 0.33 | 1.33 | 6/151 | 0.5498 |
+| 8 | agent4 | train | 209 | -38706.9 | -26187.7 | -18.52 | 28.7 | -0.005 (-0.051 to 0.037) | -0.92 | 1.56 | 6/151 | 0.7127 |
+| 8 | scorer | score | 110 | -24033.2 | -25938.0 | -21.85 | 27.3 | -0.005 (-0.072 to 0.07) | 0.73 | 0.69 | 3/144 | 1.0273 |
 
 ## Luck check
 
-- Different rules tested on training data so far: 223 (by the agents and the editor).
-- Editor rules checked on the blind months: 54; passed clearly (whole 95% range above buying everything the same way): 0.
-- Expected to pass by luck alone: about 1.4. Treat a pass as real only if it clearly beats that count and the rule keeps passing in later generations.
+- Different rules tested on training data so far: 259 (by the agents and the editor).
+- Editor rules checked on the blind months: 62; passed clearly (whole 95% range above buying everything the same way): 0.
+- Expected to pass by luck alone: about 1.6. Treat a pass as real only if it clearly beats that count and the rule keeps passing in later generations.
 
 ## Blind scoring trades by list (hindsight check)
 
@@ -76,6 +81,1249 @@ Random = the same kind of trades on random candidates from the same list in the 
 | 6 | wide (honest) | 130 | -26.68 | -30.99 | -34,687 | -40,282 |
 | 7 | big movers (hindsight) | 170 | -1.62 | -14.86 | -2,748 | -25,260 |
 | 7 | wide (honest) | 136 | -27.22 | -28.76 | -37,025 | -39,120 |
+| 8 | big movers (hindsight) | 75 | -14.68 | -10.78 | -11,007 | -8,087 |
+| 8 | wide (honest) | 35 | -37.22 | -32.57 | -13,026 | -11,400 |
+
+## Generation 8
+
+### Editor's rules, tested on all training months and bundles
+
+- R1-$50 overbought heavy calls up-market (when price = >$50 and rsi > 70 and calls 20d > 2 and market 20d % > 0: buy the 30-day call 5% above the price, exit hold10): matched no tradable training candidates.
+- R1 overbought sustained calls (when rsi > 70 and calls 20d > 2: buy the 30-day call 5% above the price, exit hold10): 175 trades, average +34.0% (95% range +6.0% to +63.3%, resampling whole weeks), median -53.4%, 34% winners. Buying every candidate the same way: -12.2%. Beat that in 5 of 6 bundles; first half of the months +62.5%, second half +15.0%.
+- R4 momentum accumulation (when calls 20d >= 1.5 and 20d % >= 10 and vs ma20 % >= 5: buy the 30-day call 5% above the price, exit hold10): 297 trades, average +17.8% (95% range -5.4% to +39.9%, resampling whole weeks), median -50.4%, 33% winners. Buying every candidate the same way: -12.2%. Beat that in 6 of 6 bundles; first half of the months +27.3%, second half +11.1%.
+- R2 momentum run up-market 10% OTM (when 20d % > 20 and vs ma50 % > 15 and market 20d % > 0: buy the 30-day call 10% above the price, exit hold10): matched no tradable training candidates.
+- R3 trend news over $50 (when vs ma50 % > 0 and 20d % > 0 and news tone 7d > 0 and price = >$50: buy the 30-day call 5% above the price, exit hold10): 143 trades, average +23.4% (95% range -6.5% to +58.8%, resampling whole weeks), median -41.3%, 38% winners. Buying every candidate the same way: -12.2%. Beat that in 4 of 6 bundles; first half of the months +23.8%, second half +23.1%.
+- R6 uptrend in rising market (when vs ma50 % > 0 and 20d % > 0 and market 20d % > 0: buy the 30-day call 5% above the price, exit hold10): matched no tradable training candidates.
+- R8 over $50 trend market ATM (when price = >$50 and vs ma50 % > 0 and market 20d % > 0: buy the 30-day call 0% above the price, exit hold10): matched no tradable training candidates.
+- R12 90d stack over $50 (when calls 5d avg > 1 and vs ma50 % > 0 and market 20d % > 0 and price = >$50: buy the 90-day call 10% above the price, exit hold10): matched no tradable training candidates.
+
+### The same rules on the blind scoring months (never shown to agents)
+
+- R1-$50 overbought heavy calls up-market (when price = >$50 and rsi > 70 and calls 20d > 2 and market 20d % > 0: buy the 30-day call 5% above the price, exit hold10): matched no tradable training candidates.
+- R1 overbought sustained calls (when rsi > 70 and calls 20d > 2: buy the 30-day call 5% above the price, exit hold10): 148 trades, average -24.5% (95% range -45.1% to -3.1%, resampling whole weeks), median -59.9%, 26% winners. Buying every candidate the same way: -19.8%. Beat that in 2 of 6 bundles; first half of the months -14.3%, second half -34.8%.
+- R4 momentum accumulation (when calls 20d >= 1.5 and 20d % >= 10 and vs ma20 % >= 5: buy the 30-day call 5% above the price, exit hold10): 225 trades, average -19.4% (95% range -36.0% to -1.5%, resampling whole weeks), median -59.7%, 26% winners. Buying every candidate the same way: -19.8%. Beat that in 3 of 6 bundles; first half of the months -13.2%, second half -26.0%.
+- R2 momentum run up-market 10% OTM (when 20d % > 20 and vs ma50 % > 15 and market 20d % > 0: buy the 30-day call 10% above the price, exit hold10): matched no tradable training candidates.
+- R3 trend news over $50 (when vs ma50 % > 0 and 20d % > 0 and news tone 7d > 0 and price = >$50: buy the 30-day call 5% above the price, exit hold10): 89 trades, average -7.8% (95% range -42.6% to +26.3%, resampling whole weeks), median -56.2%, 28% winners. Buying every candidate the same way: -19.8%. Beat that in 3 of 6 bundles; first half of the months +17.1%, second half -24.8%.
+- R6 uptrend in rising market (when vs ma50 % > 0 and 20d % > 0 and market 20d % > 0: buy the 30-day call 5% above the price, exit hold10): matched no tradable training candidates.
+- R8 over $50 trend market ATM (when price = >$50 and vs ma50 % > 0 and market 20d % > 0: buy the 30-day call 0% above the price, exit hold10): matched no tradable training candidates.
+- R12 90d stack over $50 (when calls 5d avg > 1 and vs ma50 % > 0 and market 20d % > 0 and price = >$50: buy the 90-day call 10% above the price, exit hold10): matched no tradable training candidates.
+
+### Editor's notes (passed to the next generation)
+
+# PLAYBOOK FOR THE NEXT GENERATION (committee edit after six bundles)
+
+**How to read the numbers.** The scorebook figures come from code run on all candidates in all six bundles. Where a trader's figure differs from the scorebook, the scorebook is used.
+- All returns are per-trade option returns on premium. Entry is on the signal day and the exit is after 10 sessions unless stated.
+- "Benchmark" means buying every candidate with the same expiry, strike and exit. "Range" is the 95% range from resampling whole weeks. "Halves" are the first and second half of the sample by month. "x of 6" is the number of bundles in which the rule beat its benchmark.
+- Every rule is written with exact conditions so you can restate it and have it scored.
+- "Expiry/strike" means, for example, "30-day 5% above": the call that expires in about 30 days with a strike 5% above the price.
+
+---
+
+## 0. BOTTOM LINE
+
+**The option wrapper loses. Filters separate the least-bad baskets from the bad ones, and a few filters turn the average positive. No tested rule has a positive median.**
+
+| Structure (buy every candidate, hold 10) | Benchmark average |
+|---|---|
+| 30-day at-the-money (ATM) | -10.9% |
+| 30-day 5% above | -12.2% (median -57.3%, 27% winners, 2,276 trades; halves -11.6% and -12.9%) |
+| 30-day 10% above | -17.7% (median -67.6%, 23% winners, 2,023 trades) |
+| 90-day ATM | -8.4% |
+| 90-day 5% above | -7.4% |
+| 90-day 10% above | -9.7% |
+| 14-day ATM on call-volume surges | -15.2% |
+
+**What the stock itself does.**
+- Over 10 sessions the typical candidate does almost nothing. Stock medians ran from about -1.0% to +0.4% per bundle, and averages were about +1% to +2.5%.
+- Premium is roughly 1% to 6% of the share price (median about 2% to 3%), plus decay. A 30-day call usually needs a +7% to +10% move to pay.
+- Most of the loss is wrapper cost: decay, premium paid on rich days, and strike distance. The stock median is flat while option medians are -15% to -75%.
+
+**What is real, in order of strength.**
+1. **A rising market.** The same rule flips from clearly negative to positive when market 20d % > 0. Every call rule tested with market 20d % < 0 lost 11% to 48%.
+2. **Stock trend and momentum together with the market gate.** The market gate alone is not enough. The up-market non-extended stock (market 20d % > 0, 20d % ≤ 20, vs ma20 % ≤ 10) lost -17.7% over 1,167 trades at 30-day 5% above and beat the benchmark in 1 of 6 bundles.
+3. **Overbought stocks with sustained 20-day call buying** (rsi > 70, calls 20d > 2).
+4. **Price over $50.** It helps at 30-day ATM and out-of-the-money strikes and barely helps at 90-day ATM.
+5. **Recent news.** This is weaker and mostly lowers the loss. See "Stock-level signals the traders found" below.
+
+**What is not real.**
+- Ratings are noise. Four traders found four different "signals" and none held.
+- Close vs VWAP, pullbacks below ma20, rsi bands, IV bands, iv/realized and puts measures showed nothing stable.
+- 5-day call bursts and 14-day expiries are bad.
+
+**Expected payoffs.**
+- The best 30-day out-of-the-money baskets average +15% to +50%, but their medians are -21% to -57% and only 30% to 43% win. These are lottery-ticket baskets, not edges.
+- At 90 days the same filters give only +3% to +7%, with a median of -8% to -16%. That is steadier but small.
+- Any positive average comes from a few large winners. Take every signal that passes and spread premium across many names.
+
+### Where the four traders agreed (and the scorebook backs them)
+- The median option trade loses. Averages depend on a few big winners.
+- 14-day expiries are bad. 30-day ATM and 30-day 10% above ungated lose.
+- Ratings are noise.
+- Do not size up after wins. Use flat, small size.
+- Oversold plus heavy calls is bad.
+- Sub-$10 is erratic and paper-only.
+- **News present beats news absent.** This is a stock-level result in 3 of 3 bundles that were examined, and the scorebook agrees at the option level: buying with no news at 30-day ATM (news 7d ≤ 0 and news 3d ≤ 0) lost -15.3% over 1,095 trades and beat the benchmark in 1 of 6 bundles.
+- Exit marks are suspect. See below.
+
+### Where they disagreed, and what the scorebook says
+- **Market gate.** Every trader reported the market columns as blank and so never tested it. Agent 2 and Agent 1 removed it from their rule lists and Agent 4 logged it only. The scorebook, which can see the column, shows it as the clearest sign flip. **Keep it.** Never trade a call rule when market 20d % < 0.
+- **Stock-level medians versus option results.** The traders found stock-level edges of +1% to +4% (call days 2x+ ≥ 2, news, close ≥ VWAP). The scorebook shows these do not survive the wrapper:
+  - Call days 2x+ ≥ 2 alone at 90-day ATM: 289 trades, **-10.3%**, 2 of 6. It is worse than the benchmark of -8.4%.
+  - Close vs VWAP % ≥ 0.78 at 30-day 5% above: 439 trades, -11.8%, 1 of 6.
+  - Close vs VWAP % ≥ 0.22 at 90-day ATM: 208 trades, -10.4%, 1 of 6.
+  - A stock median of +1% to +2% does not cover the premium.
+- **"Do not chase extension."** Agent 3 and Agent 1 warned against extended names. Scorebook: 5d % > 6 at 30-day 5% above had 552 trades, -0.9%, **6 of 6** vs -12.2%, halves -2.3% and +0.6%. Strong runs beat the baseline, so the warning is unsupported at 30 days. R10 says the same.
+- **Over $50.** Agent 3 doubted it and Agent 2 used it. The scorebook shows it helps.
+- **30-day 10% above.** Ungated it is -17.7% (median -67.6%). Only gated versions work.
+- **90 days.** Agent 2 called 90-day 5% above a failure and Agent 3 dropped 90-day. The scorebook shows a small steady positive only with the trend plus market gate, plus a few near-breakeven 90-day ATM cells (Tier 2).
+- **Verdicts of "no signal."** Several traders closed or paused on extremes lists or single-bundle reads of 3 to 40 trades. Trust the all-candidate scorebook over those reads.
+
+### The exit-quote problem (unresolved, affects every number)
+- Three traders independently flagged -100% exit marks on rising stocks. Examples: a 30-day 5%-above call at -100% on a stock up +6.8%, and a 14-day call at -100% on a stock up +3.3%.
+- Upside marks look credible, because they match intrinsic value. The wipeouts are the suspect marks. If no-bid is recorded as zero, every median here is too pessimistic.
+- The scorebook does not audit quotes and charges no bid-ask spread. Real results would be worse on spreads and better if the zero marks are bad. The sign of the net bias is unknown.
+
+---
+
+## 1. STRATEGY: SETUPS WORTH TRADING (small flat size, or paper)
+
+All rules are bought on the entry day and exited after 10 sessions unless noted.
+- Size so that a -100% loss on every open position is survivable. Do not add after wins.
+- Take every signal that passes rather than cherry-picking. Skipping signals loses the few big winners that make the average.
+- **The rules overlap heavily.** They pick up the same trending, overbought, up-market names. Do not count them as independent confirmations.
+
+### 1A. Tier 1: positive average, large n, beat the benchmark in most bundles
+
+**R1. Overbought with sustained call buying, 30-day 5% above** (best statistics at large n)
+- Rule: rsi > 70 and calls 20d > 2.
+- Scorebook: 175 trades, average **+34.0%** (range +1.9% to +67.5%), median -53.4%, 34% winners. Benchmark -12.2%, **5 of 6**. Halves +62.5% and +15.0%.
+- With vs ma50 % > 0 added (172 trades): +33.0%, 5 of 6. The ma50 condition adds nothing.
+- Control (rsi > 70 and calls 20d ≤ 2): 119 trades, +1.0%, halves -32.1% and +25.8%. The call-flow condition carries the edge.
+- **R1-$50** (price over $50 and rsi > 70 and calls 20d > 2 and market 20d % > 0, 30-day 5% above):
+  - 44 trades, **+52.4%** (range -6.9% to +135.3%), median **-21.5%**, 43% winners, 5 of 6. Halves **+40.9% and +60.4%**.
+  - It has the best average, the best median and the most even halves of any 30-day R1 variant, and it fixes the weak second half.
+  - n = 44 is small and the range touches zero. It is promising, not proven.
+- **R1b** (rsi > 70 and calls 20d > 2 and market 20d % > 0, 30-day ATM): 153 trades, +7.8% (range -12.0% to +31.3%), median -39.0%, 5 of 6. Halves +27.6% and -2.2%. The 5% above strike pays far more than ATM on the same stocks, so this is a convexity effect.
+- **R1c** (rsi > 70 and calls 20d > 2, 30-day 10% above, exit as soon as the option doubles, else after 10 sessions): 147 trades, +6.9% (range -12.5% to +24.2%), median -44.2%, 39% winners, **6 of 6** vs -17.4%. Halves +12.2% and +3.6%. It is the only double-or-10 result that works.
+- Variant (rsi > 70 and calls 20d > 3, 30-day ATM, no market gate): 127 trades, +2.6%, 4 of 6. Weaker.
+
+**R2. Momentum run, 30-day 10% above**
+- Rule: 20d % > 20 and vs ma50 % > 15.
+- Scorebook: 211 trades, **+26.2%** (range -6.0% to +61.0%), median -57.4%, 30% winners. Benchmark -17.7%, **6 of 6**. Halves +11.9% and +35.9%.
+- Looser thresholds (20d % > 15 and vs ma50 % > 10): 274 trades, +14.4%. Stricter is better.
+- At 90-day 10% above: 57 trades, -4.4%, median -20.3%, 4 of 6.
+- Extreme tail lottery, so size very small.
+- **Never use it when market 20d % < 0.** That version had 38 trades, -47.8%, median -87.6%.
+
+**R3. Trend, news tone and over $50, 30-day 5% above**
+- Rule: vs ma50 % > 0 and 20d % > 0 and news tone 7d > 0 and price over $50.
+- Scorebook: 143 trades, **+23.4%** (range -5.7% to +56.8%), median -41.3%, 38% winners. Benchmark -12.2%, 4 of 6. Halves **+23.8% and +23.1%**, the most even halves of any rule.
+
+**R4. Momentum accumulation, 30-day 5% above**
+- Rule: calls 20d ≥ 1.5 and 20d % ≥ 10 and vs ma20 % ≥ 5.
+- 30-day 5% above: 297 trades, **+17.8%** (range -5.4% to +39.9%), median -50.4%, 33% winners, **6 of 6**. Halves +27.3% and +11.1%.
+- 30-day 10% above: 279 trades, +7.0%, 6 of 6 vs -17.7%. Halves +2.8% and +9.9%. 5% above is the better strike.
+- **R4b** (same plus market 20d % > 0, 30-day ATM): 243 trades, +6.1%, median -39.0%, 5 of 6. Halves +11.4% and +3.0%.
+
+**R5. Momentum plus news, 30-day 5% above**
+- Rule: 5d % > 5 and vs ma20 % > 5 and news 3d ≥ 1.
+- Scorebook: 186 trades, +16.4% (range -13.3% to +49.6%), median -48.4%, 4 of 6. Halves +13.0% and +20.8%.
+
+**R6. Uptrend in a rising market, 30-day 5% above**
+- Rule: vs ma50 % > 0 and 20d % > 0 and market 20d % > 0.
+- Scorebook: 666 trades, **+9.1%** (range -6.7% to +24.7%), median -48.8%, 30% winners, **6 of 6**. Halves +5.1% and +11.3%.
+- At 10% above: 561 trades, +8.8%, 6 of 6. Halves -4.7% and +16.1%, so 5% above is steadier.
+- Without the market gate but with news (vs ma50 % > 0 and 20d % > 0 and news 3d > 0): 306 trades, +11.3%, 4 of 6, halves +11.3% and +11.3%.
+
+**R7. Regime gate, 30-day 5% above**
+- Rule: market 20d % > 0 and vs ma50 % > 0 and rsi > 60.
+- Scorebook: 430 trades, **+9.4%** (range -9.2% to +30.6%), median -47.9%, 32% winners, **6 of 6**. Halves +0.0% and +15.1%.
+- Without the rsi condition: 756 trades, +6.1%, 6 of 6. So rsi > 60 adds about 3 points.
+- ATM version (vs ma20 % > 0 and market 20d % > 0): 885 trades, -4.2%, 6 of 6 vs -10.9%. Still negative, so use 5% above for a positive average.
+
+**R8. Over $50, trend and market gate, 30-day ATM** (the "least ugly" 30-day option)
+- Rule: price over $50 and vs ma50 % > 0 and market 20d % > 0.
+- Scorebook: 259 trades, +5.0% (range -9.6% to +19.7%), median **-25.1%**, 38% winners, **6 of 6** vs -10.9%. Halves -5.1% and +11.3%.
+- Four-gate version (adds 20d % > 0): 236 trades, **+6.6%**, median -26.6%, 5 of 6. Halves -2.8% and +12.3%.
+- Do not use the 10% above version of this rule. It has 171 trades, +3.8%, and halves -37.0% and +24.7%, so it is unstable.
+
+**R9. Winner profile, 30-day ATM**
+- Rule: 20d % > 20 and vs ma50 % > 10 and rsi > 60.
+- Scorebook: 205 trades, +5.2%, median -42.6%, 5 of 6. Halves +10.3% and +1.9%.
+
+**R10. Run-ups, 30-day 5% above**
+- Rule: 20d % ≥ 25 and vs ma20 % ≥ 10.
+- Scorebook: 209 trades, +9.1%, median -53.4%, 5 of 6. Halves +3.5% and +14.6%.
+- Related: 5d % > 6 at 30-day 5% above had 552 trades, -0.9%, 6 of 6. Strength is not a fade at 30 days.
+
+**R11. Above ma50 in an up market, 90-day 10% above**
+- Rule: vs ma50 % > 0 and market 20d % > 0.
+- Scorebook: 183 trades, +3.3% (range -10.7% to +17.6%), median -16.1%, 38% winners, 5 of 6 vs -9.7%. Halves +0.5% and +4.6%.
+- The market gate is the point. The same stock condition with market 20d % < 0 averaged -12.9% over 78 trades.
+
+**R12. Full stack over $50, 90-day 10% above**
+- Rule: calls 5d avg > 1 and vs ma50 % > 0 and market 20d % > 0 and price over $50.
+- Scorebook: 42 trades, +7.0% (range -16.7% to +27.0%), median **-8.0%**, 45% winners, 4 of 6. Halves -8.3% and +13.9%.
+- It has the best median among positive-average rules, but n is small.
+- The same stack at $10 to $50 had 63 trades, -4.2%, median -19.6%.
+
+### 1B. Tier 2: near benchmark or better, but small n, unstable halves or no positive average
+
+**Near-breakeven 90-day ATM cells.** Their medians are the closest to zero among rules with n ≥ 40, but averages are slightly negative. All are small.
+- **Calls today 1.3 to 3.2 with call days 2x+ ≥ 2** (calls ≥ 1.3 and calls ≤ 3.2 and call days 2x+ ≥ 2, 90-day ATM): 66 trades, -2.9% (range -16.3% to +9.7%), median **-4.1%**, 48% winners, **6 of 6** vs -8.4%. Halves +3.0% and -8.4%.
+- **Call days 2x+ ≥ 2 and news 3d ≥ 1, 90-day ATM:** 116 trades, -3.0%, median -10.9%, 41% winners, 4 of 6. Halves -5.4% and -0.7%.
+- **Extension with news, 90-day ATM** (vs ma50 % > 4.6 and news 3d ≥ 1): 70 trades, -2.5%, median -7.0%, 40% winners, 3 of 6.
+- **Stretch with news 7d, 90-day ATM** (vs ma50 % ≥ 12 and news 7d ≥ 1): 77 trades, -2.4%, median -6.1%, 43% winners, 3 of 6.
+- **Fresh spike, 90-day ATM** (days since spike from 1 to 5): 150 trades, -3.1%, median -11.8%, 5 of 6. Halves +2.4% and -8.9%.
+- **Oversold, 90-day ATM** (rsi < 30): 66 trades, -5.0%, median -7.8%, 44% winners, 4 of 6. The first half is -18.9%. Oversold at 30 days is toxic.
+
+**Oversold quiet-call pattern, 90-day 5% above** (rsi < 30 and off high % ≤ -30 and calls 20d < 1.5): only **8 trades**, +20.6%, **median +13.2%**, 88% winners. It is the only positive median seen anywhere, but n = 8. It is a lead, not a rule. The same pattern at 30-day 5% above had 46 trades, +4.0%, 2 of 6, halves -25.8% and +15.8%.
+
+**30-day filters that beat the benchmark but are not clearly positive.**
+- **News 3d ≥ 1, 30-day ATM:** 699 trades, -3.8% (range -16.0% to +8.7%), median -37.9%, 5 of 6 vs -10.9%. Halves +2.8% and -10.7%.
+- **News 3d ≥ 1, 30-day 5% above:** 710 trades, -6.0%, median -54.1%, 4 of 6. Halves -1.0% and -10.9%.
+- **News 3d ≥ 1 and days since spike ≥ 10 and realized vol % ≤ 81, 30-day 5% above:** 97 trades, -2.7%, 4 of 6. Halves +11.5% and -14.1%.
+- **Call days 2x+ 2 to 3 with news 3d ≥ 1, 30-day 5% above:** 316 trades, +0.4%, median -51.8%, 5 of 6. Halves +9.7% and -9.8%.
+- **News 7d ≥ 1 and call days 2x+ ≥ 2, 30-day 5% above:** 645 trades, -3.2%, 3 of 6.
+- **Extended names, 5d % > 6, 30-day 5% above:** 552 trades, -0.9%, 6 of 6. Halves -2.3% and +0.6%.
+- **Positive news tone, 30-day ATM** (news 7d ≥ 1 and news tone 7d ≥ 0.3): 353 trades, -1.8%, 5 of 6.
+- **Positive news, 30-day ATM** (news tone 7d > 0 and news 3d > 0): 432 trades, -0.1%, median -35.0%, 5 of 6.
+- **Calls 20d > 3 and vs ma50 % > 0, 30-day 10% above:** 322 trades, -5.5%, 5 of 6.
+- **News 3d > 0 and calls 20d > 1.5, 30-day 10% above:** 354 trades, -4.6%, 5 of 6.
+- **Fresh spike plus positive news over $50, 30-day 10% above** (days since spike < 5 and news tone 7d > 0 and price over $50): 138 trades, -7.0%, 6 of 6.
+- **Realized vol % > 100, 30-day 10% above:** 297 trades, -3.0%, 4 of 6 vs -17.7%. Halves -28.2% and +19.3%, so unstable. High-vol names carry the right tail, but only in some months.
+
+**Lotteries and small cells.**
+- **Overextended run, 30-day 10% above** (vs ma50 % > 25 and rsi > 75): 81 trades, +20.7%, 4 of 6. Halves -27.2% and +51.9%, so unstable.
+- **Sub-$10 with huge call volume, 30-day 10% above** (price under $10 and calls 20d > 10): 47 trades, +39.9% (range -19.2% to +107.3%), median -45.1%, 3 of 6. Halves +34.8% and +46.8%. This is a pure tail lottery on the erratic band. Paper-size only, and the exit marks must be audited first.
+- **Quiet after a spike, 30-day ATM** (days since spike ≥ 20 and calls 5d avg < 1): 117 trades, +10.1%, median -37.9%, 2 of 6. Both halves are positive (+20.3% and +1.6%).
+- **Oversold exclusion over $50, 30-day 10% above** (rsi ≥ 30 and off high % > -25 and market 20d % > 0 and price over $50): 267 trades, +3.7%, 5 of 6. Halves -26.0% and +21.5%, so unstable.
+- **Call flow with put lean in an up market, 30-day 5% above** (calls 20d > 1.5 and p/c < 1 and market 20d % > 0 and news 3d > 0): 231 trades, +4.1%, 3 of 6. Weak.
+- **High vol trend up, 30-day ATM** (vol20 % > 5 and vs ma50 % > 0 and 20d % > 0): 232 trades, +1.9%, 5 of 6.
+- **Overbought chase, 30-day ATM** (rsi > 70 and vs ma20 % > 10): 233 trades, +4.8%, 4 of 6.
+- **Share volume building, 30-day 5% above** (shares 5d avg > 1.25 and shares 5d avg < 1.68): 445 trades, -5.9%, 4 of 6. Halves +2.3% and -12.3%.
+- Other 90-day cells, all near the benchmark:
+  - Over $50 alone: 90-day 5% above, 198 trades, -3.8%.
+  - Broad uptrend, 90-day 5% above (calls 5d avg > 1 and vs ma50 % > 0): 224 trades, -2.5%, 5 of 6.
+  - Momentum, 90-day 5% above (20d % > 10): 174 trades, -1.0%, 4 of 6.
+
+### 1C. Weak or noise (do not build on these)
+- High-vol sub-$10 at 90-day 5% above (+3.7%, 3 of 6).
+- Dip names at 90-day ATM (+14.1% on 44 trades, 3 of 6).
+- Dip in high vol at 90-day ATM (+25.7% on 17 trades).
+- Sharp 1-day drop at 90-day 5% above (+3.9%, 3 of 6).
+- Fast spike at 30-day ATM (halves +23.4% and -25.6%).
+- Oversold rebound in an up market at 90-day ATM (31 trades, +6.6%, halves -15.9% and +19.0%).
+
+### 1D. Stock-level signals the traders found (use as supporting filters only)
+- **News present in the prior 3 days (news 3d ≥ 1):** positive in 3 of 3 stock-level bundles, with medians of +5.4%, +0.7% and +3.4% against baselines of about 0%. Zero-news names are weak. At the option level it only lowers the loss (see Tier 2). Its best use is as an add-on to trend and market gates (R3, R5, R6 no-gate version).
+- **Call days 2x+ in the last 5 sessions at 2 to 3:** positive at the stock level in 3 of 3 bundles. At the option level it is useful mainly combined with news at 30-day 5% above (+0.4%) or with calls today of 1.3 to 3.2 at 90-day ATM.
+- **Call days 2x+ of 0 to 1** is weak at the stock level in every bundle. Use as a mild negative filter.
+- **Spike older than 10 sessions** is mildly positive. A spike 0 to 9 sessions old is weak at the stock level, but the scorebook shows that fresh does not mean "today."
+
+### 1E. Sizing and execution
+- Flat, small size. Never add after wins. Do not raise size because a rule just won.
+- Use 30-day or 90-day expiries. Never 14-day.
+- Pick the structure by what you want:
+  - **Tail-seeking lottery:** 30-day 5% above with R1 to R7, taking the whole basket of every passer. Use 10% above only for R2 and R6. Median about -40% to -57%.
+  - **Steadier profile:** 90-day 10% above with the trend plus market gate, preferably over $50 (R11, R12). Median -8% to -16%.
+  - **Middle road:** 30-day ATM with the over-$50 market gate (R8). Median about -25%.
+  - **Closest to breakeven:** 90-day ATM near-breakeven cells (Tier 2), medians -4% to -11%.
+  - **Best median among the big-average rules:** R1-$50 (-21.5%), but only 44 trades.
+- Hold exactly 10 sessions. No exit has been shown to rescue a bad entry. Double-or-10 has a slightly worse benchmark (-12.0% vs -10.9% at ATM). Its one success is R1c.
+- **Always apply the market gate (market 20d % > 0) to any trend, momentum or call-flow rule, and pair it with stock strength.**
+- The scorebook charges no bid-ask spread and does not audit exit quotes. Real results will be worse than these averages on spreads.
+
+---
+
+## 2. AVOID
+
+### Clearly worse than the benchmark (code-confirmed)
+
+| Rule | Trades | Average (range) | Median | Beat benchmark |
+|---|---|---|---|---|
+| Surge follow-through (1d % ≥ 5 and shares 5d avg ≥ 3 and news 3d ≥ 1), 30-day 5% above | 30 | **-38.8%** (-63.5% to -13.8%) | -63.8% | 1 of 6 |
+| Overextended fall (5d % ≥ 25 and rsi ≥ 70 and 1d % ≤ 0), 30-day 5% above | 10 | **-61.5%** | -61.5% | 0 winners |
+| Momentum in a down market (R2 plus market 20d % < 0) | 38 | **-47.8%** | -87.6% | 2 of 5 |
+| Oversold with heavy calls (rsi < 30 and calls 20d ≥ 1.5), 30-day ATM | 148 | **-26.9%** | -49.1% | 0 of 6 |
+| Oversold with heavy calls (rsi < 30 and calls 20d > 3), 30-day ATM | 78 | **-30.0%** | -58.3% | 0 of 6 |
+| Oversold with heavy calls (rsi < 30 and calls 20d > 2), 30-day 5% above | 128 | **-27.5%** | -64.2% | 2 of 6 |
+| Oversold deep off-high (rsi < 33 and off high % < -35), 30-day 10% above | 127 | **-24.4%** | -67.3% | 2 of 6 |
+| Sub-$10 oversold rebound (rsi < 30, off high % < -30), 30-day 5% above | 80 | -24.3% | -64.2% | 2 of 6 |
+| Large down day with call spike (1d % ≤ -5 and calls ≥ 3), 30-day | 95 | -23.2% | -48.6% | 1 of 6 |
+| Gate complement (20d % ≤ 20), 30-day 10% above | 1,722 | -22.8% | -68.2% | 2 of 6 |
+| Oversold pullback (rsi < 35 and off high % < -20), 30-day 5% above | 272 | -21.6% | -55.3% | 2 of 6 |
+| Calls ≥ 3 and price $10 to $50, 90-day | 103 | -21.9% | -30.5% | 1 of 6 |
+| Stretched-up (rsi ≥ 70, vs ma20 % ≥ 10, 5d % ≥ 10), 90-day ATM | 48 | -20.6% | -33.8% | 2 of 6 |
+| $10 to $50 alone, 30-day 5% above | 958 | -19.6% | -60.0% | 1 of 6 |
+| Sub-$10 alone, 30-day 10% above | 612 | -19.0% | -74.4% | 3 of 6 |
+| Spike with no news ≥ 1, 90-day ATM | 138 | -19.4% | -25.2% | 0 of 6 |
+| Pullback vs ma20 with news (vs ma20 % from -7.8 to -2.4 and news 3d ≥ 1), 30-day 5% above | 121 | **-18.1%** (halves -0.4% and -37.3%) | -56.2% | 1 of 6 |
+| Loser profile (20d % < -20, rsi < 45, off high % < -35), 30-day ATM | 118 | -18.8% | -57.2% | 2 of 6 |
+| Fresh spike with no news (days since spike ≤ 1, spike no news ≥ 1), 30-day ATM | 549 | -17.9% | -42.7% | 1 of 6 |
+| Up market but non-extended stock (market 20d % > 0, 20d % ≤ 20, vs ma20 % ≤ 10), 30-day 5% above | 1,167 | -17.7% | -56.7% | 1 of 6 |
+| Overbought reversal (rsi ≥ 74, 20d % ≥ 18, off high % > -5), 90-day ATM | 37 | -17.9% | -34.4% | 2 of 6 |
+| **No news** (news 7d ≤ 0 and news 3d ≤ 0), 30-day ATM | 1,095 | **-15.3%** (-25.6% to -4.8%) | -46.1% | 1 of 6 |
+| Oversold (rsi < 45, off high % < -25), 30-day | 326 | -17.1% | -46.9% | 1 of 6 |
+| $10 to $50 gate rules, 90-day ATM (three tested) | 68 to 114 | -12.7% to -16.1% | -20.7% to -24.6% | 2 of 6 each |
+| Accumulation in a falling market (market 20d % < 0, calls 20d ≥ 1.5), 30-day 5% above | 436 | -16.0% | -65.2% | 1 of 6 |
+| Any 30-day 5% rule in a falling market | 775 | -15.8% | -61.0% | 1 of 6 |
+| Calls 20d ≥ 3 in a falling market, 30-day ATM | 205 | -15.3% | -47.8% | 3 of 6 |
+| Call-days surge (call days 2x+ ≥ 4, calls 5d avg > 2), 30-day | 256 | -15.0% | -47.9% | 2 of 6 |
+| OTM call build-up (otm calls 20d > 3, p/c < 1), 30-day 10% above | 549 | -15.7% | -66.7% | 5 of 6, still negative |
+| Close near high (close vs vwap % ≥ 0.78), 30-day 5% above | 439 | -11.8% | -53.3% | 1 of 6 |
+| Close vs vwap % ≥ 0.22, 90-day ATM | 208 | -10.4% | -22.6% | 1 of 6 |
+| Call days 2x+ ≥ 2 alone, 90-day ATM | 289 | -10.3% | -20.1% | 2 of 6 |
+| News 3d ≥ 1 and shares 5d avg 1.05 to 1.7, 30-day ATM | 286 | -11.8% (halves +2.2% and -25.1%) | -40.2% | 3 of 6 |
+| News 7d ≥ 1 and shares 5d avg 1.05 to 1.7, 90-day ATM | 115 | -10.2% | -14.9% | 3 of 6 |
+| IV % > 83, 30-day 5% above | 493 | -12.6% (halves -23.1% and -4.5%) | -64.3% | 3 of 6 |
+| Low realized vol and IV (realized vol % ≤ 80 and iv % ≤ 60), 30-day ATM | 1,154 | -10.3% | -39.5% | 3 of 6 |
+| Calls ≥ 3 alone, 90-day | 234 | -15.2% | -28.2% | 1 of 6 |
+| Calls 20d ≥ 3 alone, 90-day ATM | 160 | -12.6% | -23.6% | 3 of 6 |
+| Call build 5d (calls 5d avg ≥ 2 and call days 2x+ ≥ 3), 30-day 5% above | 582 | -12.5% | -58.7% | 2 of 6 |
+| Call days 2x+ 3 to 5 with news 7d ≥ 1, 30-day 5% above | 371 | -11.7% | -57.4% | 3 of 6 |
+| Call days 2x+ 3 to 5, 30-day ATM | 592 | -9.3% | -41.3% | 3 of 6 |
+| Sub-$10 alone, 30-day 5% above | 610 | -13.4% | -65.4% | 3 of 6 |
+| Short-dated 14-day ATM on call surges | 1,204 | -11.9% | -64.1% | 5 of 6 vs -15.2% |
+| Buying every candidate, ungated (30-day 5% above; 30-day 10% above) | 2,276; 2,023 | -12.2%; -17.7% | -57.3%; -67.6% | 0 of 6 |
+
+### Themes
+- **Falling-market calls lose.** Every bullish call rule with market 20d % < 0 lost 11% to 48%. Do not trade any call rule then.
+- **Chasing a spike on its day loses.** Surge follow-through and the overextended fall are the worst cells. Spike-day premium is rich.
+- **But strength over many days does not lose.** The 20-day trend, momentum, and 5d % > 6 baskets beat their benchmarks. The difference is a persistent run versus a one-day jump.
+- **Call flow helps on strength and hurts on weakness.** Overbought with 20-day heavy calls is +34.0%. Oversold with heavy calls is -27% to -30% in every bundle.
+- **Call flow with no trend condition, or measured over only 5 days, does not help.** 5-day call-day rules are at the benchmark or worse at the option level.
+- **No news is a clear avoid.**
+- **$10 to $50 is the worst price band** for 30-day 5% above, for market-up 90-day rules and for 90-day ATM gates. "Trade only $10 to $50" is refuted. Over $50 is best. Sub-$10 is erratic, though huge-call-volume names pay a tail.
+- **Quiet-stock close/VWAP/share-volume filters** are noise at the option level.
+- **Low volatility alone does not help.** Over $50, low vol, market up at 30-day ATM averaged -6.6%, worse than the plain gate.
+- **Overbought reversal fades only at 90-day ATM.** At 30 days the same stocks pay on the right tail.
+
+### No edge either way (about the benchmark)
+- Extended names (rsi ≥ 75, vs ma20 % ≥ 20): 96 trades, -8.2%.
+- Sustained call building (calls 5d avg ≥ 2, call days 2x+ ≥ 3): 573 trades, -8.9%.
+- Heavy calls with news, 30-day 5% above: 423 trades, -6.6%.
+- Put crowding (puts 5d avg ≥ 3): 727 trades, -9.2%. Not a bearish signal.
+- Slow steady call buying, 30-day 5% above: 179 trades, -4.3%, halves +20.1% and -27.4%.
+- **Ratings of any kind.**
+- **iv/realized and IV bands.** No stable band across bundles at the stock or option level.
+
+### Stop doing
+- 14-day expiries.
+- Strikes 10% or more out of the money outside R2, R4 (at most), R6 at 10% above, the sub-$10 huge-call lottery, and their direct variants.
+- Reading best and worst lists as evidence. Both tails contain the same features, and extremes lists misled traders into rejecting rules the all-candidate scoring confirms.
+- Judging by total dollar P&L, by a single bundle, or by cells with n < 20. Cells at n = 3 to 40 flipped sign between bundles.
+- Rescuing a bad entry with an exit.
+- Rejecting a rule only for a negative median. For a lottery basket, judge by average, range, bundles beaten and halves, and use the median for sizing. Do not call a positive-average, negative-median rule a proven edge either.
+- Taking a "positive median" from fewer than 20 trades as a rule.
+- Drawing option conclusions from stock-level medians. A +1% to +4% stock median does not cover the premium.
+
+---
+
+## 3. NEW IDEAS TO TEST
+
+Ordered by expected value. State each as an explicit rule so it can be scored. Require n ≥ 60, report both halves, and compare to the benchmark.
+
+1. **Widen R1-$50 (highest priority).**
+   - It has +52.4%, median -21.5%, even halves, but only 44 trades.
+   - Loosen to reach n ≥ 60 while keeping both halves positive: rsi > 65 or > 60, calls 20d > 1.5, price over $30, market 5d % > 0 instead of market 20d % > 0, or add vs ma50 % > 0.
+   - Test calls 20d thresholds of 1.5, 2, 3 and 4 with rsi above 60, 70 and 75, at ATM, 5% above and 10% above.
+2. **Add news as an overlay on the trend and market gates (partly credited to the traders' news finding).**
+   - News alone only reduces the loss. Test R6 and R7 plus news 3d ≥ 1, and R1 plus news 3d ≥ 1.
+   - Test the "no news" exclusion on every Tier 1 rule, since no-news is -15.3% at 30-day ATM.
+   - R3 and R5 already suggest the overlay helps.
+3. **Near-breakeven 90-day ATM stack.**
+   - The best 90-day ATM cells have medians of -4% to -11% (calls today 1.3 to 3.2 with call days 2x+ ≥ 2, extension with news).
+   - Test them with market 20d % > 0 and price over $50 added, and at 90-day 5% above and 10% above. Look for the first positive median at n ≥ 60.
+4. **Strength ladder.**
+   - Inside the market-up gate, rank passers by 20d %, vs ma50 %, vs ma20 % and rsi in bands (20d % 0 to 10, 10 to 20, 20 to 40, 40+).
+   - Look for a dose-response and an upper bound. R10 suggests none through +25%.
+   - Test R7 with rsi > 65 and > 70, and R6 with 20d % > 10 and > 15.
+5. **Replace the wrapper (untested; all four traders proposed it).**
+   - Test deep in-the-money calls (strike 5% to 10% below the price, 60 or 90 days, delta about 0.7 to 0.8) and bull call spreads (long near the price, short about 10% higher) on R1, R1-$50, R2, R4 and R6.
+   - Compare with plain shares on the same entries. Success is the first positive median.
+   - Also measure the stock-level median and right-tail rate of every Tier 1 rule's passers against the universe on the same dates, to separate signal from premium cost. No one has measured it.
+6. **Right-tail rate as the screen target (Agent 2's idea).**
+   - For each filter, record the share of passers rising 8% or more in 10 sessions and the share falling 8% or more, versus the unscreened group.
+   - Only the right tail pays a call. A filter that raises the right-tail rate is useful even with a zero median.
+7. **Exit variants on the gated baskets.**
+   - R1c (double-or-10) is the only exit variant with both halves positive and 6 of 6.
+   - Test double-or-10, a 15 or 20 session hold, and a +50% or +100% profit target with a 10-session cap on R1, R1-$50, R2, R4 and R6 at 5% above.
+8. **Strike and expiry ladder for R1, R2 and R4.** Test ATM, 5%, 10% and 15% above at 30, 60 and 90 days. Add over-$50 and news add-ons.
+9. **Stack trend, over $50, news and market at 60 and 90 days (untested).** Test over $50 + vs ma50 % > 0 + 20d % > 0 + news tone 7d > 0, then add market 20d % > 0, then calls 20d > 1.5.
+10. **Oversold plus quiet calls at long expiry.**
+    - Agent 1's pattern had a +13.2% median and 88% winners on 8 trades at 90-day 5% above.
+    - Test rsi < 30 and calls 20d < 1.5, dropping the off-high condition, at 90-day ATM, 5% and 10% above. Add variants with market 20d % > 0 and with price over $50.
+    - Understand why oversold with heavy calls loses badly while oversold with quiet calls does not.
+11. **Buy before the crowd.** Quiet after a spike (days since spike ≥ 20, calls 5d avg < 1) was +10.1% with both halves positive. Test with vs ma50 % > 0, over $50 and market 20d % > 0, at ATM at 30 and 90 days.
+12. **Sub-$10 huge-call-volume lottery.** Test calls 20d thresholds of 5, 10 and 20, with and without trend, news and market gates, at 30-day 5% and 10% above. Do an exit-quote check first.
+13. **Volatility-aware premium filter.** Test vol20 % and realized vol bands (realized vol above 100, 80 to 100, below 80) inside R1, R2, R4 and R11. High realized vol gave -3.0% at 10% above with unstable halves (-28.2% and +19.3%), so it may be a regime-dependent tail.
+14. **Why overbought pays at 30 days but fails at 90-day ATM.** Test whether 5d % ≥ 10 or off high % > -5 is the toxic ingredient. Test rsi > 70 at 90-day 5% and 10% above.
+15. **Fade the chasers with defined risk (paper only).** The worst cells are surge follow-through, the overextended fall, oversold with heavy calls, and call rules in a down market. Test put debit spreads or bear call spreads after loosening thresholds to reach n ≥ 60. These names occasionally rebound 40% to 146%, so watch tail risk. Only calls have been scored so far.
+16. **Unused features as single-feature buckets.** Keep a feature only if it beats the benchmark in at least 4 of 6 bundles and in both halves. Candidates: shares, close vs vwap20, call-term mixes (short, medium, long), p/c drop, news 1d, puts 20d, otm calls 20d, long calls 20d, call days 2x+ 20d.
+17. **Basket and sizing simulation.**
+    - Test whether an equal-premium weekly basket of all Tier 1 passers has a positive weekly total, and what the worst week looks like.
+    - Check whether the 6-of-6 record survives removing overlapping names.
+    - Measure the effect of bid-ask costs.
+18. **Entry premium and IV (needs data).** Nobody logged premium or full quote records. If available, test whether low premium relative to realized vol picks the winners, and whether spike-day premium explains why spikes lose.
+19. **Exit-quote audit.** Test how the Tier 1 averages change when -100% prints on rising stocks (up 3% or more with the exit mark ≤ 5% of premium) are excluded. Log bid, ask, mid, IV and settlement source at entry and exit. Check that expiry selection matches the label (traders saw "14-day" trades with 11 to 17 sessions left and "30-day" with 19 to 27).
+
+---
+
+## 4. OPEN QUESTIONS
+
+- **Positive median.** Can any call setup have a positive median? The best candidates:
+  - Positive: Agent 1's 8-trade oversold quiet-call 90-day cell (+13.2%).
+  - Small negative: calls today 1.3 to 3.2 with call days 2x+ ≥ 2 at 90-day ATM (-4.1%), R12 (-8.0%), oversold 90-day ATM (-7.8%), extension with news at 90-day ATM (-7.0%).
+  - Large negative but with a high average: R1-$50 (-21.5%).
+  - Is a positive median reachable only with deep in-the-money calls, spreads or shares?
+- **Exit quotes.** Do the -100% prints on rising stocks reflect real wipeouts or missing quotes? This is the largest unresolved risk to every median and average.
+- **First half versus second half.** Rules built on news, share volume or call flow fall off in the second half (for example news 3d ≥ 1 at 30-day ATM +2.8% then -10.7%, and R1 +62.5% then +15.0%). Trend plus market rules (R2, R3, R6, R7, R8) rise. Is this a regime, a volatility effect, the lower-priced names, or a few weeks? R1-$50 stays even.
+- **Does the market gate generalize?** The sample is up-market-heavy and baselines moved between bundles. If the regime changes, the averages could reverse. Down-market behavior is known only to be bad.
+- **Over $50.** Is it a liquidity, size or lower-implied-volatility effect, or a proxy for something else? It helps at 30-day and out-of-the-money strikes but barely at 90-day ATM.
+- **Strike effect.** Trend and call-flow rules do best 5% out of the money at 30 days (R1 +34.0% at 5% above vs +7.8% at ATM). Is 5% above the sweet spot, or just convexity on trending names?
+- **Call flow.** Why does 20-day buying add value on overbought names and lose on oversold ones, while 5-day buying does not help? Is it informed buying, or chasing that momentum rewards?
+- **Stock edge versus option edge.** Stock-level medians of +1% to +4% did not translate to option profits. How big does the stock edge need to be, and in which tail, to cover premium and decay?
+- **Sub-$10 huge call volume.** Is the +39.9% lottery real, or an artifact of a few stale or optimistic marks?
+- **Dips at long expiries.** The small positive 90-day dip and rebound cells contradict the large negative 30-day dip results. Is this meaningful or small-n noise?
+- **Ratings.** Four traders found four different "signals" and none held. Treat as noise unless a full-universe test with n ≥ 60 and medians says otherwise.
+
+### How the committee would remake the test (not passed on)
+
+# Redesign proposal
+
+## 1. What blocked us (ranked by damage)
+
+1. **The wrapper, not the signal, decided the outcome, and only one wrapper was allowed.** The test allowed only long calls, from 14 days to 90 days and at-the-money to 20% above, with a fixed 10-session hold.
+   - Agent 3: "The option wrapper is the main source of loss."
+   - Agent 4: "no stock-level entry screen produced a median 10-session gain large enough to cover the premium."
+   - Stock edges of +1% to +4% were found repeatedly and never converted into profit. Every trader proposed deep in-the-money calls, spreads or shares, and none could test them.
+
+2. **Information was hidden from the people choosing rules.** The market 5d and 20d columns were blank for the traders in all six bundles, yet the scorebook shows market 20d % < 0 as the clearest sign flip.
+   - Agent 1 and Agent 2 dropped the market gate as "dead" while the code was showing it was the strongest factor.
+   - Dates, earnings, sector and benchmark return were also hidden.
+
+3. **Feedback was bad.** Traders saw bucketed summaries, extremes lists and per-bundle medians on 3 to 40 trades.
+   - Agent 4 on the bins: "I cannot read them as clean zero-news groups," and "The bins do not let me compute the exact intersection."
+   - Rules flipped sign between bundles, and the committee noted that "extremes lists misled traders into rejecting rules the all-candidate scoring confirms."
+   - The all-candidate scorebook only arrived at the end, so nobody could iterate against it.
+
+4. **Exit marks could not be trusted, and there was no quote data to check them.** There were -100% marks on stocks up +6.8% and +3.3%, and "14-day" trades with 11 to 17 sessions left.
+   - Agent 4: "no audit results were supplied."
+   - The scorebook also charges no spread. The net bias is unknown, so every median is in doubt.
+
+5. **Too little independent data.** Six bundles of about 250 names, with baselines moving between -1.0% and +0.4% and a market that was mostly up.
+   - There are only a handful of independent weeks and many correlated rules.
+   - The best result, R1-$50, has n = 44 and a range touching zero. Hundreds of rules were tried with no multiple-testing penalty and no untouched holdout.
+
+6. **Candidates were pre-selected on call-volume surges.** Call flow could not be compared against a non-flow universe, and the right tail could not be measured against an unscreened group (Agent 2 asked for exactly this and "did not log" it).
+
+7. **A fixed 10-session hold and daily data only.** There was no path information, so exits, stops and profit targets could not be tested.
+
+## 2. Data to add
+
+Ranked by value. All are realistic from end-of-day vendor data (ORATS, OptionMetrics, CBOE DataShop).
+
+1. **Populated market context for traders:** SPY and sector-ETF returns over 5, 20 and 50 days, VIX level, and a week index.
+   - This lets them test regime gates and market-relative returns.
+2. **Daily option-chain snapshots at entry and exit:** bid, ask, volume, open interest, IV and delta for every strike and expiry within range.
+   - This enables spread-aware fills, quote audits, delta-matched structures, skew and term structure.
+   - A zero bid should be flagged, not scored as a -100% loss.
+3. **Earnings and event calendar:** days to the next earnings, whether earnings fall inside the hold, and the implied earnings move.
+   - Earnings explains the news effect, the IV pattern and the spike results. It is currently invisible.
+4. **Forward daily stock path for every candidate:** daily closes for 40 sessions, with max favorable and max adverse excursion.
+   - This allows exit, hold-length and stop tests without changing the data.
+5. **Company and liquidity fields:** market cap, sector, beta, average dollar volume, short interest, and IV rank/percentile.
+   - This helps explain the "over $50" and sub-$10 effects.
+6. **Clean, non-overlapping bins and raw values.** Provide news counts as 0, 1 or 2+, and spike age as exact integers. Let traders query raw values rather than prebinned tables.
+7. **Open-interest change by strike and call/put volume split.** This is the most that daily data can say about "informed" flow. Trade-side or sweep data is not realistic from daily data, so do not promise it.
+
+## 3. Tools and instruments
+
+1. **Allow shares, deep in-the-money calls (delta 0.7 to 0.85, 60 to 90 days), bull call spreads, and put and put-spread structures.**
+   - Shares and ITM calls separate "signal" from "premium cost."
+   - Puts and put spreads let the many clean avoid-lists (oversold with heavy calls, falling-market calls) be tested as shorts.
+   - Cash-secured puts and straddles are optional extras.
+2. **Variable holds (5, 10, 20, 40 sessions) and path-based exits:** profit target, time stop, and a roll or close at a fixed fraction of time to expiry.
+3. **A realistic fill model:** pay the ask, sell the bid or mid minus a fraction of the spread, and apply a minimum liquidity filter (open interest, spread width).
+4. **A rule-testing tool.**
+   - Traders submit an exact rule and get an immediate scorebook run on all candidates in a training window: n, average, median, week-block 95% range, both halves, beat-benchmark count, and stock-level
+
+### Agent 1's final notes (not passed on)
+
+# TRADING NOTES: STOCK-LEVEL SCREEN AND OPTION ARM (after bundles 1 to 6)
+
+## 1. CURRENT STRATEGY
+
+**Status: paper only. No live money.** The pass test has not been met on any pooled data.
+
+**Pass test (unchanged):** a pre-registered stock-level screen must show, on a bundle:
+- median 10-session stock return ≥ +3%
+- ≥ 55% of stocks up
+- median at least 2 points above the same bundle's baseline
+- pooled n ≥ 60 across bundles
+
+The option arm stays closed until the screen passes and the exit pipeline is verified (section 1d).
+
+### 1a. Why stock first
+
+Option premiums cost 1% to 6% of the price up front, and a 30-day call loses value each session. A screen whose median stock return is near 0% cannot make option trades work. The stock has to rise by more than the premium plus decay. So I test the stock return first and only then the option wrapper.
+
+### 1b. Current candidate screen: S3 (pre-registered for bundle 7)
+
+S3 is built from the factors that have held up across bundles. Each leg has its own evidence grade below.
+
+1. **News 3d ≥ 1** (required). Articles about the company in the 3 days before the close. Zero-news names are excluded.
+2. **Days since spike ≥ 10, or no 3x spike in 60 sessions.** Excludes spikes 0 to 9 sessions old.
+3. **Calls ratio ≥ 0.55** (not in the bottom fifth). Names with calls below about half of normal volume have been negative.
+4. **Realized vol below the top fifth** (about 81% annualized or less). Top-fifth volatility has been negative in two bundles.
+
+Report for S3 on bundle 7: n, median 10-session return, % up, and gap to that bundle's baseline. Pool with bundles 4 to 6 for n.
+
+**Pooled leg evidence (3 bundles = bundles 4, 5, 6):**
+
+| Factor | Bundle 4 | Bundle 5 | Bundle 6 | Read |
+|---|---|---|---|---|
+| News 3d ≥ 1 (median, % up) | +5.4%, 68% | +0.7%, 55% | +3.4%, 68% | Direction held 3 of 3. Size unstable. **Strongest leg.** |
+| News 3d zero | Negative | Negative | −1.0%, 30% up | Zero-news names weak in all three. |
+| Call days 2x+ (5d) = 2 to 3 | +3.0% | +1.3%, 60% | +1.4%, 68% | Positive 3 of 3 at this bucket. **Tracked, not in S3.** |
+| Call days 2x+ (5d) = 3 to 5 | +3.5% | −0.7%, 45% | +2.4%, 66% | Mixed. Not used alone. |
+| Spike 1 to 10 sessions old | Day-0 spike −6.7% | −1.2% to −2.3% | −0.2% (3 to 11 bucket) | Weak. Avoid candidate. |
+| Spike > 10 sessions old | n/a | +0.8%, 53% | +1.8%, 64% | Mildly positive 2 of 2. Used in S3 as an exclusion. |
+
+### 1c. Watch list (not in S3)
+
+- **Pullback below the 20-day average (vs ma20 about −7.8% to −2.4%).** Positive in bundles 3, 4 and 5 (+1.0%, +2.2%, +1.2%). **Failed in bundle 6:** the nearest bucket (vs ma20 −5% to −0.4%) gave −0.3% median, 50% up, against a +0.4% baseline. The companion (vs vwap20 −7.5% to −2.6%) also failed (about −0.1% to −0.3%). I am downgrading this from "moderate-high" to "watch: 3 of 4 bundles, latest negative." It is not dropped. Bucket boundaries in bundle 6 did not line up with the band, so the failure is not a clean test.
+- **Close near the day's high (close vs VWAP ≥ +0.78%).** Top fifth gave +2.2% median, 66% up in bundle 6. I had retired close-at-high after bundle 4, and bundle 5 did not revive it. Bundle 6 did. One bundle; treat as a new lead to test, not a rule.
+- **Calls ratio 1.3 to 3.2.** +3.5% median, 62% up (bundle 6). One bundle. Only the bottom-fifth avoid rule is in S3.
+- **Calls 20d between 1.05 and 1.52.** +3.8%, 71% up (bundle 6). Bucket noise is likely; adjacent buckets were flat.
+
+### 1d. Option arm and the exit-mark problem
+
+**Bundle 6 option results are unverified.** The pattern from bundle 5 repeated:
+- A 30-day, 5%-strike call logged at −100% on a stock up +6.8%.
+- A 14-day, 5%-strike call logged at −100% on a stock up +3.3%.
+- A 30-day, 10%-strike call logged at −94.7% on a stock up +0.6%, close to the flag line.
+
+These contradict the stock path. A call struck 5% above the price on a +6.8% move should have value. Two trades clearly meet the flag rule (stock up ≥3%, exit mark ≤5% of premium). The bug was not fixed before this bundle, or the fix did not work.
+
+**Exit rules from now on:**
+- Log bid, ask, mid, IV, premium as % of price, sessions to expiry, and the settlement source at entry and at exit.
+- Flag any trade where the stock is up ≥3% over the hold and the exit mark is ≤5% of premium. Do not count flagged trades until the quote is checked.
+- Report "verified exit" and "flagged" separately. Only verified trades count toward the 30-trade target.
+- Settlement claims must be checked against the strike and the expiry date. "Expired at session 10" on a call with 18 sessions of life is a data question, not a result.
+
+**Option arm status:**
+- Fixed control: 30-day call, 5% strike, held 10 sessions, exit at mid. Bundle 6 result: 18 trades, median −40%, all unverified because of flagged marks.
+- 90-day arm: parked. Bundle 6 had 4 trades, median −24%, unverified.
+- Double-or-10 exits: too few trades to read. Keep logging.
+
+**What the option data does show (not evidence yet):** the large positive option results in bundle 6 (+60% to +296%) came from stocks that rose 4% to 12% over the hold. The large losses came from stocks that fell, plus the flagged cases. Option outcomes track the stock move, with the exit bug as a second source of error.
+
+---
+
+## 2. WHAT I TESTED IN THIS BUNDLE (bundle 6)
+
+**Baseline:** 250 candidates, average +2.5%, median +0.4% (10-session stock return). Baselines moved: +0.6% (bundle 4), −1.0% (bundle 5), +0.4% (bundle 6). Judge gaps only against the same bundle.
+
+**Pre-registered screen S2 (pullback band + news 3d ≥ 1 + spike age ≥ 10, call-buying leg dropped):**
+- The pullback leg failed (−0.3% median, 50% up in the nearest bucket).
+- The news leg passed on its own: +3.4% median, 68% up, a gap of about +3 points over baseline.
+- The spike-age leg was positive but small: +1.8% median, 64% up in the 11 to 60 bucket.
+- **S2 as written fails.** The news leg alone clears the median and gap thresholds in this bundle, but its exact n is not in the bucket data, and it was only one of three bundles that passed the median.
+
+**Single-factor results that replicated:**
+- News 3d ≥ 1 (direction held in 3 of 3 bundles).
+- Call days 2x+ in the 2 to 3 bucket (positive in 3 of 3).
+- Spike older than 10 sessions (mildly positive in 2 of 2).
+- Bottom-fifth call activity (calls, long calls, OTM calls ratio below about 0.5): −2.0% to −2.6% median, 34% to 36% up. Consistent within this bundle across three call measures.
+
+**Single-factor results that failed or were contradicted:**
+- Pullback below ma20 and the vs vwap20 companion (failed in bundle 6).
+- Deep drawdown (off the 60-day high by more than 14%): −0.1% to −0.8% median. Retired (bundles 4 and 5 disagreed; bundle 6 agrees with 5).
+- Ratings: the −1 group had a −0.5% median in bundle 6 and the largest winners among the −1s. Ratings remain retired as inputs.
+
+**Single-factor results that are new or unclear:**
+- High realized volatility (top fifth): −3.2% median, 46% up. Negative in bundles 5 and 6 (bundle 4 said the opposite). Use as an avoid rule with low-moderate confidence.
+- Shares ratio below 1.0 (quiet volume): −1.1% median, 42% to 44% up. Shares ratio 1.0 to 1.8: +1.0% to +1.9% (bundle 6). Bundle 5 showed the top fifth negative. Contradictory; watch only.
+- Close near the high of the day: top fifth +2.2% median (see 1c).
+- Expensive options (IV/realized above 1.57): +1.8% median, 59% up. Cheap options (below 0.68): −0.4% median. Earlier bundles flipped on this too (bundle 4 cheap was negative, bundle 5 cheap was positive). Not a stock filter.
+
+**Market gate:** the market 5-day and 20-day columns are blank again in bundle 6. The gate is not testable with this export. I am removing it from the candidate list until the data includes it.
+
+---
+
+## 3. WHAT I WILL TRY NEXT (bundle 7)
+
+**Run S3 on bundle 7 with the pass test unchanged:**
+- Required: news 3d ≥ 1.
+- Exclude: spikes 0 to 9 sessions old (keep days since spike ≥ 10, or none in 60).
+- Exclude: calls ratio in the bottom fifth (below 0.55).
+- Exclude: realized vol in the top fifth (above about 81%).
+- Report: n, median 10-session return, % up, gap to the bundle 7 baseline.
+- Pool with bundles 4 to 6 for n. Pass requires pooled n ≥ 60 and median ≥ +3% with a ≥ 2-point gap on the bundle.
+
+**Single-factor checks on bundle 7 (confirm or drop):**
+1. News 3d zero versus 1 or more, and news 7d zero versus 1 or more. Confirm whether the bundle 6 gap of about +3 points holds.
+2. Exact call-days buckets (0, 1, 2 to 3, 4 to 5) to see whether the 2 to 3 bump repeats in a fourth bundle. If it does, promote it to a candidate leg.
+3. Spike age buckets: 0, 1 to 4, 5 to 10, more than 10. Retest the day-0 and 1-to-10 avoid zone.
+4. Close vs VWAP top-fifth lead: does it repeat? If it does in bundle 7, consider it as a separate screen.
+5. Pullback band (vs ma20 −7.8% to −2.4%) on exact boundaries. If bundle 7 is positive, keep it on the watch list; if negative again, retire it.
+
+**Option arm:** no option trades on S3 names until (a) S3 passes the stock test and (b) the exit bug is fixed and verified on a test set of at least five trades where the stock rose 5% or more. For the five test trades, log the full quote record (bid, ask, mid, IV, strike, expiry, settlement source) and confirm that the exit mark matches the stock move.
+
+**Data:** fix the market gate columns before the next bundle. Record "market gate untested" on every result until they are populated.
+
+**Ratings:** retire completely. Stop logging them as inputs.
+
+**No sizing.** Paper only until the pass test clears on pooled data.
+
+---
+
+## 4. SUPPORTING EVIDENCE AND DROPPED IDEAS
+
+### Confidence summary (after bundle 6)
+
+- **Moderate (direction): news present in the prior 3 days.** Positive in 3 of 3 bundles. Median +5.4%, +0.7%, +3.4%. Zero-news names are weak in all three. The best current leg. Size is unstable and n is not verified.
+- **Moderate-low: spike age.** Recent spikes (1 to 10 sessions) are weak; spikes more than 10 sessions old are mildly positive in 2 of 2 bundles. Use as an exclusion, not a predictor.
+- **Moderate-low: 2 to 3 call days in the last 5 sessions.** Positive in all three bundles (+1.3% to +3.0%) at this bucket. The 3 to 5 bucket flipped in bundle 5 and is not used alone.
+- **Low-moderate (avoid): bottom-fifth call activity** (calls, long calls and OTM calls ratio below about 0.5). Negative (about −2% to −2.6%) in bundle 6, the only bundle with all three measures.
+- **Low-moderate (avoid): top-fifth realized volatility.** Negative in bundles 5 and 6, positive in bundle 4.
+- **Low (watch): pullback below ma20.** Positive in 3 of 4 bundles, negative in the latest. Downgraded.
+- **Low (watch): close near the day's high.** One bundle (+2.2%). Previously retired.
+- **Low (watch): quiet volume (shares ratio below 1.0).** Negative in one bundle, contradicted in another.
+
+### Retired or contradicted
+
+- **Vol20 in either direction.** Retired in bundle 5 and not revived in bundle 6. Realized vol (top fifth) is kept only as an avoid rule above.
+- **Deep drawdown as a long signal.** Bundle 4 positive, bundles 5 and 6 negative or flat. Retired.
+- **Share volume surge as a long signal.** Bundle 4 positive, bundle 5 negative, bundle 6 mildly positive in the middle buckets. Not used.
+- **Ratings (+2 to −2).** Sign flipped across bundles. Retired.
+- **Extension above ma50 as an edge.** Bundle 6 top two buckets were mildly positive (+1.4%, +2.2%), but bundle 5 showed no effect. Keep only as "do not chase extension above about +12%," with no claim of edge.
+- **IV bands and IV/realized ratio as stock filters.** No consistent sign across bundles.
+- **RSI, news tone 7d.** Noise in bundle 6 (buckets flip sign between adjacent values).
+- **Run-ups (5-day, 20-day).** Retired. Bundle 6 showed a weak positive for 20-day gains above 4.6% (+1.3% to +1.5%) but the bucket below was flat, so I am not reviving them.
+- **Market gate.** Untested; blank in all six bundles.
+
+### Option-level findings (reference only, not evidence)
+
+- **Bundle 6:** 37 trades, average −9.9%, median −43%, 32% winners. At least two trades flagged (stock up ≥3%, exit mark near zero). Verified-only median not yet computable.
+- **Positive option outcomes** (+60% to +296%) came from stocks up roughly 4% to 12% over the hold, with IV from about 4% to 37%. These are few and uneven.
+- **IV and IV/realized bands** in bundle 6 showed no clean option-level pattern. The exit bug is the more likely explanation for the worst outcomes in the lowest IV band.
+
+### Why stock-level results still come first
+
+- The candidate tables cover about 250 names per bundle and report stock returns, not option marks.
+- Option results have been unreliable because of the exit-mark problem, which persisted into bundle 6.
+- Baselines move between bundles, so only same-bundle gaps count.
+- The news-present leg is the first stock-level signal that has cleared the median and gap thresholds in one bundle without contradiction in the others, but it is not yet at the pass test.
+
+### Overall
+
+No screen has passed the pass test. The news-present leg has the most consistent direction across three bundles and cleared the median and gap thresholds in bundle 6. The pullback lead that dominated bundles 3 to 5 failed in bundle 6, so it moves to the watch list. The next step is S3 on bundle 7, which keeps news as the required leg and adds the spike-age, call-activity and volatility exclusions. Options stay closed until the screen passes and the exit-mark bug is fixed and verified.
+
+### Agent 2's final notes (not passed on)
+
+# WORKING NOTES: LONG CALLS ON CANDIDATE STOCKS
+*(Rewritten after bundle 6 of 6. Supersedes the bundle 5 version.)*
+
+## 0. Bottom line
+
+- Six bundles, about 216 paper trades, cumulative about -$35,600. Bundle 6 lost $9,155 on 35 trades (29% winners, average -26.2%, median -41.1%).
+- **The 90-day 5%-above structure has failed in every bundle that tested it at scale.** Bundle 6 added 14 trades averaging -29.5% with a median of -42.1%. Pooled across bundles 3 to 6 (42 trades), the average is roughly -13% and the median is negative. My bundle 5 stop rule now triggers: **the 90-day 5%-above option test is paused.**
+- **The stock basket rose this time.** The average candidate gained +2.5% over 10 sessions (median +0.4%), and the trades still lost heavily. The binding problem is the premium hurdle, not just direction. A typical long call needs roughly +7% to +10% or more in 10 sessions to pay for itself. Only a small share of candidates do that.
+- **Stock-level findings that have held up across bundles:**
+  - Low recent call activity (0 or 1 sessions of 2x+ call volume in the last 5) is weak. Replicated in bundles 4, 5, and 6.
+  - Two or more such sessions is positive in bundles 4 and 6, and mixed in bundle 5.
+  - News presence (1d, 3d, or 7d) is positive in bundles 4, 5, and 6.
+- **Dropped in bundle 6:** the "stretch above the 50-day average" exclusion. Names more than 12% above their 50-day average were the best bin (+2.2%, 62% up). Ratings and the market gate remain unusable.
+- **New in bundle 6:** where the close sits versus the day's VWAP. Closes at or above VWAP by 0.8% or more had a +2.2% median (66% up). One bundle, but a strong and monotone signal.
+- **Mechanics are still not trustworthy.** Bundle 6 adds suspect marks (Section 1d). The 90-day 10%-above "winners" are also suspect, so the one positive option result cannot yet be believed.
+
+**Status: paper only, zero size. The long-call strategy is not validated and is currently paused. This bundle's work goes to stock-level research and the mechanics audit.**
+
+## 1. CURRENT SETUP (research mode, not a trading rule)
+
+### 1a. Stock-level screen (what I am now trying to predict)
+
+The goal is to find names with a higher chance of a large upside move (a right tail of +8% or more in 10 sessions), because only that tail pays a long call. Mean return is not the target. The current screen candidates, in order of confidence:
+
+1. **Call days 2x+ (last 5 sessions) at least 2.** Median 10-session return +1.4% (2 to 3 days, 68% up) and +2.4% (3 to 5 days, 66% up), against a baseline of +0.4%. Positive in bundles 4 and 6, mixed in bundle 5. Confidence: moderate.
+2. **Not in the 0 to 1 call-day group.** Median -1.6% (34% up) in bundle 6, -3.2% in bundle 5, -2.7% and -2.1% in bundle 4. Replicated three times. Confidence: moderate. Use as a negative filter.
+3. **News present.** News 1d of 1 to 8: +2.0% (64% up). News 3d of 1 or more: +3.5% (68% up). News 7d of 1 to 2: +2.7% (72% up). Positive in bundles 4, 5, and 6, negative in bundle 3. Confidence: low to moderate.
+4. **Close at or above VWAP.** Close vs VWAP of +0.22% or more: +1.0% to +2.2% (62 to 66% up). Strongest in the top fifth. One bundle. Confidence: low, needs replication.
+5. **Price of $10 or more.** Sub-$10 names carried both the largest winners and largest losers in bundle 6, as in every prior bundle. Confidence: moderate that they are high-variance. The sign of their average is not reliable.
+6. **Spike with no news.** Stocks with a 3x+ call spike and no news in the prior 3 days: weak in bundles 3 and 4. In bundle 6, names with a spike in the last 11 sessions were flat (about 0%), and names with no spike in 11 to 60 sessions were best (+1.8%, 64% up). Confidence: low to moderate. Keep as a mild exclusion.
+7. **Realized volatility above roughly 80%.** Top fifth was the weakest bin in bundle 6 (-3.2%, 46% up), and 84 and above was weak in bundle 5 (-2.0%). Bundle 4 disagreed. Confidence: low to moderate. Use as a low-priority exclusion.
+
+Watch flags (log, do not exclude): shares 5d average between about 1.2 and 1.7 (positive in bundles 5 and 6), calls today between about 1.3 and 3.2 (+3.5% in bundle 6, not replicated yet), 20-session call activity between about 1.05 and 1.5 (+3.8%, 71% up in bundle 6, not yet tested), and off-high between -1.6% and 0% (+1.1%, 61% up).
+
+### 1b. Option structure (paused)
+
+- **Instrument:** long calls only. No spreads, stops, averaging, or adding to winners.
+- **Expiry:** 90 days is still the only expiry with a non-negative record. The 30-day contract has lost in every bundle (bundle 6 ATM 30-day medians were negative in every IV and implied/realized bin).
+- **Strike:** The 90-day 5%-above structure is paused. The 90-day 10%-above structure produced +38.2% average and +36.0% median on 5 trades in bundle 6. Pooled with bundle 5 (-26.6% on 5 trades), it is +5.8% on 10 trades. That is too thin, and the bundle 6 winners are suspect (see 1d). It is not a candidate yet.
+- **Exit:** close at the session-10 mark. No double-or-10 exits. Log every position every session.
+- **Size:** paper only, flat. Each position can lose 100%.
+
+**Reopening the option test requires all of these:**
+1. The mechanics audit (1d) is complete and clean.
+2. The stock-level screen shows a right-tail rate, not just a median edge: at least 15% of screened names rising 8% or more in 10 sessions, against a clearly lower rate for the unscreened group.
+3. A new option test on screened names reaches at least 25 trades and reports median and hit rate, not just average.
+
+### 1c. Why the structure fails, plainly
+
+Bundle 6 is the clearest example yet. The average stock rose 2.5%, but a 90-day 5%-above call needs the stock to clear the strike plus premium, and premium was 2% to 8% of the stock price for most trades. The median 90-day 5%-above trade lost 42%. Positive stock moves of 2% to 5% were not enough. The option only pays on a right-tail move, and the screen has not yet found names where that tail is common.
+
+### 1d. Mechanics: unresolved, more problems found
+
+Bundle 6 contains results that look wrong:
+
+- **14-day calls recorded -90% to -100% on stocks that finished up.** At least two trades had the stock up 1% to 5% and the call written off almost entirely. An at-the-money or 5%-out call on a stock up that much should retain substantial value.
+- **90-day calls with 60 or more sessions to expiry recorded -73% to -86%** on stocks down 8% to 12%. Possible, but large for contracts with that much time left. Needs checking against the option mark.
+- **Expiry labels do not match.** The "14-day" trades had 11 to 17 sessions to expiry. The "30-day" trades had 19 to 27. Either the expiry selection or the session count is wrong.
+- **The 90-day 10%-above winners are suspect.** One trade gained 136% with the stock up only 4.5% and 67 sessions to expiry. Gains that large on a small stock move suggest a stale or inflated mark, not a market outcome.
+
+**Action (mandatory before any option scoring):** for every trade with a loss beyond -70% or a gain beyond +100%, pull the entry and exit marks and compare them to the option's last trade or theoretical value. Log whether the result matches the option math. Also check that expiry selection matches the label. Until this is done, no option-level median in either direction can be trusted.
+
+## 2. WHAT I TESTED IN THIS BUNDLE AND HOW IT WENT
+
+### 2a. Overall result
+- 35 trades. Average -26.2%, median -41.1%, 29% winners, total -$9,155.
+- Stock baseline across 250 candidates: average +2.5%, median +0.4%. This was a better tape than bundle 5 (-0.6%, -1.0%). The trades still lost, which points to the premium hurdle and the mechanics issues, not market direction alone.
+
+### 2b. Results by structure
+
+| Structure | Trades | Average | Median | Notes |
+|---|---|---|---|---|
+| 90d 5%-above | 14 | -29.5% | -42.1% | Main structure. Failed again. |
+| 14d 5%-above | 7 | -44.7% | -42.7% | Several suspect -100% marks. |
+| 90d 10%-above | 5 | +38.2% | +36.0% | Only positive structure. Suspect marks. Too thin. |
+| 30d 5%-above | 4 | -68.0% | -86.6% | Worst. 30-day dropped. |
+| 90d 15%-above | 2 | +19.0% | +19.0% | Too few. |
+| 30d ATM | 2 | -69.5% | -69.5% | Failed. |
+| 90d ATM | 1 | -6.7% | -6.7% | Too few. |
+
+**Pooled 90-day 5%-above, bundles 3 to 6:** about 42 trades. Bundle 3 (2 trades, -0.5%), bundle 4 (7 trades, +7.8%), bundle 5 (19 trades, -9.1%), bundle 6 (14 trades, -29.5%). Pooled average is roughly -13%, and the median is negative. The bundle 4 result was not durable.
+
+**Pooled 90-day 10%-above, bundles 5 and 6:** 10 trades, average about +6%, median unclear. Too thin, and bundle 6's winners need mechanics review before they count.
+
+### 2c. The stock-level tests
+
+- **Call days 2x+ (5d):** the 0 to 1 bin was weak again (-1.6%, 34% up). The 2 to 3 and 3 to 5 bins were positive (+1.4% and +2.4%, 68% and 66% up). Bundle 5 had shown the top bins fading, so this is a real but unsteady signal.
+- **Call days 2x+ (20d):** 3 to 4 days was weakest (-2.1%, 36% up), and 4 to 5 days was strongest (+2.1%, 68% up). Not monotone; treat as noise until replicated.
+- **Calls 5d average:** no monotone pattern (+0.2% to +1.5% in the lower bins, -1.1% in one, +1.0% and +0.8% above). Not usable.
+- **Calls today:** below 0.55 was the weakest bin (-2.6%, 34% up). Between 1.29 and 3.15 was strongest (+3.5%, 62% up). Mixed with bundle 5's reversal at the top. Low call activity is the only consistently weak end.
+- **Shares 5d average:** 1.25 to 1.68 was best (+2.1%, 62% up). The bottom bin was -1.5%. Consistent with bundle 5's 1.2 to 1.68 band (+0.5%) and bundle 4's top-fifth positive, but bundle 5's 1.69-plus bin was negative.
+- **News:** positive at every horizon (see 1a). News 7d of 2 to 27 was the lowest positive bin (+1.8%).
+- **Stretch vs ma50:** the top bin (12.6% to 84%) was best (+2.2%, 62% up). The bottom bins were weak. This contradicts the bundle 3 and 4 exclusion, which I am now dropping.
+- **Close vs VWAP:** monotone, from -1.0% in the lowest bin to +2.2% in the highest.
+- **Realized volatility:** top fifth weakest (-3.2%, 46% up).
+- **IV:** flat across bins (-0.3% to +1.5%). The bundle 5 weakness at 44 to 65 did not replicate. Drop the IV exclusion.
+- **Off high:** near-high (-1.6% to 0%) best (+1.1%, 61% up). Deep-off-high (-81% to -24%) weakest (-0.3%). Mild, and reverses bundle 5.
+- **Vol20:** top fifth weakest (-3.2%, 46% up), in line with the realized-vol result. One bundle.
+- **Ratings:** -1 group (129 stocks) averaged +4.2%, median +0.5%. -2 group averaged -0.1%, median -2.0%. The -2 group reversed from bundle 5 (+15.7%). Unusable.
+
+### 2d. Option-level results (30-day ATM)
+
+- By IV: every bin had a negative median (-21% to -39%). The 40 to 58 bin had average +19% but median -21%.
+- By implied/realized ratio: every bin had a negative median (-15% to -59%).
+- Bundle 5 showed the same. The 30-day ATM structure has now failed in two full bundles.
+
+### 2e. The new idea: stock-level right-tail check
+
+Bundle 6's stock-level data shows names with stronger sustained call buying and close-at-VWAP strength had better medians. But medians around +2% do not clear the premium. The right test is the frequency of large gains, which I did not log this bundle. Next bundle, log it.
+
+## 3. WHAT I WILL TRY NEXT (bundle 7, fresh stocks)
+
+1. **Mechanics audit first (mandatory).** Pull marks for every trade with loss beyond -70% or gain beyond +100%. Verify expiry selection against the label. Report how many trades are affected and how many settlements are impossible. No option scoring until this is done.
+
+2. **Stock-level research, no options.** On every candidate (not just passers), record 10-session outcome in these bins:
+   - Median return.
+   - Share rising 8% or more (the right-tail rate).
+   - Share falling 8% or more (the left-tail rate).
+
+   Compare screened names against unscreened names on each of these. Screen factors to test:
+   - Call days 2x+ (5d) at 2 or more, versus 0 to 1.
+   - News 1d, 3d, and 7d presence.
+   - Close vs VWAP at or above +0.2%.
+   - Calls today between 1.3 and 3.2.
+   - Shares 5d average between 1.2 and 1.7.
+   - Stretch vs ma50 at 12% or more (now a candidate, not an exclusion).
+   - Realized vol above 80%.
+   - Spike with no news.
+   - Price at $10 or more.
+
+3. **Negative filter promotion.** If the 0 to 1 call-day weakness holds a fourth time, treat it as a standing exclusion for any future option work.
+
+4. **Positive screen, pass or fail.** Promote a screen to "candidate" only if it shows a higher right-tail rate and a positive median in bundle 7. Do not add a rule from a single-bundle bin.
+
+5. **Option test: stay paused.** Reopen only under the criteria in 1b.
+
+6. **News.** Keep recording 1d, 3d, and 7d counts. Test whether positive news presence replicates a fourth time.
+
+7. **Ratings, market gate, rsi, deep-off-high as a positive tag, IV exclusions:** drop or leave dropped. The market gate has been blank in all six bundles; remove it permanently.
+
+8. **Sub-$10 names.** Keep excluded from any future option work. Log them in the stock-level research so their tails can be measured.
+
+## 4. SUPPORTING EVIDENCE AND DROPPED IDEAS
+
+### Supporting detail: stock level (bundle 6, median 10-session return, % up)
+
+- **Call days 2x+ (5d):** 0: -0.8% (48%). 0 to 1: -1.6% (34%). 1 to 2: -0.7% (50%). 2 to 3: +1.4% (68%). 3 to 5: +2.4% (66%).
+- **Calls 20d:** 1.05 to 1.52: +3.8% (71%). 0.39 to 1.04: +1.1% (56%). 2.24 to 4.84: -0.5% (46%).
+- **Long calls 20d:** 1.14 to 1.75: +1.3% (63%). 2.92 to 5.56: -0.8% (46%).
+- **Otm calls 20d:** 1.1 to 1.69: +2.2% (61%). 2.97 to 6.14: +0.4% (51%).
+- **Puts 20d:** 1.12 to 1.79: +1.5% (68%). 3.01 to 7.14: -0.1% (49%).
+- **Calls today:** 0.06 to 0.55: -2.6% (34%). 0.55 to 1.27: +1.9% (62%). 1.29 to 3.15: +3.5% (62%). 3.16 to 7.07: +0.2% (50%).
+- **Long calls (ratio):** 0 to 0.46: -2.0% (36%). Top fifth: +1.5% (60%).
+- **Otm calls (ratio):** 0 to 0.47: -2.3% (34%). Top fifth: +0.7% (60%).
+- **Shares 5d average:** 0.55 to 0.86: -1.5% (40%). 1.25 to 1.68: +2.1% (62%). 1.7 to 8.06: +0.6% (60%).
+- **Puts 5d average:** top fifth (6.2+): +1.7% (68%).
+- **Close vs VWAP %:** -6 to -0.5: -1.0% (46%). 0.22 to 0.77: +1.0% (62%). 0.78 to 12.6: +2.2% (66%).
+- **Vs ma50 %:** -69 to -9: +1.1% (59%). -9 to -2: -0.8% (45%). 4.6 to 12.4: +1.4% (62%). 12.6 to 84: +2.2% (62%).
+- **Vs ma20 %:** -0.3 to 2.8: +1.4% (58%). 7.9 to 52: +0.9% (56%).
+- **Off high %:** -1.6 to 0: +1.1% (61%). -14 to -7: -0.8% (48%). -81 to -24: -0.3% (49%).
+- **Vol20 %:** top fifth (5.14+): -3.2% (46%).
+- **Realized vol %:** top fifth (81.6+): -3.2% (46%).
+- **IV %:** 4.8 to 27: +0.2% (52%). 40 to 58: +1.5% (56%). 58 to 84: -0.3% (49%). 84 to 436: +0.5% (51%).
+- **Iv/realized:** top fifth (1.57+): +1.8% (59%). Bottom fifth: -0.4% (50%). Reverses bundle 5's finding.
+- **News 1d:** 1 to 8: +2.0% (64%). **News 3d:** 1 to 22: +3.5% (68%). **News 7d:** 1 to 2: +2.7% (72%).
+- **News tone 7d:** 0 to 0.2: +4.4% (62%). Negative tone (-0.1 to 0): -0.8% (44%).
+- **Spike with no news, days since spike:** 11 to 60 sessions since spike: +1.8% (64%). 3 to 11: -0.2% (50%).
+- **Ratings:** -1 group +0.5% median (129 stocks). -2 group -2.0% median.
+
+### Supporting detail: stock-level history for the replicated factors
+
+| Factor | Bundle 4 | Bundle 5 | Bundle 6 | Status |
+|---|---|---|---|---|
+| Call days 2x+ 5d, 0 to 1 weak | Weak (-2.7%, -2.1%) | Weak (-3.2%) | Weak (-1.6%) | **Replicated 3 times.** Negative filter. |
+| Call days 2x+ 5d, 2 to 5 strong | Strong (+3.0%, +3.5%) | Mixed (+1.3%, -0.7%) | Positive (+1.4%, +2.4%) | **Mostly replicated.** Candidate. |
+| News presence positive | Positive | Positive | Positive | **Replicated 3 times.** Low-moderate. |
+| Stretch vs ma50 weak | Weak | Flat | Strongest bin | **Reversed.** Drop exclusion. |
+| High IV weak | 65 to 90 weak | 44 to 65 weakest | Flat | **Not replicated.** Drop. |
+| High realized vol weak | Positive | 84+ weak | 81.6+ weakest | **2 of 3.** Low-priority exclusion. |
+| Calls 5d avg strong | Strong | Failed | Flat | **Failed.** Drop. |
+| Off-high deep weak | Strong | Weakest | Weak (mild) | **Mixed.** Drop as a tag. |
+| Ratings | +2 weak, -2 strong | -2 strong | -2 weak | **Unstable.** Drop. |
+| 30-day ATM | Negative | Negative | Negative | **Failed.** Dropped. |
+
+### Dropped or deprioritized
+
+- **Calls 5d avg, shares 5d avg above 1.7, and calls today as positive selectors.** Unstable across bundles.
+- **Stretch vs ma50 as an exclusion.** Reversed in bundle 6. Re-tested as a candidate screen factor.
+- **IV as an exclusion.** Not replicated in bundle 6.
+- **30-day expiry.** Negative in every bundle.
+- **Double-or-10 exits.** Dropped in bundle 2.
+- **10%-above strikes as primary.** Still too thin and mechanics-suspect.
+- **Ratings** as entry, sizing, or exclusion.
+- **Market gate.** Blank in all six bundles. Removed.
+- **Rsi thresholds** in either direction.
+- **Judging any rule on total P&L or one bundle.**
+
+### Confidence summary
+
+- **Moderate:** 0 to 1 recent call days is weak (bundles 4, 5, 6). Use as a negative filter.
+- **Moderate:** 2 or more recent call days is positive (bundles 4 and 6, mixed in 5). Candidate screen.
+- **Moderate:** 30-day expiry and 30-day ATM are negative in every bundle.
+- **Low to moderate:** news presence is positive (bundles 4, 5, 6; negative in 3).
+- **Low:** close at or above VWAP is positive (bundle 6 only).
+- **Low:** realized vol above 80% is weak (bundles 5 and 6; positive in 4).
+- **Low:** spike with no news is weak (bundles 3 and 4; not clearly tested since).
+- **Dead or reversed:** IV exclusion, stretch-vs-ma50 exclusion, calls 5d avg as a selector, ratings, market gate.
+- **Unresolved:** whether any long-call structure has a positive median. Six bundles say not yet. The 90-day 5%-above structure is paused. The mechanics audit must be done before any option scorecard is trusted.
+
+### Agent 3's final notes (not passed on)
+
+# TRADING NOTES: OPTION CALL BUYING ON SIGNALS (rewritten after bundle 6 of 6)
+
+## 1. MY CURRENT STRATEGY
+
+**Status: paper only. No real-money option trades.** The gate is unchanged. A rule must show a positive median option return across at least 40 trades, in at least two bundles, with exit quotes audited. Nothing has passed after six bundles.
+
+### 1.1 The core conclusion
+
+The option wrapper is the main source of loss, and the stock-level signals I have tested do not replicate reliably across bundles.
+
+- **Pooled option results are negative at the median for every structure tested.** Setup A (30d, 5% OTM, double-or-10) has medians of -48% (b3, n=32), -39% (b4, n=19), -67% (b5, n=23), and -30% (b6, n=8). Its only positive bundle, b2, had n=6.
+- **Bundle 6 made money in total (+$1,023 on 40 trades) with a median trade of -23%.** The total came from a few large winners on stocks that rose 8% to 22% in the window. Most trades lost. A positive total from a fat right tail does not establish a rule, and one bundle's total should not change the gate.
+- **Breakeven arithmetic.** A 30-day call 5% OTM bought for 1% to 6% of the share price needs the stock to finish meaningfully above the strike plus premium. Doubling within 10 sessions typically needs a stock gain of about 8% to 20%. In bundle 6 the average stock moved +2.5% and the median moved +0.4%. Most stocks cannot deliver that move in the window, so most trades expire worthless or close to it.
+- **Premium paid does not sort outcomes.** Winners and losers overlap across the 0.5% to 9% premium range.
+- **Implied volatility does not sort outcomes consistently.** Bundle 5 showed the 44 to 65 IV band as the worst. Bundle 6 showed it as the best. The IV pattern is not stable.
+- **Confidence that the typical 30-day OTM call loses money: high.** Confidence that any specific option structure is profitable: very low.
+
+### 1.2 Pooled option results
+
+| Structure | Bundles | n (approx.) | Median | Verdict |
+|---|---|---|---|---|
+| 30d 5% OTM, double-or-10 (Setup A) | 2 to 6 | ~88 | Negative in b3, b4, b5, b6 (b6 median -30%, avg +68% driven by 3 large winners); b2 positive on n=6 | Paper only; not a rule |
+| 30d 0%, hold 10 | 2 to 6 | ~20 | Negative in b5 (n=2) and b6 (n=13, median -5%, closest to breakeven of any hold-10 structure) | Still negative pooled; watch |
+| 30d 5% OTM, hold 10 | 2 to 6 | ~21 | Negative (b6 n=4, median -64%) | Dropped |
+| 30d 10% and 20% OTM, hold 10 | 2 to 6 | ~5 | Negative where tested | Dropped |
+| 30d 0%, double-or-10 | 4 to 6 | ~16 | Negative | Dropped |
+| 90d calls (ATM, 10% OTM, mixed) | 2 to 6 | ~24 | Mixed; b6 90d 10% OTM hold 10 (n=4) median -17% with winners of +80% and +35% | Not a rule; too few per bundle |
+| 14d calls | 5 | 1 | -36% | No usable sample |
+
+### 1.3 Stock-level signals
+
+These are the conditions I still test. Each entry lists the evidence and my confidence. Several weakened in bundle 6.
+
+**S-1. Recent news present (strongest, most consistent).**
+- Rule: at least 1 news article in the prior 3 sessions OR at least 1 in the prior 7 sessions.
+- Bundle 6: news 3d at 1 to 22 articles: +3.5% median (68% up). News 7d at 1 to 2: +2.7% (72% up). News 7d at 2 to 27: +1.8% (60% up). Zero-news bins were mixed and tiny (news 7d zero: +1.8% with 78% up on a small group; news 3d zero: -1.0% with 30% up).
+- Bundle 5 put the strongest bin at news 7d 0 to 1. Bundle 6 put it at 1 to 2. The direction (news present beats no news) held. The exact count threshold moved.
+- Evidence: bundles 2, 3, 4, 5, 6 for direction. Confidence: moderate. Threshold: at least 1 article in 3 days or 7 days.
+
+**S-2. News tone (low to moderate confidence).**
+- Bundle 6: tone 7d 0 to 0.2: +4.4% (62% up). 0.2 to 0.3: +0.3%. 0.3 to 0.6: +1.4% (54% up). Negative tone (-0.1 to 0): -0.8%.
+- Bundle 5: tone 0.38 to 0.64 +1.4%; 0.05 to 0.2 -1.6%.
+- Rule (supporting only): tone 7d at or above 0.
+- Confidence: low to moderate.
+
+**S-3. Shares volume above normal, not extreme (moderate, new evidence in b6).**
+- Bundle 6: shares today 1.28 to 1.78 gave +1.9% (60% up). Shares today 0.82 to 1.0 gave -1.1%. Shares 5d avg 1.06 to 1.68 gave +1.3% to +2.1%. Shares 5d avg 0.55 to 0.86 gave -1.5%.
+- Bundle 5: shares 0.95 to 1.27 gave +1.9%. Shares 5d avg above 1.69 gave -2.0%.
+- Rule: shares 5d avg between about 1.05 and 1.7. Avoid the extreme high end.
+- Evidence: bundles 5 and 6 agree on the middle band. Confidence: moderate.
+
+**S-4. Sustained call buying over the last 5 sessions (new in b6, one bundle).**
+- Bundle 6: call days 2x+ (out of the last 5 sessions) at 2 to 3: +1.4% median (68% up). At 3 to 5: +2.4% (66% up). At 0 to 1: -1.6% (34% up).
+- Not measured in bundle 5 notes, so this has one bundle of support.
+- Rule (candidate): at least 2 of the last 5 sessions with call volume at least 2x normal.
+- Confidence: low. Needs replication.
+
+**S-5. Calls 20d in the 1.05 to 1.52 band (reversed in b6, conflicting history).**
+- Bundle 6: calls 20d 1.05 to 1.52: +3.8% median (71% up). 1.52 to 2.21: -0.3%. 2.24 to 4.84: -0.5%.
+- Bundle 4 showed a similar sweet spot. Bundle 5 showed the band as flat or negative.
+- Confidence: low. Two of three bundles that tested it were positive, but the band was dropped and reinstated, so treat it as a candidate only.
+
+**S-6. Pullback versus the 20-session average (weakened).**
+- Bundle 6: vs ma20 -5 to -0.4: -0.3%. -0.3 to 2.8: +1.4% (58% up). The -7.8 to -2.4 band was not clearly positive.
+- Bundle 5 positive in that band. Bundles 3 and 4 positive.
+- Rule: no hard threshold. Do not use vs ma20 as a filter until it replicates.
+- Confidence: low.
+
+**S-7. Close versus VWAP (reversed in b6; drop the old rule).**
+- Bundle 5 said stocks bid up into the close underperformed. Bundle 6 showed the reverse: close vs vwap 0.22 to 0.77: +1.0% (62% up); above 0.78: +2.2% (66% up).
+- Conclusion: the signal is inconsistent across bundles. Log only.
+- Confidence: low; direction disagrees across bundles.
+
+**S-8. Put activity present (weakened).**
+- Bundle 6: p/c 0 to 0.065 (calls-only names): +0.6% (52% up). That is not weak. The old "avoid calls-only names" rule did not replicate. Puts 5d avg 6.2 and above: +1.7% (68% up). Puts 20d 1.12 to 1.79: +1.5% (68% up).
+- Bundle 5 and bundle 3 supported avoiding calls-only names. Bundle 6 does not.
+- Rule: no hard rule. Mild preference for puts 20d between about 1.1 and 1.8.
+- Confidence: low.
+
+**S-9. RSI (old caution reversed).**
+- Bundle 6: RSI 37 to 49: +0.2%. RSI 58 to 68: +0.6%. RSI 68 to 91: +0.9%. RSI 8 to 36: -0.1%.
+- Bundle 5 showed RSI 43 to 64 as negative. Bundle 6 does not show that.
+- Rule: no RSI filter. Avoid RSI below 30 only as a weak caution.
+- Confidence: low.
+
+**S-10. Implied/realized ratio (unresolved).**
+- Option-level bundle 6: ratio 0.17 to 0.68 median -59%; 0.68 to 0.95 median -29%; 0.95 to 1.25 median -40%; 1.25 to 1.57 median -15%; 1.57 to 3.43 median -17%.
+- Stock-level bundle 6: ratio 0.17 to 0.68 -0.4% median; 1.57 to 3.43 +1.8%.
+- Bundle 5 said the 0.95 to 1.5 band was the worst and the cheapest band the best. Bundle 4 said 1.0 to 1.6 was the best.
+- Conclusion: the ratio has not produced a stable band across three bundles. Log it on every trade. No entry rule.
+- Confidence: none for an entry rule.
+
+### 1.4 Rules demoted or retired
+
+- **Ratings (-2 to +2).** Bundle 6: rated -1 had the highest average (+3.7%) and median (+0.5%). Rated +1 was -0.3% median. Rated +2 was -1.3% (one stock). Ratings do not sort outcomes in any bundle. Do not use.
+- **Market 5d and 20d.** Blank in all six bundles. The market gate is dead.
+- **Deep off-high below -15%.** Bundle 6 showed only small negatives (-0.1% to -0.3%). Bundle 5 was more negative. Neutral with a mild caution.
+- **Very high IV on option trades (above 83).** Option-level median near -39% in bundle 6, and bundle 5 showed -83%. Keep avoiding.
+- **IV 44 to 65 as worst (bundle 5).** Bundle 6 showed IV 40 to 58 as the best option-level bin (median -21%). Contradictory. No IV rule.
+
+### 1.5 Hard rules (keep)
+
+- **Instrument:** 30-day call, paper only.
+- **Strike:** 5% OTM for Setup A. Do not test 10% or 15% OTM on 30-day expiry.
+- **Exit:** sell when the contract doubles, or at session 10, whichever comes first. Record exit quote, source, and the stock's 10-session return.
+- **Premium:** log as a % of price. Premiums under 1% still need a quote audit.
+- **Sizing:** flat and minimal. Never add after a win. No real money.
+- **Stops:** none. Hold to the exit rule.
+- **Ratings:** not used.
+- **Market gate:** not usable.
+
+### 1.6 What I am running now
+
+**Track 1: stock-level tracker (no option cost).** This is the main test. Record every candidate's 10-session stock return, whether it passes the filter or not.
+
+**Stock filter v2 (candidate):**
+- News: at least 1 article in the last 3 sessions OR at least 1 in the last 7 sessions (S-1).
+- News tone 7d at or above 0 (S-2, supporting).
+- Shares 5d avg between about 1.05 and 1.7 (S-3).
+- Call days 2x+ over the last 5 sessions at least 2 (S-4, candidate).
+- No hard threshold on p/c, RSI, vs ma20, close vs vwap, or ratings.
+
+Logging requirement: record the full set of 1.3 columns so the filter can be tested in other combinations later. Do not add conditions until the current filter has been tested.
+
+**Target:** at least 300 filtered candidates across two bundles before judging. The bar is a stock median above the unfiltered median, with at least 55% of filtered stocks up over 10 sessions. Compare against the unfiltered baseline in the same bundle, not against zero.
+
+**Track 2: Setup A paper test (reduced).** Keep 30-day 5% OTM double-or-10 on filter-passing candidates only. Record the stock's 10-session return next to every option result. Do not expand Setup A.
+
+### 1.7 Setup A (paper only)
+
+- **Instrument:** 30-day call, strike 5% above the price.
+- **Entry:** stock filter v2 in 1.6.
+- **Exit:** double or session 10, whichever comes first.
+- **Reporting:** report the option median and the stock median on the same rows. Report the gap (stock median minus option median) per bundle.
+- **Result so far (all bundles):** median negative in four of five bundles with more than 5 trades. Bundle 6 median -30%, average +68% (n=8). The average is driven by a few large winners.
+
+## 2. WHAT I TESTED IN THIS BUNDLE
+
+**Bundle 6 results (40 trades on 250 candidates):** total +$1,023, average +2.6%, median -23.0%, 38% winners.
+
+| Structure | Trades | Average | Median |
+|---|---|---|---|
+| 30d 5% OTM, double-or-10 | 8 | +67.5% | -30.4% |
+| 30d 0%, hold 10 | 13 | -2.6% | -5.0% |
+| 30d 0%, double-or-10 | 5 | -14.4% | -16.3% |
+| 30d 5% OTM, hold 10 | 4 | -14.0% | -64.0% |
+| 30d 10% OTM, hold 10 | 2 | -66.8% | -66.8% |
+| 90d 0%, hold 10 | 2 | -17.4% | -17.4% |
+| 90d 5% OTM, hold 10 | 2 | -42.5% | -42.5% |
+| 90d 10% OTM, hold 10 | 4 | -5.4% | -16.8% |
+
+**What the trades show:**
+
+- **The winners were few and large.** The top results were +455%, +379%, +167%, +167%, and +90%. Their stocks rose roughly 7% to 22% in the window. Most of those stocks had news in the prior 3 to 7 sessions, and most had iv/realized between 0.5 and 1.7.
+- **The losers were mostly flat or down stocks.** The -100% and near-100% losses came from stocks that fell or stayed flat. Several had strong 5-session run-ups before entry (5d % above +6), which argues against chasing extended names.
+- **The 30d 0% hold-10 group was the closest to breakeven** (median -5%, 13 trades). It is still negative and is the least bad structure in this bundle. It is a candidate for the next paper comparison, not a rule.
+- **The 30d 5% OTM double-or-10 average was positive, but the median was -30%.** The average is not a reliable measure with n=8.
+- **Stock backdrop was mildly positive.** Average +2.5%, median +0.4%, with the same fat right tail. Stocks priced under $10 and with high IV produced the largest moves in both directions.
+
+**Stock-level results that held or moved:**
+
+- News present (S-1): held. News 3d 1+ at +3.5% median (68% up); news 7d 1 to 2 at +2.7% (72% up).
+- Shares 5d avg 1.06 to 1.68 (S-3): held. Consistent with bundle 5 on the middle band.
+- Calls 20d 1.05 to 1.52 (S-5): reappeared at +3.8% (71% up).
+- Puts 20d 1.1 to 1.8 (S-8): mildly positive.
+
+**Stock-level results that reversed or failed:**
+
+- Calls-only names (p/c under 0.065): +0.6% median in bundle 6. The old "avoid calls-only" rule did not replicate.
+- Vs ma20 pullback band (-7.8 to -2.4): flat in bundle 6. Did not replicate.
+- Close vs VWAP below zero: the bundle 5 signal reversed. Stocks that closed above VWAP did better (+1.0% to +2.2%).
+- RSI 43 to 64: no caution in bundle 6. Old caution dropped.
+- Ratings: rated -1 had the highest median of the groups. Confirms ratings do not work.
+- IV 40 to 58: best option-level bin in bundle 6, worst stock-level bin in bundle 5. No stable IV rule.
+
+**New idea tried: sustained call buying (S-4).** Call days 2x+ in the last 5 sessions at 2 or more gave +1.4% to +2.4% median. Result: encouraging, one bundle, low confidence. Next bundle must confirm before it becomes part of the filter.
+
+**Second idea tried: iv/realized above 1.25 at the option level.** Median -15% to -17% for ratio 1.25 to 3.43, versus -29% to -59% below. Result: the best option-level ratio band in bundle 6. Bundle 5 said the opposite at the stock level. Conclusion: not stable. Log only.
+
+## 3. WHAT I WILL TRY NEXT
+
+1. **Run the stock tracker on filter v2 (Track 1).** Record the 10-session return for every candidate, filtered and unfiltered. Judge only after 300+ filtered candidates across two bundles.
+
+2. **Test the call-days filter alone.** Run S-4 (2 or more call days 2x+ in the last 5 sessions) as a separate subgroup. If it does not hold on new stocks, drop it.
+
+3. **Compare 30d 0% hold-10 and 30d 5% OTM double-or-10 on the same filter-passing rows.** The 0% hold-10 median was the least negative in bundle 6. Run both structures on the same entries, paper only, and report the medians side by side.
+
+4. **Run the deeper in-the-money paper test.** Buy a 30-day call with the strike about 5% below the price (delta about 0.7 to 0.8), exit at session 10, on filter-passing candidates. This is still the highest-priority test because it separates the wrapper from the signal. Paper only.
+
+5. **Report the wrapper gap for every bundle.** Stock median minus option median on the same rows. A consistently large gap confirms the wrapper is the loss.
+
+6. **Log iv/realized to two decimals on every trade** and bin it into four bands (below 0.7, 0.7 to 1.0, 1.0 to 1.25, above 1.25). Check whether the option-level pattern from bundle 6 persists.
+
+7. **Log IV in four bins** (below 30, 30 to 45, 45 to 65, above 65). Test whether the bundle 5 and bundle 6 IV patterns converge.
+
+8. **Audit every 30-day trade that expires before session 10.** Record the stock close against the strike and the recorded exit. Report audited and unaudited results side by side.
+
+9. **Log market 5d and 20d again.** Blank in all six bundles. If blank next bundle too, remove the market gate permanently.
+
+10. **Keep ratings out of the filter.** Log them for the record only.
+
+## 4. SUPPORTING EVIDENCE AND IDEAS I HAVE DROPPED
+
+**Held, with confidence:**
+
+- **Very high:** The option wrapper loses at the median on typical 30-day OTM trades. Median negative for every structure with more than about 10 trades.
+- **Moderate:** News present (1 or more articles in the last 3 or 7 sessions) beats no news. Five bundles agree on direction.
+- **Moderate:** Shares 5d avg in the middle band (about 1.05 to 1.7) beats both the low end and the extreme high end. Two bundles agree.
+- **Low to moderate:** Positive news tone (0 and above) is mildly supportive. Two bundles agree on direction.
+- **Low:** Calls 20d 1.05 to 1.52 sweet spot. Two of three bundles positive. Needs confirmation.
+- **Low:** Sustained call buying (2 or more call days 2x+ in the last 5 sessions). One bundle.
+- **Low:** Avoid very high IV (above 83) on option trades. Consistent in bundles 4, 5, and 6 at the option level, but IV bands elsewhere are unstable.
+- **Low:** Puts 20d about 1.1 to 1.8: mildly positive in bundle 6 only.
+
+**Demoted, reversed, or dropped:**
+
+- **iv/realized as an entry band (R-C, 1.0 to 1.6):** Bundle 4 positive, bundle 5 negative, bundle 6 showed the highest option-level median above 1.25 but the stock-level signal was weak. No stable band. Log only.
+- **Calls-only names (p/c under 0.06) as a filter:** Held in bundles 3 and 5, not in bundle 6 (+0.6%). Dropped.
+- **Vs ma20 pullback band (-7.8 to -2.4):** Positive in bundles 3, 4, and 5. Flat in bundle 6. Demoted to low confidence. No threshold.
+- **Vs ma50 pullback:** Did not replicate in bundle 5. Not tested as a filter.
+- **Close vs VWAP below zero:** Positive in bundle 5, reversed in bundle 6. Dropped.
+- **RSI 43 to 64 caution:** Negative in bundles 4 and 5, not in bundle 6. Dropped.
+- **Ratings:** Dropped. Rated -1 outperformed rated +1 in bundle 6. No monotone relationship in any bundle.
+- **Deep off-high below -15%:** Small negative in bundle 6, larger in bundle 5. Neutral with caution.
+- **Extended names (5d above +6):** Negative option results in bundle 6 losers. Stock-level neutral. Avoid chasing.
+- **Shares 5d avg above 1.7:** Negative in bundle 5. Mild positive in bundle 6. Caution, no hard rule.
+- **Calls ratio above 6:** Conflicting. Dropped.
+- **Puts 5d avg above 4.5 (old drop):** Bundle 6 showed +1.7% at 6.2 and above. Conflicting. Log only.
+- **Market-gated rules:** Unknown. The data are blank.
+- **30-day 10% and 20% OTM, hold 10:** Negative in every bundle where tested.
+- **30-day ATM, hold 10:** Negative in every bundle except one small positive group. Dropped as a standalone rule.
+- **14-day calls:** No usable sample.
+- **Sub-$10 lottery calls:** Paper only. The largest stock moves in both directions were concentrated here, so the sample is tempting but hard to audit.
+- **Chasing one-day spikes:** Avoid. "Spike, no news" rows are not reliably weak or strong across bundles.
+- **Any rule resting on fewer than 20 trades:** Not accepted.
+
+**Confidence summary:**
+
+- News present as the core stock-level condition: moderate.
+- Shares 5d avg middle band: moderate.
+- Sustained call buying: low, one bundle.
+- Calls 20d 1.05 to 1.52: low.
+- Option wrapper as run (30d 5% OTM, double-or-10): very low. Median negative across four bundles.
+- Deeper ITM call on filtered entries: untested. Highest-priority option test.
+- Market-gated rules: unknown.
+- Rating-based rules: none.
+- Real-money option trading: none until the gate in section 1 is met.
+
+### Agent 4's final notes (not passed on)
+
+# TRADING PLAYBOOK: OPTION-CALL SWING TRADER (FINAL)
+
+*Paper only. Closed after bundle 6 of 6.*
+
+## 1. MY CURRENT STRATEGY
+
+### 1a. Status: no active entry rule
+
+Arm A (call-flow pullback) was the only pre-registered stock-level setup. It failed the bundle 6 test, so I am not trading any setup. No paper positions are to be opened under this playbook. No live size of any kind is justified.
+
+**Pre-registered test result (bundle 6, 250 candidates, baseline median +0.4%, average +2.5%):**
+
+| Component | Bin in bundle 6 | Median 10-session return | % rose | Relative to baseline median | Result |
+|---|---|---|---|---|---|
+| A1: call days 2x+ (5-session) = 2 or 3 | "2 to 3" | +1.4% | 68% | +1.0 | Fails the +1.5 median threshold; passes the 55% rule |
+| A2: vs ma20 between -7.8% and -1.5% | closest bin "-5 to -0.4" | -0.3% | 50% | -0.7 | Fails both thresholds |
+
+The bins do not let me compute the exact intersection of A1 and A2, so I scored each component. Neither passes. Under the pre-registered decision rule, Arm A is dropped and the strategy closes. I am not rescuing it by changing thresholds after the fact.
+
+**Why the strategy is closed, in one line:** over six bundles, no stock-level entry screen produced a median 10-session gain large enough to cover the premium on a 30-day call. Even when the stock rose, the option wrapper's median was negative in every bundle.
+
+### 1b. The structural problem: premium versus the typical move
+
+- Premiums paid on the 30-day calls in bundle 6 ran about 0.5% to 11% of the share price (median roughly 2% to 3%).
+- The median stock in this universe moved +0.4% over 10 sessions. The median move in the best-performing bins was about +1.5% to +3.8%.
+- A long call needs a move larger than the premium, plus time decay over 10 sessions, just to break even. For most candidates, the typical move does not cover that cost.
+- This is why the median option result is negative even when the stock average is positive. Convexity only pays when the tail is captured, and the tail is not identifiable from these columns.
+
+### 1c. Instrument and wrapper (retired, for reference)
+
+- **30-day ATM call, held 10 sessions:** negative median in bundles 4, 5 and 6 (bundle 6: ATM-labelled trades were mostly in the "+0%" and "+15%" buckets, with medians of -84.8% and -39%).
+- **30-day 5% OTM call, held 10 sessions:** bundle 6 had 20 trades, average -7.3%, median -32%. Better average than ATM, still negative median.
+- **30-day 10% OTM:** 3 trades, median -64.1% in bundle 6. Dropped.
+- **90-day calls:** 1 trade in bundle 6 (+31.1%). Too few to judge. Dropped as a wrapper since it was negative in bundles 4 and 5.
+- **Double-or-10 exit, 20% OTM:** dropped.
+
+No wrapper is recommended. If an option study continues, it should be a new, separately pre-registered study with a clean audit, not a continuation of this one.
+
+## 2. WHAT I TESTED IN THIS BUNDLE AND HOW IT WENT
+
+### 2a. Option results (bundle 6, 27 trades, unaudited)
+
+- Total P&L: -$2,988. Average -11.1%, median -40.0%, 33% winners.
+- By label: 30d 5% OTM 20 trades (avg -7.3%, median -32%); 30d 10% OTM 3 trades (median -64%); 30d 15% OTM 2 trades (-39%); "+0%" 1 trade (-84.8%); 90d 5% OTM 1 trade (+31.1%).
+- **Audit status:** no audit results were supplied with this bundle. These numbers are reported as unaudited and must not be used to decide anything.
+
+**Evidence the marks are still wrong (checked by inspection, not by quote data):**
+- A 30-day ATM call with 11 sessions to expiry, premium 3.9% of price and the stock down 2.8%, is marked at -100%. A call that far from expiry with a 2.8% drop should still hold roughly 1.5% of price in value, about a -60% result, not a total loss. A -100% mark needs a zero bid.
+- A 30-day call with 21 sessions to expiry, premium 1.3% of price, and the stock up 9.8% is marked at +293%. That is roughly what intrinsic value would give (a 5%-OTM strike at 1.3% premium, with a 9.8% move, is worth about 3.5x). The upside marks look credible. The losses at -100% are the suspect ones.
+- Conclusion: the option median is biased downward by the loss marks. Even so, the stock-level failure does not depend on the marks. The strategy closed on stock-level evidence.
+
+### 2b. Stock-level findings (bundle 6)
+
+**Baseline:** +2.5% average, +0.4% median. This is a higher baseline than bundle 5 (-1.0% median), so the market backdrop shifted between bundles.
+
+**Call-flow components (A1):**
+- Call days 2x+ (5-session): 0 to 1: -1.6% (34% up); 1 to 2: -0.7%; 2 to 3: +1.4% (68% up); 3 to 5: +2.4% (66% up). The 3-to-5 bin is the strongest, but it is a different setup from the one pre-registered.
+- Calls 5d avg: top fifth (7.3 to 150) +0.7%; 3.2 to 7.1 +0.2%; 0.93 to 1.53 +1.5%. No monotonic pattern.
+- Calls 20d (slow, sustained buying): 1.05 to 1.52 gave +3.8% (71% up), the best single bin in the bundle. Adjacent bins were -0.3%, -0.5% and +0.4%. This looks like a single-bin spike, not a trend.
+
+**Pullback components (A2):**
+- Vs ma20: -5 to -0.4 gave -0.3% (50% up). -0.3 to 2.8 gave +1.4%. The mild-dip effect from bundles 4 and 5 did not repeat.
+- Vs vwap20: -4.7 to -0.4 gave -0.3% (50% up). Not repeated.
+
+**Extension (C3 test):**
+- Vs ma50 4.6 to 12.4: +1.4% (62% up). Above 12.6: +2.2% (62% up). Bundle 6 says extension was positive. Bundle 5 said flat, and bundles 3 and 4 said flat or negative. The cap is not supported.
+
+**Volatility and IV:**
+- IV 83.5 to 436: +0.5% (51% up). IV 57.6 to 83.5: -0.3% (49% up). IV 40 to 57.6: +1.5% (56% up). IV cap has no clear effect on stock returns in bundle 6.
+- Realized vol 81.6 to 244: -3.2% median (46% up). Bundle 5 showed -1.3% to -3.0% in comparable bins. Two bundles negative.
+- Vol20 top fifth (5.1 to 15.4): -3.2% (46% up). Bundle 4 found the reverse for vol20 3.7 to 5.5. Conflicting overall.
+- IV/realized: 0.17 to 0.68: -0.4%; 0.68 to 0.95: +0.9%; 0.95 to 1.24: +0.3%; 1.25 to 1.57: +0.6%; 1.57 to 3.43: +1.8% (59% up). Mildly rising with the ratio. Bundle 5 showed the opposite. Conflicting.
+
+**News (new evidence, bins partly broken):**
+- News 3d, 1 to 22 articles: +3.5% (68% up). News 3d 0 to 1: +3.4% (68% up). Both bins are above the baseline median by more than 3 points.
+- News 7d, 1 to 2: +2.7% (72% up). News 1d, 1 to 8: +2.0% (64% up).
+- Zero-news bins are mislabeled. "0 to 0" appears with -8.9% (0% up) and +12.4% (100% up), which suggests very small n. I cannot read them as clean zero-news groups.
+
+**Days since spike:**
+- 11 to 60 sessions: +1.8% (64% up). 0 to 3: about 0%. The 0-day bins are contradictory again ("0 to 0" at -5.4% with 2% up, and +3.7% with 100% up on tiny samples). Not usable.
+
+**Ratings:**
+- +2: 1 stock, +0.5%. +1: 16 stocks, median -0.2%. +0: 93 stocks, median +0.1%. -1: 122 stocks, average +4.7%, median +0.8%. -2: 9 stocks, median -3.0%.
+- The -1 average was pulled up by very large winners. The median edge over baseline is about +0.4 points. Ratings have not been a useful gate in any bundle.
+
+**Market columns:** still blank. Not testable.
+
+**Tails:** the largest losers (-17% to -37%) were mostly under $50, with realized vol above 100% and IV above 100%. Several were rated -1 or 0. The largest winners (+24% to +244%) were also high-vol, often with calls-ratio spikes above 10x, or 20-day moves above +30%. Tails are fat in both directions. A median screen cannot capture them.
+
+## 3. WHAT I WILL TRY NEXT
+
+No trading. The series is over. Any future work starts from a fresh, pre-registered hypothesis on fresh stocks.
+
+**Hypotheses worth a clean test (not rules yet):**
+
+1. **News present in the prior 3 days (news 3d ≥ 1) versus none.** Bundle 6 showed +3.4% and +3.5% for the news bins. Bundles 4 and 5 showed higher medians for news as well (+7.8% at "0 to 1"). Three bundles, but the zero-news bins are broken, so the comparison may be contaminated. **Confidence: low to medium.**
+   - Pre-registration: log news 3d as 0, 1, or 2+ with clean bins. Test ≥1 article versus 0. Pass if the median beats the same bundle's baseline by at least +1.5 with at least 55% rising.
+
+2. **Call days 2x+ at 3 to 5 in the last 5 sessions.** Bundle 6 +2.4% (66% up); bundle 4 +3.5%; bundle 5 -0.7%. Mixed. The 2-to-3 bin (which failed the threshold in bundle 6) is positive in four of four bundles, but the relative edge is shrinking (+1.0 relative in bundle 6). **Confidence: low.**
+   - Note: this is the same signal family as Arm A. Given that Arm A failed, I would test it only as a fresh, separate hypothesis with a new threshold, not as a continuation.
+
+3. **Realized volatility above about 80% as an avoid rule.** Negative in bundle 5 (-1.3% to -3.0% across bins) and bundle 6 (-3.2%, 46% up). Bundle 4 found the reverse for vol20. **Confidence: low to medium.** It is more useful as an exclusion for option trades (high realized vol means high premium and high tail risk) than as a long signal.
+
+4. **Share volume building (5d avg 1.25 to 1.68):** +2.1% (62% up) in bundle 6, positive in bundle 4's top bin (+3.5%), flat to negative in bundle 5's top bin (-2.0%). Two of three bundles. **Confidence: low.** Reinstated as a hypothesis only; previously dropped.
+
+**Logging requirements for any future study:**
+- News counts with clean bins: 0, 1, 2+ across 1d, 3d and 7d.
+- Days since spike with clean bins: 0 will be split into a single-day bin, and bins will not overlap.
+- Market 5d and 20d columns, in full. If blank, record "not testable."
+- Option marks: recompute the mid price at sessions 0, 1, 5 and 10 from quotes. Reject zero-bid marks, stale quotes, and moves over 50% in one session without a matching stock move. For expired options, check the settlement against the close on the expiry date.
+
+**Decision rule for any future study:** a hypothesis is promoted only after it passes on a fresh bundle with a pre-registered threshold. Passing on one bundle after the fact does not count.
+
+## 4. SUPPORTING EVIDENCE AND DROPPED IDEAS
+
+**Closed (failed the pre-registered test):**
+- **Arm A (call-flow pullback):** closed in bundle 6. Both components failed their thresholds. Two bundles of partial support (4 and 5) were not enough.
+
+**Dropped:**
+- **Extension cap (vs ma50 ≤ +5.5):** bundle 6 showed positive returns above the cap (+1.4% to +2.2%). Bundles 3 to 5 showed flat or negative. Not supported as a filter.
+- **IV cap (IV ≤ 60):** no clear effect on stock returns in bundle 6 (IV 57.6 to 83.5 was -0.3%, IV 40 to 57.6 was +1.5%). Option-level IV bands were negative at every level in bundle 6 (median -21% to -39%). The cap is not a useful stock-level filter, but it may still help limit premium cost on options. Not carried forward as a rule.
+- **Deep drawdown (Arm B):** mixed in bundle 6 (off high -24 to -14: -0.1%; -14 to -7: -0.8%; vs ma50 ≤ -9: +1.1%). Sign flips across bundles. Dropped.
+- **Ratings (all levels):** -1 averages were higher than +1 in five bundles, but medians were close to baseline. Not a gate.
+- **Calls ratio (today or 5d top fifth):** no consistent direction. Dropped.
+- **Calls 20d sustained buying:** the 1.05 to 1.52 bin was +3.8% (71% up) but the adjacent bins were flat to negative. Single-bin result. Not a rule.
+- **Vol20 cap:** reversed across bundles. No signal.
+- **Puts ratio and puts 5d/20d measures:** no consistent direction. Not used.
+- **Days since spike:** bins contradictory across bundles. Not testable.
+- **RSI bands:** non-monotonic in bundle 6 (+0.9% at RSI 68 to 91; -0.1% at RSI 8 to 36). Noise.
+- **Price band and premium as % of price:** no reliable edge. Premium cost is a structural drag, not a predictor.
+- **Option wrappers (ATM, 5%, 10%, 15% OTM, 90-day, double-or-10):** no positive median in any bundle. Retired.
+
+**What I learned across six bundles:**
+- The stock-level baseline varies a lot between bundles (median -1.0% in bundle 5, +0.4% in bundle 6). Any signal has to be judged against its own bundle's baseline.
+- Several stock-level signals (call-flow building, mild pullbacks, news presence) showed small positive relative effects in several bundles. None were large enough to cover premium costs on long calls, and none held cleanly with tight bins.
+- The option marks are not reliable enough to measure the convexity hypothesis. Upside marks appear consistent with intrinsic value. Downside marks at -100% do not match stock moves. Option results in this series are biased downward and cannot be used to confirm or reject any stock-level idea.
+- Tails are fat in both directions, and median screens do not identify them. A future study of convex payoffs needs a different design: a wider candidate set, option-quote data at entry and exit, and explicit premium budgeting before any signal is tested.
+
 
 ## Generation 7
 

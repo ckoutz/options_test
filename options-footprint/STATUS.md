@@ -1,41 +1,41 @@
-# Status (2026-10-10 01:11 UTC, storage: postgres)
+# Status (2026-10-10 05:32 UTC, storage: postgres)
 
 ## Backfill
-- Big moves logged: 5,384 across 1,650 stocks
-- Pre-move windows filled: 5,384 of 5,384
+- Big moves logged: 5,389 across 1,652 stocks
+- Pre-move windows filled: 5,389 of 5,389
 - Stocks eligible for full history (3+ moves): 650; done: 920
-- Control days: 10,758 (filled 10,758)
-- Daily rows: 1,174,576; database size: 490 MB
+- Control days: 10,767 (filled 10,767)
+- Daily rows: 1,175,548; database size: 499 MB
 
 ## Table sizes
-- daily: 272 MB, about 1,174,576 rows
+- daily: 272 MB, about 1,175,548 rows
 - ladder_trades: 141 MB, about 564,225 rows
 - news: 47 MB, about 225,612 rows
-- pool: 21 MB, about 9,157 rows
+- pool: 22 MB, about 9,157 rows
+- agent_ratings: 11 MB, about 55,102 rows
 - arena: 5 MB, about 1,613 rows
-- agent_ratings: 5 MB, about 25,590 rows
-- event_features: 3 MB, about 16,142 rows
-- flags: 2 MB, about 3,918 rows
-- agent_trades: 2 MB, about 4,257 rows
-- controls: 1 MB, about 10,758 rows
-- events: 1 MB, about 5,384 rows
-- agent_weeks: 1 MB, about 2,992 rows
+- agent_trades: 4 MB, about 9,357 rows
+- event_features: 3 MB, about 16,156 rows
+- agent_weeks: 2 MB, about 5,984 rows
+- flags: 2 MB, about 4,038 rows
+- controls: 1 MB, about 10,767 rows
+- events: 1 MB, about 5,389 rows
 - oi_daily: 1 MB, about 3,653 rows
-- committee_notes: 0 MB, about 20 rows
+- committee_notes: 0 MB, about 40 rows
+- scorebook: 0 MB, about 304 rows
 - bundles: 0 MB, about 766 rows
 - history_done: 0 MB, about 920 rows
-- scorebook: 0 MB, about 146 rows
 - news_fetched: 0 MB, about 742 rows
 - ladder_report: 0 MB, about 90 rows
 - wide_universe: 0 MB, about 300 rows
+- agent_runs: 0 MB, about 54 rows
 - errors: 0 MB, about 151 rows
 - signal_report: 0 MB, about 36 rows
-- agent_runs: 0 MB, about 33 rows
-- run_log: 0 MB, about 36 rows
+- run_log: 0 MB, about 37 rows
 - agent_lessons: 0 MB, about 4 rows
 
 ## Labels
-- unknown: 4,600
+- unknown: 4,605
 - sector_day: 772
 - check_corporate_action: 11
 - news_catalyst: 1
@@ -85,7 +85,7 @@
 | 30% | Stealth: calls 3x+, shares normal, price quiet | 11,258 | 2.2 | 0.4 | 0.38 | 0.44 | 0.45 | -0.14 |
 
 ## Flags (daily shortlist)
-- 3,918 flags; latest signal date: 2026-10-08
+- 4,038 flags; latest signal date: 2026-10-09
 
 ## Trader generations
 | lineage | gen | phase | model | trades | profit $ | random profit $ | mean % | median % | win % | random mean % | random win % | unreadable | cost $ | status |
@@ -123,6 +123,27 @@
 | gen10 | 2 | train | anthropic/claude-haiku-5.5 | 237 | -50255.2 | -22443.9 | -21.2 | -36.32 | 27.8 | -9.47 | 33.7 | 12/151 | 0.3613 | complete |
 | gen10 | 2 | score | anthropic/claude-haiku-5.5 | 179 | -21569.5 | -23771.2 | -12.05 | -24.75 | 30.7 | -13.28 | 29.9 | 42/144 | 0.5312 | complete |
 | gen10 | 3 | unfinished | anthropic/claude-haiku-5.5 |  |  |  |  |  |  |  |  |  | 1.1656 | error: RuntimeError: model replies unreadable (4/6): '(empty reply)' |
+| gen10 | 3 | train | anthropic/claude-haiku-5.5 | 211 | -8163.4 | -4009.0 | -3.87 | -27.35 | 34.1 | -1.9 | 33.2 | 4/151 | 0.4595 | complete |
+| gen10 | 3 | train | anthropic/claude-haiku-5.5 | 259 | -19846.3 | -16835.0 | -7.66 | -47.97 | 34.4 | -6.5 | 30.8 | 3/151 | 0.3976 | complete |
+| gen10 | 3 | train | anthropic/claude-haiku-5.5 | 275 | -2130.4 | -18067.5 | -0.77 | -36.58 | 36.4 | -6.57 | 34.0 | 3/151 | 0.4227 | complete |
+| gen10 | 3 | train | anthropic/claude-haiku-5.5 | 208 | -20817.1 | -14393.6 | -10.01 | -34.72 | 31.2 | -6.92 | 32.9 | 4/151 | 0.3922 | complete |
+| gen10 | 3 | score | anthropic/claude-haiku-5.5 | 221 | -39393.2 | -41128.1 | -17.82 | -52.27 | 25.8 | -18.61 | 25.6 | 8/144 | 0.9507 | complete |
+| gen10 | 4 | train | anthropic/claude-haiku-5.5 | 206 | -26821.1 | -32589.2 | -13.02 | -41.61 | 31.1 | -15.82 | 29.4 | 3/151 | 0.419 | complete |
+| gen10 | 4 | train | anthropic/claude-haiku-5.5 | 210 | -2056.6 | -27132.0 | -0.98 | -47.29 | 29.0 | -12.92 | 26.7 | 3/151 | 0.4954 | complete |
+| gen10 | 4 | train | anthropic/claude-haiku-5.5 | 224 | -28688.2 | -21459.2 | -12.81 | -32.94 | 31.2 | -9.58 | 31.2 | 5/151 | 0.4617 | complete |
+| gen10 | 4 | train | anthropic/claude-haiku-5.5 | 241 | -5304.4 | -23063.7 | -2.2 | -54.0 | 27.4 | -9.57 | 26.7 | 6/151 | 0.5341 | complete |
+| gen10 | 4 | score | anthropic/claude-haiku-5.5 | 267 | -39894.7 | -57965.7 | -14.94 | -49.12 | 26.2 | -21.71 | 25.0 | 7/144 | 0.9614 | complete |
+| gen10 | 5 | train | anthropic/claude-haiku-5.5 | 249 | -17996.3 | -48779.1 | -7.23 | -40.86 | 28.9 | -19.59 | 26.3 | 4/151 | 0.4778 | complete |
+| gen10 | 5 | train | anthropic/claude-haiku-5.5 | 292 | 1110.4 | -44530.0 | 0.38 | -50.52 | 29.8 | -15.25 | 25.6 | 4/151 | 0.581 | complete |
+| gen10 | 5 | train | anthropic/claude-haiku-5.5 | 252 | -19896.0 | -40244.4 | -7.9 | -35.28 | 31.0 | -15.97 | 27.7 | 5/151 | 0.5337 | complete |
+| gen10 | 5 | train | anthropic/claude-haiku-5.5 | 244 | -876.1 | -32354.4 | -0.36 | -39.67 | 29.9 | -13.26 | 28.9 | 6/151 | 0.6127 | complete |
+| gen10 | 5 | score | anthropic/claude-haiku-5.5 | 290 | -50697.8 | -70760.0 | -17.48 | -51.86 | 26.6 | -24.4 | 24.5 | 9/144 | 1.0433 | complete |
+| bakeoff | 5 | score | deepseek/deepseek-v4-pro | 178 | -52680.7 | -40245.8 | -29.6 | -61.95 | 24.2 | -22.61 | 24.5 | 0/144 | 1.6865 | complete |
+| gen10 | 6 | train | anthropic/claude-haiku-5.5 | 187 | -16270.1 | -22215.6 | -8.7 | -26.59 | 35.3 | -11.88 | 33.3 | 10/151 | 0.5365 | complete |
+| gen10 | 6 | train | anthropic/claude-haiku-5.5 | 252 | -16837.7 | -29710.8 | -6.68 | -45.14 | 29.8 | -11.79 | 28.8 | 6/151 | 0.4825 | complete |
+| gen10 | 6 | train | anthropic/claude-haiku-5.5 | 278 | 4829.3 | -36612.6 | 1.74 | -40.3 | 31.3 | -13.17 | 27.9 | 4/151 | 0.4789 | complete |
+| gen10 | 6 | train | anthropic/claude-haiku-5.5 | 254 | -6737.1 | -27482.8 | -2.65 | -24.66 | 37.0 | -10.82 | 31.9 | 1/151 | 0.4741 | complete |
+| gen10 | 6 | score | anthropic/claude-haiku-5.5 | 302 | -49143.5 | -76859.0 | -16.27 | -52.32 | 27.8 | -25.45 | 24.5 | 4/144 | 1.2332 | complete |
 
 ### Latest lessons: blank lineage, generation 3 (anthropic/claude-haiku-5.5)
 
@@ -136,6 +157,7 @@
 - 300 stocks chosen; full options history done for 300
 
 ## Job notes (latest 8)
+- 2026-10-10T05:31:45+00:00 build-pool: pool rebuilt: 9,157 candidates (3,663 from the wide list).
 - 2026-10-09T13:47:23+00:00 focused: Options flow: blind rank correlation +0.009, top tenth +2.67%; Technical analysis: blind rank correlation +0.028, top tenth +2.91%; Market: blind rank correlation +0.015, top tenth -0.23%; News: blind rank correlation +0.017, top tenth -0.21%; Flow + technical: blind rank correlation +0.021, top tenth +2.64%; Everything: blind rank correlation +0.021, top tenth +2.91%
 - 2026-10-09T13:47:23+00:00 focused-hindsight: wide-list passed: none
 - 2026-10-09T13:47:10+00:00 focused-volatility: passed: Options flow, Technical analysis, Flow + technical, Everything; volatility-only top tenth +3.01%
@@ -143,7 +165,6 @@
 - 2026-10-09T13:42:50+00:00 focused-volatility: passed: Options flow, Technical analysis, Flow + technical, Everything; volatility-only top tenth +3.01%
 - 2026-10-09T05:33:11+00:00 focused: Options flow: blind rank correlation +0.009, top tenth +2.67%; Technical analysis: blind rank correlation +0.028, top tenth +2.91%; Market: blind rank correlation +0.015, top tenth -0.23%; News: blind rank correlation +0.018, top tenth -0.21%; Flow + technical: blind rank correlation +0.021, top tenth +2.64%; Everything: blind rank correlation +0.021, top tenth +2.91%
 - 2026-10-09T05:30:45+00:00 benchmark: model (stock or calls) on blind months: 401 trades, average -4.35%, range (-9.13, -0.26), random same-trades -2.13%.
-- 2026-10-09T05:30:45+00:00 benchmark-runs: 74 of 120 model runs beat the random same-trades picker.
 
 ## Errors (151 total, latest 8)
 - 2026-10-09 01:03 IAC oi 2026-01-13: 504 The remote gateway timed out.

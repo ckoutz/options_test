@@ -314,6 +314,19 @@ Use your tools to:
    you need.
 5. Write your journal as a GAME PLAN: your read of the market, your strategies, what you will do on the first
    trading day, and what would make you change course.
+
+HOW TO WORK TODAY (enforced):
+- Think out loud: before each batch of tool calls, write a few sentences saying what you are checking and why,
+  and after results come back, what you learned. Those notes are what the human reads.
+- Go wide before you go narrow. Research at least four different strategy families from outside sources (for
+  example momentum, mean reversion, earnings drift, volatility selling or buying, sector rotation, event
+  trades, options-flow following, pairs). Use web_search at least 6 times and read_page at least 3 times on
+  sources you find (papers, practitioner write-ups, data studies). Judge evidence: who tested it, on what
+  years, after costs?
+- Check at least two of the ideas against real data with your tools before choosing.
+- Your journal must include a section RESEARCH NOTES: each strategy family you looked at, the best evidence
+  for and against it (with the source), and why you kept or rejected it.
+finish_day is refused until these minimums are met.
 Then call finish_day with a summary."""
 
 
@@ -331,6 +344,7 @@ def run_agent(n, snap, research=False):
     messages = [{"role": "system", "content": RULEBOOK.format(season=SEASON)},
                 {"role": "user", "content": brief}]
     transcript, cost, steps, summary, wrote_journal, n_orders = [], 0.0, 0, "", False, 0
+    used = {}
     while steps < max_steps:
         steps += 1
         if cost >= max_usd:
@@ -358,17 +372,24 @@ def run_agent(n, snap, research=False):
                                        "tool calls"}
                 elif not wrote_journal:
                     result = {"error": "update your journal with journal_write first, then call finish_day again"}
+                elif research and cost < max_usd and (used.get("web_search", 0) < 6 or used.get("read_page", 0) < 3):
+                    result = {"error": f"research minimums not met: web_search {used.get('web_search', 0)}/6, "
+                                       f"read_page {used.get('read_page', 0)}/3. Keep researching, then rewrite "
+                                       "your journal (with RESEARCH NOTES) and finish."}
                 else:
                     summary, done = str(args.get("summary", ""))[:3000], True
                     result = {"ok": True}
             else:
                 before = len(TL.WEB_COST)
                 result = TL.call(n, name, args)
+                if not (isinstance(result, dict) and result.get("error")):
+                    used[name] = used.get(name, 0) + 1
                 cost += sum(TL.WEB_COST[before:])
                 wrote_journal |= name == "journal_write" and bool(result.get("saved")) if isinstance(result, dict) else False
                 n_orders += name == "place_order"
             text = json.dumps(result, default=str)
-            transcript.append(f"TOOL {name} {json.dumps(args)[:600]} -> {text[:800]}")
+            transcript.append(f"TOOL {name} {json.dumps(args)[:600]} -> "
+                              f"{text[:1500 if name in ('web_search', 'read_page') else 800]}")
             messages.append({"role": "tool", "tool_call_id": tc["id"], "content": text[:12000]})
         if done:
             break
@@ -509,6 +530,9 @@ def research_report(agents):
                 if line.startswith("THOUGHT:"):
                     L.append("> " + line[8:].strip().replace("\n", "\n> "))
                     L.append("")
+                elif line.startswith("TOOL web_search") or line.startswith("TOOL read_page"):
+                    L.append(f"- `{line[5:].split(' -> ')[0][:300]}`")
+                    L.append("  - found: " + line.split(' -> ', 1)[-1][:1500].replace("\n", " "))
                 elif line.startswith("TOOL "):
                     L.append(f"- `{line[5:][:220]}`")
             L.append("")

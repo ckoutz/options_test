@@ -285,9 +285,10 @@ class LLM:
         if not self.key:
             sys.exit("Set LLM_API_KEY (your OpenRouter key).")
         self.check_budget()
-        body = json.dumps({"model": self.model, "messages": messages, "max_tokens": max_tokens,
-                           "temperature": 0.7, "usage": {"include": True}}).encode()
+        limit = max_tokens
         for attempt in range(6):
+            body = json.dumps({"model": self.model, "messages": messages, "max_tokens": limit,
+                               "temperature": 0.7, "usage": {"include": True}}).encode()
             req = urllib.request.Request(f"{self.base}/chat/completions", data=body, headers={
                 "Authorization": f"Bearer {self.key}", "Content-Type": "application/json",
                 "X-Title": "options-footprint trader generations"})
@@ -324,7 +325,15 @@ class LLM:
                 raise RuntimeError(f"model API returned no choices: {str(data)[:300]}")
             choice = data["choices"][0]
             self.last_finish = choice.get("finish_reason")
-            return (choice["message"].get("content") or "").strip()
+            text = (choice["message"].get("content") or "").strip()
+            if not text and attempt < 5:
+                # An empty reply: usually the model spent its whole allowance thinking (cut off by
+                # length) or the provider hiccuped. Retry, with more room if it was cut off.
+                if self.last_finish == "length":
+                    limit = min(limit * 2, 12000)
+                time.sleep(5)
+                continue
+            return text
         raise RuntimeError("model API kept failing")
 
 

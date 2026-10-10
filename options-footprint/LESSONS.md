@@ -1,4 +1,4 @@
-# Agent notes (2026-10-10 19:06 UTC)
+# Agent notes (2026-10-10 21:32 UTC)
 
 Every lessons document each generation passed on, oldest first, then what the agents wrote
 week by week in their latest runs. Lineages without -v2 are the first test, whose weekly
@@ -852,461 +852,460 @@ replies were cut off (no trades) and were not saved.
 - week 143 [pass]: [Bundle 6] C5 matches R1 strict but its 5%-above 30-day strike is unavailable and market gate is blank. Other candidates lack edge or hit exclusions.
 - week 144 [call 30d +10% hold10; call 30d +10% hold10]: [Bundle 6] C9 and C7 match R2 momentum run (20d>20, vs ma50>15) and C9 also matches R4. Market gate blank; medians weak, so small size.
 
-## Weekly notes: gen10b, generation 9, train
+## Weekly notes: gen10b, generation 10, train
 
-- week 1 [pass]: [Bundle 1 of 6] (unreadable) ```json
-{"ratings": {"C1": -1, "C2": 1, "C3": 1, "C4": -1, "C5": -1, "C6": 1, "C7": -1, "C8": 1, "C9": 0, "C10": -1}, "picks": [{"id": "C8", "buy": "call", "expiry": 30, "strike":
-- week 2 [call 30d +5% hold10 -57%]: [Bundle 1 of 6] 
-- week 3 [pass]: [Bundle 1 of 6] (unreadable) {"rat
-- week 4 [call 30d +5% hold10 -61%; call 90d +10% hold10 -31%]: [Bundle 1 of 6] C1 and C7 pass the R6 and R11 trend plus market-up gate. The 30-day trade on C1 is a small test, given the last trade lost.
-- week 5 [call 30d +0% hold10 -67%]: [Bundle 1 of 6] C5 passes the market-up, above-ma50, news-7d gate (R7-like). Others fail trend or market gates or are sub-$10 lotteries.
-- week 6 [call 30d +5% hold10 -80%]: [Bundle 1 of 6] Market 20d is negative, so call rules historically lose. C8 has the strongest call-flow and news, and cheap premium, so I test it as a single small idea.
-- week 7 [call 30d +10% double_or_10 -43%]: [Bundle 1 of 6] C10 is the only candidate with a market 20d gate above zero and strong 20-day momentum. Its 10%-above call is cheap at 4.2% of price. Small lottery-size trade only.
-- week 8 [call 30d +10% hold10 -59%; call 30d +5% hold10 -64%]: [Bundle 1 of 6] C9 fits R1-$50 (rsi, calls 20d, market gate, over $50). C2 fits R2 at 10% above. Both are small-size tests; shares<1 and sub-$10 are risks.
-- week 9 [pass]: [Bundle 1 of 6] (unreadable) {"ratings": {"C1": -1, "C2": 1, "C3": -1, "C4": 0, "C5": -2, "C6": -1, "C7": 1, "C8": -2, "C9": -1, "C10": 1}, "picks": [{"id": "C2", "buy": "call", "expiry": 30, "strike
-- week 10 [call 30d +5% hold10 -68%; call 30d +10% double_or_10 +112%; call 30d +5% hold10 -61%]: [Bundle 1 of 6] 
-- week 11 [call 30d +5% hold10 -100%]: [Bundle 1 of 6] C9 matches R1-$50: rsi 76, calls 20d 3.8, price over $50, market up. Others lack strength or call flow.
-- week 12 [call 30d +10% hold10 -82%; call 90d +0% hold10 -39%; call 30d +5% hold10 -72%]: [Bundle 1 of 6] C1 fits R2 momentum; C9 fits R4 accumulation; C5 is a cheap-IV 90-day ATM idea test, kept small.
-- week 13 [call 30d +5% hold10 +314%; call 30d +10% double_or_10 -77%]: [Bundle 1 of 6] Market 20d is negative, so call rules are unreliable. Two small tests: sustained call-flow lottery and over-$50 OTM flow.
-- week 14 [call 30d +15% hold10 -38%]: [Bundle 1 of 6] Market 20d is down and every candidate is oversold, sub-$10, or fails shares/call gates. One cheap far-OTM paper test of the wrapper idea.
-- week 15 [call 30d +0% hold10 +104%]: [Bundle 1 of 6] Market 20d is negative, so the call-rule gates fail. Only C3 is a cheap at-the-money >$50 name, bought as a small test trade.
-- week 16 [call 30d +10% hold10 -96%; call 30d +0% hold10 -37%; call 30d +10% hold10 +163%]: [Bundle 1 of 6] C10 and C9 match R2 momentum (20d>20, vs ma50>15, market up); C1 fits R8 trend and market gate at ATM.
-- week 17 [call 30d +0% hold10 -63%]: [Bundle 1 of 6] C10 meets R8 (over $50, above ma50, up market) at 30-day ATM. C4 has strong momentum but is sub-$10. C6 and C5 are oversold with heavy calls, which scores badly.
-- week 18 [call 30d +5% hold10 -90%; call 30d +0% hold10 +17%]: [Bundle 1 of 6] 
-- week 19 [call 30d +5% hold10 +32%; call 30d +5% hold10 -44%; call 30d +5% hold10 -74%]: [Bundle 1 of 6] C9 meets R1 and R4; C10 meets R4; C3 meets R3 with market and trend gates. Small, flat size.
-- week 20 [call 30d +5% hold10 -86%; call 30d +10% hold10 +718%; call 30d +10% hold10 +21%]: [Bundle 1 of 6] R2 momentum (20d>20, vs ma50>15, market up) on C7 and C8; R7 trend-plus-market gate on C3.
-- week 21 [call 30d +5% hold10 +48%; call 30d +10% hold10 -67%]: [Bundle 1 of 6] C7 meets R2 momentum with market up; C2 meets R6 uptrend in rising market. C1 fails market gate; C8 oversold with heavy calls.
-- week 22 [call 30d +5% hold10 -37%; call 30d +5% hold10 -33%]: [Bundle 1 of 6] C6 meets R1 (rsi>70, calls 20d>2) and strong 20d/ma50 momentum. C4 meets R4 (calls 20d, 20d>=10, vs ma20>=5) in an up market.
-- week 23 [pass]: [Bundle 1 of 6] (unreadable) {"ratings": {"C1": -1, "C2": 1, "C3": -1, "C4": 1, "C5": -1, "C6": -1,
-- week 24 [call 30d +20% double_or_10 -12%; call 30d +10% hold10 -40%]: [Bundle 1 of 6] Only weak trend and news signals; cheap far-OTM 30-day calls on >$50 uptrending names as small lottery bets, market gate flat.
-- week 25 [call 30d +10% hold10 +29%; call 30d +20% double_or_10 -15%]: [Bundle 1 of 6] C5 meets R2 momentum gate (20d>20, vs ma50>15, market up). C9 tests extreme-run far-OTM with double-or-10 exit.
-- week 26 [call 30d +5% hold10 -100%]: [Bundle 2 of 6] C10 passes R6 with news and iv/realized below 1 at 30d 5% above. Others fail the iv or news gate, or lack the 5% strike.
-- week 27 [call 30d +5% hold10 +120%; call 30d +0% hold10 -100%]: [Bundle 2 of 6] C7 passes news 7d and iv/realized<1 gates; C10 tests cheap-vol ATM. Trend columns partly missing, so low conviction.
-- week 28 [pass]: [Bundle 2 of 6] (unreadable) {"ratings": {"C1": 1, "C2": 0, "C3": 0, "C4": -1, "C5": 0, "C6": 1, "C7": -1, "C8": 0, "C9": 1, "C10": 0}, "picks": [
-- week 29 [call 30d +5% hold10 -85%]: [Bundle 2 of 6] C2 passes market, 20d trend, news and iv/realized<1 (vs ma50 missing). C6 has the base but expensive options. Others fail the trend or market gate.
-- week 30 [call 30d +5% hold10 -44%; call 30d +5% double_or_10 -30%]: [Bundle 2 of 6] C8 passes rule A and B (trend, market, iv/rv 0.88, news). C2 tests trend without the iv gate, using double_or_10.
-- week 31 [call 30d +5% hold10 +40%]: [Bundle 2 of 6] Market 20d is negative for all, so rule gates fail. Test contrarian sustained call accumulation in a falling market with one small position.
-- week 32 [call 30d +5% hold10 -59%]: [Bundle 2 of 6] C10 passes rule A: trend, market, and iv/realized 0.98 all qualify. Other names fail a gate or are lottery-like.
-- week 33 [call 30d +5% hold10 +65%; call 30d +5% double_or_10 -56%]: [Bundle 2 of 6] C3 passes rule A+B (trend, market, news, iv/rv 0.99). C8 is a test of trend plus news without iv/rv data.
-- week 34 [call 30d +10% hold10 -51%; call 30d +5% hold10 -4%]: [Bundle 2 of 6] C7 passes R6 with iv/realized 0.37 and shares surge. C1 tests the R6 base at 10% strike, the only 30-day strike offered.
-- week 35 [call 30d +5% hold10 -63%; call 30d +5% hold10 -94%; call 30d +0% hold10 -57%]: [Bundle 2 of 6] C2 and C5 pass the R6 trend, market and news gates. C7 tests cheap-IV volume surge with no news.
-- week 36 [call 30d +20% hold10 -100%]: [Bundle 2 of 6] No candidate passes rule A (C7 fails market gate). One exploratory momentum-OTM test on C7, cheap iv/realized.
-- week 37 [call 90d +5% hold10 -71%; call 30d +5% hold10 -87%]: [Bundle 2 of 6] C9 passes rule A (trend, market up, iv/rv<1). C7 fails the shares<1 filter, so the 90-day trade tests that filter.
-- week 38 [call 30d +5% hold10 -95%]: [Bundle 2 of 6] Market 20d is negative for all, so no rule passes. Testing a contrarian idea: heavy call surge with cheap IV (iv/rv 0.65) in a falling market.
-- week 39 [call 30d +0% hold10 -97%]: [Bundle 2 of 6] Market 20d is negative for all candidates, failing the market gate. One ATM test on C1 with news and trend support, as a labelled exploratory trade.
-- week 40 [call 30d +5% hold10 -70%; call 30d +5% hold10 +184%]: [Bundle 2 of 6] Market 20d is negative for all, so no scorebook rule fires. Two small exploratory tests: relative strength and cheap premium without the market gate.
-- week 41 [call 30d +5% hold10 +23%]: [Bundle 2 of 6] Market 20d is negative for all, failing the gate. C7 is an out-of-rule test: sustained OTM call buying, cheap 30d premium.
-- week 42 [call 30d +10% double_or_10 -55%; call 30d +5% hold10 -91%]: [Bundle 2 of 6] Market 20d is -4.2%, so every market-gated rule fails. Test cheap-premium idea (iv/rv<1, trend, news) with two small calls.
-- week 43 [call 30d +5% hold10 -35%; call 30d +5% hold10 -77%; call 30d +5% hold10 -85%]: [Bundle 2 of 6] Rule A+B combined: C4, C7, C10 pass all gates (iv/realized under 1, trend and market up, news 7d at least 1).
-- week 44 [call 30d +5% hold10 -63%; call 30d +5% hold10 -74%]: [Bundle 2 of 6] C5 passes all rule A+B gates; C2 passes rule A with cheap iv (0.95). Others fail trend gate or iv gate.
-- week 45 [call 30d +5% hold10 -100%; call 30d +5% hold10 -100%]: [Bundle 2 of 6] Only C10 (rule A+B) and C2 (rule A) pass trend, market, and iv/realized gates. C1 fails iv; the rest fail trend.
-- week 46 [call 30d +5% hold10 -80%; call 30d +5% hold10 -83%; call 30d +5% hold10 -44%]: [Bundle 2 of 6] C5 and C1 pass the full rule A+B gates; C3 passes rule B with cheap premium. Test is about gate-based selection.
-- week 47 [call 30d +0% hold10 -85%; call 30d +5% hold10 -58%]: [Bundle 2 of 6] C7 passes rule A (trend, market, iv/rv 0.77). C3 is an exploratory ATM test despite shares<1, to check that filter.
-- week 48 [call 30d +10% hold10 +668%]: [Bundle 2 of 6] Market 20d is negative, so the R6 and rule A gates fail for all. One exploratory momentum trade to meet the weekly minimum.
-- week 49 [call 30d +5% hold10 +31%; call 30d +5% hold10 -63%; call 30d +10% double_or_10 -24%]: [Bundle 2 of 6] C1 and C7 pass rule B (uptrend, market up, news 7d≥1). C5 tests trend without news at 10% OTM, a new idea.
-- week 50 [call 30d +0% hold10 -22%; call 30d +15% hold10 -82%; call 30d +5% hold10 -15%]: [Bundle 2 of 6] Trend, market and iv/realized gates: C2 and C9 pass R6+iv; C10 matches R8. C9 at 15% is an untested strike.
-- week 51 [call 30d +5% double_or_10 -40%; call 30d +5% hold10 -11%]: [Bundle 3 of 6] Rule AB barely fires: the ma50 field is blank, and only C2 passes iv/rv. C2 is the rule-closest pick; C8 tests a double-or-10 exit on a flow name.
-- week 52 [call 90d +10% hold10 -52%]: [Bundle 3 of 6] No Rule AB or Rule A signal fires. C9 fails iv/rv. Single cheap-IV test trade on C3 keeps evidence flowing.
-- week 53 [call 90d +10% hold10 -20%]: [Bundle 3 of 6] No candidate passes Rule AB (most lack news; C9 fails the trend gate). Overextension and spikes fade, so I rate them down. One exploratory 90-day call tests the cheap long-dated structure.
-- week 54 [call 30d +10% double_or_10 -73%; call 30d +5% hold10 -96%]: [Bundle 3 of 6] C7 is the only Rule AB pass with a buyable 30d 5% call. C5 is a test of high news with negative 20d trend.
-- week 55 [call 30d +5% hold10 -98%]: [Bundle 3 of 6] Only C8 passes Rule AB: uptrend above ma50, 20d up, market 20d up, news 7d at 6, iv/realized 0.77. Others fail trend or news gates.
-- week 56 [call 30d +5% hold10 -54%]: [Bundle 3 of 6] Only C3 passes Rule AB (uptrend, 7d news, iv/rv 0.83, market up). Its overextension is a flagged risk, so the rating is only +1.
-- week 57 [call 30d +0% hold10 -67%; call 30d +5% hold10 -51%; call 30d +5% hold10 -91%]: [Bundle 3 of 6] C5 passes Rule AB. C9 is the Rule A reference arm. C8 tests a cheap-IV ATM call without news.
-- week 58 [call 30d +5% hold10 -36%; call 30d +5% hold10 +38%]: [Bundle 3 of 6] Rule AB baseline: C2 and C6 pass trend, market, news and IV/realized gates; C6 is overextended, a known fade risk.
-- week 59 [call 30d +5% hold10 +588%; call 30d +5% hold10 +135%]: [Bundle 3 of 6] Rule AB passes only C1 and C5 (uptrend, market up, news, IV/realized below 1). Others fail trend, news, or IV/realized gates.
-- week 60 [call 30d +5% hold10 +39%]: [Bundle 3 of 6] No candidate passes Rule AB. C6 is an exploratory oversold, heavy-put-flow contrarian test with 21 sessions to expiry.
-- week 61 [call 90d +5% hold10 +1%]: [Bundle 3 of 6] No Rule AB signals. C10 passes the Rule A reference arm; testing 90-day expiry since 30-day is under 20 sessions.
-- week 62 [call 30d +10% hold10 -100%]: [Bundle 3 of 6] Rule AB fails: market 20d is negative for all. Only one off-rule test: a 30-day 10%-OTM call on a beaten-down name, with 23 sessions to expiry.
-- week 63 [call 30d +5% hold10 -36%]: [Bundle 3 of 6] Market 20d is negative for all, so Rule AB passes nothing. C10 is the only name passing AB minus the market gate, so I take one labelled test trade.
-- week 64 [call 30d +5% hold10 -97%]: [Bundle 3 of 6] Market 20d is negative for every name, so Rule AB passes none. C8 passes all other AB conditions; traded as a no-market-gate test (test 10).
-- week 65 [call 30d +0% hold10 -98%; call 30d +0% hold10 -83%]: [Bundle 3 of 6] Rule AB fails: market 20d is negative for all. Testing relative strength (C8) and cheap-IV oversold rebound (C10) at ATM.
-- week 66 [call 30d +5% hold10 +14%]: [Bundle 3 of 6] Rule AB fails everywhere (market 20d negative), so only C3 passes the market-free arm, tested as the item 10 gate check.
-- week 67 [call 30d +5% hold10 -78%]: [Bundle 3 of 6] Rule AB fails: market 20d is -4.2% and no candidate passes. Exploratory test: news-driven call spike after a 20d drop, outside the trend gate.
-- week 68 [call 30d +0% hold10 -3%]: [Bundle 3 of 6] Only C8 passes Rule AB's news and IV/realized gates. Its 5% strike is unlisted, so I test ATM as a strike probe. Most others fail news or trend.
-- week 69 [call 30d +5% hold10 -18%; call 90d +10% hold10 -31%]: [Bundle 3 of 6] C6 is the only Rule AB pass. C5 tests a no-news 3x call spike idea on 90-day calls.
-- week 70 [call 30d +5% hold10 +47%]: [Bundle 3 of 6] No Rule AB signal (news or iv/realized fails). C10 passes reference Rule A (trend, market, iv/rv 0.84). Logged as paper trade.
-- week 71 [call 30d +5% hold10 -38%]: [Bundle 3 of 6] No candidate passes Rule AB (C1 fails iv/rv). One exploratory trade tests news-rich trend with iv/rv above 1.
-- week 72 [pass]: [Bundle 3 of 6] (unreadable) {"ratings": {"C1
-- week 73 [call 30d +10% hold10 -19%]: [Bundle 3 of 6] No candidate passes Rule AB (C1 lacks news). C1 passes Rule A with iv/rv 0.85, so I test it as a reference arm at 10% strike.
-- week 74 [call 90d +0% hold10 -42%]: [Bundle 3 of 6] Rule AB fails: market 20d is negative and only C7 has news, with IV/realized above 1. One exploratory 90-day test on C2 momentum.
-- week 75 [call 30d +15% hold10 +64%; call 90d +10% hold10 +21%]: [Bundle 3 of 6] Rule AB fails on most names (no news, or iv/realized missing). C7 is the closest fit. C6 tests a cheap 90-day call idea.
-- week 76 [pass]: [Bundle 4 of 6] C1 fell 25% today on bad news with heavy put volume. Its only option grid entries are unavailable: both expiries end inside the hold window.
-- week 77 [call 30d +10% hold10 -79%; call 30d +5% double_or_10 -72%]: [Bundle 4 of 6] AB fails for all but C1, which breaks trend. Test oversold C8 and no-news trend C9 as own ideas.
-- week 78 [call 90d +10% hold10 -66%]: [Bundle 4 of 6] Only C9 passes the AB screen with a usable expiry: news, uptrend, market up, IV/realized below 1. Others fail trend, news, IV or expiry rules.
-- week 79 [call 30d +5% hold10 -73%; call 90d +10% hold10 +39%]: [Bundle 4 of 6] Market gate fails for all, so I test AB without it: C8 (trend, news, spike) and C9 (trend, news, cheap IV, 90d).
-- week 80 [call 30d +10% hold10 -70%]: [Bundle 4 of 6] Only C2 is tradeable (30d, 20 sessions). It is sub-$10, which breaks my exclusion, so this is a logged test of that group.
-- week 81 [call 30d +5% hold10 -93%]: [Bundle 4 of 6] No candidate passes AB (C7 fails expiry and overextension). One exploratory news-heavy test on C9 to keep evidence flowing.
-- week 82 [call 30d +5% hold10 -79%; call 30d +5% hold10 +76%]: [Bundle 4 of 6] Market 20d is negative, so AB gates out. Two small test trades of the 30d 5% structure on uptrend names with news and call flow, to meet the weekly-trade rule.
-- week 83 [call 30d +0% hold10 -42%]: [Bundle 4 of 6] No AB signal fires. Exploration trade: strong call flow, IV/realized 0.96, uptrend, market up. Shares ratio is below 1, which is a known exclusion.
-- week 84 [call 90d +5% hold10 +108%; call 90d +5% double_or_10 -73%]: [Bundle 4 of 6] Market 20d is negative for all, so AB fails; chose the cheapest long-dated calls, as a required low-cost test.
-- week 85 [call 30d +0% hold10 +297%]: [Bundle 4 of 6] Market 20d is negative for all, so AB has no signals. Test a news-on-dip idea: C5 has news, is below ma50, and has IV/realized under 1.
-- week 86 [call 90d +15% hold10 -49%]: [Bundle 4 of 6] Market 20d is negative for every candidate, so AB fails everywhere. C4 is the one news 1-2, mid-trend name. The 90d 15% OTM call tests a cheap long-dated structure.
-- week 87 [call 30d +5% hold10 -93%; call 30d +5% hold10 +143%]: [Bundle 4 of 6] C3 meets AB baseline; C4 is an overextension-cap test. Other names fail news, trend, or IV/realized.
-- week 88 [call 90d +10% hold10 -46%; call 90d +5% hold10 -38%]: [Bundle 4 of 6] No candidate meets AB (30d expiry under 20 sessions). Testing 90d calls on trend+news names as an out-of-arm idea.
-- week 89 [call 30d +0% hold10 -59%]: [Bundle 4 of 6] No candidate meets AB with 20+ sessions to expiry. C6 is a cheap, 28-session ATM test of the oversold/put-spike idea, outside AB.
-- week 90 [call 30d +5% hold10 -100%]: [Bundle 4 of 6] Market 20d is negative for all, so AB fails everywhere. C1 has news, call spikes and cheap options; a single test trade.
-- week 91 [call 30d +5% hold10 -6%]: [Bundle 4 of 6] Market 20d is negative for every candidate, so AB fails. C7 meets the R4 momentum-accumulation rule; it is the only pick.
-- week 92 [call 30d +15% hold10 +25%; call 30d +15% double_or_10 +9%]: [Bundle 4 of 6] Market 20d is negative everywhere, so AB fails. Testing oversold-with-news (C7) and a news spike (C1) at cheap 15% strikes; avoiding heavy put spikes.
-- week 93 [call 90d +5% hold10 -36%]: [Bundle 4 of 6] Only C9 passes AB stock filters but has no tradeable 30d/90d call. C6 tests cheap-IV 90-day call as an idea test.
-- week 94 [call 30d +10% hold10 -76%; call 30d +0% hold10 +107%]: [Bundle 4 of 6] No AB signal fires. Testing oversold cheap-call idea (C4) and mid-trend ATM call (C8) for the record.
-- week 95 [call 30d +5% hold10 -22%]: [Bundle 4 of 6] C1 passes the AB baseline (uptrend, news, IV/realized below 1). Its 20d move exceeds the cap, so it is overextended. Other names fail AB, are sub-$50 with low shares, or lack 30d options.
-- week 96 [call 30d +5% double_or_10 -81%; call 30d +5% hold10 -98%]: [Bundle 4 of 6] C7 passes AB gates (news, trend, market, IV/realized 0.48). C10 tests news above the 1-2 band with heavy puts.
-- week 97 [call 30d +5% hold10 -60%]: [Bundle 4 of 6] AB baseline: C3 is the only candidate passing trend, news 7d ≥1 and IV/realized <1. Overextended, so it is a low-conviction baseline trade.
-- week 98 [call 30d +5% hold10 -48%]: [Bundle 4 of 6] Only C6 passes AB: uptrend, market up, news 7d 2, IV below realized. Shares 0.86 breaks an exclusion, so sizing stays at one trade.
-- week 99 [call 30d +5% hold10 -86%; call 30d +5% hold10 -85%; call 30d +5% hold10 -30%]: [Bundle 4 of 6] AB baseline: C1, C4, C8 pass trend, news and IV/realized checks; all take 30d 5% calls.
-- week 100 [call 90d +15% hold10 +11%]: [Bundle 4 of 6] Market down, so no AB signal. Only C6 has a tradable 90-day call; a cheap far-OTM test, not a rule trade.
-- week 101 [call 30d +5% hold10 -75%; call 30d +5% double_or_10 +234%]: [Bundle 4 of 6] C6 passes AB except IV/realized (1.44), a tested exception. C7 tests news band and momentum with IV excluded, as an idea check.
-- week 102 [call 30d +0% hold10 -67%]: [Bundle 5 of 6] Most fail AB and exclusions (spike today, thin shares, sub-$10). C3 is oversold, not spiking, with a 30-day ATM test trade.
-- week 103 [call 30d +5% hold10 -82%]: [Bundle 5 of 6] 
-- week 104 [call 30d +5% hold10 +32%]: [Bundle 5 of 6] C1 passes AB: news, trend, market up, IV/realized 0.49, 21 sessions to expiry. Others fail news/trend, sub-$10, or spike-today.
-- week 105 [call 30d +0% hold10 -78%]: [Bundle 5 of 6] Oversold C3 with cheap IV and 23 sessions to expiry. Shares are thin, so it breaks an exclusion; this is an explicit test. Most others are overbought, spiking, or thin-volume.
-- week 106 [call 90d +0% hold10 +34%]: [Bundle 5 of 6] C3 is oversold with news and heavy calls, but no buyable 20+ session expiry. C10 has news, call persistence and 90-day expiry, a logged strike test.
-- week 107 [call 30d +0% hold10 -74%; call 30d +0% hold10 +35%; call 30d +5% hold10 -24%]: [Bundle 5 of 6] Oversold names with call persistence and news; thin-share, spike-today, sub-$10 names rated down; ATM test logged.
-- week 108 [call 30d +0% hold10 -21%]: [Bundle 5 of 6] C5 is oversold (RSI 18) with news and call persistence; trend fails, so this is a logged ATM strike test. Others fail screens.
-- week 109 [call 30d +5% hold10 +294%; call 30d +0% hold10 +134%]: [Bundle 5 of 6] Oversold with news present, no spike today. Options are negative-median in past bundles, so small logged tests only.
-- week 110 [call 90d +0% hold10 -29%]: [Bundle 5 of 6] C4 has oversold RSI plus news. C5 is a logged test of cheap 90-day ATM calls. C2 excluded (spike today).
-- week 111 [call 30d +5% hold10 -16%]: [Bundle 5 of 6] C3 is the only AB-qualifying name: news, uptrend, up market, IV below realized, 21 sessions to expiry. Others fail gates or are excluded.
-- week 112 [call 30d +0% hold10 -95%; call 30d +0% hold10 +2%]: [Bundle 5 of 6] No candidate meets the news plus oversold or persistence screen. Two ATM 30-day calls test the strike question, logged only.
-- week 113 [call 30d +5% hold10 -97%]: [Bundle 5 of 6] C7 has news, call persistence, heavy shares, no spike today. Spike-today names and thin-share names rated down.
-- week 114 [call 30d +5% hold10 +7%]: [Bundle 5 of 6] Only C5 has 28 sessions to expiry and an oversold RSI; no candidate has news plus a clean setup, so one logged test trade.
-- week 115 [call 30d +0% hold10 -1%; call 30d +0% hold10 -21%]: [Bundle 5 of 6] News present, RSI near or under 35, heavy shares, call persistence; spike-today, sub-$10 and no-news names excluded.
-- week 116 [call 30d +5% hold10 -83%]: [Bundle 5 of 6] C5 is oversold with news, cheap IV (0.56), shares ok. C6 passes AB but fails the shares exclusion, so it is rated only.
-- week 117 [call 30d +5% hold10 -58%; call 30d +0% hold10 -42%]: [Bundle 5 of 6] C10 passes AB rules; C7 oversold (RSI 21), tests ATM strike. Spike-today names rated down.
-- week 118 [call 30d +10% hold10 +72%]: [Bundle 5 of 6] Only C8 has news, 5-day call persistence and a 21-session expiry. Its spike-today flag breaks the rules, so this is a logged test.
-- week 119 [call 30d +0% hold10 -6%]: [Bundle 5 of 6] C5 passes every AB condition (news, trend, market, IV/realized below 1), and its 30-day call has 21 sessions to expiry. Others fail trend, news, or the spike exclusion.
-- week 120 [call 30d +5% double_or_10 +455%]: [Bundle 5 of 6] C9 has news, heavy shares, and a cheap 30-day 5% call. Most others are overbought, news-less, or thin-volume.
-- week 121 [call 30d +5% hold10 -24%]: [Bundle 5 of 6] Oversold (RSI 22) with non-thin shares is the strongest stock-level read here. Spike-today and no-news names are excluded. Only one trade, a test of the overs
-- week 122 [call 30d +5% hold10 +78%; call 30d +15% hold10 +13%]: [Bundle 5 of 6] C7 passes the AB gates (trend, market, news, IV/realized about 1). C10 is an untested overbought strike id
-- week 123 [call 30d +0% hold10 +443%]: [Bundle 5 of 6] Most fail spike-today, thin-shares, or no-news rules. C3 is a logged ATM strike test, not a rule-based pick.
-- week 124 [call 90d +5% hold10 -40%]: [Bundle 5 of 6] C5 is oversold with heavy news and call persistence. Its 90-day expiry clears the 20-session minimum. Thin-share, no-news names rated down.
-- week 125 [call 90d +10% hold10 +18%; call 90d +0% hold10 +98%]: [Bundle 5 of 6] Spike-today names excluded; oversold/news-backed C2 kept; C5 tests 90d ATM strike. AB gate fails (market 20d negative).
-- week 126 [call 30d +5% hold10 -71%; call 30d +10% hold10 -63%]: [Bundle 5 of 6] Screen: C9 has news and not-thin shares, no spike today. C2 is near oversold with call persistence. Spike-today names excluded.
-- week 127 [call 90d +5% hold10 +30%]: [Bundle 6 of 6] Own idea: long-dated calls surging on 2.7x shares, no spike today. No AB signal passes (IV/realized or news fails). Testing 90-day structure.
-- week 128 [pass]: [Bundle 6 of 6] (unreadable) {"ratings": {"C1": 1, "C2": -1, "C3": -1, "C4": 0, "C5": 0, "C6": 0, "C7": -
-- week 129 [call 90d +10% hold10 +94%; call 30d +0% hold10 +96%]: [Bundle 6 of 6] Trend up, calls persistent, shares not thin. C10 spike today excluded. AB has no signal; C2 and C8 are stock-filter tests.
-- week 130 [call 30d +0% hold10 -63%]: [Bundle 6 of 6] Trend and news pass for C1, but iv/realized is exactly 1.00 and no 5% strike is offered. Exploratory ATM test only.
-- week 131 [call 90d +0% hold10 +112%]: [Bundle 6 of 6] C2 has persistent call buying, news, and a spike yesterday, but its market and trend gates fail. Other expiries are unavailable or under 20 sessions.
-- week 132 [call 90d +0% hold10 -83%]: [Bundle 6 of 6] C1 passes stock filters: news, call persistence, spike yesterday, shares not thin. Only 90-day option has 20+ sessions. Other names fail trend, news or shares.
-- week 133 [call 30d +10% double_or_10 -71%]: [Bundle 6 of 6] Most names fail the spike-today or thin-shares exclusions. C2 is the only clean tradable name, so it's a strike test outside AB's trend gate.
-- week 134 [call 90d +15% hold10 -10%]: [Bundle 6 of 6] Most names had spikes today, the weakest stock bin. C6 is an uptrend test on a cheap 90-day, 15%-OTM call; C7 lacks a tradable 20+ session expiry.
-- week 135 [call 30d +0% hold10 -94%]: [Bundle 6 of 6] Exploratory: C10 has news and no recent spike, but thin shares and a 17-session expiry break AB rules. Logged as a test.
-- week 136 [call 30d +5% hold10 +82%]: [Bundle 6 of 6] C5 is spike-yesterday, shares 1.29, news present, oversold. Most others are spike-today or thin shares. Market is down, so AB is off.
-- week 137 [call 30d +10% hold10 +56%]: [Bundle 6 of 6] Spike-yesterday test (C8) is the strongest notes bin, but it's sub-$10 and market 20d is negative, so one small trade only.
-- week 138 [call 90d +5% hold10 +214%]: [Bundle 6 of 6] Only C10 passes spike-yesterday and call persistence with a strong trend and cheap IV. Spike-today names are excluded.
-- week 139 [call 30d +0% hold10 -92%]: [Bundle 6 of 6] Most names fail filters (spike today, thin shares, short expiry). C2 is a logged ATM test: uptrend, market up, >$50.
-- week 140 [call 30d +0% hold10 -14%; call 90d +0% hold10 -47%]: [Bundle 6 of 6] Trend, news and call persistence favour C10. C6 is a deliberate test: oversold RSI with four positive-tone news items. Spike-today names mostly excluded.
-- week 141 [pass]: [Bundle 6 of 6] (unreadable) {"ratings": {"C1": 0, "C2": -1, "C3": -1, "C4": -1, "C5": -1, "C6": -1, "C7": -1, "C8": 1, "C9": 1, "C10": 0}, "picks": [{"id": "C8", "buy": "call", "expiry":
-- week 142 [call 30d +5% double_or_10 +59%]: [Bundle 6 of 6] C4 has spike yesterday, call persistence, news and an uptrend. Spike-today and thin-share names are excluded or rated down.
-- week 143 [pass]: [Bundle 6 of 6] (unreadable) {"ratings": {"C1": 1, "C2": -1, "C3": 0, "C4": -1, "C5": -1, "C6": -1, "C7": -1, "C8": 1, "C9": -1, "C10": -2}, "picks": [{"id": "C8", "buy": "call", "expiry": 30, "strike": 5, "exit":
-- week 144 [call 30d +5% hold10 -54%]: [Bundle 6 of 6] Only C1 is non-spike and near AB; it fails the shares<1 exclusion, so this is a logged test of that exclusion.
-- week 145 [call 30d +5% hold10 +121%; call 90d +5% hold10 -27%]: [Bundle 6 of 6] C5 passes stock filters: no spike today, news, persistent call days, shares ok, strong trend. C4 tests 90-day on trend leader.
-- week 146 [call 30d +5% hold10 -49%]: [Bundle 6 of 6] C6 passes AB: trend up, news 7d 1, IV/realized 0.98, spike yesterday, shares 1.26. Others fail spike or trend rules.
-- week 147 [call 30d +5% hold10 -95%]: [Bundle 6 of 6] No AB-compliant name with 20+ sessions to expiry. C6 is an exploratory contrarian test: 22% off high, no spike in 47 sessions, 21-session expiry.
-- week 148 [call 30d +5% hold10 -49%; call 30d +0% hold10 +50%]: [Bundle 6 of 6] C7 meets AB and spike-yesterday with shares and news support. C1 is a small test of call persistence with news and oversold RSI.
-- week 149 [call 90d +5% hold10 +49%]: [Bundle 6 of 6] C3 passes spike, shares, and news filters; the other names fail spike-today or thin-share exclusions. Market is down, so AB gate fails.
-- week 150 [call 30d +5% hold10 +390%; call 30d +0% hold10 +13%]: [Bundle 6 of 6] C2 meets AB baseline with recent spike and news. C10 is an own-idea test: cheap ATM oversold name, not AB-qualified.
-- week 151 [call 30d +5% hold10 -76%]: [Bundle 6 of 6] Most candidates are spike-today exclusions or fail iv/realized. C6 is the only AB-eligible name, though its IV is missing.
+- week 1 [call 30d +0% hold10 -24%; call 30d +10% double_or_10 -15%]: [Bundle 1 of 6] C5 passes the S1 momentum gate (20d +33, market up, volume 6.6x). C10 is a sub-$10 double-or-10 test of the momentum idea, kept small.
+- week 2 [call 30d +0% hold10 -87%; call 30d +0% hold10 +38%]: [Bundle 1 of 6] C3 and C10 pass the S1 strong-momentum gate (20d ≥20, shares ≥1, market up) with cheap 30-day ATM premiums. Others lack momentum or volume.
+- week 3 [call 30d +0% hold10 -100%; call 30d +0% hold10 -99%]: [Bundle 1 of 6] Strongest 20-day momentum with news and cheap-ish IV (C10, C4); falling or weak-flow names rated negative. Tests the momentum-plus-news idea at ATM.
+- week 4 [call 90d +0% hold10 -62%]: [Bundle 1 of 6] C9 has news, four of five call days at 2x+, and a strong 5-day run. It fits the 90-day screen, the only positive-median basket. Others lack trend or flow.
+- week 5 [call 30d +0% hold10 -38%]: [Bundle 1 of 6] Market 20d is negative, so the market gate fails for most setups. C8 is the one strong-trend, heavy-news name, traded as a small test of a no-gate idea.
+- week 6 [call 30d +0% hold10 -74%]: [Bundle 1 of 6] C9 passes the S1 strong-momentum gate (20d +39%, vs ma50 +40%, market up, shares 11.8x). C8 passes but is sub-$10 with a 19.6% premium, so no pick.
+- week 7 [call 90d +0% hold10 +34%]: [Bundle 1 of 6] Only C3 passes the 90-day screen (news, call days 2x+ 2, spike not today). Weak lead, tested in a falling market; the rest are fading or lack a trigger.
+- week 8 [pass]: [Bundle 1 of 6] (unreadable) {"ratings": {"C1": -1, "C2":
+- week 9 [call 30d +5% double_or_10 -69%; call 30d +0% hold10 -4%]: [Bundle 1 of 6] No candidate passes the S1 gate. C5 tests cheap-cost flow with heavy news; C8 tests a near-dated call surge with news.
+- week 10 [call 30d +0% hold10 +26%]: [Bundle 1 of 6] C10 is near the S1 gate (20d 15.5, vs ma50 16.2, market up, shares 1.4) but misses 20d≥20. C6 is sub-$10, so skipped.
+- week 11 [call 30d +15% hold10 -81%]: [Bundle 1 of 6] Market 20d is -3.2%, so the trend and flow gates fail. Only one test trade: an oversold, no-news bounce on a cheap far-OTM 30-day call.
+- week 12 [call 30d +0% hold10 +30%]: [Bundle 1 of 6] Market 20d is negative for every candidate, failing the gate. Most are weak or cheap. C2 is an exploratory low-cost flow test.
+- week 13 [call 30d +0% hold10 +127%]: [Bundle 1 of 6] Only C9 has S1-like strength, news and heavy call flow. Its market gate fails, so this trade tests whether the gate matters. Others are mild or falling.
+- week 14 [call 30d +0% hold10 +95%]: [Bundle 1 of 6] C5 passes the S1 gate: 20d +44.6%, vs ma50 +23.5%, shares 1.82, market up. Others fail gate or have thin volume.
+- week 15 [call 90d +0% hold10 -31%]: [Bundle 1 of 6] Market 20d is negative for every candidate, so the S1 gate fails. Only a small sustained-call-buying experiment on a 90-day ATM call; most others lean avoid.
+- week 16 [call 30d +0% hold10 -49%]: [Bundle 1 of 6] Market is down about 8% over 20 sessions, so most trend gates fail. C8 is a small test: sustained heavy call buying with a 5% cost, bought at the money.
+- week 17 [call 30d +0% hold10 -100%]: [Bundle 1 of 6] Market 20d is negative for all names, so the market gate fails. Rated falling names down. Single small test of strong trend without the market gate.
+- week 18 [call 30d +0% hold10 +39%]: [Bundle 1 of 6] No candidate passes the S1 gate (20d% ≥ 20, vs ma50 ≥ 15). C9 is a test of heavy long-dated call flow at a modest cost, required to keep a trade in the week.
+- week 19 [call 30d +0% hold10 -39%; call 30d +0% hold10 +4%]: [Bundle 1 of 6] C3 and C4 pass the S1 strong-momentum gate with market up and shares at or above 1. C5 passes too but has no 30-day quote.
+- week 20 [call 30d +5% double_or_10 -56%]: [Bundle 1 of 6] C6 passes the S1 strong-momentum gate (20d +36%, vs ma50 +47%, market up, shares 1.29). Its 0% strike is not offered, so the 5%-above call is the only option.
+- week 21 [call 30d +0% hold10 -6%; call 30d +0% hold10 -60%]: [Bundle 1 of 6] C5 and C6 are closest to the strong-momentum gate with heavy call flow and volume. Negative-trend and put-heavy names rated down.
+- week 22 [call 30d +0% double_or_10 -63%; call 30d +5% hold10 +161%]: [Bundle 1 of 6] C2 and C6 pass the strong-momentum-plus-news gate (20d % ≥ 20, vs ma50 ≥ 15, news 7d ≥ 1, market up). C2 tests the double-or-10 exit at ATM; C6 tests 5% above.
+- week 23 [call 30d +0% hold10 -73%; call 30d +15% hold10 -80%; call 30d +20% double_or_10 +169%]: [Bundle 1 of 6] C3 passes the S3 gate; C2 passes S1 but only the 15% strike trades. C9 tests a 5-day surge with a double-or-10 exit.
+- week 24 [call 30d +0% hold10 +344%; call 30d +0% hold10 -85%]: [Bundle 1 of 6] C6 passes the S1 gate fully, though sub-$10 costs are high. C7 tests the 40%+ tail on a price over $50 without the shares gate.
+- week 25 [call 90d +0% hold10 -42%; call 90d +0% hold10 +9%]: [Bundle 1 of 6] Market 20d is negative, so the S1 gate fails. Only 90-day ATM tests remain: C3 is nearest the S1 profile; C7 is a small test.
+- week 26 [call 90d +0% hold10 -22%]: [Bundle 2 of 6] No candidate passes the S1 gate (ma50 or 20d fails). Test C5: building calls, cheap 90-day premium, own-idea control.
+- week 27 [call 30d +0% short10 +71%]: [Bundle 2 of 6] No candidate passes the S1 gate (20d ≥20, market 20d >0). C5 fails only the market gate. One exploratory cheap spread on C4 news-driven call buying, to meet the weekly trade requirement.
+- week 28 [call 30d +0% hold10 -70%]: [Bundle 2 of 6] C1 is the only S1 gate pass; 90d is not offered, so a small 30d control. Others fail the 20d or ma50 gates.
+- week 29 [call 30d +0% double_or_10 -18%]: [Bundle 2 of 6] Only C9 has a tradable 30-day grid; none pass the S1 90-day gate. Small ungated contrarian test after a -13% day, to check oversold bounces.
+- week 30 [call 30d +0% hold10 +69%]: [Bundle 2 of 6] Market 20d is negative for every name, so the S1 gate fails across the board. C3 is a small test of a contrarian spike idea with IV roughly in line with realized vol.
+- week 31 [call 90d +0% hold10 +9%]: [Bundle 2 of 6] No candidate passes the S1 gate (20d ≥20 with shares ≥1). Test oversold stock with heavy long-dated call accumulation, 90d ATM, cheap at 6.2%.
+- week 32 [call 30d +0% short10 -6%]: [Bundle 2 of 6] C5 passes the S1 momentum gate and the 90d option isn't offered, so I use a cheaper 30d spread. Other names fail the gate.
+- week 33 [call 30d +0% hold10 +77%]: [Bundle 2 of 6] C3 is the only candidate passing the S1 momentum gate (20d, vs ma50, market, shares). Its 30-day cost is lower than the 90-day, so I use the 30-day control. Others fail the gate or show weak trend.
+- week 34 [call 30d +0% hold10 +229%; call 30d +0% hold10 -30%]: [Bundle 2 of 6] C2 and C5 pass the S1 momentum gate. 90-day C2 costs 23% of price, so I test the 30-day ATM control instead. Others fail the 20d or ma50 gate.
+- week 35 [call 90d +0% hold10 +89%; call 30d +0% double_or_10 +58%]: [Bundle 2 of 6] No candidate passes the S1 gate (20d% fails everywhere). Testing cheap 30d ATM on C6 and long-dated spike on C4 as controls.
+- week 36 [call 30d +0% short10 +71%]: [Bundle 2 of 6] No candidate passes the S1 gate (20d % at or above 20). Rated on flow and news. One cheap spread tests long-dated call buying.
+- week 37 [call 30d +5% hold10 -92%; call 30d +5% double_or_10 -6%]: [Bundle 2 of 6] S1 gate fails everywhere (market 20d negative). Small test of strong call flow with 5% OTM strikes; ratings are low-confidence.
+- week 38 [call 30d +0% double_or_10 +184%; call 30d +0% hold10 -77%]: [Bundle 2 of 6] C3 and C4 pass the S1 momentum gate (20d, vs ma50, market, shares); the rest fail it or show weak trend. Using the 30-day ATM control, since 90-day strikes are not listed.
+- week 39 [call 30d +5% double_or_10 -100%; call 90d +0% hold10 -57%]: [Bundle 2 of 6] C10 is the only S1 gate pass. C4 tests building call flow with a cheap 5%-OTM call.
+- week 40 [call 30d +0% double_or_10 -61%]: [Bundle 2 of 6] No candidate passes the S1 gate (20d≥20, vs ma50≥15). C8 is a test of a news-backed 1-day spike with positive tone, a small own-idea trade.
+- week 41 [call 90d +10% hold10 -34%; call 90d +0% short15 -86%]: [Bundle 2 of 6] C8 passes the S1 momentum gate with a cheaper 90d spread; C9 tests a cheap-IV, >$50  90d OTM call.
+- week 42 [call 30d +0% hold10 -70%]: [Bundle 2 of 6] No S1 gate passes: market 20d is negative and C9 misses 20d by 0.1. C9 is a near-miss control test, sized as one trade.
+- week 43 [call 30d +0% short10 -98%; call 30d +0% hold10 -72%]: [Bundle 2 of 6] No candidate passes the S1 gate because market 20d is negative. Small test of news-driven spike spread and a failed-market-gate control.
+- week 44 [call 30d +0% hold10 -83%]: [Bundle 2 of 6] No candidate passes the S1 gate; market 20d is negative. C7 is a small untested idea: a volume spike with cheap IV and a 2.6% premium.
+- week 45 [call 30d +0% double_or_10 +94%]: [Bundle 2 of 6] No candidate passes the S1 gate (20d% and market 20d% are negative). Testing a contrarian idea: deep drawdown plus heavy call flow, on a cheap 30-day ATM call.
+- week 46 [call 30d +0% short10 -96%; call 30d +0% hold10 -18%]: [Bundle 2 of 6] C2: cheap ATM, sustained call buying, 5 of 5 heavy days. C9: passes S1 gate; spread caps premium cost.
+- week 47 [call 30d +0% hold10 -43%; call 90d +0% hold10 -45%]: [Bundle 2 of 6] C2 and C5 pass the S1 momentum gate. Cheap-IV and extended-move risk noted. Two gated tests, 90d and 30d control.
+- week 48 [call 30d +10% hold10 +138%]: [Bundle 2 of 6] Only C9 passes the strong-momentum gate, but its ATM options are unlisted. Small 10%-OTM 30-day test; other names lack a clear edge.
+- week 49 [call 14d +0% hold10 -27%]: [Bundle 2 of 6] No candidate passes the S1 gate (none has 20d ≥20 with vs ma50 ≥15). C8 is a small test: heavy call flow on cheap 14-day premium (3% cost, IV near realized).
+- week 50 [call 30d +5% double_or_10 -86%]: [Bundle 2 of 6] No candidate passes the S1 gate (20d% at least 20 with vs ma50 at least 15). C5 is a small test of multi-day call buying with news, not a gated trade.
+- week 51 [call 90d +0% hold10 +23%]: [Bundle 2 of 6] S1 gate fails (market 20d is -0.1). Only C4 has a tradable 90-day call, at 7.7% cost. Small control trade.
+- week 52 [call 30d +5% hold10 +45%]: [Bundle 3 of 6] No candidate passes the S1 gate (20d ≥20 and vs ma50 ≥15). One small, paper-size own test: a 30-day 5%-OTM call on C9, a cheap-IV >$50 momentum name, to check the cheap-IV decay idea.
+- week 53 [call 30d +5% hold10 -100%]: [Bundle 3 of 6] No candidate passes the S1 gate; C3 is a small untested-idea control (30d +5% call), not a gated trade.
+- week 54 [call 30d +0% double_or_10 -50%]: [Bundle 3 of 6] Only C8 passes the S1 gate (20d +83%, vs ma50 +52%, market up). Its 90-day call isn't offered, so I take the 30-day as a paper-size lottery test.
+- week 55 [call 90d +0% hold10 +37%]: [Bundle 3 of 6] Gate fails (market 20d is -1.1%), so this is a control test: market-selloff bounce with call flow, >$50, 90-day cost about 3.9%.
+- week 56 [call 90d +5% hold10 -26%]: [Bundle 3 of 6] C7 misses the gate only on shares (0.96 vs 1). Taking it as a logged near-miss control at 90-day, 5% OTM, the cheaper strike. No other stock passes the gate.
+- week 57 [call 90d +0% hold10 +112%]: [Bundle 3 of 6] S1 gate fails everywhere (market 20d negative). One small contrarian test: 90-day ATM call on a 20d-down, multi-day call-buying name.
+- week 58 [call 30d +0% double_or_10 +59%]: [Bundle 3 of 6] No candidate passes the S1 gate because market 20d is -7.6%. Test idea: sustained call buying (8 of 20 sessions at 2x+) in a falling market, 30-day ATM call.
+- week 59 [call 30d +5% hold10 -58%]: [Bundle 3 of 6] No candidate passes the S1 gate (C10 fails shares). C6 is a small paper test of heavy long-dated call flow with cheap 5%-OTM premium.
+- week 60 [call 90d +0% hold10 -39%]: [Bundle 3 of 6] C5 is the only candidate passing the full S1 gate (20d, ma50, market, shares, iv≥40). Its 90-day cost is high, so the size stays paper.
+- week 61 [call 30d +0% hold10 -38%; call 30d +0% hold10 +1%]: [Bundle 3 of 6] C1 and C3 pass the S1 gate, but 90-day calls are not offered. Taking 30-day ATM controls on both.
+- week 62 [call 30d +0% hold10 -92%]: [Bundle 3 of 6] No candidate passes the S1 gate (20d≥20 fails for all). Paper-size control test on C9: 30d ATM, cost 7.6%, expires outside hold.
+- week 63 [call 30d +0% short10 -78%]: [Bundle 3 of 6] No candidate passes the S1 gate. C2 spread is a cheap, capped-cost test of strong call flow with a 5-day rally.
+- week 64 [call 30d +20% double_or_10 -95%]: [Bundle 3 of 6] No candidate passes the S1 gate (20d % ≥ 20 fails everywhere). One cheap 30-day 20%-OTM test on C7's news and trend, kept to one trade for the weekly minimum.
+- week 65 [call 30d +0% short10 -73%]: [Bundle 3 of 6] No candidate passes the S1 gate (C3 fails market 20d). C3 spread is a cheap, capped test of strong momentum under a weak market.
+- week 66 [call 90d +0% hold10 +33%]: [Bundle 3 of 6] S1 gate fails everywhere since market 20d is negative. Small 90-day test on a sharp pullback with heavy volume, a contrarian idea.
+- week 67 [call 90d +0% hold10 -15%]: [Bundle 3 of 6] C1 passes the S1 gate with iv 114 and a cheap 4.1% 90-day cost. C6 passes too but its 12% cost is above my cap.
+- week 68 [call 30d +5% hold10 +174%]: [Bundle 3 of 6] Gate needs 90-day calls, which are unlisted for C2, C4 and C6. C7 is a low-cost 30-day control test.
+- week 69 [call 30d +15% hold10 -43%]: [Bundle 3 of 6] C4 and C6 pass the S1 gate but have no 90-day listing. I take the 30-day gated call on C6 as a small test; its 8% cost is the cheapest gated option.
+- week 70 [call 30d +0% hold10 -92%]: [Bundle 3 of 6] No candidate passes the S1 gate (20d% ≥20). C5 passes the trend screen (news, call flow, above ma50, market up) as a small test of that idea at 30-day ATM.
+- week 71 [call 30d +5% hold10 +59%]: [Bundle 3 of 6] C9 is the only S1 gate pass, but its 90-day call isn't offered and IV is below 40. I'll take a small 30-day control trade and log it.
+- week 72 [call 90d +20% hold10 -7%]: [Bundle 3 of 6] No candidate passes the S1 gate (20d≥20 fails everywhere). One cheap 90-day 20%-OTM test on C3 to log the far-OTM long-dated arm.
+- week 73 [call 90d +10% hold10 -0%]: [Bundle 3 of 6] Only C10 passes the S1 gate (20d, ma50, market 20d, shares). Its 90-day ATM call is not offered, so I test the 90-day +10% strike as a labeled deviation.
+- week 74 [call 30d +0% hold10 -17%]: [Bundle 3 of 6] No candidate passes the S1 gate (20d% ≥20 fails everywhere). One small exploratory test: heavy call flow with rising price and iv ≥40, on a 30-day call.
+- week 75 [call 30d +20% hold10 +461%]: [Bundle 3 of 6] C8 passes the S1 gate, but its 90-day calls are not offered. Taking a small 30-day OTM test, logged as a control.
+- week 76 [call 30d +20% double_or_10 -88%]: [Bundle 3 of 6] Only C6 passes the S1 gate, but its 90-day call is not offered. I take a cheap 30-day +20% control test to keep trading going.
+- week 77 [call 90d +0% hold10 +5%]: [Bundle 4 of 6] C3 passes the 20d/ma50 gate but has no 90-day listing and is overextended. C4 is a cheap 90-day call (4.4% cost), a test of cheap-premium, quiet-tape entries.
+- week 78 [call 30d +0% hold10 -4%]: [Bundle 4 of 6] No candidate passes the 90-day gate (20d or ma50 missing). One small test of heavy put flow on an uptrend, as a contrarian idea.
+- week 79 [call 30d +0% hold10 -4%]: [Bundle 4 of 6] No candidate passes the 90-day gate (C6 fails shares, C3 misses 20d). C2 is a cheap-premium call-flow test, so I'm paper-testing it.
+- week 80 [call 30d +0% double_or_10 -92%]: [Bundle 4 of 6] No candidate passes Rule 1 (C9 fails only on shares 0.97). Testing the momentum name's 30-day call with a double-or-10 exit, under the 10% premium cap (7.2%).
+- week 81 [call 30d +10% hold10 -67%]: [Bundle 4 of 6] Own test: cheap 30-day
+- week 82 [call 30d +0% hold10 +5%; call 30d +0% hold10 +3%]: [Bundle 4 of 6] Post-selloff arm test: market 5d down, stocks well off highs, cheap premiums. Rule 1 gate fails on all ten.
+- week 83 [call 30d +0% hold10 +47%; call 90d +0% hold10 +22%]: [Bundle 4 of 6] No candidate passes the 90d gate (20d % under 20). Testing an own idea: sustained 20-day call accumulation, with cost under 7%.
+- week 84 [call 30d +10% hold10 -80%; call 30d +5% double_or_10 -92%]: [Bundle 4 of 6] Only C10 passes the Rule 1 momentum gate; its 90-day premium exceeds the 10% cap, so I test its cheaper 30-day +10% strike. C2 tests a short-dated call-flood idea.
+- week 85 [call 30d +0% hold10 -33%]: [Bundle 4 of 6] Only C4 passes the 90-day gate, but it has no 90-day listing and a 16% premium. C6 is a cheap-premium test of an overbought >$50 name.
+- week 86 [call 30d +0% hold10 -64%]: [Bundle 4 of 6] No candidate passes the 90-day gate. C6 is a small test of the post-selloff idea: market down 3.1% in 5 days, 31% off high, 30-day premium under the 10% cap.
+- week 87 [call 30d +5% hold10 +43%]: [Bundle 4 of 6] Only C7 passes the 90-day gate, but its premium is 25% of price, over the cap. C2 is a cheap 30-day +5% control test.
+- week 88 [call 30d +0% hold10 -26%; call 30d +5% hold10 +52%]: [Bundle 4 of 6] Market 20d is negative, so the Rule 1 gate fails everywhere. C8 has news and flow at low cost. C2 tests strong momentum in a weak tape.
+- week 89 [pass]: [Bundle 4 of 6] No candidate passes the Rule 1 gate (market 20d is negative) or the post-selloff arm. C2 is a cheap-premium call-flow test of a spread, needed for a weekly trade.
+- week 90 [call 30d +0% hold10 -15%; call 30d +5% double_or_10 +105%]: [Bundle 4 of 6] No candidate passes the 90-day gate (none has 20d ≥ 20). Testing sustained call flow with cheap 30-day premium, plus a double_or_10 arm on C1.
+- week 91 [call 30d +0% hold10 -79%; call 90d +20% hold10 -14%]: [Bundle 4 of 6] Testing post-selloff bounce arm (market down, stocks well off highs) with a 90-day far-OTM call and a 30-day ATM control; C9 call-flow with no news rated up.
+- week 92 [call 30d +10% hold10 -83%]: [Bundle 4 of 6] No candidate passes the 90-day gate. One post-selloff test on a $10-50 stock, 30-day call, at 5% premium cost.
+- week 93 [call 90d +0% hold10 -47%]: [Bundle 4 of 6] Post-selloff arm: C7 is 24% off its high after a market dip. Cost slightly above the 10% cap, noted. Other names lack a clear edge.
+- week 94 [call 90d +10% hold10 -16%; call 90d +20% hold10 -45%]: [Bundle 4 of 6] Post-selloff arm: C6 is the only match with a 90d call under 10% cost. C1 tests a deep-OTM 90d call after a spike and drop.
+- week 95 [call 90d +0% hold10 -4%; call 30d +10% hold10 -6%]: [Bundle 4 of 6] Post-selloff arm test: C2 is 90-day, 34% off high. C8 is a 30-day +10% bounce test, cost under 10%.
+- week 96 [call 30d +0% hold10 +57%]: [Bundle 4 of 6] C1: 7.5x call spike with no news, cheap 5.7% premium. Tests flow-only in a weak market; 90-day options are not offered this bundle.
+- week 97 [call 14d +0% double_or_10 -94%; call 30d +0% hold10 -5%; call 30d +0% hold10 +111%]: [Bundle 4 of 6] C2, C5, C9 pass the momentum gate (20d, ma50, market, shares). Only 30d or 14d calls are listed, so the 90-day rule can't run. C5 double_or_10 tests a short-expiry idea.
+- week 98 [call 90d +0% hold10 +46%; call 30d +5% double_or_10 -100%]: [Bundle 4 of 6] Market is up, so the selloff arm is not triggered. C1 and C7 show multi-day call buying with cheap-ish premium. Both are small tests of flow, not the gate. C5 fails the 90-day gate because no 90-day option is listed.
+- week 99 [call 30d +0% hold10 -100%; call 30d +0% hold10 -17%]: [Bundle 4 of 6] No candidate passes the 90-day gate. C1 is a low-cost sustained-call-buying test, a new idea, not the committee's gate.
+- week 100 [call 30d +0% hold10 +150%]: [Bundle 4 of 6] No candidate passes the Rule 1 gate. C3 tests slow long-call accumulation on a cheap, liquid stock; its option costs only about 3%.
+- week 101 [call 90d +10% hold10 -29%; call 30d +5% hold10 +58%]: [Bundle 4 of 6] No candidate passes the 90-day gate under the 10% premium cap. Testing two own ideas: a pullback after call flow (C4) and a cheap-premium 90-day OTM call on a sharp drop with heavy call flow (C1).
+- week 102 [call 30d +0% short5 +123%]: [Bundle 5 of 6] Bounce rule doesn't fire (market 5d is positive). Testing a cheap 30-day call spread on C7, a spike with positive news, as an own idea.
+- week 103 [call 90d +0% hold10 -31%]: [Bundle 5 of 6] C2 meets the post-selloff stock bounce gate, but its 90d call exceeds the 8% premium cap. C4 has a 90d ATM call at 6.8%, within the cap, on a volume spike.
+- week 104 [call 14d +0% short10 -100%]: [Bundle 5 of 6] No bounce gate passes (market 5d never ≤ -1.5). C2 tests sustained call buying with cheap IV, using a capped spread to limit decay.
+- week 105 [call 30d +0% hold10 -77%]: [Bundle 5 of 6] No bounce gate fired (market 5d is +1.5%). Test one cheap 30-day ATM call (3.6% cost) on a sharp dip with heavy call buying, a contrarian idea.
+- week 106 [call 30d +0% hold10 +116%; call 30d +0% short10 -100%]: [Bundle 5 of 6] No bounce signal fires (market 5d +3.1). Testing cheap-premium spread on C9 and low-cost call on C6 as controls.
+- week 107 [call 90d +0% hold10 +44%]: [Bundle 5 of 6] No bounce signal: market 5d is positive for all but C4 and C3. Test an own idea: cheap-IV pullback, 90-day ATM call on C2.
+- week 108 [call 30d +0% hold10 -18%]: [Bundle 5 of 6] Bounce gate (market 5d ≤ -1.5, off high ≤ -15) hits C3, C4, C5, C8, C10. C4 is the only one with a 30-day ATM call under the 8% cost cap. Momentum spikes rated down.
+- week 109 [call 30d +5% hold10 +93%]: [Bundle 5 of 6] C1 and C9 pass the post-selloff bounce gate (market 5d ≤ -1.5, off high ≤ -15). One cheap 30-day call as a logged test.
+- week 110 [pass]: [Bundle 5 of 6] No bounce signal (only C4 has market 5d ≤ -1.5, and it fails off-high). Testing cheap-IV call spread on heavy call and long-dated buying.
+- week 111 [call 30d +0% hold10 -26%]: [Bundle 5 of 6] Bounce gate fails (market 5d not ≤ -1.5), so I'm testing an oversold, off-high-40% call on a cheap-ish 6.7% premium as a logged control.
+- week 112 [call 90d +0% hold10 -39%]: [Bundle 5 of 6] No candidate passes the bounce gate (market 5d is positive). C7 is a cheap-IV, no-news call spike, a test of my own idea at 3.9% premium.
+- week 113 [call 30d +0% hold10 -100%]: [Bundle 5 of 6] Bounce gate (market 5d ≤ -1.5, off high ≤ -15) hits C3, C6, C7, C8. C7 is the only one with a cheap ATM 30-day call (4.1%), so I test it as an option arm.
+- week 114 [call 30d +5% hold10 -100%; call 90d +0% hold10 -32%]: [Bundle 5 of 6] No bounce-rule signal: market 5d is positive. Ratings reflect deep off-high pullbacks. Picks test cheap-IV 90d and cheap-premium 30d calls.
+- week 115 [call 30d +5% hold10 -72%; call 30d +0% short20 -22%]: [Bundle 5 of 6] Bounce gate (market 5d ≤ -1.5, off high ≤ -15) met by C1, C3, C6, C8, C9. Testing a cheaper call spread on C3 and a 30d OTM call on C8.
+- week 116 [call 30d +0% hold10 +85%]: [Bundle 5 of 6] Most candidates meet the post-selloff bounce gate. Options are mostly unavailable or over the 8% cost cap, so I take one cheap test call on C7 as a control.
+- week 117 [call 30d +5% hold10 -52%]: [Bundle 5 of 6] No candidate passes the bounce gate (market 5d is not at or below -1.5). C2 is a single small test: a selloff with heavy call buying.
+- week 118 [call 90d +20% hold10 +46%]: [Bundle 5 of 6] No bounce signal: market 5d is up for every candidate. C8 is a cheap test of a 90-day far-OTM call at 1.2% premium; a log-only rating otherwise.
+- week 119 [call 90d +5% hold10 -22%]: [Bundle 5 of 6] Bounce gate not met (market 5d above -1.5). One small cheap 90-day OTM test on a quiet, low-cost name; the rest are unsupported.
+- week 120 [call 90d +0% hold10 +96%]: [Bundle 5 of 6] Bounce rule doesn't fire (market rising). One 90-day ATM call, premium 6.5%, tests the option arm; C1 looks overextended.
+- week 121 [call 30d +5% short15 -16%]: [Bundle 5 of 6] Bounce gate fails (market 5d positive). Testing a cheap call spread after an 18% crash on heavy call volume, a contrarian idea.
+- week 122 [call 90d +0% hold10 -9%; call 90d +0% hold10 -1%]: [Bundle 5 of 6] Bounce gate fails (market 5d +1.9). Testing the 90-day ATM arm on C2 (cost 5.4%), and a contrarian heavy-put-volume idea on C9 (cost 7.5%).
+- week 123 [call 30d +5% hold10 -98%]: [Bundle 5 of 6] C1 meets the post-selloff bounce gate. Only the 30-day +5% call is under the 8% premium cap, so it is a small control test.
+- week 124 [call 30d +0% hold10 -83%]: [Bundle 5 of 6] No bounce gate: market 5d was never below -1.5. C1 is the cheapest ATM option (3% cost) with sustained call buying, a small test of that idea.
+- week 125 [call 30d +0% hold10 +89%]: [Bundle 5 of 6] Bounce gate (market 5d ≤ -1.5) fails for all candidates. One small test of a 30-day ATM call on C3, the cheapest option with heavy news and moderate IV.
+- week 126 [call 30d +0% hold10 -24%]: [Bundle 5 of 6] Market fell only briefly, so no bounce signal fires. C7 tests a heavy call spike on a pullback with cheap IV (cost 2.8%). Options otherwise lack a clear edge.
+- week 127 [call 90d +0% hold10 -30%]: [Bundle 6 of 6] No primary signal: market 5d is positive and off-high is blank. C4 is the only 90-day ATM premium under 8% (control A). Cheap IV and a 20d drop fit the log.
+- week 128 [call 14d +5% hold10 -1%]: [Bundle 6 of 6] Primary bounce gate can't fire (market 5d above -1.5 everywhere, off-high missing). Small test: cheap 14-day +5% call on C7, a logged control.
+- week 129 [call 14d +15% hold10 -100%]: [Bundle 6 of 6] Primary bounce gate fails everywhere (C5, C10 fail off-high). C8 is the only off-high control; one cheap OTM test trade, not a primary signal.
+- week 130 [call 90d +0% hold10 +40%]: [Bundle 6 of 6] Only C5, C6, C9 pass the bounce gate, but their options cost 15%+ or lack 90-day quotes. C1 is the cheap 90-day control.
+- week 131 [pass]: [Bundle 6 of 6] (unreadable) {"ratings": {"C1": -1, "C2": 0, "C3": 1, "
+- week 132 [call 30d +0% hold10 +118%]: [Bundle 6 of 6] Market is up 4.8%, so the primary bounce gate fails everywhere. C8 is the off-high control test: a $50+ stock, -17.7% off high, cheap IV. Small paper trade.
+- week 133 [call 90d +0% hold10 +6%]: [Bundle 6 of 6] Market 5d is positive, so no bounce signal fires. C3 is the cheap 90-day control. Spiky, overbought names rated lower.
+- week 134 [call 90d +0% hold10 -26%]: [Bundle 6 of 6] No primary signal: market 5d is positive everywhere. C1 is a parabolic run, and C2 and C7 are sub-$10 high-IV collapses. C4
+- week 135 [call 90d +0% hold10 -7%]: [Bundle 6 of 6] C1 is the only primary bounce signal (market 5d -1.9, off high -22.5). C7 is the 90-day ATM control, premium under 8%.
+- week 136 [call 30d +0% hold10 +77%]: [Bundle 6 of 6] C5 and C9
+- week 137 [call 30d +5% hold10 -7%]: [Bundle 6 of 6] C6 and C1 meet the post-selloff bounce gate (market
+- week 138 [call 30d +0% hold10 -100%]: [Bundle 6 of 6] Five stocks pass the post-selloff gate (market 5d ≤ -1.5, off high ≤ -15). C1 is the cheap-IV test pick, since its IV is below realized.
+- week 139 [call 30d +10% hold10 +108%; call 30d +0% hold10 -51%]: [Bundle 6 of 6] Primary bounce gate met by C2, C4, C5, C7, C10; C4 and C2 are the strongest drawdowns with cheaper option strikes. C8 overbought after a spike.
+- week 140 [call 90d +0% hold10 -63%; call 90d +0% hold10 -54%]: [Bundle 6 of 6] C9 passes the primary bounce gate, but I can only buy options. C3 and C10 are 90-day ATM controls under the premium cap, with no other gate.
+- week 141 [call 30d +5% hold10 -70%; call 30d +5% hold10 -30%; call 14d +0% hold10 -100%]: [Bundle 6 of 6] Post-selloff bounce gate: market 5d below
+- week 142 [call 30d +0% hold10 -16%; call 30d +0% hold10 -41%]: [Bundle 6 of 6] Post-selloff bounce candidates (market 5d -9.8%, off high -20 to -27). Options are the only permitted instrument, so I take two small at-the-money 30-day calls; the evidence on those is weak.
+- week 143 [call 90d +0% hold10 -17%]: [Bundle 6 of 6] Market rallied 6.9-8.3%, so the bounce gate fails everywhere. One 90-day control (premium under 8%) only; weak names rated lean-avoid.
+- week 144 [call 30d +0% hold10 -48%; call 30d +0% hold10 -10%]: [Bundle 6 of 6] No primary bounce signal (market 5d is -0.4). C3 is the off-high control; C9 tests a volume spike at a moderate price. Overbought runs (C1, C4, C7) rated lean avoid.
+- week 145 [call 90d +5% hold10 +35%]: [Bundle 6 of 6] No bounce signal: market 5d is positive for all. Overbought, run-up names rated down. One cheap 90-day control to keep the ledger complete.
+- week 146 [call 30d +0% hold10 +7%]: [Bundle 6 of 6] Market up 2.2%, so the bounce gate fails everywhere. Overbought, sharp 5-day spikes fade. One cheap quiet-name call tests the low-activity case.
+- week 147 [call 30d +0% hold10 +19%]: [Bundle 6 of 6] Market 5d is positive, so the primary bounce gate doesn't fire. C8 is a small control test of stock-specific weakness (off-high -19%) with the cheapest available ATM call.
+- week 148 [call 90d +5% hold10 -29%]: [Bundle 6 of 6] Market 5d is +1.9%, so the post-selloff bounce gate fails everywhere. One cheap 90-day control call (premium under 8%) keeps the ledger complete.
+- week 149 [call 90d +5% hold10 -45%]: [Bundle 6 of 6] Market 5d is not down 1.5%, so the bounce gate never fires. C7 is the 90-day control at premium under 8%, with no gate.
+- week 150 [call 90d +0% hold10 -42%]: [Bundle 6 of 6] No primary bounce signal fires (market 5d is -1.0, above the -1.5 gate). C5 is a cheap-premium 90-day control on a >$50 name with building call demand.
+- week 151 [call 30d +5% hold10 -93%]: [Bundle 6 of 6] Primary bounce gate fails (market 5d not below -1.5). C3 is a cheap-IV control; C7 and C8 are parabolic fades; C10 is the stock-weakness control.
 
-## Weekly notes: gen10b, generation 9, score
+## Weekly notes: gen10b, generation 10, score
 
-- week 1 [pass]: [Bundle 1] Market 20d is negative for every candidate, failing the market gate. S1 needs shares ≥1, and C3 is the only other strong trend name. Passing.
-- week 2 [call 30d +0% hold10; call 30d +0% hold10; call 30d +0% hold10]: [Bundle 1] C6 and C1 pass the S1 momentum gate with volume; C3 passes S3 with cheap ATM premium. C10 has no ATM quote.
-- week 3 [call 30d +0% hold10; call 30d +0% hold10; call 30d +0% hold10]: [Bundle 1] C2, C4, C9 pass S1 gate (20d%≥20, vs ma50≥15, shares≥1, market up). C1 misses shares by 0.03.
-- week 4 [call 30d +0% hold10]: [Bundle 1] C7 passes the S1 strong-momentum gate (20d +25.6, vs ma50 +18.7, market up, shares 1.38). Others fail trend or volume gates.
-- week 5 [pass]: [Bundle 1] No candidate passes S1, S2, S3 or the screen. C8 has momentum but fails the 20d and ma50 gates, so I pass.
-- week 6 [call 30d +0% hold10; call 30d +0% hold10]: [Bundle 1] C3 passes S1 and S2 gates, with 30d ATM available. C10 passes S2. C2 has no 30d option. Skipped sub-$10 C6.
-- week 7 [call 30d +0% hold10]: [Bundle 1] C2 passes the S1 strong-momentum gate (20d +27, vs ma50 +24, market up, shares 1.65). Other names fail the trend or volume gates.
-- week 8 [call 30d +0% hold10; call 30d +0% hold10]: [Bundle 1] C2 passes the S1 strong-momentum gate; C10 passes S2 (trend plus news), though its 12% premium is costly.
-- week 9 [call 30d +0% hold10]: [Bundle 1] C1 alone passes the S1 momentum gate (20d +115%, vs ma50 +82%, shares 1.19, market up). Sub-$10 cost is high, so one small pick only.
-- week 10 [call 30d +0% hold10]: [Bundle 1] C3 has strong 20d and vs ma50 momentum with market up, though shares fail the gate. Other names lack trend or are sub-$10.
-- week 11 [call 30d +0% hold10]: [Bundle 1] C3 passes the S1 strong-momentum gate (20d +27, vs ma50 +19.8, shares 1.5, market up) and S2 news/trend. C5 is sub-$10 with no option grid, so it is unbuyable.
-- week 12 [call 30d +0% hold10]: [Bundle 1] C9 passes S1 gate (20d 53.6, vs ma50 42, market up, shares 1.08). Others fail or are sub-$10 with heavy cost.
-- week 13 [pass]: [Bundle 1] Most calls are not offered. C7 fails the market gate and is falling, C4 has weak trend, and the sub-$10 names are poor fits.
-- week 14 [pass]: [Bundle 1] No candidate passes the S1 gate (20d % ≥ 20, vs ma50 ≥ 15, shares ≥ 1). Passing preserves capital.
-- week 15 [call 30d +5% hold10; call 30d +0% hold10; call 30d +0% hold10]: [Bundle 1] C3 and C9 pass the S1 momentum gate at 30-day ATM. C5 passes the S1-tail trend gate; its ATM contract is unlisted, so I use 5% above.
-- week 16 [pass]: [Bundle 1] Market 20d is -0.6%, failing the market gate that every surviving rule needs. No bundle-1 setup passes; C3 is the only lean-buy.
-- week 17 [call 30d +0% hold10; call 30d +0% hold10]: [Bundle 1] C1 passes S1 strong-momentum gate; C7 passes S2 trend-plus-news. Others lack the gates or have weak trend.
-- week 18 [call 30d +0% hold10]: [Bundle 1] C5 passes the S1 momentum gate (20d +55%, vs ma50 +32%, market up, shares 1.36). It is sub-$10 with high cost, so it is a small-size pick. C4 misses shares by a hair.
-- week 19 [call 30d +0% hold10; call 30d +0% hold10]: [Bundle 1] C1 passes S1 and S1-tail with strong trend and volume. C10 passes S1 but is sub-$10, so it is a small second bet.
-- week 20 [pass]: [Bundle 1] (unreadable) {"ratings": {"C1": -1, "C2": -1, "C3": -1, "C4": 0, "C5": -1, "C6": 2, "C7": -1, "C8": 0, "C9": 1, "C10": 1}, "picks": [{"id": "C6", "buy":
-- week 21 [pass]: [Bundle 1] No candidate passes the S1 gate (20d % ≥ 20 with shares ≥ 1). Sub-$10 and low-IV names lose on costs, so I pass.
-- week 22 [call 30d +0% hold10; call 30d +0% hold10]: [Bundle 1] C6 and C5 pass the S1 strong-momentum gate with market up and shares ≥1, and have 30-day ATM calls. C4 and C10 are lean buys, not picked.
-- week 23 [pass]: [Bundle 1] C3 passes the S1 gate but has no tradable option grid. C4 fails shares and has no ATM grid. No other candidate passes a validated rule.
-- week 24 [pass]: [Bundle 1] No candidate passes the S1 momentum gate (20d % of 20 or more, vs ma50 of 15 or more). C8 has spike flow but low IV and a modest trend, so pass.
-- week 25 [pass]: [Bundle 2] Market 20d is negative (about -1.4 to -3.7) for every candidate, failing the gate that all passing rules required. Sub-$10 names are excluded.
-- week 26 [pass]: [Bundle 2] No candidate passes the S1 momentum gate (20d % ≥ 20, vs ma50 ≥ 15, market 20d > 0, shares ≥ 1). C7 is close but fails the ma50 test, so I pass.
-- week 27 [call 30d +0% hold10; call 30d +0% hold10]: [Bundle 2] C9 and C3 pass the S1 strong-momentum gate (20d%≥20, vs ma50≥15, market up, shares≥1). C8 is sub-$10, so skipped.
-- week 28 [call 30d +0% hold10]: [Bundle 2] C2 matches S3 (calls 20d 1.51, 20d% 21, iv 41, market up). C5 is strong but shares under 1. Others fail the gates or are sub-$10 or falling.
-- week 29 [call 30d +0% hold10]: [Bundle 2] C1 passes the S1 gate: 20d +28.6, vs ma50 +19, market 20d +3.4, shares 1.15. Others fail the gate.
-- week 30 [call 30d +0% hold10; call 30d +5% hold10]: [Bundle 2] C2 passes S1 gate with cheap 30d ATM option. C1 passes S1 but ATM unavailable; 5% strike used. C9 skipped, sub-$10 at 24% cost.
-- week 31 [call 30d +0% hold10; call 30d +0% hold10]: [Bundle 2] C3 passes S1 gate with price over $50; C7 fits S2 trend plus news. Others weak or sub-$10.
-- week 32 [pass]: [Bundle 2] No candidate clears the S1 momentum gate with clean data. C2 is sub-$10 and expensive; the rest are mild or weak.
-- week 33 [call 90d +0% hold10; call 30d +0% hold10]: [Bundle 2] C10 passes S2 trend plus news and R3. C3 passes the 90-day screen, the only positive-median basket. No S1 passers.
-- week 34 [call 30d +0% hold10]: [Bundle 2] C8 passes S1 and S2 gates: 20d +44.5%, vs ma50 +68.8%, market up, shares 2.7x, news present. Others fail the trend gate.
-- week 35 [call 30d +0% hold10]: [Bundle 2] C1 passes the S1 strong-momentum gate (20d +32.5, vs ma50 +29, market up, shares ok). C4 passes too but is sub-$10, so I pass it.
-- week 36 [call 30d +0% hold10; call 30d +0% hold10; call 30d +0% hold10]: [Bundle 2] C6 passes the S1 momentum gate; C3 passes it with thinner support; C7 passes the S3 and S2 gates.
-- week 37 [pass]: [Bundle 2] No candidate meets the S1 gate (20d % ≥ 20, vs ma50 ≥ 15). Most calls are not offered, and the tradeable ones lack the trend or screen conditions.
-- week 38 [pass]: [Bundle 2] No candidate passes the S1 gate (20d ≥20, vs ma50 ≥15, shares ≥1). C6 and C5 are near misses; passing.
-- week 39 [call 30d +0% hold10; call 30d +0% hold10; call 30d +0% hold10]: [Bundle 2] Three S1 gate passers (20d% ≥20, vs ma50 ≥15, market up, shares ≥1); 30-day ATM, hold10.
-- week 40 [pass]: [Bundle 2] Market 20d is negative, so the market-gated trend and flow rules don't fire. The screen fails on spike or call-day counts. Option costs and cheap premiums lose on average.
-- week 41 [call 30d +0% hold10]: [Bundle 2] C4 passes the S1 strong-momentum gate (20d +24.9, vs ma50 +18.8, market up, shares 1.99). Others fail the trend gate.
-- week 42 [call 30d +0% hold10; call 30d +0% hold10]: [Bundle 2] C7 passes S1 momentum gate (sub-$10, so small). C5 passes S2 trend-plus-news gate, price over $50. Others fail gates.
-- week 43 [call 30d +0% hold10]: [Bundle 2] C10 passes the S1 strong-momentum gate (20d +87%, vs ma50 +67%, market up, shares 6.7x). Others fail or lack a tradable 30/90-day call.
-- week 44 [call 30d +0% hold10; call 30d +0% hold10]: [Bundle 2] C4 and C6 pass the S1 strong-momentum gate (20d%≥20, vs ma50≥15, market up, shares≥1). Others are mild or negative.
-- week 45 [call 30d +0% hold10; call 30d +0% hold10; call 30d +0% hold10]: [Bundle 2] C2, C4, C6 pass S1 strong-momentum gate (20d≥20, vs ma50≥15, market>0, shares≥1); C4 cheapest premium, over $50.
-- week 46 [call 30d +0% hold10]: [Bundle 2] C2 passes the S3 gate: calls 20d 3.84, 20d +15%, market 20d positive, IV 32. C6 fails the market gate.
-- week 47 [call 30d +0% hold10]: [Bundle 2] C8 passes the S1-tail gate (20d +54%, vs ma50 +32%, shares 2.8x). C2 also passes S1 but is sub-$10, so I skip it.
-- week 48 [call 30d +0% hold10]: [Bundle 2] C8 passes the S1 strong-momentum gate (20d +127%, vs ma50 +82%, market up, shares 2.5x). Others fail it or are fading.
-- week 49 [pass]: [Bundle 3] Market 20d is negative for every candidate, failing the market gate that all call rules need. No candidate meets S1 or S2, so pass.
-- week 50 [pass]: [Bundle 3] Market 20d is negative, failing the market gate. No candidate meets the strong-momentum setup, so I pass.
-- week 51 [pass]: [Bundle 3] No candidate passes S1, S2 or the 90-day screen. Thin evidence and cost floors favour passing.
-- week 52 [pass]: [Bundle 3] Only C3 passes the S1 gate, but its 30-day calls are not offered and 90-day variants have weak medians. Pass.
-- week 53 [call 30d +0% hold10]: [Bundle 3] C8 passes the S1 tail gate (20d +56%, vs ma50 +56%, shares 12x, market up). C1 is close but misses 20d≥20; the rest fail.
-- week 54 [pass]: [Bundle 3] (unreadable) {"ratings": {"C1": 0, "C2": 1, "C3": -1, "C4": 2, "C5": -1, "C6": 1, "C
-- week 55 [call 30d +0% hold10]: [Bundle 3] C5 passes S1 gate: 20d +51%, vs ma50 +34%, market 20d positive, shares 2x. Others fail the momentum or volume gate.
-- week 56 [call 30d +0% hold10]: [Bundle 3] C3 passes the S3 sustained-flow, momentum, moderate-IV gate; 30-day ATM is cheap. C10 has no ATM option offered. Others fail the gates.
-- week 57 [call 30d +0% hold10]: [Bundle 3] C1 passes the S1 strong-momentum gate (20d +60, vs ma50 +33, market up, shares 8.6x). C5 is close but misses the 20d cutoff.
-- week 58 [pass]: [Bundle 3] (unreadable) {"ratings": {"C1": -1, "C2": -1, "C3": 0, "C4": -1, "C5": 2, "C6": -1, "C7": -1, "C8": 1, "C9": -1, "C10": 0}, "picks": [{"id": "C5", "buy": "call", "expiry": 30, "strike": 0, "exit": "hold10"
-- week 59 [pass]: [Bundle 3] C5 fits the S1-tail gate, but it is sub-$10 with an 11.5% ATM premium, which the playbook says to avoid. No other candidate passes a validated gate.
-- week 60 [pass]: [Bundle 3] No candidate meets the strong-momentum gate (20d % ≥ 20, vs ma50 ≥ 15). Most are weak or falling. Pass.
-- week 61 [call 30d +0% double_or_10]: [Bundle 3] C1 passes the S1 momentum gate (20d +64.6, vs ma50 +58.2, market up, shares 3.99). Its 30-day ATM option is the only offered one, though the premium is costly and the stock is sub-$10.
-- week 62 [call 30d +0% hold10]: [Bundle 3] C1 passes the S1 gate: 20d +35.5, vs ma50 +23.3, market up, shares 1.08. Others fail it.
-- week 63 [call 30d +0% hold10; call 30d +0% hold10; call 30d +0% hold10]: [Bundle 3] C1, C7 and C4 pass the S1 strong-momentum gate (20d%≥20, vs ma50≥15, market up, shares≥1); C4 is a weaker $10-50 case.
-- week 64 [pass]: [Bundle 3] Market 20d is negative and the only available 90-day grids (C2, C4) fail the screen gates. Nothing qualifies, so pass.
-- week 65 [call 30d +0% hold10]: [Bundle 3] C7 is the only strong-trend name with heavy call flow, but its shares ratio is below 1, so the S1 gate is not met. One small exploratory trade. The rest are weak or crashing.
-- week 66 [pass]: [Bundle 3] (unreadable) {"ratings": {"C1": 1, "C2": -1, "C3": -2, "C4": 0, "C5": -1
-- week 67 [call 90d +0% hold10]: [Bundle 3] C7 passes S1 gate (20d 25.8, vs ma50 27, shares 1.08, market up). Only 90-day offered; modest trade. C1 passes screen but has no 90d contract.
-- week 68 [pass]: [Bundle 3] No candidate passes the S1 or S3 gates with a tradable 30-day or 90-day call. C2 passes S1 but has no 30-day or 90-day listing. Pass.
-- week 69 [call 30d +0% hold10]: [Bundle 3] C2 passes the S1 strong-momentum gate (20d +35.6, vs ma50 +30.9, shares 6.6, market up), with cheap 4.6% premium. C5 passes too but is sub-$10 at 14% cost, so no pick.
-- week 70 [pass]: [Bundle 3] C8 matches the S1 gate but has no 30- or 90-day calls offered. Others fail the gates or show cost-floor and decay risk.
-- week 71 [call 30d +0% hold10]: [Bundle 3] C10 passes the S1 strong-momentum gate (20d 42%, vs ma50 23%, market up, shares 5.2x). Others fail a gate.
-- week 72 [pass]: [Bundle 3] No candidate passes the S1 gate: C10 misses 20d % (+19.1) and shares (0.48). The rest lack strong trend. Option costs are high, so pass.
-- week 73 [pass]: [Bundle 4] Market 20d is negative for all candidates, failing the market gate that every trend and flow rule needs. Passing this week.
-- week 74 [pass]: [Bundle 4] No candidate passes the S1 gate: market 20d is about -0.4 for most names, and the rest lack 20d % ≥ 20 with vs ma50 ≥ 15. Passing.
-- week 75 [call 30d +0% hold10]: [Bundle 4] C6 passes S1 gates (20d +110%, vs ma50 +77%, market up, shares 4.2x). C8/C10 are trending but thin volume, so no buy.
-- week 76 [pass]: [Bundle 4] Only C10 passes the strong-momentum gate, but it is sub-$10 with 18.5% premium cost and IV 165, which the playbook says to avoid. Pass.
-- week 77 [pass]: [Bundle 4] No candidate passes the S1 strong-momentum gate (20d % ≥ 20, vs ma50 ≥ 15). Mild or negative trends lose on options, so pass.
-- week 78 [pass]: [Bundle 4] No S1 momentum gate passes (20d % below 20). C6 passes S2 but is sub-$10 with a 30% premium, so pass.
-- week 79 [call 30d +0% hold10]: [Bundle 4] C1 passes the S1 strong-momentum gate (20d +349%, vs ma50 +94%, market up, shares 2.1). C10 passes too but has no 30-day contract, so it can't be bought.
-- week 80 [call 30d +5% hold10]: [Bundle 4] C8 passes S1 and S1-tail gates (20d +49.8%, vs ma50 +28.4%, market up, shares ≥1). ATM 30-day isn't offered, so use 5% above. C10 passes the gates but is sub-$10 with a 16% ATM cost, so I rate it but don't buy.
-- week 81 [pass]: [Bundle 4] Only C9 passes the S1 gate, but it is sub-$10 with a 13.9% premium cost, which is untested. Passing.
-- week 82 [call 30d +0% hold10]: [Bundle 4] C8 passes the S1 gate (20d 33.6, vs ma50 48.7, shares 1.33, market up) with cheap 4.9% premium. C1 and C4 pass but have no tradable 30-day call.
-- week 83 [call 30d +0% hold10]: [Bundle 4] C10 fits the S2 trend-plus-news gate and R1b overbought flow with market up. Other names fail the momentum, trend or flow gates.
-- week 84 [call 30d +0% hold10; call 30d +0% hold10]: [Bundle 4] C2 and C8 pass the S1-tail gate (20d ≥40, vs ma50 ≥15, market up, shares ≥1). C10 passes S1 but is sub-$10 and untested.
-- week 85 [pass]: [Bundle 4] No candidate passes the S1 gate (20d% at least 20 with vs ma50 at least 15). C8 is close but its market 20d% is negative, so pass.
-- week 86 [call 30d +0% hold10; call 30d +0% hold10; call 30d +0% hold10]: [Bundle 4] S1 gate passes C1, C4, C10 (20d%≥20, vs ma50≥15, market up, shares≥1); C4 is also over $50.
-- week 87 [call 30d +0% hold10; call 30d +0% hold10; call 30d +0% hold10]: [Bundle 4] C5 and C10 pass the S1 momentum gate; C9 passes S2 trend plus news. Others fail or show downtrends.
-- week 88 [pass]: [Bundle 4] Market 20d is -0.6%, failing the market gate every winning rule needs. Most near-dated options are not offered. Passing.
-- week 89 [pass]: [Bundle 4] No candidate passes the S1 gate (20d% ≥ 20, vs ma50 ≥ 15, shares ≥ 1). C2 and C6 fail on volume or momentum. Pass.
-- week 90 [pass]: [Bundle 4] No candidate passes the strong-momentum gate (20d % ≥ 20, vs ma50 ≥ 15). C10 is closest but lacks the trend, so pass.
-- week 91 [pass]: [Bundle 4] No candidate meets S1 (shares ≥1) with a tradable 30-day or 90-day grid. C1 and C4 fail on shares or expiry; the rest lack strength or news.
-- week 92 [call 30d +5% hold10; call 30d +0% hold10; call 30d +0% hold10]: [Bundle 4] Pass S1 strong-momentum gate (20d>=20, vs ma50>=15, market>0, shares>=1); C8 uses 5%-above since ATM is unlisted.
-- week 93 [call 30d +0% hold10]: [Bundle 4] C2 passes the S1 strong-momentum gate with a cheap 30-day ATM call. C3 passes too but its only 30-day option is 5% above at 15.7% cost, so I pass it.
-- week 94 [call 30d +15% double_or_10]: [Bundle 4] C9 passes the strong-momentum gate (20d +69%, vs ma50 +59%, market up, shares ok). Its only cheap-enough listed strike is 30-day +15%. Others fail trend or market gates.
-- week 95 [call 30d +0% hold10; call 30d +5% hold10; call 90d +0% hold10]: [Bundle 4] C6 and C3 pass the S1 momentum gate; C8 passes S3. C1 is a sub-$10 crash, so avoid.
-- week 96 [call 30d +0% hold10; call 30d +0% hold10]: [Bundle 4] C7 and C2 pass the S1 strong-momentum gate with shares ≥1 and market up; C9 is sub-$10 with 25% cost, so skipped.
-- week 97 [pass]: [Bundle 5] Market 20d is -1.6%, failing every market-gated momentum rule the notes support. No candidate meets S2 or the 90-day screen, so pass.
-- week 98 [pass]: [Bundle 5] No candidate passes the S1 momentum gate (20d % ≥ 20, vs ma50 ≥ 15, shares ≥ 1). C5 is a near miss, but its options are not offered.
-- week 99 [call 30d +0% hold10; call 30d +0% hold10]: [Bundle 5] S1 gate (20d≥20, vs ma50≥15, market up, shares≥1) passes C9 and C10. C5 passes but crashed 35% and is sub-$10, so skipped.
-- week 100 [call 30d +0% hold10]: [Bundle 5] C1 passes the S1 strong-momentum gate (20d +31.6, vs ma50 +21.5, market up, shares 1.41). Others fail the gate.
-- week 101 [call 30d +0% hold10]: [Bundle 5] C3 alone passes the S1 strong-momentum gate (20d +65, vs ma50 +71, shares 8.7, market up). Others fail the gate or show mild strength.
-- week 102 [call 30d +0% hold10]: [Bundle 5] C5 passes the S1 momentum gate (20d +20.5, vs ma50 +74.7, market up, shares ≥1). C6 passes S2 but is sub-$10, so I rate it without buying.
-- week 103 [call 30d +0% hold10]: [Bundle 5] C7 passes the verified S1 gate (20d +31, vs ma50 +18.7, market up, shares 1.01). No other candidate passes.
-- week 104 [call 30d +0% hold10]: [Bundle 5] C9 passes the verified S1 gate (20d 25.9, vs ma50 16.6, shares 2.03, market up). Others fail gates or are sub-$10 with heavy costs.
-- week 105 [call 30d +0% hold10; call 30d +0% hold10]: [Bundle 5] C7 passes S1 (20d 28%, vs ma50 21%, shares 1.3, market up). C1 passes S2 (vs ma50 14%, news). Others fail the trend gates or sit in weak cells.
-- week 106 [call 30d +0% hold10]: [Bundle 5] C4 passes the S1 strong-momentum gate (20d +47.5%, vs ma50 +39.4%, shares 2.18, market up). Others fail the trend gate.
-- week 107 [call 30d +0% hold10]: [Bundle 5] C4 passes S1 (20d +23, vs ma50 +19, market up, shares 1.9, price over $50). Others fail the trend gate or are in downtrends.
-- week 108 [pass]: [Bundle 5] No candidate passes the S1 gate cleanly. C4 fits the tail but is sub-$10 with extreme realized vol, so I pass.
-- week 109 [call 90d +5% hold10]: [Bundle 5] C7 has strong trend, news and flow, but its spike today fails the screen. Only one tradeable name; C1 and C9 pass the S1 gate but have no tradeable expiry.
-- week 110 [call 30d +0% hold10]: [Bundle 5] C7 passes the S1 strong-momentum gate (20d +26.5, vs ma50 +18, market up, shares 1.14). C2 passes too but has no option quote.
-- week 111 [call 30d +0% hold10]: [Bundle 5] C8 alone passes the S1 gate (20d +72.9, vs ma50 +20.9, shares 2.26, market up). Others miss the 20d or vs ma50 thresholds. Sub-$10 is a caveat.
-- week 112 [pass]: [Bundle 5] Market 20d is -0.6%, failing the market gate that every validated call rule requires. No setup qualifies, so pass.
-- week 113 [call 30d +5% hold10; call 30d +0% hold10]: [Bundle 5] C5 and C8 pass the S1 momentum gate with market up and volume ≥1x. C8 is the S1-tail case; C5 is sub-$10 and costly.
-- week 114 [call 30d +0% hold10]: [Bundle 5] C2 passes the S1 momentum gate (20d 23.5, vs ma50 24.8, shares 1.37, market up). Sub-$10 is a risk. Others lack trend or flow.
-- week 115 [call 30d +0% hold10]: [Bundle 5] C8 passes the S1 strong-momentum gate (20d +40.7, vs ma50 +23.3, market up, shares 2.04). Others fail or are untradable.
-- week 116 [call 30d +0% hold10; call 30d +0% hold10]: [Bundle 5] C7 and C4 pass the S1 strong-momentum gate (20d%, vs ma50, market, shares). C8 passes too, but its 30-day ATM strike is not offered.
-- week 117 [call 30d +0% hold10; call 30d +0% hold10]: [Bundle 5] C7 and C5 pass the S1 and S1-tail momentum gates with market up; C4 is an S2 trend-plus-news pass.
-- week 118 [call 30d +0% hold10]: [Bundle 5] C1 fits S2 (vs ma50 >11.9, news 7d ≥1, market up) and has strong trend. Others lack trend, volume, or news.
-- week 119 [pass]: [Bundle 5] No candidate passes the S1 gate; C7 has strong trend but shares 0.96 and sub-$10 price, so pass.
-- week 120 [pass]: [Bundle 5] No candidate passes the S1 gate (vs ma50 ≥ 15 with shares ≥ 1). C3 misses by 1.2 points and is sub-$10 with costly premium, so pass.
-- week 121 [pass]: [Bundle 6] Market 20d is negative for every candidate, failing the market gate that all verified call rules require. Passing.
-- week 122 [call 30d +5% hold10]: [Bundle 6] C3 meets the R4 momentum-accumulation rule (calls 20d, 20d%, vs ma20). No candidate passes the S1 gate strictly; C1, C7, C8 and C9 are weak trend or thin-volume names.
-- week 123 [call 90d +0% hold10; call 30d +0% hold10]: [Bundle 6] C1 passes S2 trend-news gate; C8 matches the 90-day screen with heavy call flow and news. Others fail gates or are sub-$10 or thin.
-- week 124 [pass]: [Bundle 6] No candidate fits a scored winning gate with tradable options. C1 matches S1 but has no offered expiry. C6 has sustained flow but low IV. Passing.
-- week 125 [call 30d +0% hold10; call 30d +0% hold10]: [Bundle 6] C1 and C8 pass the S1 strong-momentum gate (20d≥20, vs ma50≥15, market>0, shares≥1). Others fail the trend gate. Both are sub-$10, so the cost floor is a risk.
-- week 126 [call 30d +0% hold10]: [Bundle 6] C2 passes the S1 strong-momentum gate (20d +74%, vs ma50 +75%, shares 1.9, market up) at $10-50 with a 14.8% premium. Others fail the gate or are sub-$10 cost traps.
-- week 127 [pass]: [Bundle 6] C1 passes the S1 gate but is sub-$10 with no option offered. C8 fails shares ≥ 1. Nothing else clears the gate, so pass.
-- week 128 [pass]: [Bundle 6] (unreadable) {"ratings": {"C1": 1, "
-- week 129 [call 30d +5% hold10; call 30d +0% hold10; call 30d +0% hold10]: [Bundle 6] S2 trend-plus-news gate (vs ma50 above 11.9, news 7d at least 1) with market up. C5, C7, C8 pass; no S1 names.
-- week 130 [call 30d +0% hold10; call 30d +0% hold10]: [Bundle 6] C1 and C10 pass the S1 momentum gate (20d%≥20, vs ma50≥15, market up, shares≥1). C3 is near-miss. Rest fail trend or weak flow.
-- week 131 [call 30d +0% hold10]: [Bundle 6] C8 passes the S1 strong-momentum gate (20d +24.8, vs ma50 +16.4, market up, shares 1.24) at a cheap 4.6% ATM cost. C1 passes too but is sub-$10, which the notes avoid.
-- week 132 [pass]: [Bundle 6] C3 meets the S2 gate (vs ma50 far above 11.9, news 7d ≥ 1, market up). Others miss the S1/S2 gates or show weak flow.
-- week 133 [pass]: [Bundle 6] No candidate passes S1, S2, S3 or the 90-day screen. Tradable strikes are poor fits, so I pass.
-- week 134 [call 30d +0% hold10]: [Bundle 6] C10 passes the S1 strong-momentum gate (20d +44, vs ma50 +27.5, market up, shares 5.6) and is priced over $50. Others fail the gate.
-- week 135 [pass]: [Bundle 6] No candidate passes the S1 gate (20d ≥ 20, vs ma50 ≥ 15, shares ≥ 1). C3 fails only on shares, which the thin-volume control shows is bad.
-- week 136 [pass]: [Bundle 6] Market 20d % is negative, which fails the market gate that every trend rule needs. Strong-trend names here don't pass S1 cleanly, so pass.
-- week 137 [call 30d +0% hold10]: [Bundle 6] C8 passes S1 gate (strong trend, shares ≥1, market up). Others fail gates or show weak trend and no news.
-- week 138 [pass]: [Bundle 6] No candidate passes the S1 gate (20d % ≥ 20). The rest are mild-strength, thin-volume, sub-$10, or falling names, which lose on the scorebook.
-- week 139 [call 90d +0% hold10]: [Bundle 6] C6 meets the S1 strong-momentum gate (20d +21.8, vs ma50 +28, shares 1.47, market up), but only the 90-day ATM call is offered. Expected value is near zero, so this is a single small bet.
-- week 140 [call 30d +0% hold10; call 30d +5% hold10]: [Bundle 6] C4 and C2 pass the S1 momentum gate with market up and shares ≥1; C4 is the 40%+ tail. C10 passes too but its 31% cost is too heavy.
-- week 141 [call 30d +0% hold10]: [Bundle 6] C3 passes the S1 strong-momentum gate (20d +228%, vs ma50 +190%, market 20d +0.3%, shares 3.96x). Others fail the gates or are sub-$10 or bearish.
-- week 142 [pass]: [Bundle 6] No candidate passes the S1 or S2 gates. C8 is strong but misses vs ma50 ≥15 and shares ≥1. Pass.
-- week 143 [pass]: [Bundle 6] No candidate passes the verified S1 gate: C4 has thin shares (0.82) and C5 fails vs ma50 at 12.7%. Passing.
-- week 144 [call 30d +0% hold10; call 30d +10% double_or_10]: [Bundle 6] C4 passes the S1 strong-momentum gate with ATM 30-day available. C2 passes too, but only 10%-above strikes are offered, so it is a smaller, double-or-10 bet.
+- week 1 [pass]: [Bundle 1] No candidate meets S1, S2, S5 or the 90-day screen. C1 fits G2 but has no tradable option. Thin call flow on C2, C9.
+- week 2 [call 30d +0% hold10; call 30d +0% hold10]: [Bundle 1] C8 meets S1 (20d>=20, vs ma50>=15, market 20d>0, shares>=1) with 5 call days. C10 meets S2 with news and 5 call days. C9 has no 30d ATM offered.
+- week 3 [call 30d +0% hold10; call 30d +0% hold10; call 30d +0% hold10]: [Bundle 1] S1 gate fires on C1, C3, C6 (strong 20d trend, above ma50, rising market, shares up). Ratings reflect trend and flow only.
+- week 4 [pass]: [Bundle 1] No candidate meets S1 or S5 conditions: C8 fails shares ≥1 and news gates, market 5d is positive, and the rest lack a 20-day trend.
+- week 5 [call 30d +0% hold10]: [Bundle 1] C4 meets the S1-cap rule (20d 33%, vs ma50 15.2%, market up). Shares gate fails, so this is a small single trade. Most others lack trend or call flow.
+- week 6 [call 30d +0% hold10]: [Bundle 1] C4 passes S1 and S2 gates, but it is sub-$10 with a 12% cost. Flat size
+- week 7 [call 30d +0% hold10; call 30d +0% hold10]: [Bundle 1] C4 triggers S1, S3 and G1; C1 triggers S2 with a cheap 5.5% option. S5 is off since market 5d is up.
+- week 8 [call 30d +0% hold10]: [Bundle 1] C9 passes the S1 momentum gate (20d +47%, vs ma50 +23%, shares 5.5x, market 20d up). Others lack trend, flow, or both.
+- week 9 [pass]: [Bundle 1] Only C1 meets S1, but it is sub-$10 with a 25% round-trip option cost and a negative S1 median. Passing.
+- week 10 [call 30d +0% hold10]: [Bundle 1] C6 meets the S1-nospike gate (strong trend, market up, no recent spike), though its median is negative. Thin or no short-dated call flow elsewhere, so avoid.
+- week 11 [call 30d +0% hold10]: [Bundle 1] C10 is the only candidate meeting the S5 rule (20d ≥20, two 2x call days, market 5d down). C9 is sub-$10 with no tradable options.
+- week 12 [call 30d +0% hold10; call 30d +0% hold10]: [Bundle 1] C6 passes S1 momentum gate; C10 passes S3 call-buying gate with moderate IV. S5 fails since market 5d is positive.
+- week 13 [pass]: [Bundle 1] No candidate meets a scored option rule (S1, S2, S5 need 20d% of 20+ or news). Stock-level edges are too small to survive option costs. Pass.
+- week 14 [pass]: [Bundle 1] No candidate meets S5 (20d% ≥20, 2x+ call days ≥2, market 5d <0). Thin call flow on most names is an avoid. Passing.
+- week 15 [call 30d +0% hold10; call 30d +0% hold10]: [Bundle 1] S1 momentum gate passes for C4 and C5 (strong 20d trend, market up, shares up). Others fail or are sub-$10 or weak.
+- week 16 [pass]: [Bundle 1] No candidate meets S1, S5 or the stock flow rules. Most are in 20-day downtrends or show thin trend signals, so I pass.
+- week 17 [pass]: [Bundle 1] (unreadable) {"ratings": {"C1": -1, "C2": 1, "C3": 1, "C4": 2, "C5": -1, "C6": -1, "C7": -2, "C8":
+- week 18 [call 30d +0% hold10]: [Bundle 1] C3 passes the S1-nospike and S3 gates with cheap 3.9% option cost. Only one pick; C4 is sub-$10 with 13.9% cost, so pass.
+- week 19 [call 30d +0% hold10; call 30d +0% hold10]: [Bundle 1] C10 passes S1-tail-style strength with volume and market up. C7 passes S1-nospike and S2 with a 13.5% ATM cost. Others lack the trend gate or are thin.
+- week 20 [call 30d +0% hold10]: [Bundle 1] C10 meets the S2 trend-plus-news rule with a 30-day ATM call available; C3 fits S5 but has no ATM strike.
+- week 21 [pass]: [Bundle 1] (unreadable) {"ratings": {"C1": -1, "C2": 0, "C3": 1, "C4": 0, "C5": 1, "C6": -1, "C7": 1,
+- week 22 [call 30d +0% hold10]: [Bundle 1] C9 passes S1 gates (20d +60%, above ma50 by 58%, market up, shares ok) at $50+ with a moderate option cost. Sub-$10 and weak-trend names are excluded.
+- week 23 [pass]: [Bundle 1] No candidate meets S1 or S5 with a tradable 30-day strike. C5's 30-day grid is n/a. Thin or falling flow elsewhere.
+- week 24 [call 30d +0% hold10]: [Bundle 1] No S5 or S1 trigger. C4 meets the old R1b overbought, sustained-call-buying setup at ATM. Low conviction, one flat-size trade.
+- week 25 [pass]: [Bundle 2] No candidate meets S1 or S5 (20d % ≥20 absent). Most show thin or no short-dated call flow, which the notes flag as avoid.
+- week 26 [pass]: [Bundle 2] No candidate meets S1, S5, G1/G2 or D1/D2 gates. Thin or zero 5-day call flow and overextended trends are avoids. Passing.
+- week 27 [call 30d +0% hold10]: [Bundle 2] C6 matches S1-tail (20d +57, vs ma50 +34, shares 1.5, market up). Thin-flow names rated negative; sub-$10 C1 not picked.
+- week 28 [call 30d +5% hold10]: [Bundle 2] C9 matches R6 (trend, 20d and market up) at 30-day 5% above; no S1/S5/G-rule matches. Small, flat size.
+- week 29 [pass]: [Bundle 2] No candidate meets S1 (shares ≥1) or S5 (market 5d <0). C2 has trend and flow but fails shares; the rest are weak or unsuitable.
+- week 30 [call 30d +5% hold10; call 30d +0% hold10]: [Bundle 2] C9 passes S1 (strong trend, shares, market up, news) with a cheap 30-day ATM call. C2 fits the S1-flow variant with overbought call flow; it is a 5% OTM call because ATM is not offered.
+- week 31 [call 30d +0% hold10; call 30d +0% hold10]: [Bundle 2] C3 and C6 meet S5 (20d≥20, 2x+ call days≥2, market 5d<0); C3 also meets S1 with cheap 4.4% cost. C6 is sub-$10, so sized as a lead.
+- week 32 [call 30d +0% hold10]: [Bundle 2] C6 matches S5 and S1 (strong trend, 2 call days, market 5d down, shares up). Thin-flow names are avoided; sub-$10 caution applied.
+- week 33 [call 30d +0% hold10; call 30d +0% hold10]: [Bundle 2] S2 passes C9 and C10 (vs ma50 high, news 7d ≥1). Others have thin call flow, weak trend, or sub-$10 cost floors.
+- week 34 [call 30d +0% hold10]: [Bundle 2] C6 meets S1 and S2 (20d +65%, vs ma50 +69%, shares and news); the other candidates fail the trend gates.
+- week 35 [call 30d +0% hold10]: [Bundle 2] C7 meets S1 gate (20d 32%, vs ma50 29%, market up, shares 3.9x). Cost is high, so one small pick. C2 meets S5 but costs 30%, so I pass.
+- week 36 [call 30d +0% hold10; call 30d +0% hold10]: [Bundle 2] C4 meets S1 gate (20d +94%, vs ma50 +63%, shares 1.5x). C10 meets S2 (vs ma50 +12%, news 2). Thin-flow names rated negative.
+- week 37 [pass]: [Bundle 2] No option rule fires: S5 needs market 5d below 0 (it is +2.9), S1 needs 20d above 20 (none qualify). Thin or no short-dated call flow is an avoid.
+- week 38 [pass]: [Bundle 2] (unreadable) {"ratings": {"C1": 1, "C2": -1, "C3": 0, "C4": -1, "C5": 1, "C6": 1, "C7": 0
+- week 39 [call 30d +0% hold10; call 30d +0% hold10]: [Bundle 2] S1 momentum gate fires on C8 (cheap 6% cost) and C3; S5 fails since market 5d is positive. C10 has no 30-day quote.
+- week 40 [pass]: [Bundle 2] (unreadable) {"ratings": {"C1": 0, "C2": -1, "C3": 1, "C4": 0,
+- week 41 [call 30d +0% hold10]: [Bundle 2] C1 passes S5 (20d +24.9, 2 call days, market 5d -1.4) and S1 gates, with market 20d up. Other names fail the 20d trend gate.
+- week 42 [call 30d +0% hold10; call 30d +0% hold10]: [Bundle 2] C7 fires S1 (strong trend, market up, shares up). C2 fires S2 and S3. S5 never fires because market 5d is positive.
+- week 43 [call 30d +0% hold10]: [Bundle 2] C7 passes the S1 strong-momentum gate (20d +87%, market 20d up, shares 3x). Others fail the gates or have weak momentum.
+- week 44 [call 30d +0% hold10; call 30d +0% hold10; call 30d +0% hold10]: [Bundle 2] C8 and C5 pass S1 momentum gate; C2 passes S3 sustained-call rule with iv under 60. Others fail filters or fade.
+- week 45 [call 30d +0% hold10; call 30d +0% hold10]: [Bundle 2] C2 and C4 meet S5 (20d ≥20, two 2x call days, market 5d down). C2 has cheap options. C4 also has market 20d up.
+- week 46 [pass]: [Bundle 2] Market 5d and 20d are mildly up, so the S1 and S5 gates fail. Most names have thin or no short-dated call flow. Only C1 passes a stock-level flow gate, and it is sub-$10. Pass.
+- week 47 [call 30d +0% hold10; call 30d +0% hold10]: [Bundle 2] C8 and C10 meet every S1 momentum condition with volume; sub-$10 and median risk are accepted at flat size. C7 has no ATM contract.
+- week 48 [call 30d +0% hold10]: [Bundle 2] C7 meets S5 and S1 gates (20d +127%, 4 call days, market 5d down and 20d up). Thin-flow and news-negative names avoided.
+- week 49 [pass]: [Bundle 3] No candidate clearly meets the S1, S5 or stock-flow gates; the only S5 trigger (C8) has no 30-day contract offered, and the rest are weak or too costly.
+- week 50 [call 30d +0% hold10]: [Bundle 3] C7 meets S5 (20d +55.7, 3 call days 2x+, market 5d down) and S1 gates; the other names lack the trend or call flow.
+- week 51 [call 30d +0% hold10]: [Bundle 3] C9 meets S1 gate (20d 30.6, vs ma50 21, market up, shares ≥1). Others lack trend, flow, or are sub-$10 with thin flow.
+- week 52 [call 90d +10% hold10]: [Bundle 3] C1 fits S2 (trend far above MA50 with news) and only has a 90-day strike available; the rest show falling 20-day trends or thin signals.
+- week 53 [call 30d +0% hold10]: [Bundle 3] C9 is the only S1 momentum signal (20d +48%, shares and market gates pass). C3 passes the G1 call-flow stock rule. Thin-flow names rated negative.
+- week 54 [call 30d +0% hold10; call 30d +0% hold10; call 30d +0% hold10]: [Bundle 3] C2, C6 and C8 pass the S1 strong-momentum gate. C8 is also an S1-tail case. S5 fails: market 5d is positive.
+- week 55 [call 30d +0% hold10]: [Bundle 3] C6 fires S5 and S1 (20d +51%, 5 call-flow days, market 5d down, shares 2x). Others miss the trend gates or are sub-$10 with thin flow.
+- week 56 [call 30d +0% hold10]: [Bundle 3] C3 fits S2/S3 (strong trend, news, sustained call buying, IV 32). Others lack call flow, have weak trend, or are sub-$10 and costly.
+- week 57 [call 30d +0% hold10]: [Bundle 3] C1 passes the S2 trend-plus-news gate with moderate IV. C10 is overextended with extreme IV, so I pass it. Thin-flow names are avoided.
+- week 58 [call 30d +0% hold10]: [Bundle 3] C7 passes the S1 momentum gate (20d +57%, vs ma50 +51%, market 20d up, shares ok). Others fail the gates; S5 fails on market 5d up.
+- week 59 [call 30d +0% hold10]: [Bundle 3] C5 passes S1 (20d +43%, far above ma50, market up, shares ≥1). Other names lack trend or call flow; sub-$10 is a risk, so one small pick.
+- week 60 [pass]: [Bundle 3] No candidate meets the S1, S5, S2 or S3 gates; the closest have weak trend or no ATM option.
+- week 61 [pass]: [Bundle 3] No S1, S5 or S3 gate passes; most expiries are not offered; thin flow and overextended names are avoided.
+- week 62 [call 30d +0% hold10; call 30d +0% hold10]: [Bundle 3] C1 fits S1 strong-momentum gate; C8 fits S2 trend plus news. C2 fits S5 but has no ATM strike offered.
+- week 63 [call 30d +0% hold10; call 30d +0% hold10; call 30d +0% hold10]: [Bundle 3] C1, C4, C9 pass S1 and S2-type trend gates with flow; C1 has cheap option cost. C8 shows negative news tone and a sharp drop.
+- week 64 [pass]: [Bundle 3] No S5 or S1 trigger: market 20d negative, no strong-trend call flow. Stock dip rules are weak, so pass.
+- week 65 [pass]: [Bundle 3] (unreadable) {"ratings": {"C1": 1, "C2": -1, "C3": 1, "C4": -1, "C5":
+- week 66 [call 30d +0% hold10]: [Bundle 3] C2 passes the S2 trend-plus-news gate with 4 call days and a rising market. C8 fits G2 but is only a small stock edge. C3, C5, C6 and C9 fail flow or trend gates.
+- week 67 [pass]: [Bundle 3] S5 fails (market 5d is +1.1). S1 hits on C1 and C2 but only at 90-day or sub-$10, where the scorebook is weak. C9 has no buyable option. Pass.
+- week 68 [pass]: [Bundle 3] No candidate meets S1, S2 or S5 gates. Rules are thin, and option costs and sub-$10 structure are too heavy. Passing.
+- week 69 [call 30d +0% hold10; call 30d +0% hold10; call 30d +0% hold10]: [Bundle 3] C8 and C3 match S5 (20d≥20, 2 call days, market 5d<0); C1 matches S3 with moderate IV. Others fail gates.
+- week 70 [pass]: [Bundle 3] No candidate passes S1, S2, S5, G1/G2, D1 or B1. Market 5d is positive, breadth is 51%, and call flow is thin for most names.
+- week 71 [call 30d +0% hold10]: [Bundle 3] C1 passes the S1 strong-momentum gate with sustained call flow. Most others show thin call flow or no trend, which the notes flag as avoids.
+- week 72 [pass]: [Bundle 3] No candidate meets S1, S5, G1/G2, D1/D2 or B1 conditions; 20d-momentum gates fail and call-flow days are thin. Pass.
+- week 73 [pass]: [Bundle 4] No candidate meets S5 or S1 (market 5d or 20d gate fails); C7 is strong but market 20d is negative, so pass.
+- week 74 [pass]: [Bundle 4] Market 20d is negative, so S1 and S5 gates fail. No candidate matches a rule with a positive option median. Pass.
+- week 75 [call 30d +0% hold10]: [Bundle 4] C3 passes S2 (strong trend plus news), the only scored option rule that fires here. Most others are weak or fail the thin-flow avoid.
+- week 76 [pass]: [Bundle 4] No candidate meets S5 (market 5d is positive for all) or a stock-level edge. C5 passes S1 but its 30-day contract expires mid-hold and the 90-day costs 36%, so pass.
+- week 77 [pass]: [Bundle 4] No rule fires: S5 needs market 5d<0 (it is positive), S1/S2 need strong trends. Thin call flow is an avoid. Passing.
+- week 78 [call 30d +0% hold10; call 30d +0% hold10]: [Bundle 4] S1 momentum gate qualifies for C7 and C4; both have 30-day ATM costs under 12%. Other names fail or are sub-$10 with heavy cost.
+- week 79 [pass]: [Bundle 4] C9 meets S5 and S1 but has no buyable 30/90-day call; C4 meets S1 but its 30-day expiry falls inside the hold. Nothing else qualifies.
+- week 80 [call 30d +5% hold10; call 30d +0% hold10]: [Bundle 4] C8 passes the S1 strong-trend gate, but its ATM call isn't listed, so I use 5% above. C2 passes the S1-cap variant. Other names fail the trend or flow gates.
+- week 81 [call 30d +0% hold10]: [Bundle 4] C9 passes the S1 momentum gate (20d +40%, vs ma50 +50%, shares 1.09, market up). Others fail or are sub-$10 or thin-flow.
+- week 82 [pass]: [Bundle 4] (unreadable) {"ratings": {"C1": -1, "C2": 0, "C3": -1, "C4": 1, "C5": 2,
+- week 83 [pass]: [Bundle 4] No candidate meets the S1, S2, S5 or G2 gates. C10 passes S3 but its wide-list record is weak, so pass.
+- week 84 [call 30d +0% hold10]: [Bundle 4] C4 passes S1 momentum gate with shares confirmed. C6 has zero call days and C8 is sub-$10, so both are skipped.
+- week 85 [pass]: [Bundle 4] No S1, S5, S2 or G-rule triggers. Market 20d is negative for most names, and C1's 30/14-day options are not offered, so pass.
+- week 86 [call 30d +0% hold10; call 30d +0% hold10; call 30d +0% hold10]: [Bundle 4] Three names pass S1 momentum gate (20d≥20, vs ma50≥15, market 20d>0, shares≥1). S5 fails since market 5d is up.
+- week 87 [call 30d +0% hold10; call 30d +0% hold10]: [Bundle 4] S1 momentum gate fires on C7 and C10 (C10 also S2/S3). Market 5d is positive, so S5 does not fire. Thin sample, so small size.
+- week 88 [pass]: [Bundle 4] No candidate meets the S1 or S5 trend gates. Stock dip signals fall on thin-flow or sub-$10 names, and option costs are too high.
+- week 89 [call 30d +0% hold10]: [Bundle 4] C6 fits S2 (news plus trend above ma50) and R1b (overbought with sustained calls) with a positive average. C9 fits S1-cap but has thin call flow, so I'm not buying it.
+- week 90 [pass]: [Bundle 4] No candidate meets the S1, S2, S5 or D1 conditions. C4 and C7 meet only the stock-level G2 flow gate, which has no proven option edge. Thin or absent call flow in C1, C5 and C10 is an avoid. Passing.
+- week 91 [pass]: [Bundle 4] C1 fits S1 but is sub-$10 with no 30-day ATM or 5%-above call offered, and RSI is 87. Others lack the momentum gate or have thin call flow.
+- week 92 [call 30d +0% hold10; call 30d +5% hold10]: [Bundle 4] S1 momentum gate fires on C4 and C10 (20d%, vs ma50, shares, market up); S5 needs market 5d down, none qualify.
+- week 93 [call 30d +0% hold10]: [Bundle 4] C1 passes both S1 and S5 gates (strong trend, 4 call days, rising 20d market, shares ≥1). Thin-flow names and sub-$10 lotteries are avoided.
+- week 94 [call 30d +0% hold10]: [Bundle 4] C4 fires S1 (20d +69, vs ma50 +59, market up, shares 1.3x). Only S1-qualifying name; others lack trend or call flow.
+- week 95 [call 30d +5% hold10]: [Bundle 4] C1 fits the S1-tail momentum pattern (20d +47.9%, news, call flow). ATM 30-day is not offered, so I use 5% above. Others lack a qualifying signal.
+- week 96 [pass]: [Bundle 4] (unreadable) {"ratings": {"C1": 0, "C2": -1, "C3": 0, "C4": -1, "C5": -1, "C6": 1, "C7": 2, "C8": -1, "C9": 2, "C10": 1
+- week 97 [pass]: [Bundle 5] No scored rule fires: S5 needs 20d% ≥ 20 and a falling 5-day market, S1 and S2 need strong trends, and the rest are weak or unsupported. Ratings are judgment only.
+- week 98 [pass]: [Bundle 5] No S1 or S5 trigger; only C10 passes the stock-level call-flow gate, and it is sub-$10 with high option cost.
+- week 99 [call 30d +0% hold10; call 30d +0% hold10]: [Bundle 5] C6 and C1 pass the S1 strong-momentum gate (20d%≥20, vs ma50≥15, market 20d>0, shares≥1). Market 5d is positive, so S5 is not triggered. C3 is lottery-priced, so no pick.
+- week 100 [call 30d +0% hold10]: [Bundle 5] C5 alone fires S1 (20d +31.6, vs ma50 +21.5, market up, shares 1.38). Its 17% option cost is high, so one small trade only.
+- week 101 [call 30d +0% hold10]: [Bundle 5] C10 passes the S1 momentum gate (20d +65%, vs ma50 +71%, market 20d up, shares 8.7x). Most others show thin call flow, which the notes say to avoid.
+- week 102 [call 30d +0% hold10]: [Bundle 5] C8 passes the S1 momentum gate (20d +88%, vs ma50 +75%, shares and market up, 5 call days). Other names miss the gates. Sub-$10 risk noted.
+- week 103 [pass]: [Bundle 5] No S5 or S1 signal passes: S1 fails shares, and most candidates lack a 20-day trend or 2+ call days. Passing.
+- week 104 [call 30d +0% hold10]: [Bundle 5] C7 passes the S1 momentum gate with shares 2x; the rest lack trend, volume, or sit below $10.
+- week 105 [call 30d +0% hold10]: [Bundle 5] C10 passes S1 and S2 (strong trend, news, volume); its median is weak and sub-$10 costs are high. Thin call flow elsewhere.
+- week 106 [call 30d +0% hold10]: [Bundle 5] C3 meets the S1 strong-momentum gate (20d +47.5%, vs ma50 +39.4%, market 20d up, shares ≥1) with cheap 5.9% option cost. Others lack the trend gate or show thin flow.
+- week 107 [call 30d +0% hold10]: [Bundle 5] C4 meets S1 and S5 gates: 20d +23%, 4 call days at 2x+, market 5d flat or down, rsi 81. Others are downtrending or thin.
+- week 108 [call 30d +0% hold10]: [Bundle 5] C8 passes S1 (20d +57%, vs ma50 +35%, shares 8.8x, market 20d up). Others lack momentum or flow. C6's cost is too high.
+- week 109 [pass]: [Bundle 5] No candidate meets S1 or S5 (market 5d is +2.9, so S5 fails; C1 shares and C6 trend fail S1). Thin call flow on most names. Pass.
+- week 110 [call 30d +0% hold10]: [Bundle 5] C1 meets the S1 and S2 momentum-plus-news rules, has cheap 30-day ATM options and was positive on average. C2 matches but has no tradable calls.
+- week 111 [call 30d +0% hold10]: [Bundle 5] C7 meets the S3 and S4 gates with a cheap 30-day ATM cost. C5 fits S1 but is sub-$10 with an 18% option cost, so I pass.
+- week 112 [pass]: [Bundle 5] S5 fires on C2 and C8, but their 30-day ATM calls are not offered. Other candidates fail the gates, and the market's 20-day trend is negative.
+- week 113 [pass]: [Bundle 5] No S5 setups (20d%/market gates fail). S1 passes only on C2 (no 0% strike offered) and C3 (sub-$10, high vol). Medians are negative, so pass.
+- week 114 [call 30d +0% hold10]: [Bundle 5] C9 matches S1 (strong trend, shares and market gates, cheap cost). Others lack the trend or flow setup, or are falling.
+- week 115 [call 30d +0% hold10]: [Bundle 5] C9 matches the S1 strong-momentum gate with a 30-day ATM call available. C10 fits S5 and S1 but its expiry falls inside the hold, so it can't be bought.
+- week 116 [call 30d +0% hold10]: [Bundle 5] C3 passes S1 (strong trend, volume, market up). Sub-$10 and costly, so one small pick. C4 and C10 show no call flow.
+- week 117 [call 30d +0% hold10]: [Bundle 5] C3 meets the S5 rule (20d +20%, two 2x call days, market 5d down) in the $10-50 band. C9 also fits but is sub-$10 with a 17% round-trip cost, so I pass.
+- week 118 [pass]: [Bundle 5] No candidate meets S1, S5 or G1 gates; several have zero short-dated call flow or thin 5-day flow, which the notes flag as avoid.
+- week 119 [pass]: [Bundle 5] No candidate meets S1 or S5 gates. C4 is closest but fails shares and market 5d, and is sub-$10 with overbought RSI.
+- week 120 [call 30d +0% hold10]: [Bundle 5] C7 alone meets S5: 20d +28.6%, 3 call days at 2x+, market 5d negative.
+- week 121 [pass]: [Bundle 6] No S1/S5/D rule fires: market 20d is negative and 5d is up. C10 matches G2 flow (stock edge only), but option wrappers have lost, so pass.
+- week 122 [call 30d +0% hold10]: [Bundle 6] C1 fires S2 (vs ma50 above 11.9, news 7d, 4 call days). Others fail S1, S3, S5 or thin-flow avoids.
+- week 123 [pass]: [Bundle 6] (unreadable) {"ratings": {"C1": -1, "C2": 2, "C3": -1, "C4": 1, "C5": -1, "C6": 0, "C7": 0, "C8": 0, "C9": 1, "C10": 0}, "picks": [{"id": "C2", "buy": "call", "expiry": 30, "strike": 0, "ex
+- week 124 [call 90d +0% hold10]: [Bundle 6] C9 passes the 90-day screen (news, 2 call days, G2-style flow) with positive medians. Others lack setups or are untradable.
+- week 125 [call 30d +0% hold10; call 30d +0% hold10]: [Bundle 6] C7 and C2 pass S1 gate (20d% ≥20, vs ma50 ≥15, market 20d up, shares ≥1); both sub-$10, so small size. Others fail gates.
+- week 126 [call 30d +0% hold10]: [Bundle 6] C1 passes S1 and S2 gates (20d +74%, vs ma50 +75%, shares 1.9, news). Sub-$10 S1 names carry about 27% cost, so I pass them.
+- week 127 [pass]: [Bundle 6] No S5 match. C4 passes S1 but has no 30-day contract offered. C1 is a weak trend fit. Options lose on median; pass.
+- week 128 [call 30d +0% hold10; call 30d +0% hold10]: [Bundle 6] C1 and C5 pass S1 gate (20d≥20, vs ma50≥15, market 20d>0, shares≥1). S5 fails since market 5d is positive. Sub-$10 cost risk noted.
+- week 129 [call 30d +5% hold10]: [Bundle 6] C2 passes the S2 strong-trend-plus-news gate (vs ma50 above 11.9, news 7d at least 1); the rest lack trend, call flow or news.
+- week 130 [call 30d +0% hold10; call 30d +0% hold10]: [Bundle 6] C6 passes S2 (strong trend, news). C7 passes S1 gate (20d, ma50, market up, volume). C9 crashed on news, so avoid.
+- week 131 [call 30d +0% hold10]: [Bundle 6] C3 passes both S5 and S1 gates: strong 20d trend, 5 call days at 2x+, shares normal, mild down 5-day market. C4 fits S1 but is sub-$10 with a cost floor, so passed.
+- week 132 [call 30d +0% hold10]: [Bundle 6] C8 passes S1 (20d +25.8, vs ma50 +17.2, shares and market up) with 30-day ATM cost near the 12% S1-low-cost line. Other names fail or carry extreme cost.
+- week 133 [pass]: [Bundle 6] No candidate meets S1, S5 or the stock flow rules; 20-day trend is weak or negative, and most 30-day options are not offered.
+- week 134 [call 30d +0% hold10]: [Bundle 6] C5 meets S5 (20d +44%, 2 call days, market 5d down) and S1 gates. Other candidates fail the rule conditions.
+- week 135 [call 30d +0% hold10; call 30d +5% hold10]: [Bundle 6] C7 fits S1-nospike/S2 trend-plus-news; C9 fits overbought R1-$50 with sustained call buying. Others show thin flow or weak trend.
+- week 136 [call 90d +0% hold10]: [Bundle 6] C2 matches the S5 rule (20d≥20, 5 call days, market 5d down) but only 90-day is offered. Small size; others fail gates.
+- week 137 [call 30d +0% hold10]: [Bundle 6] C10 meets S1 and S5 gates: strong 20d trend, 3 call days at 2x+, shares surge, and a down 5-day market. Others lack trend or call flow.
+- week 138 [call 30d +0% hold10; call 30d +0% hold10]: [Bundle 6] C1 fires S2 (strong trend plus news). C4 fires S1 (momentum gate, 6/6 beat). Other names fail gates or show thin flow.
+- week 139 [pass]: [Bundle 6] No scored rule fires. S1 matches C8 only at 90-day, which is weak; S5 fails on market 5d; C7 misses shares by 0.01.
+- week 140 [call 30d +5% hold10]: [Bundle 6] C1 passes the S1 momentum gate (20d, vs ma50, market 20d, shares). Only the 30-day 5%-above strike is offered. Others fail S1/S5 or have sub-$10 cost floors.
+- week 141 [call 30d +0% hold10; call 30d +0% hold10]: [Bundle 6] C5 passes S5 and S1 gates; C3 passes S1 gate. Others fail the 20-day trend or call-flow conditions.
+- week 142 [pass]: [Bundle 6] No candidate meets S1, S2, S5, G1/G2 or D1/D2 conditions. Option costs and thin flow argue against trading.
+- week 143 [call 30d +5% hold10]: [Bundle 6] C7 passes S1-flow (strong 20d trend, above ma50, market up, 30-day 5% above). Other setups fail or lack tradable options.
+- week 144 [call 30d +0% hold10]: [Bundle 6] C7 alone matches S5 (20d +29.5, 2 call days, market 5d down) and S1; the rest fail the trend or flow gates.
 
 ## Weekly notes: options1, generation 1, train
 
-- week 1 [call 14d +10% double_or_10 -100%; call 14d +10% hold10 -100%]: [Bundle 1 of 6] Short-dated call surges on bounce days from below-average prices, with cheap OTM strikes. Testing whether short-expiry flow plus price setup beats decay.
-- week 2 [call 30d +5% double_or_10 +113%; call 14d +0% hold10 -100%; call 14d +10% double_or_10 +6%]: [Bundle 1 of 6] C7 has broad bullish flow with cheap 5% OTM calls. C4 is an oversold bounce. C8 tests short-dated spikes with cheap OTM strikes.
-- week 3 [call 30d +0% hold10 +94%; call 90d +5% hold10 -77%]: [Bundle 1 of 6] Testing cheap ATM calls on calm stock with long-dated call spike; overbought, parabolic names rated down as reversal risk.
-- week 4 [call 90d +5% hold10 -62%]: [Bundle 1 of 6] Extreme one-sided call spike with zero put activity and cheap 90-day 5% calls. Tests whether quiet, long-dated call crowding leads a bounce.
-- week 5 [call 30d +0% hold10 -30%; call 30d +0% double_or_10 +272%]: [Bundle 1 of 6] Oversold, deep-drawdown names with long-dated call spikes; extended, overbought momentum names rated down.
-- week 6 [call 30d +5% double_or_10 -84%; call 30d +0% hold10 +147%]: [Bundle 1 of 6] Test contrarian: heavy call crowding in a deep-drawdown, cheap-strike stock (C3); long-dated call surge after a 10% drop (C2). Fading extended momentum names.
-- week 7 [call 30d +5% double_or_10 +111%; call 30d +20% double_or_10 +144%]: [Bundle 1 of 6] C2: strong OTM and medium call crowding after a 10% day. C4: test cheap far-OTM 30d lottery on a call spike.
-- week 8 [call 14d +0% double_or_10 +163%; call 30d +0% hold10 -42%]: [Bundle 1 of 6] C7: short-dated call spike with a modest rise. C3: deeply oversold bounce setup, cheap 30-day at-the-money calls. Testing both.
-- week 9 [call 14d +0% double_or_10 +190%; call 30d +0% double_or_10 -79%; call 30d +15% double_or_10 -90%]: [Bundle 1 of 6] Short-dated call spike with put collapse (C2), oversold call spike (C4), cheap long-dated OTM lottery (C5). C3 blowoff fade risk.
-- week 10 [call 30d +0% double_or_10 -73%; call 30d +0% double_or_10 +104%]: [Bundle 1 of 6] C7 shows heavy OTM and long-dated call crowding with puts absent. C3 has low puts and long-dated buying on a pullback-to-up setup. Chasing extended names rated down.
-- week 11 [call 30d +15% double_or_10 -28%; call 30d +20% double_or_10 +217%]: [Bundle 1 of 6] C8: puts zero, medium calls 3x, shares calm, cheap OTM. C3: contrarian oversold bounce test on very cheap calls.
-- week 12 [call 90d +15% hold10 -1%; call 90d +10% double_or_10 +20%]: [Bundle 1 of 6] C2: puts collapsed while calls rose, cheap 90d. C8: call crowding with zero puts, but overbought, so a small test.
-- week 13 [call 14d +0% hold10 -100%]: [Bundle 1 of 6] C7 has unusual long-dated call buying with a cheap 14d ATM option. Overbought C1 and put-heavy C5 are weak. Testing cheap short-dated calls.
-- week 14 [call 30d +0% double_or_10 -92%; call 14d +15% double_or_10 -98%]: [Bundle 1 of 6] C1: breakout to 60-day high on heavy call flow, cheap ATM options. C2 tests short-dated OTM calls after a 13% week.
-- week 15 [call 30d +5% double_or_10 -81%; call 30d +0% hold10 -87%; call 30d +5% hold10 -61%]: [Bundle 1 of 6] C1 oversold, cheap calls; C6 short-call surge in uptrend; C8 is a contrarian test of a cheap bounce after a crash.
-- week 16 [call 30d +20% double_or_10 -45%; call 30d +10% double_or_10 +4%; call 14d +10% hold10 -58%]: [Bundle 1 of 6] Test oversold, short-spike, cheap-OTM calls. C3 is up 27% in 5 days but below its 50-day average; C1 is oversold with a 12x call spike.
-- week 17 [call 30d +5% double_or_10 -84%; call 30d +10% hold10 -50%]: [Bundle 1 of 6] C3: calls crowd out puts, medium-dated buying, calm shares, cheap options. C4: short and medium call buying, shallow puts, at highs. C1 is overextended.
-- week 18 [call 30d +5% hold10 -100%; call 14d +5% double_or_10 -100%]: [Bundle 1 of 6] C1 is oversold below its 50-day average with cheap options; C7 tests cheap short-dated calls on a calm name.
-- week 19 [call 30d +5% double_or_10 -64%]: [Bundle 1 of 6] Quiet call flow in a steady uptrend (above MA50 by 15%, at highs). Test a 5% OTM 30-day call with a 2x exit for the momentum-plus-cheap-option idea.
-- week 20 [call 30d +0% double_or_10 -83%]: [Bundle 1 of 6] Call-only flow with almost no puts, huge OTM and long-dated call activity, and cheap 30-day ATM options. Overbought C1 and put-heavy falling names are avoided.
-- week 21 [call 14d +0% hold10 -100%]: [Bundle 1 of 6] Test of cheap at-the-money calls on a calm stock (0.8% premium). Overheated C7 and C2 rated down; no clear edge elsewhere.
-- week 22 [call 30d +0% hold10 +94%]: [Bundle 1 of 6] C6 is an oversold dip in an uptrend with low put flow. Extended names (C1, C2, C7) and heavy-put names look weak.
-- week 23 [call 30d +0% double_or_10 +172%; call 14d +0% double_or_10 -100%]: [Bundle 1 of 6] Test whether call spikes after 10%+ weeks with put collapse (C1, C3) carry direction. Fading exhausted 123% month (C4) and falling names.
-- week 24 [call 30d +5% double_or_10 +5%; call 14d +20% double_or_10 -100%]: [Bundle 1 of 6] Call-heavy trend breakouts (C8, C5) and an oversold bounce with huge OTM flow (C6). Cheap OTM lottery tested. Others look like puts or fading spikes.
-- week 25 [call 14d +5% hold10 -100%]: [Bundle 1 of 6] C1 is a beaten-down stock with heavy call crowding and a cheap option. C2, C3 and C7 are overextended after huge 20-day rallies and high RSI, so I expect fades.
-- week 26 [call 30d +0% hold10 -93%]: [Bundle 2 of 6] Calm 2.8% vol, near 20-day average, medium-call spike, cheapest 30-day ATM cost. C1 and C4 are overextended with RSI above 77.
-- week 27 [call 30d +0% hold10 -95%; call 30d +0% double_or_10 -58%]: [Bundle 2 of 6] C6 tests the medium-spike, calm, call-over-put flow rule. C5 has the strongest call flow, tested with double-or-10 exit.
-- week 28 [call 30d +0% hold10 -72%]: [Bundle 2 of 6] C6 passes my filters: near the 20-day average, calm volatility, moderate call spike, and not in a deep drawdown. Only one trade; the others fail the filters.
-- week 29 [call 30d +0% hold10 -67%]: [Bundle 2 of 6] C4 has a strong call spike, calls far above puts, calm vol, near its average, and a cheap 30-day ATM option. Others lack the setup or are chasing or falling.
-- week 30 [call 30d +0% hold10 -29%]: [Bundle 2 of 6] C2 fits the calm-vol, medium-spike, zero-put flow test at a cheap 4.2% 30d ATM cost. Others are drawdowns or put-heavy.
-- week 31 [call 30d +0% hold10 +76%]: [Bundle 2 of 6] C4 fits the rule: calm vol, 30d ATM available, near 20-day average, 13% off high, extreme call flow with very low puts.
-- week 32 [call 30d +0% hold10 +152%; call 30d +0% double_or_10 -84%]: [Bundle 2 of 6] Calm vol, near ma20, shallow drawdown, 30d ATM per core rule; C8 tests double-or-10 on a medium-spike setup.
-- week 33 [call 30d +0% hold10 +242%; call 30d +0% double_or_10 -24%]: [Bundle 2 of 6] C3 fits the core rule: near ma20, shallow drawdown, low vol, quiet long-dated buying. C4 is a cheap-premium exit test.
-- week 34 [call 30d +0% hold10 +23%]: [Bundle 2 of 6] C6: calm stock near its 20-day average, low put/call, cheap 30d ATM call. Trading one name keeps the test narrow.
-- week 35 [call 30d +0% hold10 -97%]: [Bundle 2 of 6] C4: calm stock near ma20, calls crowd out puts, medium spike below 3x, 30d ATM cheap. Others are overextended, in deep drawdowns, or flow-negative.
-- week 36 [call 30d +0% hold10 -99%]: [Bundle 2 of 6] C7 fits the 30d ATM rule: near its 20-day average, shallow drawdown, medium-call spike and low put/call. Vol is above the 4% cap, so one trade only.
-- week 37 [call 30d +0% hold10 -91%]: [Bundle 2 of 6] C8 has calm volatility, balanced call and put flow, and a modest 30-day ATM cost. The other candidates are overextended, in deep drawdowns, or lack 30-day ATM contracts.
-- week 38 [call 30d +0% hold10 -36%]: [Bundle 2 of 6] C6 meets my restricted rule: near ma20, off high better than -25%. Its 10.7% premium is costly, so size is one trade.
-- week 39 [call 30d +0% double_or_10 -97%]: [Bundle 2 of 6] Closest fit to my rules: 30d ATM, calm vol, off high -24%. Weak setup; minimum-trade rule applies.
-- week 40 [call 30d +0% hold10 -21%]: [Bundle 2 of 6] Test of medium-spike plus low p/c flow, despite drawdown and vol above 4%. Low confidence; the core rule would pass.
-- week 41 [call 30d +0% double_or_10 +10%]: [Bundle 2 of 6] Only C2 has near-ATM 30-day flow with medium spike and moderate p/c; its drawdown and vol are borderline, so one small trade, sized as a test.
-- week 42 [call 30d +0% hold10 +81%]: [Bundle 2 of 6] C1 tests the price-setup idea: 25% below the 50-day average and up on the day. Flow is thin, so one small trade.
-- week 43 [call 30d +0% double_or_10 +22%]: [Bundle 2 of 6] Only C8 fits a tested idea: a 30-day ATM call spike near the 20-day average after a big rebound day. Cheap C3 is too extended to fit the rule.
-- week 44 [call 30d +0% hold10 +297%; call 30d +0% double_or_10 -84%]: [Bundle 2 of 6] C4 fits the rule: calm, near the 20-day average, mild drawdown. C1 tests a big call spike with a cheap 30-day ATM option.
-- week 45 [call 30d +0% hold10 -61%; call 30d +0% double_or_10 +162%]: [Bundle 2 of 6] C4 fits the rule: calm, near ma20, medium spike, calls over puts. C5 is borderline but calm. Passing on extended or deep-drawdown names.
-- week 46 [call 30d +0% hold10 -47%]: [Bundle 2 of 6] Only C1 fits my core rule: calm, near its 20-day average, shallow drawdown, calls far above puts, and cheap ATM 30d cost.
-- week 47 [call 30d +0% hold10 +38%]: [Bundle 2 of 6] Contrarian test: C4 fell sharply on heavy volume in a calm name near its 20-day average. C1 is overbought and extended, so I pass.
-- week 48 [call 30d +0% hold10 +37%]: [Bundle 2 of 6] Only C5 has a 30d ATM quote, and it is the closest fit to the rule. Its drawdown fails the filter, so this is a low-confidence test trade.
-- week 49 [call 30d +0% hold10 -54%; call 30d +0% double_or_10 -2%]: [Bundle 2 of 6] C2 fits the medium-spike, calls-over-puts, calm-volatility combo. C4 is calm, near its 20-day average, and not in a deep drawdown. Others are extended or weak.
-- week 50 [call 30d +0% hold10 +195%; call 30d +0% double_or_10 -19%]: [Bundle 2 of 6] Cheap 30d ATM calls with call spikes and long-dated flow (C5) or a short-dated event spike (C1); C7 and C4 are overextended.
-- week 51 [call 30d +20% hold10 -100%]: [Bundle 3 of 6] Fails the p/c filter, so this is an exploratory test: a cheap 20%-OTM lottery after a 25% crash. No directional view.
-- week 52 [call 30d +0% hold10 -55%; call 30d +0% hold10 -46%]: [Bundle 3 of 6] C5 and C7 pass the filter: medium at or below 1.5, p/c at or below 0.4, and 30-day ATM quotes available.
-- week 53 [call 30d +10% hold10 -72%]: [Bundle 3 of 6] C1 is the only name passing the medium and p/c filter. ATM is unavailable, so I test a cheap 30d +10% strike to log a filter pass.
-- week 54 [call 30d +0% hold10 -55%]: [Bundle 3 of 6] Only C5 passes medium (0.68), but its p/c is 1.27. Filter test, one trade. Puts heavy elsewhere.
-- week 55 [call 30d +0% hold10 +56%; call 30d +0% hold10 +105%]: [Bundle 3 of 6] Only C3 and C6 pass the medium ≤1.5 and p/c ≤0.4 filter; testing it on 30-day ATM hold-10 as planned.
-- week 56 [call 14d +10% hold10 -100%]: [Bundle 3 of 6] No candidate passes the filter. Testing cheap 14d OTM calls on a quiet name, where premium is only 0.8% of price.
-- week 57 [call 30d +0% hold10 -45%]: [Bundle 3 of 6] C2 is the only candidate passing the medium (≤1.5) and p/c (≤0.4) filter, with a tradeable 30d ATM call. Sized as a single test trade.
-- week 58 [call 30d +0% hold10 -64%]: [Bundle 3 of 6] C1 is the only candidate passing the filter (medium 0.49, p/c 0.11) with a 30-day ATM call. C2, C5 and C8 have spiking medium ratios and are rated avoid.
-- week 59 [call 30d +5% hold10 -80%; call 90d +0% hold10 +30%]: [Bundle 3 of 6] No 30d ATM call passes the filter. C7 tests the filter cheaply at 5% OTM. C8 tests a 90-day ATM idea on low medium and p/c.
-- week 60 [call 30d +5% hold10 -85%; call 30d +0% hold10 +10243%]: [Bundle 3 of 6] C3 passes the filter (medium 1.36, p/c 0) but only the +5% strike traded. C5 is an unfiltered ATM baseline. The rest fail medium or p/c.
-- week 61 [call 30d +0% hold10 +4%; call 30d +10% hold10 -70%]: [Bundle 3 of 6] C2 passes the filter (medium 0.43, p/c 0.15). C4 is a cheap contrarian test: oversold, fails p/c, +10% strike.
-- week 62 [call 30d +0% hold10 +250%; call 30d +0% hold10 -5%]: [Bundle 3 of 6] Both pass the medium≤1.5 and p/c≤0.4 filter on 30-day ATM calls; C1 is cheapest at 2.2% cost. Bundle-3 test.
-- week 63 [call 30d +0% hold10 -100%; call 30d +0% hold10 +70%]: [Bundle 3 of 6] C3 and C6 pass the medium, p/c and not-+1 filter, so I test it with 30-day ATM hold-10 calls. Other spikes look overheated or heavily put-driven.
-- week 64 [call 90d +0% hold10 +5%]: [Bundle 3 of 6] C8 passes medium, p/c and not-+1 filter; 90d ATM tests expiry. Most others show call spikes or heavy puts.
-- week 65 [call 30d +0% hold10 +251%; call 30d +0% hold10 +614%; call 30d +0% hold10 -100%]: [Bundle 3 of 6] Filter passes: medium ≤1.5, p/c ≤0.4, not +1. Oversold, cheap 30d ATM calls. Tests contrarian bounce idea.
-- week 66 [call 30d +0% hold10 -6%]: [Bundle 3 of 6] Only C7 passes the medium and p/c filter with a 30-day ATM call. Its call volume is very thin, so this is a low-confidence test trade.
-- week 67 [call 30d +10% hold10 -80%]: [Bundle 3 of 6] Only C4 passes the medium and p/c filter. Its ATM 30d call is unavailable, so I test the 10% OTM strike as a single low-size trade.
-- week 68 [call 30d +0% hold10 -9%]: [Bundle 3 of 6] No candidate fully passes the filter. C6 is closest: medium 0.64 passes, p/c 0.65 fails. Weekly trade minimum forces a small pick.
-- week 69 [call 30d +10% hold10 -10%]: [Bundle 3 of 6] C1 is the only candidate passing the medium and p/c filter, with no +1 rating. It is cheap (0.5%) but 10% OTM, a deliberate test of a cheap strike.
-- week 70 [call 30d +0% hold10 +158%]: [Bundle 3 of 6] C3 is the only candidate passing the filter (medium 0.47, p/c 0.14). Low conviction; the 30d ATM cost is high at 13.7%.
-- week 71 [call 30d +0% hold10 -24%; call 30d +5% double_or_10 -61%]: [Bundle 3 of 6] C5 is nearest the filter (medium 1.53, p/c 0.24). C2 tests a contrarian oversold bounce with double_or_10. Most others show extreme call spikes or overbought RSI.
-- week 72 [call 30d +0% hold10 -65%]: [Bundle 3 of 6] C6 is the only filter pass with a buyable 30d ATM call. Medium 0.47, p/c 0.09, not +1. Others fail on medium or p/c.
-- week 73 [call 30d +0% hold10 -82%; call 30d +0% hold10 +124%; call 30d +5% hold10 -65%]: [Bundle 3 of 6] C6 and C8 pass the medium/p-c filter. C5 tests the below-50-day-average, up-on-day setup. Other names fail the filter.
-- week 74 [call 30d +0% hold10 -90%]: [Bundle 3 of 6] C4 passes the filter (medium 0.50, p/c 0.27), but its 31% five-day spike suggests reversal risk. C1 and C6 fail on medium.
-- week 75 [call 30d +0% hold10 -36%; call 30d +0% hold10 +250%]: [Bundle 3 of 6] C2 is the only pass (medium 0.67, p/c 0.30). C6 tests cheap calls on a quiet name, outside the filter, as a labelled experiment.
-- week 76 [call 30d +5% hold10 -36%]: [Bundle 3 of 6] No candidate passes the medium filter. C2 is closest (medium 0.83, p/c 0.41). Its ATM strike is n/a, so this is a small +5% exploratory test.
-- week 77 [call 30d +0% hold10 -75%; call 30d +0% hold10 -38%; call 30d +0% hold10 -28%]: [Bundle 4 of 6] Rule-compliant 30-day ATM hold-10 calls, all medium ≤1.5. Rated 0 where unclear; C2/C4/C8 lean avoid. C3/C7 medium test.
-- week 78 [call 30d +0% hold10 -58%]: [Bundle 4 of 6] 
-- week 79 [call 30d +0% hold10 +15%; call 30d +0% hold10 -90%]: [Bundle 4 of 6] Two eligible 30-day ATM calls with medium at or below 1.5, per the medium test. C7 rated -1 despite low medium: overbought after a 28% 20-day run.
-- week 80 [pass]: [Bundle 4 of 6] (unreadable) {"ratings": {"C1": -1, "C2": -1, "C3": 0, "C4": -1, "C5": -1, "C6": -1, "C7": -1, "C8": 0}, "
-- week 81 [call 30d +0% hold10 +19%; call 30d +0% hold10 -61%; call 30d +0% hold10 +2%]: [Bundle 4 of 6] Compliant 30d ATM calls with medium at or below 1.5 for the medium test; C6 and C5 are parabolic runs, so they're rated down.
-- week 82 [call 30d +0% hold10 -2%; call 30d +0% hold10 -47%]: [Bundle 4 of 6] Only C1 and C5 are eligible 30-day ATM with low medium and cheap premium. Ratings are low-conviction; C2 is extended, C7 and C8 are unclear.
-- week 83 [call 30d +0% hold10 -79%; call 30d +0% hold10 -36%]: [Bundle 4 of 6] Only 30-day ATM candidates are eligible: C1 and C3 pass the rules with strong flow. C6 and C5 are extended or weak, so I rate them down.
-- week 84 [call 30d +0% hold10 -52%]: [Bundle 4 of 6] C1 is the only eligible 30-day ATM call with low medium and cheap premium. Cap already exceeded; one trade kept per weekly rule.
-- week 85 [call 30d +0% hold10 -35%; call 30d +0% hold10 -81%; call 30d +0% hold10 -100%]: [Bundle 4 of 6] Only C3, C4, C5, C7 have a 30d ATM quote. Medium at or below 1.5 for C3, C4, C5 serves the medium test. Hold10.
-- week 86 [call 30d +0% hold10 -2%; call 30d +0% hold10 -40%]: [Bundle 4 of 6] Medium test: low-medium (<=1.5) 30d ATM calls C4, C7. C1, C6 fade on RSI extremes; high-medium group not traded.
-- week 87 [call 30d +0% hold10 -100%; call 30d +0% hold10 -100%]: [Bundle 4 of 6] Only 30-day ATM options qualify; C1 and C5 are the only eligible names not already overextended. Low-conviction weekly trades under the rules.
-- week 88 [call 30d +0% hold10 -67%]: [Bundle 4 of 6] C7 is the only eligible 30-day ATM setup with moderate cost and no extreme run. C3 has no tradable ATM 30-day quote. Limited to one trade.
-- week 89 [call 30d +0% hold10 -84%]: [Bundle 4 of 6] C6 is a 30-day ATM call, medium 0.91 (low side of the test), cheap at 4.2%, after a 12% 5-day drop. Other eligible names look overextended or weak.
-- week 90 [call 30d +0% hold10 -84%]: [Bundle 4 of 6] Only eligible 30d ATM name with non-overbought RSI (52); rated 0 but the one compliant trade this week. Overbought names rated down.
-- week 91 [call 30d +0% hold10 -80%; call 30d +0% hold10 -83%; call 30d +0% hold10 -67%]: [Bundle 4 of 6] Three eligible 30-day ATM hold-10 calls, ranked by order seen. C2 is the low-medium test case. Other names rated 0 or -1 and not bought.
-- week 92 [call 30d +0% hold10 +11%; call 30d +0% hold10 -11%; call 30d +0% hold10 -90%]: [Bundle 4 of 6] Only 30-day ATM options are eligible. Picks C3 and C6 have low medium for the medium test; C4 balances the medium-high group.
-- week 93 [call 30d +0% hold10 -90%; call 30d +0% hold10 -45%; call 30d +0% hold10 -91%]: [Bundle 4 of 6] Rules-first: first three eligible 30-day ATM candidates, hold10, for the medium test. Ratings are separate from picks.
-- week 94 [call 30d +0% hold10 -92%; call 30d +0% hold10 -30%]: [Bundle 4 of 6] Only C1, C3, C4, C5, C6 meet the 30-day ATM rule. Buying C3 and C5 as the least-bad eligible names, with medium spread for the test.
-- week 95 [call 30d +0% hold10 -10%; call 30d +0% hold10 -50%]: [Bundle 4 of 6] Only two eligible 30-day ATM names rated 0 or higher. C5 is +1 (skip rule). C1 has no 30-day ATM quote. Logging C4 and C6 as negatives.
-- week 96 [call 30d +0% hold10 -95%]: [Bundle 4 of 6] Only C4 is a rated-0 30-day ATM setup. Others are overbought after huge runs or in blowoff/distress.
-- week 97 [call 30d +0% hold10 +17%; call 30d +0% hold10 +132%; call 30d +0% hold10 -26%]: [Bundle 4 of 6] C3 is cheapest ATM 30d. C2 is ATM with a cost of 6%. C8 tests a capitulation bounce after an 11% drop on huge put volume. C4 has no 30d ATM quote.
-- week 98 [call 30d +0% hold10 -84%; call 30d +0% hold10 +231%; call 30d +0% hold10 +87%]: [Bundle 4 of 6] Rule-compliant 30d ATM calls, hold10. C1 and C5 have medium at or below 1.5; C4 is above, so the medium test gets a paired sample.
-- week 99 [call 30d +0% hold10 -45%; call 30d +0% hold10 -40%; call 30d +0% hold10 +96%]: [Bundle 4 of 6] Own test: C5 and C8 fit the price-setup test (far below 50d, up today). C4 is low-medium ATM for the medium test.
-- week 100 [call 30d +0% hold10 -52%; call 30d +0% hold10 -87%]: [Bundle 4 of 6] Only C1 and C4 have 30-day ATM calls. Both are compliant; C4 has medium 0 and C1 medium 5.4, one on each side of the medium test.
-- week 101 [call 30d +0% hold10 -86%; call 30d +0% hold10 -5%; call 30d +0% hold10 +1%]: [Bundle 4 of 6] Only 30-day ATM candidates qualify; picked the three with medium at or below 1.5 to test the medium filter. C3 and C7 are spikes with high medium.
-- week 102 [call 30d +0% hold10 -60%; call 30d +0% hold10 -72%]: [Bundle 5 of 6] Medium at or below 1.5 test: C1 and C7 are the only 30-day ATM names with medium under 1.5. Spread check at entry required.
-- week 103 [call 30d +0% hold10 -46%]: [Bundle 5 of 6] Minimum-trade test: low-medium, cheapest ATM 30-day call on a >$50 stock. Overbought RSI, put-heavy flow; rated -1.
-- week 104 [call 30d +0% hold10 -97%]: [Bundle 5 of 6] Only one minimal trade, to meet the weekly minimum: 30-day ATM, low cost, medium at or below 1.5, under the strict rules. Other candidates fail rules or lack edge.
-- week 105 [call 30d +0% hold10 +406%]: [Bundle 5 of 6] Only one compliant 30-day ATM candidate; minimal size under stand-down. Ratings are weak, no clear edge.
-- week 106 [call 30d +0% hold10 -73%; call 30d +0% hold10 -27%]: [Bundle 5 of 6] C7 is compliant with low medium (0.43) and cheap premium. C8 tests oversold, high-medium, sub-$10 idea. Most others lack a clear edge.
-- week 107 [call 30d +0% hold10 +501%]: [Bundle 5 of 6] Single minimal trade per stand-down and weekly rule. Cheapest eligible 30d ATM, medium 1.26 tests the medium hypothesis. Logged for audit.
-- week 108 [call 30d +0% hold10 -42%]: [Bundle 5 of 6] Minimal compliant trade to meet the weekly minimum. Only one trade, as bundle 4's stand-down and unfinished audit call for zero. Sized at 2%.
-- week 109 [call 30d +0% hold10 -48%]: [Bundle 5 of 6] One minimum trade: 30-day ATM, medium at or below 1.5, not +1 or -2. Stand-down rule conflicts; flagged.
-- week 110 [call 30d +0% hold10 +26%; call 30d +0% hold10 -76%]: [Bundle 5 of 6] Only 30-day ATM options are eligible. C3 has the lowest cost and low medium ratio; C6 is the other ATM candidate with medium at or below 1.5. Not +1 or -2.
-- week 111 [call 30d +0% hold10 -100%]: [Bundle 5 of 6] Bundle 4 median triggered stand-down; one minimal evidence trade. C1 is ATM 30d, medium 0.65, liquid, mid-priced.
-- week 112 [call 30d +0% hold10 -95%]: [Bundle 5 of 6] One compliant 30-day ATM test trade, cheapest eligible spread (5.4%), medium 0.97. Rated 0, so not a +1 skip. Low conviction; ratings are mostly 0 or -1.
-- week 113 [call 30d +0% hold10 -77%]: [Bundle 5 of 6] Weekly minimum trade. C6 is the only compliant 30-day ATM call, with medium 1.01 for the test. Stand-down rule applies; no view on edge.
-- week 114 [call 30d +0% hold10 -84%]: [Bundle 5 of 6] Minimum trade to satisfy the weekly rule under stand-down. C7 has the cheapest 30d ATM call and medium ≤1.5 for the clean test. Ratings are weak views.
-- week 115 [call 30d +0% hold10 -82%]: [Bundle 5 of 6] Minimal test: low-medium 30d ATM call, rated 0. Put-heavy C7 rated -2. Stand-down and audit caveats noted.
-- week 116 [call 30d +0% hold10 -65%; call 30d +0% hold10 +105%]: [Bundle 5 of 6] Only two compliant 30-day ATM quotes. Both are low-medium, not +1, with modest premiums. Oversold, so the bounce case is weak.
-- week 117 [call 30d +0% hold10 +74%]: [Bundle 5 of 6] Bundle 4 stand-down and the one-trade weekly minimum both apply. C5 is the only compliant 30-day ATM candidate with medium at or below 1.5 and a cheap, liquid $50+ option.
-- week 118 [call 30d +0% hold10 +11%; call 30d +0% hold10 -47%]: [Bundle 5 of 6] Only C8 and C3 have 30-day ATM quotes with modest cost. C8 has medium at 0.22, the low-medium test group. C3 is the high-medium control.
-- week 119 [call 30d +0% hold10 -36%]: [Bundle 5 of 6] Stand-down rule applies, so one minimal compliant test trade: 30d ATM, low-medium ratio, cheapest premium.
-- week 120 [call 30d +0% hold10 +25%]: [Bundle 5 of 6] Only compliant 30-day ATM candidate with medium ≤1.5 and cheap premium; the rest are blowoffs or stretched or fail the rules. Logged as a training trade.
-- week 121 [call 30d +0% hold10 -99%]: [Bundle 5 of 6] Only compliant 30-day ATM option in the set; cheapest spread at 2.1%. Overextended names (C3, C7, C1) rated -1. One small trade to meet the weekly minimum.
-- week 122 [call 30d +0% hold10 +143%]: [Bundle 5 of 6] Single minimal trade: C5 has medium 1.27 (at or below 1.5) and is eligible. Bundle-4 results and the unaudited execution argue for keeping size small.
-- week 123 [call 30d +0% hold10 -89%]: [Bundle 5 of 6] Only one rule-compliant ATM 30-day trade: cheap 4.8% premium, medium 0.74. C5 and C8 are spiky, wide-spread names.
-- week 124 [call 30d +0% hold10 +28%]: [Bundle 5 of 6] Bundle 4 median triggered stand-down, so one minimal compliant trade only, to log execution. Cheapest eligible 30d ATM. Overbought names rated -1.
-- week 125 [call 30d +0% hold10 -37%; call 90d +0% hold10 -31%]: [Bundle 5 of 6] C1 is the compliant 30-day ATM test with medium at or below 1.5. C7 is a 90-day ATM idea after a put spike. Spike-chasers rated -1.
-- week 126 [call 30d +0% hold10 -40%; call 30d +0% hold10 -86%]: [Bundle 5 of 6] Only two compliant 30-day ATM options; big 5-day runs in C2/C3/C7 look stretched. Small position, rule-following.
-- week 127 [call 30d +0% hold10 +165%]: [Bundle 6 of 6] Minimum one trade per week. C1 is the cheapest eligible 30-day ATM call (4.6%) with low volatility. Ratings favour fading overheated names.
-- week 128 [call 30d +0% hold10 -83%]: [Bundle 6 of 6] Lone compliant pick: 30-day ATM, rating 0, liquid >$50 name, 4% cost. Stand-down notes conflict with the one-trade-per-week rule; this is the minimum.
-- week 129 [call 30d +0% hold10 -37%]: [Bundle 6 of 6] Single compliant 30-day ATM trade with a quoted, tight option cost (4.7%). Rating is 0, so it passes the rating filter. Stock-level signals are otherwise mixed.
-- week 130 [call 30d +0% hold10 -100%]: [Bundle 6 of 6] Test of deep-oversold bounce (RSI 8, -25% over 20d) at cheapest 30d ATM cost. C3 and C7 are +1, skipped.
-- week 131 [call 30d +0% hold10 -59%]: [Bundle 6 of 6] Minimum-trade rule applies. C7 is a rated-0 30-day ATM call with flow and a tradable grid. C1 is +1, so skipped under the notes.
-- week 132 [call 30d +0% hold10 -50%; call 30d +0% double_or_10 -21%]: [Bundle 6 of 6] Minimum-trade week. C1 is a rated-0 30-day ATM call with cheap premium. C6 tests an oversold double_or_10 exit.
-- week 133 [call 30d +0% hold10 +7%; call 30d +0% hold10 -69%]: [Bundle 6 of 6] Compliant 30d ATM, hold10, rating 0 only; tight spread on C4. Logged as a fill-quality test.
-- week 134 [call 30d +0% hold10 -21%]: [Bundle 6 of 6] Only one trade: cheapest eligible 30-day ATM call, rule-compliant. Ratings are low-conviction; no edge is shown.
-- week 135 [call 30d +0% hold10 -20%]: [Bundle 6 of 6] Minimum-trade week: one rule-compliant 30-day ATM call on a rating-0 name with cheap premium. Fill and spread must be logged; overbought and crashing names are avoided.
-- week 136 [call 30d +0% hold10 -100%]: [Bundle 6 of 6] Only one minimum compliant trade: the cheapest ATM 30-day call, rating 0, no edge claimed. Chasers and puts skipped.
-- week 137 [call 30d +0% hold10 -18%]: [Bundle 6 of 6] Minimum-trade placement: the only eligible 30-day ATM call with a tradable price and a 0 rating. Low edge, small size.
-- week 138 [call 30d +0% hold10 -80%; call 30d +0% hold10 +78%]: [Bundle 6 of 6] Overbought spikes (C2, C6, C1) look likely to mean-revert. Oversold C7 and C4 are cheap ATM bounce tests, traded minimally per the weekly-trade rule.
-- week 139 [call 30d +0% hold10 -84%]: [Bundle 6 of 6] Oversold, below ma50, cheap 30d ATM at 5%; calls not spiking. Tests a low-premium contrarian idea. Minimum trade, $1,000 cap.
-- week 140 [call 30d +0% hold10 -39%]: [Bundle 6 of 6] Minimum one trade per week. C7 is rating 0, 30-day ATM, liquid >$50 name, 8.8% premium, hold10. Logged as a compliance test.
-- week 141 [call 30d +0% hold10 +672%]: [Bundle 6 of 6] Only compliant 30-day ATM call with a liquid >$50 price and a modest 5.8% premium. Most others are overbought, extended, or sub-$10 with wide spreads.
-- week 142 [call 30d +0% hold10 -29%]: [Bundle 6 of 6] Only eligible 30-day ATM contract with a usable grid; no rating edge. One small trade to keep the weekly sample, not a conviction call.
-- week 143 [call 30d +0% hold10 +155%]: [Bundle 6 of 6] Minimum one trade this week: the only eligible 30-day ATM call with a rating of 0. Calls crowd puts. Overbought or extended names rated -1.
-- week 144 [call 30d +0% hold10 -6%; call 30d +0% double_or_10 +110%]: [Bundle 6 of 6] Must trade one per week. C8 has the tightest 30-day ATM spread. C5 tests double_or_10 on a low-vol stock.
-- week 145 [call 30d +0% hold10 -5%]: [Bundle 6 of 6] Only C4 is eligible under the 30-day ATM rule and not rated +1. Ratings lean against overbought and bearish-flow names. One trade keeps the weekly evidence requirement.
-- week 146 [call 30d +0% hold10 +448%]: [Bundle 6 of 6] Minimum weekly trade, one compliant 30-day ATM call on the flow spike with a tight 3.3% spread. Stand-down logic is otherwise unchanged.
-- week 147 [call 30d +0% hold10 -39%]: [Bundle 6 of 6] C1 is the only compliant 30-day ATM call with no chase signal. Most others are extended after big 5-day or 20-day gains with high RSI.
-- week 148 [call 30d +0% hold10 -85%]: [Bundle 6 of 6] Only C4 is a 30-day ATM call with a neutral rating. Its quiet tape and ~10% premium suit the rule, and the one trade keeps the weekly minimum.
-- week 149 [call 30d +0% hold10 +116%; call 30d +0% double_or_10 -6%]: [Bundle 6 of 6] Minimum one trade per week. C2 is the cheapest compliant 30-day ATM call. C5 tests an extreme call-spike idea.
-- week 150 [call 30d +0% hold10 -100%; call 30d +0% hold10 +11%]: [Bundle 6 of 6] Minimum-trade week: two cheapest-to-test 30-day ATM calls with flow spikes. C3 rated +1, skipped by rule. Weak evidence; log results.
-- week 151 [call 30d +0% hold10 +71%]: [Bundle 6 of 6] Forced minimum trade: C1 is a neutral, eligible 30-day ATM call. C6 shows call crowding. C4 and C7 look overextended.
+- week 1 [call 14d +0% hold10 -100%; call 30d +5% double_or_10 -84%]: [Bundle 1 of 6] C1 short-dated call spike while the p/c ratio collapses and price dips, cheap premium. C2 is a call-led bounce after a 10% drop. Test: short-expiry, cheap ATM calls after a dip.
+- week 2 [call 30d +5% hold10 -45%]: [Bundle 1 of 6] Oversold bounce test: low RSI, far below MA20, cheap 30d calls. Overbought names with extended momentum rated down.
+- week 3 [call 90d +10% double_or_10 -70%]: [Bundle 1 of 6] Test: cheap 90-day OTM calls after long-dated call surge while price calm. Momentum-spike names rated fade-risk.
+- week 4 [call 30d +5% double_or_10 -83%; call 90d +15% hold10 -62%]: [Bundle 1 of 6] C2: heavy far-OTM long-dated call buying on a dip, cheap premium. C7: oversold, down 70% off high, long calls surging; a rebound bet.
+- week 5 [call 30d +15% double_or_10 +1280%; call 30d +0% hold10 -30%]: [Bundle 1 of 6] C5 is under its 50-day average by 20%+ yet up today, the setup that worked before. C4 tests an oversold RSI bounce. Chasers are rated negative.
+- week 6 [call 14d +15% double_or_10 -100%; call 30d +15% double_or_10 +307%]: [Bundle 1 of 6] Short-dated and OTM call surges with cheap strikes, and a put/call collapse after a 5-day drop, as a test of the informed-buying idea. Overextended momentum names rated negative.
+- week 7 [call 14d +10% double_or_10 -100%; call 90d +15% double_or_10 +105%; call 30d +5% hold10 -51%]: [Bundle 1 of 6] C2: momentum with long-dated call flow, cheap decay. C3: call surge as puts vanish, cheap. C4: test of cheap far-OTM calls.
+- week 8 [call 30d +5% hold10 +38%; call 30d +10% double_or_10 +165%]: [Bundle 1 of 6] C1: put/call collapse with cheap 30d calls. C3: short-dated call spike with calm-ish price, not overbought. C7 extended, C5 overbought.
+- week 9 [call 14d +0% hold10 +310%; call 30d +15% double_or_10 -90%; call 14d +0% double_or_10 +228%]: [Bundle 1 of 6] C6 shows call spike with put collapse at low cost; C4 has medium-dated call buying in a rising stock; C1 short-dated spike while puts fade.
+- week 10 [call 30d +0% hold10 -73%; call 30d +5% double_or_10 -3%; call 14d +20% double_or_10 -100%]: [Bundle 1 of 6] Oversold names with short-dated call spikes may bounce; C1 is a cheap OTM lottery test; C7 tests heavy OTM flow.
+- week 11 [call 14d +0% double_or_10 +43%; call 14d +0% hold10 +61%]: [Bundle 1 of 6] C8 tests short-dated call spike into weakness; C5 tests oversold put-panic bounce. C1 overbought fade avoided.
+- week 12 [call 90d +10% hold10 +20%; call 30d +0% double_or_10 -5%]: [Bundle 1 of 6] C5: long-dated call surge at highs, cheap 90d. C1: calm uptrend, calls not crowded. Others: flow without clear setup.
+- week 13 [call 30d +20% double_or_10 -60%; call 14d +20% double_or_10 -100%; call 14d +0% hold10 -100%]: [Bundle 1 of 6] Test short-dated OTM calls after event-day spikes on oversold cheap stock; long-flow in C4 at low cost.
+- week 14 [call 14d +15% double_or_10 -98%; call 30d +5% double_or_10 -45%]: [Bundle 1 of 6] Breakout-type momentum with short-dated call spikes (C8) and calm-cost OTM test; crashing names and put-heavy flow rated negative.
+- week 15 [call 30d +5% hold10 -81%; call 30d +10% double_or_10 -85%]: [Bundle 1 of 6] C6 is oversold below its 50-day average and up on the day; C2 has a medium-dated call spike on a beaten-down sub-$10 stock.
+- week 16 [call 14d +0% double_or_10 -100%; call 30d +10% hold10 -58%]: [Bundle 1 of 6] C2 fits the tested setup: far below 50-day average yet up on the day, cheap calls. C8 is an exploratory oversold, call-only, cheap-option test.
+- week 17 [call 30d +0% double_or_10 -78%; call 90d +10% hold10 -10%]: [Bundle 1 of 6] C1: quiet, cheap medium-dated call buying, a test of the footprint. C7: beaten-down contrarian with cheap long calls. Avoid overbought, put-heavy names.
+- week 18 [call 90d +20% hold10 +280%]: [Bundle 1 of 6] C2 has huge far-OTM long-dated call crowding on a 5d rally, and the 90d +20% call is the cheapest option (4.1%). Test of cheap long OTM flow. Others are extended or put-heavy.
+- week 19 [call 30d +0% hold10 +11%; call 30d +5% double_or_10 +22%]: [Bundle 1 of 6] C1: pullback in an uptrend with short-dated call buying. C8: test whether heavy call buying after a sharp one-day drop bounces.
+- week 20 [call 30d +0% double_or_10 -83%; call 30d +10% hold10 -95%]: [Bundle 1 of 6] C2: huge OTM/long call flood with puts collapsing, cheap options. C5 tests zero-put call spike on a dip. Others look extended or put-heavy.
+- week 21 [call 30d +0% hold10 -49%; call 30d +5% double_or_10 +156%; call 30d +20% double_or_10 +855%]: [Bundle 1 of 6] Calls crowding out puts on a dip (C3); oversold long-call buying (C7); cheap far-OTM test idea (C8). Others look extended or are crashing.
+- week 22 [call 90d +15% hold10 +67%; call 90d +15% double_or_10 -13%]: [Bundle 1 of 6] C3: oversold, long OTM call buying as puts collapse. C7: extreme call flow, but RSI 85 risks fade. Long expiry limits decay.
+- week 23 [call 14d +5% double_or_10 -100%]: [Bundle 1 of 6] C7 shows the original footprint: short-dated call surge, put ratio collapse, and a 6% up day. Others show put-heavy or overbought, extended setups.
+- week 24 [call 30d +0% double_or_10 -56%; call 14d +0% hold10 -38%]: [Bundle 1 of 6] C5: oversold, bouncing, calls spike across all expiries. C7: breakout at high with short-dated call surge, cheap ATM. Other flow is bearish or overextended.
+- week 25 [call 14d +5% double_or_10 -100%; call 14d +5% double_or_10 -48%; call 14d +5% double_or_10 -90%]: [Bundle 1 of 6] Avoid overbought runaway rallies (C2, C4). Test contrarian bounce after the -12% day in C1 with cheap short calls; C6 and C7 have moderate momentum and flow.
+- week 26 [call 30d +15% double_or_10 -87%; call 30d +15% double_or_10 +217%]: [Bundle 2 of 6] The ma50 column is blank, so the core filter can't run. C3 is beaten down, oversold, and call-heavy. C7 is a momentum test.
+- week 27 [call 30d +15% double_or_10 -79%; call 30d +10% double_or_10 -95%; call 30d +15% double_or_10 -60%]: [Bundle 2 of 6] 50-day averages are missing, so the price filter can't be applied. Picks use the 30-day 10–20% OTM double/10 structure on flow spikes and a beaten-down test; C5 excluded for a falling 5-day move.
+- week 28 [call 30d +15% double_or_10 -82%]: [Bundle 2 of 6] No candidate meets the core filter. C5 is the closest fit: deeply below its 50-day average, oversold, and call-heavy, with a cheap 30-day strike.
+- week 29 [call 30d +15% double_or_10 -47%; call 30d +10% double_or_10 -93%]: [Bundle 2 of 6] No candidate meets the core filter (10%+ below ma50 and up today). Testing volume-plus-momentum (C5) and cheap 30d OTM (C6) as hypotheses, sized small.
+- week 30 [call 30d +15% double_or_10 -84%; call 30d +10% double_or_10 -15%]: [Bundle 2 of 6] C4 fits the beaten-down, up-on-day setup with a cheap 30d 10% OTM call. C1 tests spike continuation at low cost.
+- week 31 [call 30d +10% double_or_10 +112%]: [Bundle 2 of 6] No candidate passes the core filter (below 50-day, up on day, 10-20% strike available). C7 is a cheap momentum test outside the core setup.
+- week 32 [call 30d +15% double_or_10 +104%]: [Bundle 2 of 6] No candidate meets the core filter (10%+ below ma50 and up today, without a 5d drop over 10%). C4 is a flow test: call-over-put shift with cheap 30d 15% OTM premium.
+- week 33 [call 30d +15% double_or_10 +36%]: [Bundle 2 of 6] Cheap 30d 15% OTM call on heavy short-dated call flow; no stock passes the 10%-below-MA50 filter, so this tests flow instead.
+- week 34 [call 30d +10% double_or_10 +153%; call 30d +15% double_or_10 -61%]: [Bundle 2 of 6] Both pass the core filter: 10%+ below 50-day average, up on the day, no 5-day drop beyond -10%. Testing the 30-day, 10–20% OTM, double/10 setup.
+- week 35 [call 30d +15% double_or_10 +107%]: [Bundle 2 of 6] No candidate passes the core filter (10%+ below MA50 and up on the day). Test the opposite: a cheap 15% OTM call on a surging, crowded name.
+- week 36 [call 14d +0% double_or_10 -100%; call 30d +15% double_or_10 -95%]: [Bundle 2 of 6] C7 is the only candidate passing the beaten-down, up-day filter, but 30-day calls aren't listed, so I take 14-day ATM. C5 tests 15% OTM 30-day without the stock filter.
+- week 37 [call 90d +5% hold10 -43%; call 30d +15% double_or_10 -96%]: [Bundle 2 of 6] No candidate passes the core 30d 10-20% OTM setup with a tradable chain. C2 is a 90-day benchmark test; C1 is an exploratory trend-flow test.
+- week 38 [call 30d +10% double_or_10 -91%; call 30d +10% double_or_10 -43%]: [Bundle 2 of 6] C6 passes the core filter (10%+ below MA50, up today, 30d 10% strike cheap). C4 tests the call-spike momentum idea as a control.
+- week 39 [call 30d +10% double_or_10 -88%; call 30d +15% double_or_10 -89%]: [Bundle 2 of 6] C2 is 11% below its 50-day average with cheap 30-day strikes; C5 is deeply oversold. Small size, testing the beaten-down setup. C6 is a falling knife.
+- week 40 [call 30d +15% double_or_10 -65%; call 30d +15% double_or_10 -46%]: [Bundle 2 of 6] Beaten down, up on the day, 30d 15% OTM; C1 tests the falling-knife exclusion (5d -11%), so it is a deliberate test.
+- week 41 [call 30d +20% double_or_10 -35%; call 30d +10% double_or_10 +124%; call 30d +10% double_or_10 -2%]: [Bundle 2 of 6] C4, C6, C5 pass the core filter: 10%+ below ma50, up on day, not falling knives. Low confidence; mechanical rules only.
+- week 42 [call 30d +15% double_or_10 +109%; call 30d +20% double_or_10 +107%]: [Bundle 2 of 6] C4 and C5 pass the core filter: 10%+ below 50-day average and up today. C4 90d is a benchmark control.
+- week 43 [call 30d +15% double_or_10 +105%; call 30d +15% double_or_10 -100%]: [Bundle 2 of 6] No candidate meets the 10%-below-50-day filter. C2 is a beaten-down bounce with call spike and cheap 30d options; C8 has a heavy call spike, but is extended.
+- week 44 [call 30d +20% double_or_10 +187%; call 30d +15% double_or_10 +294%]: [Bundle 2 of 6] No candidate meets the core filter (10%+ below 50d MA while up). C5 is closest: up 2.3%, below MA50, cheap 30d call. C6 is a deep-drawdown test.
+- week 45 [call 90d +10% hold10 +103%; call 30d +0% double_or_10 +121%]: [Bundle 2 of 6] No candidate passes the core beaten-down, up-today filter. C5 is a quiet 90-day benchmark. C2 deliberately tests the falling-knife exclusion at a cheap ATM cost.
+- week 46 [call 30d +0% hold10 -47%; call 30d +10% double_or_10 -34%]: [Bundle 2 of 6] C6 fits the 30d 10% OTM test at a cheap 3.5% cost. C5 tests extreme short-dated call flow as a catalyst signal. Both are small, exploratory trades.
+- week 47 [call 30d +15% double_or_10 -15%]: [Bundle 2 of 6] No candidate passes the core filter. C1 is a test of capitulation: a huge crash day with call crowding, bought cheap at 2.1% of price.
+- week 48 [call 90d +0% hold10 +17%; call 30d +20% double_or_10 +63%]: [Bundle 2 of 6] No candidate passes the core filter (beaten down and up on day). Small benchmark 90d call plus cheap 30d 20% OTM test of strike distance.
+- week 49 [call 30d +15% double_or_10 -40%; call 30d +15% double_or_10 -62%]: [Bundle 2 of 6] Both pass the core filter: 10%+ below the 50-day average and up on the day. Two picks, not three, because the setup is untested.
+- week 50 [call 30d +15% double_or_10 -52%; call 90d +10% hold10 +60%]: [Bundle 2 of 6] No candidate passes the core beaten-down filter. Tested 90d benchmark and a cheap 30d spike-crowding idea, both small.
+- week 51 [call 30d +20% hold10 -100%]: [Bundle 3 of 6] Penny stock after a -25% day with heavy put volume; falling-knife risk. Minimal 20%-OTM test trade, since weekly trading is required.
+- week 52 [call 90d +0% hold10 +11%]: [Bundle 3 of 6] Benchmark 90-day test only. vs ma50 is missing, so the price-setup filter can't be checked. C3 has no call crowding and normal volatility. Ratings are low-confidence.
+- week 53 [call 90d +0% hold10 +10%]: [Bundle 3 of 6] Benchmark 90d hold10 test on oversold, beaten-down C2 with heavy call activity. Filter untestable (ma50 missing), so this is a small probe.
+- week 54 [call 90d +0% hold10 -28%]: [Bundle 3 of 6] Benchmark 90d hold10 on C5, a beaten-down stock (-27% over 20d, below its average) bouncing 9% over 5d. The vs ma50 filter is unavailable here, so this is a low-confidence benchmark trade.
+- week 55 [call 90d +0% hold10 -76%]: [Bundle 3 of 6] No price-setup test is possible (vs ma50 missing), so this is the minimum weekly benchmark trade: 90d 0% hold10, 1% size, not a filter-backed bet.
+- week 56 [call 90d +0% hold10 -31%]: [Bundle 3 of 6] Only 90-day benchmark available; ma50 missing so the price-setup filter can't be checked. Logged as a benchmark trade.
+- week 57 [call 90d +10% hold10 -42%]: [Bundle 3 of 6] No price-setup filter passes; a 1% 90-day control trade keeps the benchmark arm evidence flowing. Rating is logged only.
+- week 58 [call 30d +0% double_or_10 -64%]: [Bundle 3 of 6] No candidate passes the price-setup filter. C8 is beaten down and bouncing, a test of the idea; the 14-day option is banned.
+- week 59 [call 90d +0% hold10 +30%]: [Bundle 3 of 6] Benchmark 90d call on beaten-down C3 (off high -12%, RSI 40); no stock filter passes, so one small trade only. C1/C2 are overbought, crowded and extended.
+- week 60 [call 90d +0% hold10 +7326%]: [Bundle 3 of 6] No candidate passes the price-setup filter (C4 fails on 1d=0). C6 is a small 1% test of the 90d benchmark, which the notes say to run only on a passing filter, so it is exploratory.
+- week 61 [call 90d +0% hold10 +3%]: [Bundle 3 of 6] No candidate passes the price-setup filter. Weekly minimum: one 90-day benchmark call, at-the-money, lowest-cost available option. Overbought, crowded C1 and C5 rated down.
+- week 62 [call 90d +0% hold10 +89%]: [Bundle 3 of 6] C6 passes the untested price-setup filter (-32% vs ma50, up on day). Benchmark 90d ATM hold10 as a single test trade. C2 and C7 look crowded; C8 is a falling knife.
+- week 63 [call 90d +0% hold10 -91%]: [Bundle 3 of 6] C5 is the only candidate passing the price-setup filter (vs ma50 ≤ -10, 1d > 0). Benchmark 90d 0% hold10 per the notes; costly at 23% of price.
+- week 64 [call 90d +0% hold10 +5%]: [Bundle 3 of 6] Only the 90-day benchmark is tradable, and C5 has the cheapest 90-day cost. Its price-setup filter fails, so this is a small benchmark test to meet the weekly trade requirement.
+- week 65 [call 90d +0% hold10 +197%]: [Bundle 3 of 6] C1 is the only price-setup pass (vs ma50 -18%, up 1.5%). Benchmark 90d ATM hold10 only, at 1% size. Crowded/overbought C5, C8 rated down.
+- week 66 [call 90d +0% hold10 -9%]: [Bundle 3 of 6] Price-setup filter fails everywhere. Only 90d benchmark quoted here (C5). Small 1% test; C8 crowding looks like lottery buying.
+- week 67 [call 30d +20% hold10 -92%]: [Bundle 3 of 6] C7 is the only name passing the price-setup filter (vs ma50 below -10, up on day). Cheapest qualifying test-arm call, 30d 20% strike, hold10.
+- week 68 [call 30d +10% hold10 -64%; call 30d +15% hold10 -93%; call 30d +20% hold10 +7%]: [Bundle 3 of 6] C2, C3, C8 pass the price-setup filter (vs ma50 ≤ -10, up on day). Test-arm 30d calls, hold10, 1% size, per notes.
+- week 69 [call 90d +10% hold10 -41%]: [Bundle 3 of 6] Exploratory 90d test after a -16% put-heavy drop. No candidate passes the price-setup filter, so this is an own-idea test, not a benchmark trade.
+- week 70 [call 30d +10% hold10 +3%]: [Bundle 3 of 6] C3 is the only candidate passing the price-setup filter (vs ma50 below -10, up on day). Test arm: 30d, 10% strike, hold10, 1% size.
+- week 71 [call 30d +5% hold10 -61%]: [Bundle 3 of 6] C4 passes the price-setup filter but has no 90d or 30d grid. C5 is a beaten-down contrarian test at 1% size.
+- week 72 [call 90d +0% hold10 -34%]: [Bundle 3 of 6] C2 passes the price-setup filter (below ma50, up today) and has 90d benchmark calls. Crowded long/OTM call spikes rated bearish.
+- week 73 [call 30d +15% hold10 -10%; call 90d +0% hold10 -74%]: [Bundle 3 of 6] Price-setup filter (vs ma50 ≤ -10, up on day) passes C3 and C6. C3 takes the 30d test arm; C6 takes the 90d benchmark.
+- week 74 [call 30d +15% hold10 -39%]: [Bundle 3 of 6] C5 is the only candidate passing the price-setup filter (vs ma50 below -10, up on day). Test arm at 1% size; other setups fail or are extended.
+- week 75 [call 90d +0% hold10 +19%]: [Bundle 3 of 6] No stock filter passes (price-setup fails all). One 90d ATM hold10 test on C8 to keep the benchmark logged; small size, low confidence.
+- week 76 [call 30d +5% hold10 -36%; call 30d +10% hold10 -63%]: [Bundle 3 of 6] Beaten-down, uncrowded names (low call volume, RSI not overbought) fit the contrarian test. Crowded, overbought names are rated negative, as the notes suggest.
+- week 77 [call 90d +0% hold10 -16%]: [Bundle 4 of 6] Only 90-day benchmark available (C3, at-the-money). Other names lack 90-day quotes or show weak trends. Test idea: heavy put volume on C2 may mark a contrarian bounce, unrated.
+- week 78 [call 90d +10% hold10 -24%]: [Bundle 4 of 6] Only C3 and C8 have 90-day options. C3 fits the 0-10% benchmark arm; C8 is overextended after a 59% run.
+- week 79 [call 90d +0% hold10 -27%]: [Bundle 4 of 6] Only C4 has a 90-day contract, so it is the sole benchmark-arm trade. Rated -1 for extension and overbought RSI, so it is a weak, rule-driven entry.
+- week 80 [call 90d +0% hold10 +45%]: [Bundle 4 of 6] Only 90-day listing; benchmark arm at 1%. Other names lack a validated setup; C1 and C8 look overbought and crowded.
+- week 81 [call 90d +0% hold10 -21%]: [Bundle 4 of 6] C5 is the only 90-day benchmark setup available. C6 and C7 are overextended after huge runs; the rest lack a setup.
+- week 82 [call 90d +0% hold10 +8%]: [Bundle 4 of 6] Only benchmark-compliant 90d 0% option available. Stock is below its averages and near-neutral RSI, so no edge is claimed. Small test trade.
+- week 83 [call 90d +5% hold10 -40%; call 90d +10% hold10 -12%]: [Bundle 4 of 6] Benchmark 90d 0-10% hold10 on C3. Own test: C8, a quiet, cheap 90d call on a name off its highs.
+- week 84 [call 90d +0% hold10 -17%]: [Bundle 4 of 6] Only 90d 0-10% contract available is C2; benchmark arm, no filter passes. Logging all columns.
+- week 85 [call 90d +0% hold10 +11%]: [Bundle 4 of 6] Only benchmark-eligible 90d setup at 0% strike with cheap cost; no stock-level filter passes, so rating is neutral.
+- week 86 [call 90d +5% hold10 -25%]: [Bundle 4 of 6] Only C3 has a tradeable 90d 0-10% strike. Its put-heavy flow and 5d drop fit the -1 bucket, but the 90d arm is the sole live test.
+- week 87 [call 90d +0% hold10 -65%]: [Bundle 4 of 6] C3 passes the untested price-setup filter (vs ma50 -12.6%, 1d +9.8%) and is the only benchmark-compatible 90d option. C5 and C4 show weak trends and put pressure.
+- week 88 [call 90d +5% hold10 +95%]: [Bundle 4 of 6] Benchmark 90d 0-10% hold10 arm only. C3 is the sole listed 90d quote in band, with low call crowding. Momentum names rated -1 for overextension.
+- week 89 [call 90d +0% hold10 -41%]: [Bundle 4 of 6] Only C1 has a 90-day 0% call quoted and fits the benchmark arm. Long-dated call crowding is present, though the stock is falling. Others are overbought, crashing, or banned expiries.
+- week 90 [call 90d +10% hold10 +9%; call 90d +0% hold10 -5%]: [Bundle 4 of 6] C3 passes the untested price-setup filter (test arm). C8 is the 90d benchmark, cheapest option. Overbought crowded names rated down.
+- week 91 [call 90d +5% hold10 -90%]: [Bundle 4 of 6] Benchmark 90d 0-10% hold10 arm on C8, the only cheap 90d option with heavy call crowding. Ratings are low-confidence.
+- week 92 [call 90d +5% hold10 -38%]: [Bundle 4 of 6] Benchmark 90d 0-10% hold10 arm on C3, the only 90d option with a cheap, liquid 10-session-medium call surge; ratings reflect falling or overextended price action.
+- week 93 [call 90d +5% hold10 -72%]: [Bundle 4 of 6] Only C1 and C6 have 90-day quotes. C1 has normal call volume and a 5% strike; the other names are crowded, overbought, or falling.
+- week 94 [call 90d +5% hold10 -68%; call 90d +5% hold10 -23%]: [Bundle 4 of 6] C4 is the benchmark 90d 0-10% hold10 arm with moderate call crowding. C5 tests a bounce after a 22% drop with heavy calls.
+- week 95 [call 30d +15% hold10 -35%]: [Bundle 4 of 6] No 90-day options are listed, so I must trade a banned 30-day call. C2 is the one price-setup pass (10% below ma50, up today), a test idea. Cheapest 15% strike, $1,000.
+- week 96 [call 90d +5% hold10 -59%]: [Bundle 4 of 6] C4 is quiet, cheap, and has a 90-day 5% call quoted. The others are overheated or crashing, with crowded calls and extreme moves.
+- week 97 [call 90d +5% hold10 +44%; call 90d +10% hold10 +53%]: [Bundle 4 of 6] C7 is the benchmark 90d arm. C3 tests call crowding in a calm uptrend, using a cheap 90d strike. Passed the rest.
+- week 98 [call 90d +0% hold10 +34%]: [Bundle 4 of 6] Benchmark 90d 0% hold10 arm only; C1 is the sole 90-day option listed at the money. Low conviction, as recent 90d trades lost heavily.
+- week 99 [call 90d +5% hold10 -30%]: [Bundle 4 of 6] Only 90d 0-10% benchmark arm available; C5 passes the price-setup and falling-knife tests (test arm). C5 rated 0 given its crash.
+- week 100 [call 90d +0% hold10 -43%]: [Bundle 4 of 6] C4 passes the untested price-setup filter (below ma50, up today) and has a 90d 0% quote. Benchmark arm test.
+- week 101 [call 90d +0% hold10 -5%]: [Bundle 4 of 6] Benchmark 90d 0% hold10 arm on C4, the only 90d-listed name in range. Ratings favor no crowding-driven setups.
+- week 102 [call 90d +0% hold10 -36%]: [Bundle 5 of 6] Only C7 has a 90-day benchmark-arm contract. Ratings are logged only; the 5-day rally and overbought readings favor avoiding C2, C3, C5 and C8.
+- week 103 [call 90d +10% hold10 -27%]: [Bundle 5 of 6] Benchmark-arm paper trade on C3, the only 90-day strike within 10%. Ratings are unfiltered views; the 90-day arm is paused.
+- week 104 [call 90d +5% hold10 -76%; call 90d +5% hold10 -73%]: [Bundle 5 of 6] Benchmark-arm 90d, 5% strike, hold10 only, per notes; C6 tests the calm $10-50 band, C5 tests a put-heavy oversold contrarian idea.
+- week 105 [call 90d +10% hold10 +288%]: [Bundle 5 of 6] Only 90-day call at 0-10% strike is C6, with cheapest premium. Rallies and overbought names are avoided; a bundle trade is required.
+- week 106 [call 30d +0% hold10 -73%]: [Bundle 5 of 6] No 90-day contracts traded, so the benchmark arm cannot run. C4 is the cheapest premium (3.1%), and the trade is a flagged low-cost test of the banned 30-day family, not a validated edge.
+- week 107 [call 90d +10% hold10 -20%]: [Bundle 5 of 6] Only in-policy option is C6 90-day (others banned or n/a). Heavy put flow argues against it; cheapest benchmark-band strike, minimum trade.
+- week 108 [call 90d +10% hold10 -76%]: [Bundle 5 of 6] Only the 90-day 0–10% benchmark is allowed. C6 is the one candidate without a 5-day rally of 10% or more. Low conviction, paper-track style.
+- week 109 [call 90d +10% hold10 -67%]: [Bundle 5 of 6] Only legal benchmark-arm contract (90d, 0-10%) is C3. Rated the others down: crashes, overbought crowding, or sub-$10 names. Trade is minimal-size, paper-style test.
+- week 110 [call 90d +10% hold10 -51%]: [Bundle 5 of 6] Benchmark arm only, paper-level size. C1 is mild and in-band; the others are parabolic, crashing, or post-rally.
+- week 111 [call 90d +0% hold10 -46%]: [Bundle 5 of 6] Only the 90d benchmark is available here, so C4 is the one compliant trade. Ratings are weak, with rally names rated -1.
+- week 112 [call 30d +20% hold10 -28%]: [Bundle 5 of 6] C1 passes the price-setup test (below ma50, up on day) and the falling-knife test. Only the 30-day arm is tradable here, so this is a cheap 10%-cost test.
+- week 113 [call 90d +10% hold10 -45%]: [Bundle 5 of 6] Only C5 has a 90-day grid, and only the allowed 0–10% strike band is usable. Picked the cheapest premium, 10% strike, hold10. Low conviction.
+- week 114 [call 90d +5% hold10 -64%]: [Bundle 5 of 6] Benchmark-arm test on the only 90-day, 0-10% strike on a non-crashing large cap. Falling knives and 5-day rallies rated negative.
+- week 115 [call 90d +10% hold10 -52%]: [Bundle 5 of 6] Only benchmark-arm contract available; no filter validated. Small paper-style trade. Rally and crash names rated negative.
+- week 116 [pass]: [Bundle 5 of 6] Every available contract is 14d or 30d, which are banned or retired. The 90d arm is unavailable on all eight, so I pass. This breaks the weekly-trade rule; flagging it.
+- week 117 [call 90d +5% hold10 +33%]: [Bundle 5 of 6] Only 90-day option in the lowest-cost, large-cap, low-volatility band; avoids banned short expiries and the 5-day rally names.
+- week 118 [call 90d +0% hold10 -2%]: [Bundle 5 of 6] Minimum-trade rule: one benchmark-arm 90d call. Other filters fail; the 5-day rally exclusion removes C4 and C7.
+- week 119 [call 90d +0% hold10 -5%]: [Bundle 5 of 6] Only benchmark-compatible 90d option (0%, cheap, low call crowding, mild uptrend). Ratings favor quiet setups and avoid big rallies or crashes.
+- week 120 [call 90d +10% hold10 +25%]: [Bundle 5 of 6] Pass most. C8 is off its high with heavy medium-dated call buildup, and 90d/10% is the cheapest allowed contract. Rallies look bad.
+- week 121 [call 30d +0% hold10 -99%]: [Bundle 5 of 6] All 90d calls are n/a, so the benchmark can't run. Single small test of the over-$50 band at 30d; a deliberate exception to the retired rule.
+- week 122 [call 90d +15% hold10 -42%]: [Bundle 5 of 6] Only legal-looking option is 90d, but the only 90d quote is 15% OTM, outside my 10% cap. Exploratory test of that untested band, with rally and overbought filters negative.
+- week 123 [call 90d +0% hold10 -82%]: [Bundle 5 of 6] Only 90-day-eligible name; benchmark arm, not a validated edge. Weekly trade rule applies. Ratings are subjective.
+- week 124 [call 90d +10% hold10 +4%]: [Bundle 5 of 6] Only benchmark-allowed expiry is 90d (C8, C6). C8 at +10% is the cheapest in-band call. Logged as a paper-style test; ratings are not used as inputs.
+- week 125 [call 90d +0% hold10 -31%]: [Bundle 5 of 6] Only 90-day calls are unbanned. C5 is the one falling-knife test (5d -16%, rsi 34), kept at 0% strike and hold10. Rally names rated negative.
+- week 126 [call 90d +0% hold10 -45%]: [Bundle 5 of 6] Overbought, big-rally names rated negative. C5 is oversold, 29% off high, with the only available 90-day ATM call. Small test; the 90-day arm is weak.
+- week 127 [call 90d +10% hold10 +104%]: [Bundle 6 of 6] Benchmark 90d 10%-strike paper trade; C2 has a 13% one-day crash, tests the falling-knife bounce idea. Ratings reflect extension, not buy signals.
+- week 128 [call 90d +10% hold10 +134%; call 90d +0% hold10 -50%]: [Bundle 6 of 6] C3 is the benchmark 90d/10% trade. C6 tests the falling-knife idea (5d -20.6%, under $10) on full-data logging.
+- week 129 [call 90d +10% hold10 -55%]: [Bundle 6 of 6] Only benchmark-eligible option is C8 90d; crowding test, cheapest strike band. Weak conviction; low-cost probe.
+- week 130 [call 90d +0% hold10 -32%]: [Bundle 6 of 6] Only in-band 90d benchmark available. C3 is a weak down-trend name, so this is a low-conviction paper-style test of the frozen arm.
+- week 131 [call 30d +10% hold10 -6%]: [Bundle 6 of 6] No 90d options quoted, and 14d/30d are retired or banned. One 30d paper trade tests the price-setup filter; C2 fits it (vs ma50 -17%, up on day).
+- week 132 [call 90d +10% hold10 -13%; call 90d +10% hold10 -16%]: [Bundle 6 of 6] Only C2 and C3 have 90-day quotes. Both 10% strike, hold10, tests the falling-knife and under-$10 filters on the benchmark instrument.
+- week 133 [call 30d +20% hold10 -98%]: [Bundle 6 of 6] Only 14d/30d options traded; 90d all n/a. Forced weekly trade: cheapest far-OTM 30d call, logged as a test.
+- week 134 [call 90d +5% hold10 -24%]: [Bundle 6 of 6] Benchmark-only test: cheapest 90d option, oversold below ma50, no extension. Ratings reflect extension and RSI, not a validated filter.
+- week 135 [call 30d +0% hold10 -20%]: [Bundle 6 of 6] No 90d contracts were listed, so this one 30d trade is a logged evidence test, not a strategy trade. C3 has the cheapest option.
+- week 136 [call 90d +10% hold10 -27%]: [Bundle 6 of 6] Only 90-day contract offered; benchmark 0-10% band, paper only. Ratings are logged, not used as inputs.
+- week 137 [call 90d +10% hold10 +27%]: [Bundle 6 of 6] Only 90-day contract available; C5 has the cheapest premium in the benchmark band and heavy long-dated call interest. Paper-arm trade for the weekly minimum.
+- week 138 [call 90d +5% hold10 -37%]: [Bundle 6 of 6] C3 is an oversold >$50 name, the only 90-day benchmark-eligible pick. C2 and C4 are extended far above their averages, so they get negative ratings.
+- week 139 [call 90d +10% hold10 -65%]: [Bundle 6 of 6] Only 90-day, 0–10% strikes are allowed. C3 is the cheapest such option with no extension or rally signal. One paper trade keeps the weekly record.
+- week 140 [call 90d +0% hold10 -61%; call 90d +5% hold10 -69%; call 90d +5% hold10 -38%]: [Bundle 6 of 6] C8 passes the price-setup test (far below ma50, up on day). C1 and C3 test the falling-knife filter on the 90-day benchmark.
+- week 141 [call 30d +15% hold10 -73%]: [Bundle 6 of 6] No 90-day contracts listed, so the benchmark can't run. One logged 30-day paper test (put-heavy, not extended) to meet the weekly minimum.
+- week 142 [call 90d +10% hold10 +23%; call 90d +5% hold10 +42%]: [Bundle 6 of 6] C6 is the only cheap 90-day band, oversold (RSI 17), a benchmark paper test. C7 tests momentum continuation after a big up day.
+- week 143 [call 90d +10% hold10 +172%]: [Bundle 6 of 6] Only benchmark-eligible 90d option is C1 at +10%, paper only. C1 is extended with put crowding, so it tests the extension hypothesis.
+- week 144 [call 90d +0% hold10 -79%]: [Bundle 6 of 6] Only benchmark-permitted config available (90d, 0% strike, hold10), kept as a paper trade to satisfy the weekly minimum. Ratings follow extension and overbought readings.
+- week 145 [call 90d +10% hold10 +36%]: [Bundle 6 of 6] Benchmark 90d 10% band at the cheapest 90d cost (5.2%). Extended C1/C2 rated lean avoid; C8 bearish put flow.
+- week 146 [call 90d +5% hold10 -41%]: [Bundle 6 of 6] Only 90-day quote available is C5, cheap at 6.6% in the 0-10% band; paper benchmark trade. Weak call flow and falling trend, so low conviction.
+- week 147 [call 90d +0% hold10 -40%; call 90d +0% hold10 -45%]: [Bundle 6 of 6] Paper benchmark 90d 0% hold10 only available names. C1 is extended (vs ma50 +12.7), so it's a decomposition test. C2 is off its high, not extended.
+- week 148 [call 90d +0% hold10 -45%]: [Bundle 6 of 6] Benchmark-band paper test at the cheapest 90-day ATM premium. C7 looks extended. Ratings are low-conviction; no stock filter is validated.
+- week 149 [call 30d +20% double_or_10 +93%]: [Bundle 6 of 6] Only 30d grid is available; C6 is the cheapest premium and neutral on filters. Extended names score negative.
+- week 150 [call 90d +10% hold10 +81%]: [Bundle 6 of 6] Benchmark 90d 0-10% band on the cheapest 90d premium (5.5%), testing whether cost drives option losses. Extension profile, low conviction.
+- week 151 [call 90d +10% hold10 +20%]: [Bundle 6 of 6] Only 90-day quotes exist here, and only C6 has them. Paper-arm trade per rules; C6 is extended, so I rate it lean avoid.
 
 ## Weekly notes: options1, generation 1, score
 
@@ -1454,4 +1453,151 @@ replies were cut off (no trades) and were not saved.
 - week 142 [call 90d +10% hold10; call 30d +5% hold10]: [Bundle 6] Under-$10 rules are the best-supported leads (C8 90d 10%-out, C5 30d 5%-out). Other candidates trigger no tested positive rule. Median still negative, so keep size small.
 - week 143 [call 30d +0% hold10; call 90d +10% hold10; call 30d +5% hold10]: [Bundle 6] Rule matches: under-$10 90d 10%-out (C1), MA20 run-up 30d 5%-out (C6), call-spike 5d-up ATM (C2). Medians are negative; small size.
 - week 144 [call 30d +0% hold10]: [Bundle 6] C6 meets the call-spike-with-5-day-up rule (calls 3.3x, 5d +23%), the best-positive-average rule. Its median is negative, so this is one small paper-sized bet.
+
+## Weekly notes: playoff, generation 5, score
+
+- week 1 [pass]: [Bundle 1] Market 20d % is negative for every candidate, so none passes the R2 gate. No trades.
+- week 2 [stock; stock; stock]: [Bundle 1] Three names pass the R2 stock gate: 20d ≥ 20, vs ma50 ≥ 15, market positive, shares ≥ 1, price ≥ $10. Stock only, 10-session hold.
+- week 3 [stock; stock; stock]: [Bundle 1] C7, C8, C9 pass the R2 stock gate: 20d and vs ma50 above thresholds, market positive, shares at least 1, price over $10.
+- week 4 [stock]: [Bundle 1] C7 passes the R2 gate: 20d +25.6%, vs ma50 +18.7%, market 20d positive, shares 1.38, price over $10. No other candidate passes.
+- week 5 [pass]: [Bundle 1] No candidate passes the gate. C1 has 20d and trend strength but shares 0.80, below the 1.0 minimum. Others fail 20d ≥ 20.
+- week 6 [pass]: [Bundle 1] Only C1 and C7 pass the R2 gate, and both are under $10 (paper only). Passing this week.
+- week 7 [stock]: [Bundle 1] C6 is the only candidate passing the R2 gate (20d +27, vs ma50 +24, shares 1.65, market positive). Options are paused.
+- week 8 [stock]: [Bundle 1] Only C1 passes the R2 gate: 20d +46.8, vs ma50 +18, market 20d positive, shares 1.85, price above $10. Others fail a gate condition.
+- week 9 [pass]: [Bundle 1] No candidate passes the R2 gate: 20d % ≥ 20, vs ma50 ≥ 15, shares ≥ 1, price ≥ $10. C9 passes but is sub-$10 (paper only).
+- week 10 [stock]: [Bundle 1] C1 passes the R2 gate: 20d +64.8, vs ma50 +41.7, market 20d positive, shares 1.13. C9 misses 20d by 0.1.
+- week 11 [stock]: [Bundle 1] Only C6 passes the R2 gate: 20d +27, vs ma50 +20, market positive, shares 1.38. C4 passes but is sub-$10, so paper only.
+- week 12 [pass]: [Bundle 1] No candidate passes the R2 gate: all fail 20d ≥ 20 or vs ma50 ≥ 15, and C4 is sub-$10 paper only.
+- week 13 [pass]: [Bundle 1] Market 20d is -1.1%, so the R2 market condition fails for every candidate. Passing; ratings are low-conviction only.
+- week 14 [pass]: [Bundle 1] No candidate passes the R2 gate. C3 fails shares and trend, C9 fails trend. Passing this week.
+- week 15 [stock; stock; stock]: [Bundle 1] Gate R2 passes: C3, C4, C9 (C7 also passes, cut for the 3-trade cap). C10 is sub-$10, so paper only.
+- week 16 [pass]: [Bundle 1] Market 20d is -0.6%, so the R2 gate fails for every candidate. No trades.
+- week 17 [stock]: [Bundle 1] Only C7 passes the R2 gate: 20d +38.8, vs ma50 +37.8, shares 3.9, market 20d positive, price over $10.
+- week 18 [pass]: [Bundle 1] Only C8 passes the R2 gate, but it is under $10 (paper only). No other candidate meets the 20d % ≥ 20 requirement, so I pass.
+- week 19 [stock]: [Bundle 1] C1 passes the R2 gate (20d +50, vs ma50 +27, shares 1.35, market +3.8, price over $10). C8 and C10 pass but are sub-$10, so paper only.
+- week 20 [pass]: [Bundle 1] No candidate passes the R2 gate: C5 fails market and price, C6 fails shares ≥1, others fail the 20-day and trend thresholds.
+- week 21 [pass]: [Bundle 1] Market 20d is negative for C1, C2 and C4, and no candidate meets all R2 gate conditions. C7 is sub-$10 (paper only). Passing.
+- week 22 [stock]: [Bundle 1] Only C3 passes the R2 gate on a $10+ stock: 20d +60, vs ma50 +58, market positive, shares 1.50. C2 and C8 are sub-$10, so paper only.
+- week 23 [pass]: [Bundle 1] No candidate passes the R2 gate: C7 fails shares, C8 is sub-$10 (paper only), and the rest fail 20d or vs ma50.
+- week 24 [pass]: [Bundle 1] No candidate passes the R2 gate: most have 20d % below 20 or vs ma50 % below 15. Passing.
+- week 25 [pass]: [Bundle 2] Market 20d is negative on every candidate, so the R2 gate (market 20d > 0) fails everywhere. Pass.
+- week 26 [pass]: [Bundle 2] No candidate passes the R2 gate: none has 20d ≥ 20 with vs ma50 ≥ 15. Passing; ratings not used.
+- week 27 [stock; stock]: [Bundle 2] R2 gate: C6 and C7 pass all four conditions (20d, vs ma50, market, shares). C4 passes but is sub-$10, so paper only.
+- week 28 [pass]: [Bundle 2] No candidate passes the gate. C1 fails shares (0.37), and the other names fail 20d % or vs ma50 %.
+- week 29 [pass]: [Bundle 2] No candidate passes the gate: C1 and C7 fail shares, others fail 20d or are sub-$10. Ratings are weak views only.
+- week 30 [stock; stock]: [Bundle 2] C2 and C6 pass the R2 gate (20d, vs ma50, market, shares). C3 passes but is sub-$10, so paper only.
+- week 31 [stock]: [Bundle 2] C9 passes the R2 gate (20d +25.7, vs ma50 +18.3, shares 1.05, market positive). C1 passes too but is sub-$10, so paper only.
+- week 32 [pass]: [Bundle 2] No candidate passes the R2 gate. C5 has strong momentum but is sub-$10 (paper only) and lacks vs ma50 data.
+- week 33 [pass]: [Bundle 2] No candidate passes the R2 gate: 20d % ≥ 20 and vs ma50 % ≥ 15 are not met together. Passing.
+- week 34 [stock]: [Bundle 2] Only C6 passes the gate: 20d +64.9, vs ma50 +68.8, market positive, shares 2.78, price over $50. Other names fail trend, momentum or volume.
+- week 35 [stock]: [Bundle 2] C6 passes the R2 gate: 20d +32.5, vs ma50 +29, market positive, shares 3.9, price over $10. Others fail or are sub-$10.
+- week 36 [stock; stock]: [Bundle 2] R2 gate passes C5 and C7 (20d ≥20, vs ma50 ≥15, market positive, shares ≥1, price ≥$10). Others fail trend or momentum.
+- week 37 [pass]: [Bundle 2] No candidate passes the R2 gate: none has 20d % ≥ 20 with vs ma50 % ≥ 15, and C4 is under $10.
+- week 38 [pass]: [Bundle 2] No candidate passes the R2 gate: none has 20d ≥ 20 with vs ma50 ≥ 15. Ratings are weak, and ratings are not an input.
+- week 39 [stock; stock; stock]: [Bundle 2] R2 gate passes C4, C7, C10: 20d ≥20, vs ma50 ≥15, market positive, shares ≥1, price ≥$10. Stock only.
+- week 40 [pass]: [Bundle 2] Market 20d is -0.6%, so the R2 gate fails for every candidate. Passing; ratings are raw views, not used for selection.
+- week 41 [stock]: [Bundle 2] C4 is the only candidate passing the R2 gate: 20d +24.9, vs ma50 +18.8, market 20d positive, shares 1.99. Others fail the 20d test.
+- week 42 [pass]: [Bundle 2] No candidate passes the R2 gate with price ≥ $10. C8 passes the momentum tests but is sub-$10, so paper only. Options stay paused.
+- week 43 [stock]: [Bundle 2] C1 passes the R2 gate (20d +87, vs ma50 +67, shares 3.0, market 20d +3.4). C3 fails only on the sub-$10 price, so it is paper only. Others fail the 20d or trend tests.
+- week 44 [stock; stock]: [Bundle 2] Only C4 and C9 pass the R2 gate: 20d ≥20, vs ma50 ≥15, market positive, shares ≥1, price ≥$10. Stock-only, 10-session hold.
+- week 45 [stock; stock]: [Bundle 2] Only C4 and C10 pass the R2 gate (20d, vs ma50, market, shares, price over $10). Ratings are not used for selection.
+- week 46 [pass]: [Bundle 2] No candidate passes the R2 gate: none has 20d % of 20 or more. Passing, with no option trades.
+- week 47 [pass]: [Bundle 2] No candidate passes the R2 gate with a tradable price. C6 and C7 pass but are sub-$10, paper only.
+- week 48 [stock]: [Bundle 2] C1 passes the R2 gate: 20d +127%, vs ma50 +82%, market 20d positive, shares 2.5x, price over $10. The others fail the gate.
+- week 49 [pass]: [Bundle 3] Market 20d is negative for every candidate, so the R2 gate fails for all. Passing.
+- week 50 [pass]: [Bundle 3] Market 20d is -0.4%, so the R2 gate (market 20d > 0) fails for every candidate. Pass.
+- week 51 [pass]: [Bundle 3] No candidate passes the gate in the eligible universe. C5 passes but is sub-$10 (paper only). C9 misses vs ma50 by 0.1.
+- week 52 [stock]: [Bundle 3] Only C7 passes the R2 gate: 20d +27%, vs ma50 +18%, market positive, shares 1.06, price over $50.
+- week 53 [pass]: [Bundle 3] No candidate passes the R2 gate: 20d % ≥ 20, vs ma50 ≥ 15 and shares ≥ 1. C4 and C6 are sub-$10, so paper only.
+- week 54 [stock; stock]: [Bundle 3] C4 and C10 pass the R2 gate (20d ≥20, vs ma50 ≥15, market positive, shares ≥1). C5 passes too but is sub-$10, so paper only.
+- week 55 [pass]: [Bundle 3] No candidate passes the R2 gate. Market 20d is negative (-0.2 to -0.5), and most names fail the 20d or shares tests.
+- week 56 [pass]: [Bundle 3] No candidate passes the R2 gate: none has 20d ≥ 20 with vs ma50 ≥ 15 and shares ≥ 1. Passing.
+- week 57 [stock]: [Bundle 3] C8 passes the R2 gate: 20d +60%, vs ma50 +33%, market 20d positive, shares 8.6x. No other candidate passes.
+- week 58 [pass]: [Bundle 3] Only C1 passes the R2 gate, but it is under $10, so it is paper only. Nothing else clears 20d % ≥ 20 with vs ma50 ≥ 15.
+- week 59 [pass]: [Bundle 3] No stock passes the R2 gate with price ≥ $10. C6 passes but is under $10, so it is paper only.
+- week 60 [pass]: [Bundle 3] No candidate passes the R2 gate: most fail 20d % ≥ 20 or shares ≥ 1, and C7 fails vs ma50 and price. Ratings are low-confidence.
+- week 61 [pass]: [Bundle 3] No candidate passes the R2 gate: most have 20d below 20, C6 fails vs ma50 and is under $10. Pass.
+- week 62 [stock]: [Bundle 3] Only C3 passes the R2 gate: 20d +35.5, vs ma50 +23.3, market positive, shares 1.08. All others fail a gate condition.
+- week 63 [stock; stock; stock]: [Bundle 3] Three names pass the R2 gate on stock: 20d≥20, vs ma50≥15, market positive, shares≥1, price≥$10. Ratings are not an input.
+- week 64 [pass]: [Bundle 3] Market 20d is -0.6%, so the R2 gate is closed for every candidate. No trades.
+- week 65 [pass]: [Bundle 3] No candidate passes the R2 gate: most fail 20d % ≥ 20 or shares ≥ 1; C3 fails vs ma50 (12.5 < 15) and is under $10.
+- week 66 [pass]: [Bundle 3] No candidate passes the R2 gate: 20d % ≥ 20, vs ma50 ≥ 15, shares ≥ 1, price ≥ $10. Ratings are weak views only.
+- week 67 [stock]: [Bundle 3] C5 passes the R2 gate: 20d +25.8, vs ma50 +27, shares 1.16, market positive. C6 is sub-$10, paper only.
+- week 68 [pass]: [Bundle 3] No candidate passes the R2 gate: most fail 20d % ≥ 20 or vs ma50 % ≥ 15, and C2 and C8 miss on other gate terms. Ratings are raw-column judgments only.
+- week 69 [stock]: [Bundle 3] Only C1 passes the R2 gate (20d +35.6, vs ma50 +30.9, market 20d positive, shares 6.6x, price over $50). C2 is sub-$10, so paper only.
+- week 70 [stock]: [Bundle 3] Only C7 passes the R2 gate: 20d +29%, vs ma50 +46%, shares 1.19, market positive, price above $10.
+- week 71 [stock]: [Bundle 3] Only C3 passes the R2 gate (20d +42, vs ma50 +23, shares 5.2, market positive). Others fail 20d or shares. Stock only.
+- week 72 [pass]: [Bundle 3] No candidate passes the gate: 20d % ≥ 20, vs ma50 % ≥ 15 and shares ≥ 1. The nearest miss, C10, fails on 20d % (19.1) and shares (0.48). Pass.
+- week 73 [pass]: [Bundle 4] Market 20d is negative (-1.4% to -3.7%) for every candidate, so the R2 gate fails everywhere. Pass.
+- week 74 [pass]: [Bundle 4] No candidate passes the R2 gate: none has 20d % ≥ 20 with vs ma50 ≥ 15, and C10 is sub-$10. Passing.
+- week 75 [pass]: [Bundle 4] No candidate passes the R2 gate with price at least $10. C1 passes but is sub-$10 (paper only). C6 fails shares ≥ 1.
+- week 76 [pass]: [Bundle 4] No candidate passes the R2 gate: 20d% of 20 or more is met only by C4, which is sub-$10 (paper only).
+- week 77 [pass]: [Bundle 4] No candidate passes R2: none has 20d ≥ 20 with shares ≥ 1 and vs ma50 ≥ 15. Passing.
+- week 78 [stock]: [Bundle 4] Only C9 passes the R2 gate (20d 20.7, vs ma50 35.9, market positive, shares 1.10, price over $10). Others fail on 20d or price.
+- week 79 [pass]: [Bundle 4] Three names pass the gate (C1, C3, C5), but all are under $10, so they are paper only. No other candidate passes.
+- week 80 [stock]: [Bundle 4] C8 passes the R2 gate: 20d +49.8, vs ma50 +28.4, market positive, shares 1.02, price $10-50. Other names fail.
+- week 81 [pass]: [Bundle 4] No candidate passes R2: C3 and C7 fail shares<1; C4 is sub-$10 (paper only); the rest fail 20d or vs ma50.
+- week 82 [stock; stock; stock]: [Bundle 4] Passed the R2 gate: 20d≥20, vs ma50≥15, market 20d>0, shares≥1, price≥$10. C1 is tail, C3 has a spike today and was not chosen, C4 and C9 are 20-40 band.
+- week 83 [pass]: [Bundle 4] No candidate passes the R2 gate: 20d ≥ 20, vs ma50 ≥ 15, market 20d > 0, shares ≥ 1. Passing.
+- week 84 [stock]: [Bundle 4] Only C10 passes the R2 gate (20d +34, vs ma50 +21, shares 10x, market positive, price over $10). C4 passes but is sub-$10, paper only.
+- week 85 [pass]: [Bundle 4] No candidate passes the R2 gate. C9 misses 20d ≥ 20 at 18.5; C6 fails vs ma50 and market 20d; C1 is sub-$10 (paper only).
+- week 86 [stock; stock; stock]: [Bundle 4] R2 gate passes C1, C5, C6 (20d≥20, vs ma50≥15, market 20d>0, shares≥1, price≥$10). Stock only, 10-session hold.
+- week 87 [stock]: [Bundle 4] C6 alone passes the R2 gate (20d +26%, vs ma50 +16%, market up, shares 3.3, price over $10). C5 is sub-$10, so paper only.
+- week 88 [pass]: [Bundle 4] Gate fails: market 20d is -0.6%, so R2 requires a positive market and no candidate qualifies. Passing.
+- week 89 [pass]: [Bundle 4] No candidate passes the R2 gate: 20d and vs ma50 fail, or shares are below 1, or price is under $10. Pass.
+- week 90 [pass]: [Bundle 4] No candidate passes the R2 gate: all ten fail the 20-day ≥ 20% test, and most are below ma50 +15%. Ratings unused.
+- week 91 [pass]: [Bundle 4] Only C1 passes the R2 gate, but it is sub-$10 (paper only). Others fail the 20d, trend, or shares conditions. No trade.
+- week 92 [stock; stock; stock]: [Bundle 4] All three pass the R2 gate: 20d ≥20, vs ma50 ≥15, market 20d positive, shares ≥1, price ≥$10. Others fail.
+- week 93 [stock]: [Bundle 4] C2 passes all four R2 gate conditions (20d, vs ma50, market, shares) at $10-50. C10 passes but is sub-$10, so paper only.
+- week 94 [stock]: [Bundle 4] Only C5 passes the R2 gate: 20d +69, vs ma50 +59, market 20d positive, shares 1.31. Others fail on 20d or trend.
+- week 95 [stock; stock]: [Bundle 4] Both pass the R2 gate (20d ≥20, vs ma50 ≥15, market20d >0, shares ≥1, price ≥$10). Others fail the 20d test.
+- week 96 [pass]: [Bundle 4] Gate R2 needs market 20d above 0; this bundle's market is -0.6%, so no candidate qualifies. Pass.
+- week 97 [pass]: [Bundle 5] Every candidate has market 20d below zero, so the R2 gate closes. Ratings are light views only; no trades.
+- week 98 [pass]: [Bundle 5] No candidate passes the R2 gate: 20d, vs ma50, shares and market conditions fail for all ten. Pass.
+- week 99 [stock; stock]: [Bundle 5] R2 gate passes C3 and C8 (20d≥20, vs ma50≥15, market positive, shares≥1). C10 passes but is sub-$10, so paper only.
+- week 100 [stock]: [Bundle 5] C9 passes the R2 gate: 20d +31.6, vs ma50 +21.5, market 20d positive, shares 1.38, price over $10. Others fail.
+- week 101 [pass]: [Bundle 5] No candidate passes the gate: C5 passes but is sub-$10 (paper only), and the rest fail the 20d or vs ma50 test.
+- week 102 [pass]: [Bundle 5] No candidate passes the R2 gate: C3 and C9 fail the $10 floor or ma50 test, and the rest fail the 20-day or ma50 condition.
+- week 103 [stock]: [Bundle 5] Only C5 passes the gate: 20d +31, vs ma50 +18.7, shares 1.01, market positive. Buy stock, hold 10 sessions.
+- week 104 [stock]: [Bundle 5] C6 is the only candidate passing the R2 gate: 20d +25.9, vs ma50 +16.6, shares 2.03, market positive. Ratings are weak, not gate-based.
+- week 105 [pass]: [Bundle 5] No gate names: none meets 20d≥20, vs ma50≥15, shares≥1 together. C10 misses vs ma50 (14.2). Pass.
+- week 106 [stock]: [Bundle 5] Only C6 passes the R2 gate: 20d +47.5, vs ma50 +39.4, market positive, shares 2.18, price over $50.
+- week 107 [stock]: [Bundle 5] Only C5 passes the R2 stock gate: 20d +23%, vs ma50 +19%, market positive, shares 1.9x. Others fail momentum.
+- week 108 [pass]: [Bundle 5] No candidate passes the R2 gate with price at least $10: C8 and C9 are sub-$10 paper only, and C7 fails shares ≥ 1. Passing.
+- week 109 [stock]: [Bundle 5] C6 is the only candidate passing the R2 gate: 20d +47.5, vs ma50 +38.4, shares 1.03, market positive, price $10-50. C10 is sub-$10, so paper only.
+- week 110 [stock]: [Bundle 5] Only C6 passes R2 gate: 20d +45%, vs ma50 +27%, market +13%, shares 7.5x, price over $10. Others fail a gate condition.
+- week 111 [pass]: [Bundle 5] No candidate passes the R2 gate. C6 passes but is under $10, so paper only.
+- week 112 [pass]: [Bundle 5] Market 20d is -0.6%, failing the gate's market-positive condition for every candidate. No trades this week.
+- week 113 [stock]: [Bundle 5] C2 passes the R2 stock gate: 20d +51%, vs ma50 +44%, market positive, shares 1.5x. C8 has the same profile but is sub-$10, so paper only.
+- week 114 [pass]: [Bundle 5] Only C9 passes the R2 gate, but it is under $10, so paper only. No trades this week.
+- week 115 [stock; stock]: [Bundle 5] Only C4 and C7 pass the R2 gate: 20d ≥20, vs ma50 ≥15, market positive, shares ≥1, price ≥$10. Both are 40%+ tail names.
+- week 116 [pass]: [Bundle 5] No candidate passes the gate. C6 and C10 meet the momentum tests but trade under $10 (paper only). C7 fails shares ≥ 1.
+- week 117 [pass]: [Bundle 5] No candidate passes the R2 gate on a $10+ stock. C4 and C7 pass but are sub-$10, so paper only.
+- week 118 [pass]: [Bundle 5] No candidate passes the R2 gate: most fail 20d % ≥ 20 or shares ≥ 1, and C2 and C9 fail the trend test. Passing.
+- week 119 [pass]: [Bundle 5] No candidate passes the R2 gate: most fail 20d ≥ 20, C5 fails shares ≥ 1 and is sub-$10. Pass.
+- week 120 [pass]: [Bundle 5] No candidate passes the R2 gate: most fail shares or 20d, C9 misses vs ma50 (13.8) and is sub-$10.
+- week 121 [pass]: [Bundle 6] Market 20d is -1.6%, so the R2 gate's market condition fails for every candidate. Passing this week.
+- week 122 [pass]: [Bundle 6] No candidate passes the R2 gate. C7 has strong 20-day momentum but fails vs ma50 (+6.8 vs 15 needed). Passing.
+- week 123 [pass]: [Bundle 6] No candidate passes the R2 gate: none has 20d ≥ 20 with vs ma50 ≥ 15 and shares ≥ 1.
+- week 124 [pass]: [Bundle 6] No candidate passes R2: most fail 20d≥20 or vs ma50≥15; C9 passes but is sub-$10 (paper only).
+- week 125 [pass]: [Bundle 6] No candidate passes the gate in the $10+ universe. C1 and C8 pass but are sub-$10, so paper only.
+- week 126 [stock]: [Bundle 6] C3 passes the R2 gate: 20d +73.8, vs ma50 +74.7, market positive, shares 1.9. C7 and C9 pass but are sub-$10, so paper only.
+- week 127 [pass]: [Bundle 6] No candidate passes the R2 gate with price at or above $10. C9 passes but is sub-$10, so paper only.
+- week 128 [pass]: [Bundle 6] Only C2 and C4 pass the gate, and both trade under $10 (paper only). Nothing else clears 20d or vs ma50 or shares.
+- week 129 [pass]: [Bundle 6] No candidate passes the R2 gate: none has 20d ≥ 20 with vs ma50 ≥ 15 and shares ≥ 1. Ratings are not an input.
+- week 130 [stock]: [Bundle 6] Only C7 passes the R2 gate (20d +113%, vs ma50 +49%, market 20d +2.6%, shares 1.28). Others fail on 20d, shares, or price.
+- week 131 [stock]: [Bundle 6] Only C9 passes the R2 gate: 20d +24.8, vs ma50 +16.4, shares 1.84, market positive, price $10-50. C8 passes but is sub-$10, so paper only.
+- week 132 [stock]: [Bundle 6] C4 passes the R2 gate: 20d +24%, vs ma50 +16%, shares 2.6x, market positive. Others fail or are sub-$10 paper names.
+- week 133 [pass]: [Bundle 6] No candidate passes the R2 gate: none has 20d % ≥ 20 with vs ma50 ≥ 15 and market 20d > 0. Pass.
+- week 134 [stock]: [Bundle 6] Only C10 passes the R2 gate: 20d +44%, vs ma50 +27.5%, market 20d positive, shares 5.6x. Others fail a gate condition.
+- week 135 [pass]: [Bundle 6] No candidate passes the R2 gate: most have 20-day change below 20%, and C4 has shares below 1. Passing.
+- week 136 [pass]: [Bundle 6] Market 20d is -0.6%, so no candidate passes the R2 gate's market condition. Passing this week.
+- week 137 [stock]: [Bundle 6] Only C10 passes the R2 gate: 20d +56.9, vs ma50 +50.1, market 20d positive, shares 8.6x, price $10 to $50.
+- week 138 [stock]: [Bundle 6] Only C4 passes the R2 gate: 20d +23.5, vs ma50 +23.7, shares 1.82, market 20d positive, price $10-50. Others fail.
+- week 139 [stock]: [Bundle 6] Only C3 passes the R2 gate: 20d +21.8, vs ma50 +28, shares 1.26, market positive. Others fail on 20d, trend, or shares.
+- week 140 [stock; stock]: [Bundle 6] R2 gate: C8 and C10 pass 20d, vs ma50, market and shares; C5 and C7 are sub-$10 paper only.
+- week 141 [stock]: [Bundle 6] Only C2 passes the R2 gate: 20d +228%, vs ma50 +190%, market 20d positive, shares 3.96x, price over $10.
+- week 142 [pass]: [Bundle 6] No candidate passes the R2 gate: none has both 20d ≥ 20 and vs ma50 ≥ 15. Pass.
+- week 143 [stock]: [Bundle 6] Only C8 passes the R2 gate (20d ≥20, vs ma50 ≥15, market positive, shares ≥1, price ≥$10). C7 misses trend at 12.7.
+- week 144 [stock; stock]: [Bundle 6] Only C8 and C9 pass the R2 gate (20d, vs ma50, market 20d, shares). Stock-only, 10-session hold, flat size.
 

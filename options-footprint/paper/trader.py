@@ -476,4 +476,13 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except SystemExit:
+        raise
+    except BaseException as ex:   # noqa: BLE001 - write the crash where it can be read, then fail the job
+        import traceback
+        with open(os.path.join(C.ROOT, "PAPER_ERROR.md"), "w") as f:
+            f.write(f"# Paper traders crashed ({dt.datetime.now(dt.timezone.utc):%Y-%m-%d %H:%M} UTC)\n\n"
+                    f"```\n{traceback.format_exc()[-4000:]}\n```\n")
+        raise

@@ -1,17 +1,17 @@
-# Status (2026-10-10 11:56 UTC, storage: postgres)
+# Status (2026-10-10 15:40 UTC, storage: postgres)
 
 ## Backfill
 - Big moves logged: 5,389 across 1,652 stocks
 - Pre-move windows filled: 5,389 of 5,389
 - Stocks eligible for full history (3+ moves): 650; done: 920
 - Control days: 10,767 (filled 10,767)
-- Daily rows: 1,175,548; database size: 507 MB
+- Daily rows: 1,175,548; database size: 508 MB
 
 ## Table sizes
 - daily: 272 MB, about 1,175,548 rows
 - ladder_trades: 141 MB, about 564,225 rows
 - news: 47 MB, about 225,612 rows
-- pool: 22 MB, about 9,157 rows
+- pool: 23 MB, about 9,157 rows
 - agent_ratings: 17 MB, about 84,575 rows
 - arena: 5 MB, about 1,613 rows
 - agent_trades: 5 MB, about 13,755 rows
@@ -31,7 +31,7 @@
 - wide_universe: 0 MB, about 300 rows
 - signal_report: 0 MB, about 36 rows
 - errors: 0 MB, about 151 rows
-- run_log: 0 MB, about 39 rows
+- run_log: 0 MB, about 40 rows
 - agent_lessons: 0 MB, about 4 rows
 
 ## Labels
@@ -178,6 +178,7 @@
 - 300 stocks chosen; full options history done for 300
 
 ## Job notes (latest 8)
+- 2026-10-10T15:40:21+00:00 build-pool: pool rebuilt: 9,157 candidates (3,663 from the wide list); market columns filled for 9,157; implied volatility for 9,129.
 - 2026-10-10T11:55:31+00:00 build-pool: STOPPED, old pool kept: market columns filled for only 0 of 9,157 candidates (SystemExit: Alpaca refused https://data.alpaca.markets/v2/stocks/bars with HTTP 401: <html>
 <head><title>401 Authorization Required</title></head>
 <body>
@@ -192,7 +193,6 @@
 - 2026-10-09T13:47:23+00:00 focused-hindsight: wide-list passed: none
 - 2026-10-09T13:47:10+00:00 focused-volatility: passed: Options flow, Technical analysis, Flow + technical, Everything; volatility-only top tenth +3.01%
 - 2026-10-09T13:42:50+00:00 focused: Options flow: blind rank correlation +0.009, top tenth +2.67%; Technical analysis: blind rank correlation +0.028, top tenth +2.91%; Market: blind rank correlation +0.015, top tenth -0.23%; News: blind rank correlation +0.017, top tenth -0.21%; Flow + technical: blind rank correlation +0.021, top tenth +2.64%; Everything: blind rank correlation +0.021, top tenth +2.91%
-- 2026-10-09T13:42:50+00:00 focused-volatility: passed: Options flow, Technical analysis, Flow + technical, Everything; volatility-only top tenth +3.01%
 
 ## Errors (151 total, latest 8)
 - 2026-10-09 01:03 IAC oi 2026-01-13: 504 The remote gateway timed out.

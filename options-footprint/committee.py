@@ -1432,13 +1432,16 @@ def bakeoff(args):
             continue
         print(f"Running {mid} ({price_txt} per million tokens in / out)...")
         started = time.monotonic()
+        model_deadline = min(deadline, started + 60 * args.per_model_minutes)
         CFG.update(lineage="bakeoff")
         try:
             w = blind_run(args.generation, lambda: pot.llm(mid), notes[0]["text"], book, pool, TRAIN_BUNDLES,
-                          ("score",), "score", deadline, f"bakeoff-{mid.replace('/', '-')}")
-        except Exception as ex:   # noqa: BLE001 - a model that can't finish is itself a result
-            print(f"{mid}: failed: {type(ex).__name__}: {ex}")
-            entries.append((f"{mid} (failed: {type(ex).__name__}: {str(ex)[:120]})", None, [], price_txt))
+                          ("score",), "score", model_deadline, f"bakeoff-{mid.replace('/', '-')}")
+        except (Exception, TimeUp) as ex:   # noqa: BLE001 - a model that can't finish is itself a result
+            why = (f"too slow: not finished in {args.per_model_minutes:.0f} minutes" if isinstance(ex, TimeUp)
+                   else f"failed: {type(ex).__name__}: {str(ex)[:120]}")
+            print(f"{mid}: {why}")
+            entries.append((f"{mid} ({why})", None, [], price_txt))
             CFG.update(lineage=args.source_lineage)
             continue
         CFG.update(lineage=args.source_lineage)
@@ -1788,6 +1791,7 @@ def main():
     bo.add_argument("--max-usd", type=float, default=float(os.environ.get("MAX_USD", "25")))
     bo.add_argument("--max-minutes", type=float, default=140)
     bo.add_argument("--redo", action="store_true")
+    bo.add_argument("--per-model-minutes", type=float, default=35)
     po = sub.add_parser("playoff")
     po.add_argument("--finalists", type=int, default=5)
     po.add_argument("--model", default=os.environ.get("LLM_MODEL", "anthropic/claude-haiku-5.5"))

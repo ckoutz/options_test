@@ -1,36 +1,36 @@
-# Status (2026-10-10 05:32 UTC, storage: postgres)
+# Status (2026-10-10 05:46 UTC, storage: postgres)
 
 ## Backfill
 - Big moves logged: 5,389 across 1,652 stocks
 - Pre-move windows filled: 5,389 of 5,389
 - Stocks eligible for full history (3+ moves): 650; done: 920
 - Control days: 10,767 (filled 10,767)
-- Daily rows: 1,175,548; database size: 499 MB
+- Daily rows: 1,175,548; database size: 501 MB
 
 ## Table sizes
 - daily: 272 MB, about 1,175,548 rows
 - ladder_trades: 141 MB, about 564,225 rows
 - news: 47 MB, about 225,612 rows
 - pool: 22 MB, about 9,157 rows
-- agent_ratings: 11 MB, about 55,102 rows
+- agent_ratings: 12 MB, about 62,478 rows
 - arena: 5 MB, about 1,613 rows
-- agent_trades: 4 MB, about 9,357 rows
+- agent_trades: 4 MB, about 10,742 rows
 - event_features: 3 MB, about 16,156 rows
-- agent_weeks: 2 MB, about 5,984 rows
+- agent_weeks: 2 MB, about 6,732 rows
 - flags: 2 MB, about 4,038 rows
 - controls: 1 MB, about 10,767 rows
 - events: 1 MB, about 5,389 rows
 - oi_daily: 1 MB, about 3,653 rows
-- committee_notes: 0 MB, about 40 rows
-- scorebook: 0 MB, about 304 rows
+- committee_notes: 1 MB, about 45 rows
+- scorebook: 0 MB, about 350 rows
 - bundles: 0 MB, about 766 rows
 - history_done: 0 MB, about 920 rows
 - news_fetched: 0 MB, about 742 rows
 - ladder_report: 0 MB, about 90 rows
 - wide_universe: 0 MB, about 300 rows
-- agent_runs: 0 MB, about 54 rows
-- errors: 0 MB, about 151 rows
+- agent_runs: 0 MB, about 59 rows
 - signal_report: 0 MB, about 36 rows
+- errors: 0 MB, about 151 rows
 - run_log: 0 MB, about 37 rows
 - agent_lessons: 0 MB, about 4 rows
 
@@ -144,6 +144,11 @@
 | gen10 | 6 | train | anthropic/claude-haiku-5.5 | 278 | 4829.3 | -36612.6 | 1.74 | -40.3 | 31.3 | -13.17 | 27.9 | 4/151 | 0.4789 | complete |
 | gen10 | 6 | train | anthropic/claude-haiku-5.5 | 254 | -6737.1 | -27482.8 | -2.65 | -24.66 | 37.0 | -10.82 | 31.9 | 1/151 | 0.4741 | complete |
 | gen10 | 6 | score | anthropic/claude-haiku-5.5 | 302 | -49143.5 | -76859.0 | -16.27 | -52.32 | 27.8 | -25.45 | 24.5 | 4/144 | 1.2332 | complete |
+| gen10 | 7 | train | anthropic/claude-haiku-5.5 | 284 | -7930.0 | -21555.6 | -2.79 | -42.56 | 31.3 | -7.59 | 28.7 | 3/151 | 0.4705 | complete |
+| gen10 | 7 | train | anthropic/claude-haiku-5.5 | 271 | 7980.1 | -20270.8 | 2.94 | -38.13 | 31.7 | -7.48 | 28.2 | 4/151 | 0.5327 | complete |
+| gen10 | 7 | train | anthropic/claude-haiku-5.5 | 249 | -34650.1 | -31896.9 | -13.92 | -44.09 | 27.3 | -12.81 | 27.8 | 5/151 | 0.5417 | complete |
+| gen10 | 7 | train | anthropic/claude-haiku-5.5 | 275 | 863.7 | -14437.5 | 0.31 | -44.57 | 30.9 | -5.25 | 29.1 | 4/151 | 0.4951 | complete |
+| gen10 | 7 | score | anthropic/claude-haiku-5.5 | 306 | -39772.9 | -69768.0 | -13.0 | -50.59 | 28.1 | -22.8 | 24.1 | 6/144 | 1.507 | complete |
 
 ### Latest lessons: blank lineage, generation 3 (anthropic/claude-haiku-5.5)
 

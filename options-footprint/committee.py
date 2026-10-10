@@ -1204,6 +1204,107 @@ def final_test(args):
     report(args)
 
 
+# ---------------------------------------------------------------- playoff
+def agent_strength(book_rows_, min_trades=30):
+    """An agent's best rule, as tested by code on all training months: the bottom of its 95% range
+    minus buying everything the same way. Comparable across generations and lineages."""
+    best = None
+    for b in book_rows_:
+        if b["ci_low"] in (None, "") or b["baseline_mean"] in (None, "") or int(b["trades"] or 0) < min_trades:
+            continue
+        edge = float(b["ci_low"]) - float(b["baseline_mean"])
+        if best is None or edge > best[0]:
+            best = (edge, b)
+    return best
+
+
+def playoff(args):
+    """Shortlist the strongest agents from every lineage by the code scorebook, run each through the
+    blind months with only its own notes, and judge them on the wide list (no hindsight)."""
+    st = C.db()
+    pool = load_pool(st)
+    book = [b for b in st.backend.read("scorebook") if b["period"] == "train" and str(b["author"]).startswith("agent")]
+    by_agent = {}
+    for b in book:
+        by_agent.setdefault((b["lineage"], int(b["generation"]), b["author"]), []).append(b)
+    notes = {(n["lineage"], int(n["generation"]), n["author"]): n for n in st.backend.read("committee_notes")
+             if str(n["author"]).startswith("agent")}
+    ranked = []
+    for key, rows in by_agent.items():
+        s = agent_strength(rows)
+        if s and key in notes and (notes[key]["text"] or "").strip():
+            ranked.append((s[0], key, s[1], rows))
+    ranked.sort(key=lambda x: -x[0])
+    print(f"{len(ranked)} agents with notes and a scorable rule; top {args.finalists}:")
+    finalists = ranked[:args.finalists]
+    for edge, key, b, _ in finalists:
+        print(f"  {key}: best rule '{b['rule_name']}', edge {edge:+.2f} on {b['trades']} trades")
+    CFG.update(lineage="playoff", options_only=False)
+    done = {r["agent"]: r for r in st.backend.read("agent_runs") if r["lineage"] == "playoff" and r["phase"] == "score"}
+    deadline = time.monotonic() + 60 * args.max_minutes
+    pot = Pot(args.max_usd, spent(st))
+    results = []
+    for i, (edge, key, b, rows) in enumerate(finalists, 1):
+        name = f"{key[0]}-g{key[1]}-{key[2]}"
+        if name in done and not args.redo:
+            print(f"{name}: already played; reusing its result.")
+            run_id = done[name]["run_id"]
+            trades = [t for t in st.backend.read("agent_trades") if t["run_id"] == run_id]
+            results.append((edge, key, b, done[name], trades))
+            continue
+        text = notes[key]["text"]
+        rules_text = "\n".join(scorebook_line(json.loads(r["rule"]), stats_of(r)) for r in rows)
+        w = blind_run(i, lambda: pot.llm(args.model), text, rules_text, pool, TRAIN_BUNDLES, ("score",),
+                      "score", deadline, f"playoff-{name}")
+        s = dict(w.summary(i, name), started=dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"))
+        C._STORE = None
+        st = C.db()
+        st.backend.upsert("agent_runs", [s])
+        keep = ("run_id", "week_index", "cand_id", "ticker", "signal_date", "action", "expiry", "strike_pct",
+                "exit_rule", "ret_pct", "reason")
+        st.backend.upsert("agent_trades", [{k: t.get(k) for k in keep} for t in w.trades])
+        st.backend.upsert("agent_weeks", w.week_rows)
+        print(f"{name}: {s['trades']} trades, mean {s['mean_ret']}%, cost ${s['cost_usd']}")
+        results.append((edge, key, b, s, w.trades))
+    write_playoff(pool, results)
+
+
+def write_playoff(pool, results):
+    def fmt(v, f="{:+.2f}"):
+        return "-" if v is None else f.format(v)
+    L = [f"# Playoff ({dt.datetime.now(dt.timezone.utc):%Y-%m-%d %H:%M} UTC)", "",
+         "Finalists: the agents (from every lineage) whose best rule held up best when code tested it on all",
+         "training months. Each then traded the blind months with only its own final notes and rules, stock or",
+         "calls allowed. Judged on the **wide list** (chosen January 2024, no hindsight): average return per trade",
+         "minus the same kind of trade on random wide-list candidates in the same weeks, 95% range by week.", "",
+         "| finalist | best training rule (edge) | blind trades | WIDE: trades, agent vs random % | WIDE excess (range) | "
+         "big movers: agent vs random % | cost $ |", "|---|---|---|---|---|---|---|"]
+    verdicts = []
+    for edge, key, b, s, trades in results:
+        name = f"{key[0]} gen {key[1]} {key[2]}"
+        ls = list_stats(pool, trades)
+        wd, mv = ls.get("wide"), ls.get("movers")
+        wide = f"{wd['n']}: {wd['mean']:+.2f} vs {wd['random']:+.2f}" if wd else "-"
+        rng_ = f"{wd['excess']:+.2f} ({fmt(wd['lo'])} to {fmt(wd['hi'])})" if wd else "-"
+        mov = f"{mv['mean']:+.2f} vs {mv['random']:+.2f} ({mv['n']})" if mv else "-"
+        L.append(f"| {name} | {b['rule_name']} ({edge:+.2f}) | {s.get('trades')} | {wide} | {rng_} | {mov} | {s.get('cost_usd')} |")
+        verdicts.append((wd["excess"] if wd else -1e9, name, wd))
+    verdicts.sort(reverse=True)
+    L += ["", "## Verdict", ""]
+    clear = [v for v in verdicts if v[2] and v[2]["lo"] is not None and v[2]["lo"] > 0]
+    if clear:
+        L.append(f"- **{clear[0][1]}** beat random on the wide list with its whole range above zero. It earns paper account 2.")
+    elif verdicts and verdicts[0][2]:
+        L.append(f"- Nobody beat random on the wide list clearly. Best showing: {verdicts[0][1]} "
+                 f"({verdicts[0][2]['excess']:+.2f}% per trade versus random, range crossing zero). Treat that as luck;")
+        L.append("  choose paper account 2 for the most interesting strategy rather than this result.")
+    L += [f"- {len(results)} finalists were tested, so one passing narrowly could still be chance."]
+    with open(os.path.join(C.ROOT, "PLAYOFF.md"), "w") as f:
+        f.write("\n".join(L) + "\n")
+    print("\n".join(L))
+    C.run_log("playoff", "; ".join(f"{v[1]}: wide excess {v[2]['excess']:+.2f}" for v in verdicts if v[2]))
+
+
 # ---------------------------------------------------------------- report
 def report(args=None):
     st = C.db()
@@ -1267,6 +1368,57 @@ def report(args=None):
     with open(os.path.join(C.ROOT, name), "w") as f:
         f.write("\n".join(L) + "\n")
     print("\n".join(L[:40]))
+
+
+def list_stats(pool, trades, reps=60, seed=17):
+    """Trades split by list ('wide' = honest, 'movers' = hindsight). For each trade, the expected
+    return of the same kind of trade on a random candidate from the same list in the same week; the
+    excess over that, with a 95% range resampling whole weeks."""
+    by_key = {(c["ticker"], str(c["date"])[:10]): c for c in pool}
+    by_week = {}
+    for c in pool:
+        by_week.setdefault((c["week"], c["universe"]), []).append(c)
+    rng = random.Random(seed)
+    out = {}
+    for t in trades:
+        c = by_key.get((t["ticker"], str(t["signal_date"])[:10]))
+        if not c or t.get("ret_pct") in (None, ""):
+            continue
+        exp = int(t["expiry"]) if t.get("expiry") not in (None, "") else None
+        strike = float(t["strike_pct"]) if t.get("strike_pct") not in (None, "") else None
+        cands = by_week.get((c["week"], c["universe"]), [])
+        sims = []
+        for _ in range(reps):
+            for _try in range(10):
+                if not cands:
+                    break
+                v = A.trade_return(rng.choice(cands), t["action"], exp, strike, t.get("exit_rule") or None)
+                if v is not None:
+                    sims.append(v)
+                    break
+        if sims:
+            r = float(t["ret_pct"])
+            out.setdefault(c["universe"], []).append((c["week"], r, statistics.mean(sims)))
+    res = {}
+    for u, items in out.items():
+        weeks = {}
+        for w, r, m in items:
+            weeks.setdefault(w, []).append(r - m)
+        wl = list(weeks.values())
+        lo = hi = None
+        if len(wl) >= 5:
+            sims = []
+            for _ in range(1000):
+                pick = [rng.choice(wl) for _ in wl]
+                vals = [v for w in pick for v in w]
+                sims.append(sum(vals) / len(vals))
+            sims.sort()
+            lo, hi = sims[25], sims[974]
+        res[u] = {"n": len(items), "mean": statistics.mean(i[1] for i in items),
+                  "random": statistics.mean(i[2] for i in items),
+                  "excess": statistics.mean(i[1] - i[2] for i in items), "lo": lo, "hi": hi,
+                  "weeks": len(wl)}
+    return res
 
 
 def by_list_section(st, runs):
@@ -1344,6 +1496,12 @@ def main():
         else:
             a.add_argument("--generation", type=int, required=True)
     sub.add_parser("report")
+    po = sub.add_parser("playoff")
+    po.add_argument("--finalists", type=int, default=5)
+    po.add_argument("--model", default=os.environ.get("LLM_MODEL", "anthropic/claude-haiku-5.5"))
+    po.add_argument("--max-usd", type=float, default=float(os.environ.get("MAX_USD", "25")))
+    po.add_argument("--max-minutes", type=float, default=140)
+    po.add_argument("--redo", action="store_true", help="replay finalists that already played")
     for sp in sub.choices.values():
         if sp.prog.split()[-1] in ("loop", "final-test", "report"):
             sp.add_argument("--lineage", default="committee",
@@ -1357,7 +1515,8 @@ def main():
             sys.exit("Lineage names use lowercase letters, digits and dashes only.")
         CFG.update(lineage=a.lineage, options_only=a.options_only, seed=a.seed)
     try:
-        {"build-pool": build_pool, "loop": loop, "final-test": final_test, "report": report}[a.cmd](a)
+        {"build-pool": build_pool, "loop": loop, "final-test": final_test, "report": report,
+         "playoff": playoff}[a.cmd](a)
     except SystemExit:
         raise
     except BaseException as ex:   # noqa: BLE001 - save it where it can be read, then fail the job

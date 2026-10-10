@@ -14,6 +14,7 @@ on:
           - smoke
           - check
           - dry-run
+          - research
           - day
           - report
           - respond
@@ -78,6 +79,7 @@ jobs:
             check) python paper/check.py ;;
             smoke) python paper/trader.py smoke --agent 3 ;;
             dry-run) python paper/trader.py day --agents "${{ github.event.inputs.agents || '1,2,3' }}" --dry-run ;;
+            research) python paper/trader.py research --agents "${{ github.event.inputs.agents || '1,2,3' }}" ;;
             day) python paper/trader.py day --agents "${{ github.event.inputs.agents || '1,2,3' }}" ;;
             report) python paper/trader.py report ;;
             respond) python paper/trader.py respond --id "${{ github.event.inputs.request_id }}" \
@@ -92,10 +94,10 @@ jobs:
       - name: Commit the reports
         if: always()
         run: |
-          ls PAPER.md PAPER_CHECK.md PAPER_ERROR.md PAPER_SMOKE.md 2>/dev/null | grep -q . || exit 0
+          ls PAPER.md PAPER_CHECK.md PAPER_ERROR.md PAPER_SMOKE.md PAPER_RESEARCH.md 2>/dev/null | grep -q . || exit 0
           git config user.name "options-footprint-bot"
           git config user.email "actions@users.noreply.github.com"
-          for f in PAPER.md PAPER_CHECK.md PAPER_ERROR.md PAPER_SMOKE.md; do if [ -f $f ]; then git add $f; fi; done
+          for f in PAPER.md PAPER_CHECK.md PAPER_ERROR.md PAPER_SMOKE.md PAPER_RESEARCH.md; do if [ -f $f ]; then git add $f; fi; done
           git diff --cached --quiet && exit 0
           git commit -q -m "Paper traders $(date -u '+%Y-%m-%d %H:%M')"
           for i in 1 2 3; do git pull --rebase -q -X theirs && git push -q && exit 0; sleep 5; done

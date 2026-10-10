@@ -294,20 +294,43 @@ def briefing(n, view, snap, notes):
 
 
 # ---------------------------------------------------------------- one agent's day
-def run_agent(n, snap):
+RESEARCH_TASK = """TODAY IS A RESEARCH DAY, before the season's first trades. You cannot place orders today.
+
+Use your tools to:
+1. Understand the current market: trend, breadth, which areas lead and lag, how volatile it is, what options
+   cost (implied volatility on stocks you care about), what the news says.
+2. Explore strategy ideas with real data. Test them against what you can see: price histories of past
+   leaders, how stocks with your setup behaved recently, option prices for the trades you would make. You may
+   keep inherited ideas, change them, or start over.
+3. Decide on one strategy or several (you can switch any time). For each: what you trade (stocks, calls,
+   puts), the exact entry signal, the exit, the size, and why you expect it to beat random trades.
+4. Register an experiment for each strategy you will run, save watchlists, and file requests for anything
+   you need.
+5. Write your journal as a GAME PLAN: your read of the market, your strategies, what you will do on the first
+   trading day, and what would make you change course.
+Then call finish_day with a summary."""
+
+
+def run_agent(n, snap, research=False):
     st = C.db()
     seed_journal(n)
     notes = []
-    view = housekeeping(n, snap, notes)
+    view = TL.account_view(n) if research else housekeeping(n, snap, notes)
+    brief = briefing(n, view, snap, notes)
+    if research:
+        brief = brief.replace("Do your research, place any orders, update your journal, then call finish_day.",
+                              RESEARCH_TASK)
+    schemas = [s for s in TL.SCHEMAS if not research or s["function"]["name"] not in ("place_order", "cancel_order")]
+    max_steps, max_usd = (80, 3.0) if research else (MAX_STEPS, MAX_USD_DAY)
     messages = [{"role": "system", "content": RULEBOOK.format(season=SEASON)},
-                {"role": "user", "content": briefing(n, view, snap, notes)}]
+                {"role": "user", "content": brief}]
     transcript, cost, steps, summary, wrote_journal, n_orders = [], 0.0, 0, "", False, 0
-    while steps < MAX_STEPS:
+    while steps < max_steps:
         steps += 1
-        if cost >= MAX_USD_DAY:
+        if cost >= max_usd:
             messages.append({"role": "user", "content": "Today's research budget is used up. Update your journal "
                                                         "(journal_write) if you haven't, then call finish_day."})
-        msg, c = chat(messages, TL.SCHEMAS, cost)
+        msg, c = chat(messages, schemas, cost)
         cost += c
         messages.append({k: v for k, v in msg.items() if k in ("role", "content", "tool_calls")})
         if msg.get("content"):
@@ -341,10 +364,11 @@ def run_agent(n, snap):
             messages.append({"role": "tool", "tool_call_id": tc["id"], "content": text[:12000]})
         if done:
             break
-        if cost >= MAX_USD_DAY * 1.5:
+        if cost >= max_usd * 1.5:
             transcript.append("STOPPED: spending cap")
             break
     st.backend.upsert("paper_days", [{"agent": TL.me(n), "day": dt.date.today().isoformat(),
+                                      "kind": "research" if research else "trading",
                                       "summary": summary or "(no summary: the session ended early)",
                                       "transcript": "\n".join(transcript)[:200000], "cost_usd": round(cost, 4),
                                       "steps": steps, "orders": n_orders, "finished": TL.now()}])
@@ -444,6 +468,46 @@ def smoke(n):
     print("ALL OK" if ok else "SOME FAILED")
 
 
+def research_report(agents):
+    st = C.db()
+    days = st.backend.read("paper_days")
+    L = [f"# Research day ({dt.datetime.now(dt.timezone.utc):%Y-%m-%d %H:%M} UTC)", "",
+         "Each trader studied the current market and chose its strategies before the season's first trades "
+         "(no orders allowed). Below: its game plan (journal), summary, experiments, watchlists, requests, and "
+         "every thought it wrote while researching, with the tools it used.", ""]
+    for n in agents:
+        me = TL.me(n)
+        L += [f"## Agent {n}: {['', 'committee playbook', 'playoff pick', 'fresh start (control)'][n]}", ""]
+        j = next((x["text"] for x in st.backend.read("paper_journal") if x["agent"] == me), "(no journal)")
+        d = sorted((x for x in days if x["agent"] == me), key=lambda x: x["finished"] or "")[-1:]
+        if d:
+            L += [f"**Summary** ({d[0]['steps']} steps, ${TL.fnum(d[0]['cost_usd']):.2f}): {d[0]['summary']}", ""]
+        L += ["### Game plan (journal)", "", j, ""]
+        ex = [e for e in st.backend.read("paper_experiments") if e["agent"] == me]
+        if ex:
+            L += ["### Experiments registered", ""] + [
+                f"- **{e['name']}** ({e['id']}): {e['hypothesis']} Expect: {e['expected']}. Needs {e['trades_needed']} "
+                f"trades; judge by {e['judge_by']}." for e in ex] + [""]
+        wl = [w for w in st.backend.read("paper_watchlists") if w["agent"] == me]
+        if wl:
+            L += ["### Watchlists", ""] + [f"- **{w['name']}**: {', '.join(json.loads(w['symbols'] or '[]'))}"
+                                           f"{' — ' + w['note'] if w['note'] else ''}" for w in wl] + [""]
+        rq = [r for r in st.backend.read("paper_requests") if r["agent"] == me]
+        if rq:
+            L += ["### Requests", ""] + [f"- {r['id']} ({r['kind']}, {r['status']}): {r['text']}" for r in rq] + [""]
+        if d:
+            L += ["### Research log", "", "Thoughts in full; tool calls shortened.", ""]
+            for line in (d[0]["transcript"] or "").splitlines():
+                if line.startswith("THOUGHT:"):
+                    L.append("> " + line[8:].strip().replace("\n", "\n> "))
+                    L.append("")
+                elif line.startswith("TOOL "):
+                    L.append(f"- `{line[5:][:220]}`")
+            L.append("")
+    with open(os.path.join(C.ROOT, "PAPER_RESEARCH.md"), "w") as f:
+        f.write("\n".join(L) + "\n")
+
+
 def respond(args):
     st = C.db()
     rows = [r for r in st.backend.read("paper_requests") if r["id"] == args.id]
@@ -461,6 +525,8 @@ def main():
     d.add_argument("--agents", default="1,2,3")
     d.add_argument("--dry-run", action="store_true", help="check orders but do not send them")
     sub.add_parser("report")
+    rs = sub.add_parser("research", help="a research day: study the market and pick strategies, no orders")
+    rs.add_argument("--agents", default="1,2,3")
     sm = sub.add_parser("smoke", help="call every read-only tool once (no model, no orders)")
     sm.add_argument("--agent", type=int, default=3)
     r = sub.add_parser("respond")
@@ -482,6 +548,17 @@ def main():
                 C.run_log("paper", f"agent{n} crashed: {type(ex).__name__}: {str(ex)[:300]}")
                 print(f"agent{n} crashed: {ex}")
         print(f"Model cost today: ${total:.2f}")
+        report()
+    elif a.cmd == "research":
+        snap = AP.market_snapshot()
+        agents = [int(x) for x in a.agents.split(",")]
+        for n in agents:
+            try:
+                run_agent(n, snap, research=True)
+            except Exception as ex:   # noqa: BLE001
+                C.run_log("paper", f"agent{n} research crashed: {type(ex).__name__}: {str(ex)[:300]}")
+                print(f"agent{n} crashed: {ex}")
+        research_report(agents)
         report()
     elif a.cmd == "report":
         report()

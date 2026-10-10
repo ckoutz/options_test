@@ -102,7 +102,7 @@ LESSON_COLS = {"lineage": T, "generation": I, "run_id": T, "model": T, "text": T
 
 # Paper traders: three AI agents trading Alpaca paper accounts (see paper/).
 PAPER_JOURNAL_COLS = {"agent": T, "text": T, "updated": T}
-PAPER_DAY_COLS = {"agent": T, "day": D, "summary": T, "transcript": T, "cost_usd": F, "steps": I, "orders": I,
+PAPER_DAY_COLS = {"agent": T, "day": D, "kind": T, "summary": T, "transcript": T, "cost_usd": F, "steps": I, "orders": I,
                   "finished": T}
 PAPER_REQUEST_COLS = {"id": T, "agent": T, "created": T, "kind": T, "text": T, "status": T, "response": T}
 PAPER_EXPERIMENT_COLS = {"id": T, "agent": T, "created": T, "name": T, "hypothesis": T, "expected": T,

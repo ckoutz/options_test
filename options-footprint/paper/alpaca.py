@@ -123,15 +123,11 @@ def market_snapshot(force=False):
     assets = request("GET", f"{PAPER}/v2/assets", keys, {"status": "active", "asset_class": "us_equity"})
     syms = sorted(a["symbol"] for a in assets if a.get("tradable") and a.get("exchange") in MAJOR_EXCHANGES
                   and "." not in a["symbol"] and "/" not in a["symbol"])
-    # Liquidity screen from the latest daily bars (snapshots endpoint, 200 symbols at a time).
-    liquid = []
-    for i in range(0, len(syms), 200):
-        snap = request("GET", f"{DATA}/v2/stocks/snapshots", keys,
-                       {"symbols": ",".join(syms[i:i + 200]), "feed": "sip"})
-        for s, v in (snap or {}).items():
-            bar = (v or {}).get("dailyBar") or (v or {}).get("prevDailyBar") or {}
-            if (bar.get("c") or 0) >= 5 and (bar.get("v") or 0) >= 500_000:
-                liquid.append(s)
+    # Liquidity screen from the last week of daily bars ($5+ and 500,000+ shares a day on average).
+    # (The free plan refuses consolidated "snapshots", but historical daily bars are fine.)
+    recent = daily_bars(syms, days=10)
+    liquid = [s for s, b in recent.items()
+              if b and b[-1]["close"] >= 5 and statistics.mean(x["volume"] for x in b[-5:]) >= 500_000]
     bars = daily_bars(sorted(set(liquid) | {"SPY"}), days=400)
     spy = {b["date"]: b["close"] for b in bars.get("SPY", [])}
     rows = {}

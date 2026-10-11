@@ -251,7 +251,11 @@ def option_history(n, contract=None, symbol=None, as_of=None, days_to_expiry=30,
         T = max((exp - dt.date.fromisoformat(d)).days, 0.5) / 365
         out.append([d, s, b["c"], b.get("v"), implied_vol(b["c"], s, meta["strike"], T, meta["type"]) if s else None])
     first, last = out[0][2], out[-1][2]
+    late = as_of and out[0][0] > as_of
     return {"contract": contract, **meta,
+            **({"warning": f"first trade on record is {out[0][0]}, after {as_of}: weekly contracts are often listed "
+                           "only a few weeks before expiry, so try days_to_expiry near a monthly expiry (third "
+                           "Friday) or a contract that already existed"} if late else {}),
             "columns": ["date", "stock_close", "option_close", "option_volume", "implied_vol_pct"],
             "rows": out, "change_pct_first_to_last": round((last / first - 1) * 100, 1) if first else None,
             "note": "Option closes are the last trade of the day, not the bid/ask; thin contracts can be stale. "

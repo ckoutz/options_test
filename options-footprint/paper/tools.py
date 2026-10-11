@@ -15,6 +15,7 @@ import uuid
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import collector as C   # noqa: E402
 from paper import alpaca as AP   # noqa: E402
+from paper import extra_data as XD   # noqa: E402
 
 INDEX_FUNDS = {"SPY", "VOO", "IVV", "VTI", "QQQ", "QQQM", "IWM", "DIA", "RSP", "SPLG", "VTV", "VUG", "SCHB", "SCHX"}
 OCC = re.compile(r"^([A-Z.]{1,6})(\d{6})([CP])(\d{8})$")
@@ -451,6 +452,20 @@ SCHEMAS = [
     S("options_flow", "The project's unusual-options-activity scanner over about 550 tracked stocks, from the "
                       "latest session: call and put volume spikes, slow 20-session build-ups, recent price moves.",
       {"sort": {"type": "string", "enum": ["calls", "calls_20d", "puts"]}, "count": INT}),
+    S("earnings", "Earnings calendar (Finnhub): report dates, before open or after close, EPS estimate vs "
+                  "actual and surprise, revenue. With a symbol: its upcoming/recent reports plus its last few "
+                  "quarters. Without: every liquid stock reporting in the window.",
+      {"symbol": STR, "days_ahead": INT, "days_back": INT, "min_dollar_vol_m": NUM, "limit": INT}),
+    S("turnover", "Shares outstanding and daily share turnover (volume / shares outstanding) over 20 and 120 "
+                  "sessions, plus industry and market value, for up to 30 stocks.",
+      {"symbols": {"type": "array", "items": STR}}, ["symbols"]),
+    S("option_history", "Past daily prices for one option contract, expired ones included (Alpaca history "
+                        "starts early 2024): stock close, option close, volume and implied volatility each day. "
+                        "Give an OCC contract, or a symbol + as_of date (YYYY-MM-DD) + days_to_expiry + strike_pct "
+                        "(0 = at the money, 5 = 5% out of the money) + type, and the closest listed contract is "
+                        "found. Use it to test option ideas on real past prices.",
+      {"contract": STR, "symbol": STR, "as_of": STR, "days_to_expiry": INT, "strike_pct": NUM,
+       "type": {"type": "string", "enum": ["call", "put"]}, "sessions": INT}),
     S("place_order", "Place an order in your paper account. Stocks: market, limit, stop, stop_limit or "
                      "trailing_stop. Options (OCC symbol like AAPL261120C00200000): limit orders only, whole "
                      "contracts. Opening a position needs strategy, reason and exit_plan ('I am wrong if...').",
@@ -482,13 +497,47 @@ SCHEMAS = [
       {"summary": STR}, ["summary"]),
 ]
 
+def t_earnings(n, a):
+    sym = str(a.get("symbol") or "").upper() or None
+    ahead = max(0, min(int(fnum(a.get("days_ahead"), 30)), 90))
+    back = max(0, min(int(fnum(a.get("days_back"), 0)), 30))
+    universe = None if sym else set(AP.market_snapshot()["rows"])
+    rows = XD.earnings_calendar(sym, ahead, back, universe)
+    if not sym and a.get("min_dollar_vol_m"):
+        snap = AP.market_snapshot()["rows"]
+        rows = [r for r in rows if (snap.get(r["symbol"]) or {}).get("dollar_vol_m", 0) >= fnum(a.get("min_dollar_vol_m"))]
+    limit = max(1, min(int(fnum(a.get("limit"), 150)), 400))
+    out = {"from": (dt.date.today() - dt.timedelta(days=back)).isoformat(),
+           "to": (dt.date.today() + dt.timedelta(days=ahead)).isoformat(),
+           "reports": len(rows), "rows": rows[:limit]}
+    if sym:
+        out["past_quarters"] = XD.earnings_history(sym)
+    return out
+
+
+def t_turnover(n, a):
+    syms = [str(s).upper() for s in (a.get("symbols") or [])][:30]
+    if not syms:
+        return {"error": "give symbols (up to 30)"}
+    return {"note": "turnover = shares traded per day / shares outstanding; 20d vs 120d above 1 means trading "
+                    "has picked up recently", "stocks": XD.turnover(syms)}
+
+
+def t_option_history(n, a):
+    kind = a.get("type", "call") if a.get("type") in ("call", "put") else "call"
+    return XD.option_history(n, contract=a.get("contract"), symbol=a.get("symbol"), as_of=a.get("as_of"),
+                             days_to_expiry=fnum(a.get("days_to_expiry"), 30), strike_pct=fnum(a.get("strike_pct"), 0),
+                             kind=kind, sessions=max(1, min(int(fnum(a.get("sessions"), 30)), 120)))
+
+
 TOOLS = {"account": t_account, "price_history": t_price_history, "leaders": t_leaders,
          "stock_stats": t_stock_stats, "option_chain": t_option_chain, "news": t_news,
          "options_flow": t_options_flow, "web_search": t_web_search, "read_page": t_read_page,
          "place_order": t_place_order, "cancel_order": t_cancel_order,
          "journal_write": t_journal_write, "memory_search": t_memory_search, "watchlist_save": t_watchlist_save,
          "watchlists": t_watchlists, "request": t_request, "experiment_register": t_experiment_register,
-         "experiment_update": t_experiment_update}
+         "experiment_update": t_experiment_update, "earnings": t_earnings, "turnover": t_turnover,
+         "option_history": t_option_history}
 
 
 def call(n, name, args):

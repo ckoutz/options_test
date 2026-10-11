@@ -57,6 +57,7 @@ jobs:
       PAPER3_KEY_ID: ${{ secrets.PAPER3_KEY_ID }}
       PAPER3_SECRET: ${{ secrets.PAPER3_SECRET }}
       LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
       LLM_BASE_URL: https://openrouter.ai/api/v1
     steps:
       - uses: actions/checkout@v4

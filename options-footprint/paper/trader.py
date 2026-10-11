@@ -561,6 +561,7 @@ def main():
     rs.add_argument("--agents", default="1,2,3")
     sm = sub.add_parser("smoke", help="call every read-only tool once (no model, no orders)")
     sm.add_argument("--agent", type=int, default=3)
+    sub.add_parser("repair-experiments", help="clean stray tool-call markup out of saved experiments")
     r = sub.add_parser("respond")
     r.add_argument("--id", required=True)
     r.add_argument("--status", choices=["approved", "denied", "pending"], required=True)
@@ -598,6 +599,14 @@ def main():
         smoke(a.agent)
     elif a.cmd == "respond":
         respond(a)
+    elif a.cmd == "repair-experiments":
+        st = C.db()
+        for e in st.backend.read("paper_experiments"):
+            fixed = TL.unleak(e)
+            if fixed != e:
+                fixed["trades_needed"] = int(TL.fnum(fixed.get("trades_needed"), 10))
+                st.backend.upsert("paper_experiments", [fixed])
+                print(f"repaired {e['id']}: trades_needed {e.get('trades_needed')} -> {fixed['trades_needed']}")
 
 
 if __name__ == "__main__":

@@ -197,7 +197,24 @@ def t_request(n, a):
                     "all three traders."}
 
 
+def unleak(a):
+    """The model sometimes writes the next argument inside a text field as stray markup, e.g.
+    'expected': '... </expected>\\n<parameter name="trades_needed">30'. Pull such values out."""
+    a = dict(a)
+    for key in ("hypothesis", "expected", "name"):
+        text = str(a.get(key, ""))
+        cut = re.search(r"</\w+>|<parameter", text)
+        if not cut:
+            continue
+        for k, v in re.findall(r'<parameter name="(\w+)">\s*([^<]*)', text[cut.start():]):
+            if not a.get(k) or k == "trades_needed":
+                a[k] = v.strip()
+        a[key] = text[:cut.start()].strip()
+    return a
+
+
 def t_experiment_register(n, a):
+    a = unleak(a)
     eid = f"E{dt.date.today():%m%d}-{n}-{uuid.uuid4().hex[:4]}"
     try:
         judge = dt.date.fromisoformat(str(a.get("judge_by")))

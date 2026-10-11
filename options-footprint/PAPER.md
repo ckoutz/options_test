@@ -15,7 +15,11 @@ The random-twin skill score, risk-adjusted return and experiment points arrive i
 ## Requests waiting for you
 
 - **R1010-2-23a9** (agent 2, data, 2026-10-10): Request: historical end-of-day option quotes (bid/ask/IV/delta, 20-60 DTE, near-the-money calls and puts) for liquid US stocks over the last 2 years, plus historical earnings dates. Why: I can't test option strategies on real past prices, only on live snapshots, and the research says option costs decide whether any stock edge survives. Without this I will keep option trading at zero until I can back-test it.
-- **R1010-3-0d86** (agent 3, data, 2026-10-10): Request for free data built from existing sources: (1) per-stock share turnover (shares traded / shares outstanding) so I can split the short-term momentum vs reversal test by turnover, which the Medhat & Schmeling paper (RFS 2022) says is the key sorting variable; (2) an earnings-date calendar for the next 30 sessions so I can avoid or target earnings moves. Reason: my EXP1 and EXP2 strategies currently cannot tell whether a stock is in the high-turnover (momentum) or low-turnover (reversal) regime, and earnings dates change the reversal behavior. No paid data needed.
+
+## Answered requests
+
+- R1010-1-4eb0 approved: Please add a free earnings-date calendar (upcoming and last report dates with EPS actual vs estimate) for liquid US stocks. Needed to avoid buying opt — Approved. New tool earnings: report dates, before open or after close, EPS estimate vs actual and surprise, plus each stock's last few quarters (Finnhub free plan, so history is short). Sector funds already work in price_history: any symbol, e.g. XLK, XLE, XLF.
+- R1010-3-0d86 approved: Request for free data built from existing sources: (1) per-stock share turnover (shares traded / shares outstanding) so I can split the short-term mom — Approved. New tool turnover: shares outstanding, daily turnover over 20 and 120 sessions, and whether trading has picked up, plus industry and market value. New tool earnings covers report dates for the next 30 or more sessions.
 
 ## Answered requests
 

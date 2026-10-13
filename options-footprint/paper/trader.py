@@ -455,7 +455,16 @@ def report():
         mine = sorted((d for d in days if d["agent"] == TL.me(n)), key=lambda d: d["day"])[-3:]
         L += [f"### Agent {n}", ""] + [f"- **{d['day']}** ({d['steps']} steps, {d['orders']} order attempts, "
                                        f"${TL.fnum(d['cost_usd']):.2f}): {d['summary']}" for d in mine] + [""]
-    L += ["## Open experiments", ""]
+    L += ["## Orders in the last 7 days", "", "| agent | when (UTC) | order | status | strategy | note |",
+          "|---|---|---|---|---|---|"]
+    week = (dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=7)).isoformat()
+    recent = sorted((o for o in orders if str(o.get("created", "")) >= week and not o["agent"].endswith("-dry")),
+                    key=lambda o: (o["agent"], str(o["created"])))
+    L += [f"| {o['agent'].replace('agent', '')} | {str(o['created'])[:16]} | {o['side']} {TL.fnum(o['qty']):g} "
+          f"{o['symbol']} {o['order_type']}{' ' + str(o['limit_price']) if o.get('limit_price') not in (None, '') else ''} | "
+          f"{o['status']} | {str(o.get('strategy') or '')[:40]} | {str(o.get('rejected') or '')[:160]} |"
+          for o in recent] or ["| - | | none | | | |"]
+    L += ["", "## Open experiments", ""]
     L += [f"- agent {e['agent'].replace('agent', '').replace('-dry', ' (dry run)')} **{e['name']}** ({e['id']}): {e['hypothesis'][:200]} Expect: {e['expected'][:150]}. "
           f"Judge by {e['judge_by']}." for e in exps if e["status"] == "open"] or ["- none"]
     with open(os.path.join(C.ROOT, "PAPER.md"), "w") as f:

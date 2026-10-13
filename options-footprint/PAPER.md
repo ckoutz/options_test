@@ -1,4 +1,4 @@
-# Paper traders (2026-10-13 04:20 UTC)
+# Paper traders (2026-10-13 04:22 UTC)
 
 Season 1: 6 months, with a checkpoint at 3 months.
 
@@ -8,7 +8,7 @@ Agent 1: the research committee's final playbook. Agent 2: the playoff pick (the
 |---|---|---|---|---|---|---|---|---|---|
 | 1 | 100,000 | +0.00% | +0.00% | 100% | 0 | 4 | 0 | 3 | 0.24 |
 | 2 | 100,000 | +0.00% | +0.00% | 100% | 0 | 3 | 1 | 2 | 0.34 |
-| 3 | 100,000 | +0.00% | +0.00% | 100% | 0 | 3 | 3 | 2 | 0.29 |
+| 3 | 100,000 | +0.00% | +0.00% | 100% | 0 | 3 | 1 | 2 | 0.29 |
 
 The random-twin skill score, risk-adjusted return and experiment points arrive in the next build phase; they are computed from the saved trades, so they will cover these first days too.
 
@@ -51,10 +51,6 @@ The random-twin skill score, risk-adjusted return and experiment points arrive i
 | 2 | 2026-10-13T04:18 | buy 24 TEAM limit 210.0 | rejected | H52-stock (E1010-2-615b) | this position would cost $5,040; the Experiment-level limit is $5,000 (5% of the account, or one contract up to 10%) |
 | 2 | 2026-10-13T04:18 | buy 17 DDOG limit 291.0 | accepted | H52-stock (E1010-2-615b) |  |
 | 2 | 2026-10-13T04:18 | buy 23 TEAM limit 210.0 | accepted | H52-stock (E1010-2-615b) |  |
-| 3 | 2026-10-10T21:37 | buy 1 AAPL limit 1.0 | rejected | smoke | too small: $1 is under the 1% minimum ($1,000) |
-| 3 | 2026-10-10T21:37 | buy 1 AAPL261120C00340000 limit 10.42 | dry-run | smoke |  |
-| 3 | 2026-10-10T21:40 | buy 1 AAPL limit 1.0 | rejected | smoke | too small: $1 is under the 1% minimum ($1,000) |
-| 3 | 2026-10-10T21:40 | buy 1 AAPL261120C00340000 limit 10.42 | dry-run | smoke |  |
 | 3 | 2026-10-13T04:19 | buy 23 MRNA limit 215.0 | accepted | EXP1 stock momentum-quality, 10-session  |  |
 | 3 | 2026-10-13T04:19 | buy 24 TEAM limit 209.0 | rejected | EXP1 stock momentum-quality, 10-session  | this position would cost $5,016; the Experiment-level limit is $5,000 (5% of the account, or one contract up to 10%) |
 | 3 | 2026-10-13T04:19 | buy 23 PLTR limit 210.0 | accepted | EXP1 stock momentum-quality, 10-session  |  |

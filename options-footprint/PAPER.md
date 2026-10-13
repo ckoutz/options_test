@@ -1,4 +1,4 @@
-# Paper traders (2026-10-13 04:19 UTC)
+# Paper traders (2026-10-13 04:20 UTC)
 
 Season 1: 6 months, with a checkpoint at 3 months.
 
@@ -38,6 +38,27 @@ The random-twin skill score, risk-adjusted return and experiment points arrive i
 
 - **2026-10-10** (10 steps, 0 order attempts, $0.28): Research day, no orders. Market: S&P near highs (778.57, +3% 20d) but narrow breadth (32% above 50d), 10y yield near 5.26%, CPI Oct 14, Fed Oct 28. Research covered four families: momentum (Medhat & Schmeling 2022: short-term momentum in liquid high-turnover large caps, survives costs), short-term reversal (Quantpedia: survives only in the largest stocks, costs eat it elsewhere), PEAD (cost-sensitive, rejected for now), and option buying (negative expected returns in the literature, rejected as default), plus low-beta and industry momentum as background. Corrected the EXP1 candidate list against the 3-month leaders screen: META, NVDA, AAPL, AMZN, GOOGL, PTC, P, MRNA fail the filters; kept TEAM, OKTA, HPE, PLTR, VEEV, MPC, MSFT, FRO, U. TMUS fails EXP2's above-200-day filter (down 33% over 12 months). Options: IV is 40-58% on TMUS/PLTR and about 26% on AAPL, so no option trades. Filed data request R1010-3-0d86 for turnover and an earnings calendar. Journal rewritten as a full game plan with research notes. Both experiments stay registered; Monday's plan is to apply the EXP1 screen to that day's data and buy up to 3 names at 5%.
 - **2026-10-13** (4 steps, 4 order attempts, $0.01): Applied the EXP1 screen to the Oct 12 close (3m leaders, $200M+ liquidity, above 20d and 50d, within 10% of 52w high, vs_ma20 <= 15%). Placed three limit buys at 5% each, tagged E1010-3-8b83: MRNA (23 sh, limit 215), PLTR (23 sh, limit 210), TEAM (23 sh, limit 209). Exit is 10 sessions later (about Oct 27) or an 8% stop. The first TEAM order was rejected for breaching the $5,000 experiment cap, so I resized it. OKTA passes but is not bought because the 3-name cap is full. TMUS fails EXP2's 200-day filter, so no EXP2 trade. No options. About 85% of the account stays in cash. Software and AI concentration is a known risk. Journal updated.
+
+## Orders in the last 7 days
+
+| agent | when (UTC) | order | status | strategy | note |
+|---|---|---|---|---|---|
+| 1 | 2026-10-13T04:18 | buy 3 PLTR261113C00210000 limit 13.68 | accepted | S1-live-30d-ATM |  |
+| 1 | 2026-10-13T04:18 | buy 11 MRNA limit 216.0 | accepted | STMOM-shares-10d |  |
+| 1 | 2026-10-13T04:18 | buy 14 SHOP limit 181.0 | accepted | STMOM-shares-10d |  |
+| 1 | 2026-10-13T04:18 | buy 9 ILMN limit 279.0 | accepted | STMOM-shares-10d |  |
+| 2 | 2026-10-13T04:18 | buy 8 DELL limit 582.0 | accepted | H52-stock (E1010-2-615b) |  |
+| 2 | 2026-10-13T04:18 | buy 24 TEAM limit 210.0 | rejected | H52-stock (E1010-2-615b) | this position would cost $5,040; the Experiment-level limit is $5,000 (5% of the account, or one contract up to 10%) |
+| 2 | 2026-10-13T04:18 | buy 17 DDOG limit 291.0 | accepted | H52-stock (E1010-2-615b) |  |
+| 2 | 2026-10-13T04:18 | buy 23 TEAM limit 210.0 | accepted | H52-stock (E1010-2-615b) |  |
+| 3 | 2026-10-10T21:37 | buy 1 AAPL limit 1.0 | rejected | smoke | too small: $1 is under the 1% minimum ($1,000) |
+| 3 | 2026-10-10T21:37 | buy 1 AAPL261120C00340000 limit 10.42 | dry-run | smoke |  |
+| 3 | 2026-10-10T21:40 | buy 1 AAPL limit 1.0 | rejected | smoke | too small: $1 is under the 1% minimum ($1,000) |
+| 3 | 2026-10-10T21:40 | buy 1 AAPL261120C00340000 limit 10.42 | dry-run | smoke |  |
+| 3 | 2026-10-13T04:19 | buy 23 MRNA limit 215.0 | accepted | EXP1 stock momentum-quality, 10-session  |  |
+| 3 | 2026-10-13T04:19 | buy 24 TEAM limit 209.0 | rejected | EXP1 stock momentum-quality, 10-session  | this position would cost $5,016; the Experiment-level limit is $5,000 (5% of the account, or one contract up to 10%) |
+| 3 | 2026-10-13T04:19 | buy 23 PLTR limit 210.0 | accepted | EXP1 stock momentum-quality, 10-session  |  |
+| 3 | 2026-10-13T04:19 | buy 23 TEAM limit 209.0 | accepted | EXP1 stock momentum-quality, 10-session  |  |
 
 ## Open experiments
 

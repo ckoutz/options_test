@@ -585,7 +585,12 @@ def main():
         snap = AP.market_snapshot()
         print(f"Market snapshot: {snap['meta']['stocks']} liquid stocks; breadth {snap['meta']['breadth_pct_above_ma50']}%")
         total = 0.0
+        done_today = {(r["agent"]) for r in C.db().backend.read("paper_days")
+                      if r.get("day") == dt.date.today().isoformat() and r.get("kind", "trading") == "trading"}
         for n in [int(x) for x in a.agents.split(",")]:
+            if TL.me(n) in done_today:
+                print(f"agent{n} already traded today ({dt.date.today()}); skipping a second run")
+                continue
             try:
                 total += run_agent(n, snap)
             except Exception as ex:   # noqa: BLE001 - one agent failing must not stop the others

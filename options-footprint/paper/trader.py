@@ -434,7 +434,7 @@ def report():
         a, b = e[0], e[-1]
         ret = 100 * (TL.fnum(b["equity"]) / TL.fnum(a["equity"], 1) - 1)
         spy = 100 * (TL.fnum(b["spy_close"]) / TL.fnum(a["spy_close"], 1) - 1) if TL.fnum(a["spy_close"]) else 0
-        mo = [o for o in orders if o["agent"] == me]
+        mo = [o for o in orders if o["agent"] == me and o.get("strategy") != "smoke"]
         L.append(f"| {n} | {TL.fnum(b['equity']):,.0f} | {ret:+.2f}% | {spy:+.2f}% | "
                  f"{100 * TL.fnum(b['cash']) / TL.fnum(b['equity'], 1):.0f}% | {b['positions']} | "
                  f"{sum(1 for o in mo if o['status'] not in ('rejected', 'dry-run'))} | "
@@ -458,7 +458,8 @@ def report():
     L += ["## Orders in the last 7 days", "", "| agent | when (UTC) | order | status | strategy | note |",
           "|---|---|---|---|---|---|"]
     week = (dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=7)).isoformat()
-    recent = sorted((o for o in orders if str(o.get("created", "")) >= week and not o["agent"].endswith("-dry")),
+    recent = sorted((o for o in orders if str(o.get("created", "")) >= week and not o["agent"].endswith("-dry")
+                     and o.get("strategy") != "smoke"),
                     key=lambda o: (o["agent"], str(o["created"])))
     L += [f"| {o['agent'].replace('agent', '')} | {str(o['created'])[:16]} | {o['side']} {TL.fnum(o['qty']):g} "
           f"{o['symbol']} {o['order_type']}{' ' + str(o['limit_price']) if o.get('limit_price') not in (None, '') else ''} | "

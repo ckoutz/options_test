@@ -1,4 +1,4 @@
-# Paper traders (2026-10-14 08:42 UTC)
+# Paper traders (2026-10-15 08:18 UTC)
 
 Season 1: 6 months, with a checkpoint at 3 months.
 
@@ -6,9 +6,9 @@ Agent 1: the research committee's final playbook. Agent 2: the playoff pick (the
 
 | agent | equity $ | return since start | S&P 500 since start | cash % | positions | orders sent | rejected | open experiments | model cost $ |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | 100,051 | +0.05% | -0.01% | 89% | 4 | 4 | 0 | 3 | 0.25 |
-| 2 | 99,910 | -0.09% | -0.01% | 86% | 3 | 3 | 1 | 2 | 0.35 |
-| 3 | 100,128 | +0.13% | -0.01% | 86% | 3 | 3 | 1 | 2 | 0.33 |
+| 1 | 98,985 | -1.02% | -1.09% | 90% | 4 | 4 | 0 | 3 | 0.25 |
+| 2 | 98,992 | -1.01% | -1.09% | 87% | 3 | 4 | 1 | 2 | 0.35 |
+| 3 | 99,954 | -0.05% | -1.09% | 86% | 3 | 6 | 1 | 2 | 0.36 |
 
 The random-twin skill score, risk-adjusted return and experiment points arrive in the next build phase; they are computed from the saved trades, so they will cover these first days too.
 
@@ -26,21 +26,21 @@ The random-twin skill score, risk-adjusted return and experiment points arrive i
 
 ### Agent 1
 
-- **2026-10-10** (8 steps, 0 order attempts, $0.23): Research day, no orders (Sat 2026-10-10). Searched six-plus topics across momentum, short-term reversal, post-earnings drift, variance risk premium, options flow, sector rotation, dip-buying and option costs, and read three sources. Checked the leader list, options-flow scan, PLTR history/options and news against the research. Decisions: keep S1 (PLTR Nov 6 210 call, 3 contracts at the Monday open only if the open is 200-217 and the gate still holds). Registered a new share-momentum experiment STMOM-shares-10d (20 trades, judge 2026-12-15) with a watchlist of candidates. Rejected short-term reversal, PEAD for now, variance-premium selling, and index dip-buying, with reasons written in the journal. Filed a data request for an earnings-date calendar and sector ETF histories. Still 100% cash.
 - **2026-10-13** (6 steps, 4 order attempts, $0.01): Tue 2026-10-13. Ran the S1 gate on PLTR using the 10-12 close: passes (20-session +20.6%, 17% above 50-day). Placed a limit buy for 3x PLTR 2026-11-13 210 call at 13.68 (S1-live-30d-ATM). Applied the STMOM rule to 1-month leaders with dollar volume >= $1bn and price above 50-day: bought MRNA 11 sh (limit 216), SHOP 14 sh (limit 181), ILMN 9 sh (limit 279) under STMOM-shares-10d. Each position is about 2.5% of account. Orders execute 10-14. Exit plans: options after about 10 sessions, shares after about 10 sessions (~10-27), or on a 12% stop or a close below the 50-day. Journal updated, including the $1bn dollar-volume deviation from the plan's $300m.
 - **2026-10-14** (4 steps, 0 order attempts, $0.01): 2026-10-14: No new orders. The three share positions (MRNA, SHOP, ILMN) and the PLTR 210 Nov-13 call filled at yesterday's limits and are in the book. Checked earnings dates: MRNA (10-29 pre-market), ILMN (10-29 after close) and SHOP (11-03 pre-market) all fall after the planned ~10-27 share exit, and PLTR (11-09) after the ~10-28 option exit, so no hold conflicts with earnings. Account equity about $100,044 (+0.04% since season start) vs S&P roughly flat. Journal updated with positions, exit rules and open experiments. Still mostly cash (about 89%).
+- **2026-10-15** (3 steps, 0 order attempts, $0.00): 2026-10-15: No new orders. Held PLTR 210 Nov-13 call (3 contracts, now 10.15 vs 13.60 fill, -25%, option stop at -50%) and the three STMOM share positions: MRNA up about 8%, SHOP -1.3%, ILMN -1.5%, none at the 12% stop or below the 50-day. No earnings conflicts before planned exits (~10-27/10-28). Account about 89% cash. Journal updated with positions, stops, and open experiments. No new setup passed the rules today, and the existing experiments need their full sample before judging.
 
 ### Agent 2
 
-- **2026-10-10** (9 steps, 0 order attempts, $0.33): Research day, no orders. Reviewed 9 strategy families (time-series momentum, short-term reversal, PEAD, variance premium, options flow, industry momentum, retail earnings option losses, 52-week-high anchoring, large-cap 12-1 momentum). Most edges are small, decay after costs, or are gross-only; options look like a loss-maker for retail. Market: SPY 778.57, near its high, but breadth is narrow (32% above ma50), leadership is in tech and speculative names, and yields and oil are high. C-stock gate (SPY 5d < 0) fails today, so no entries. Registered H52-stock (52-week-high anchoring, stock only, 20 trades). Filed a data request for historical option quotes and earnings dates. Saved a candidate watchlist. Journal written as a game plan with research notes.
 - **2026-10-13** (5 steps, 4 order attempts, $0.01): 2026-10-13: C-stock gate closed (SPY 5d +0.4%), no trades. H52-stock screen run: placed limit buys for DELL (8 sh, <=582), DDOG (17 sh, <=291), and TEAM (23 sh, <=210; 24 was rejected for exceeding the $5,000 experiment cap). Each about 5% of account. No options. Exits planned after 20 sessions (~2026-11-10) or on a close below the 50d MA / -10% from entry. Journal updated with the screen, candidates passed over, and the sizing rule.
 - **2026-10-14** (3 steps, 0 order attempts, $0.00): 2026-10-14: No new orders. Kept the three H52-stock positions (DELL, DDOG, TEAM, about 5% each). DELL has no earnings in the window. TEAM and DDOG report 2026-11-05, inside the 20-session hold; I accept that as part of the experiment and will not add through earnings. The C-stock gate technically reopened (SPY 5d -0.1%), but I ran no screen and placed no trades, so I did not claim a C-stock entry. Journal updated with the book, earnings dates and the screen rule.
+- **2026-10-15** (5 steps, 1 order attempts, $0.01): 2026-10-15: DELL closed at the -10% stop: market sell of 8 sh submitted for the next open (entry 553.95, now 489, -11.7%). DDOG (-7.5%) and TEAM (-2.6%) kept under their -10% stops and earnings-window rules. C-stock gate open but the exact screen is not yet written, so no C-stock trades. No options. Journal updated with the stop record and an action item to write the C-stock screen.
 
 ### Agent 3
 
-- **2026-10-10** (10 steps, 0 order attempts, $0.28): Research day, no orders. Market: S&P near highs (778.57, +3% 20d) but narrow breadth (32% above 50d), 10y yield near 5.26%, CPI Oct 14, Fed Oct 28. Research covered four families: momentum (Medhat & Schmeling 2022: short-term momentum in liquid high-turnover large caps, survives costs), short-term reversal (Quantpedia: survives only in the largest stocks, costs eat it elsewhere), PEAD (cost-sensitive, rejected for now), and option buying (negative expected returns in the literature, rejected as default), plus low-beta and industry momentum as background. Corrected the EXP1 candidate list against the 3-month leaders screen: META, NVDA, AAPL, AMZN, GOOGL, PTC, P, MRNA fail the filters; kept TEAM, OKTA, HPE, PLTR, VEEV, MPC, MSFT, FRO, U. TMUS fails EXP2's above-200-day filter (down 33% over 12 months). Options: IV is 40-58% on TMUS/PLTR and about 26% on AAPL, so no option trades. Filed data request R1010-3-0d86 for turnover and an earnings calendar. Journal rewritten as a full game plan with research notes. Both experiments stay registered; Monday's plan is to apply the EXP1 screen to that day's data and buy up to 3 names at 5%.
 - **2026-10-13** (4 steps, 4 order attempts, $0.01): Applied the EXP1 screen to the Oct 12 close (3m leaders, $200M+ liquidity, above 20d and 50d, within 10% of 52w high, vs_ma20 <= 15%). Placed three limit buys at 5% each, tagged E1010-3-8b83: MRNA (23 sh, limit 215), PLTR (23 sh, limit 210), TEAM (23 sh, limit 209). Exit is 10 sessions later (about Oct 27) or an 8% stop. The first TEAM order was rejected for breaching the $5,000 experiment cap, so I resized it. OKTA passes but is not bought because the 3-name cap is full. TMUS fails EXP2's 200-day filter, so no EXP2 trade. No options. About 85% of the account stays in cash. Software and AI concentration is a known risk. Journal updated.
 - **2026-10-14** (3 steps, 0 order attempts, $0.04): Oct 14: No new orders. The three EXP1 positions (MRNA, PLTR, TEAM, all entered Oct 13) are within their stops: MRNA about +3%, PLTR flat, TEAM about -1%. OKTA passes the screen but the 3-name cap is full. I could not confirm the September CPI print (only previews), so I did not change position size; the rule is to cut EXP1 to 3% if core is above 0.6% m/m, and I'll recheck before any new entry. Cash remains about 85%. Journal updated with the status, risks, and the exit schedule (about Oct 27 or the -8% stop).
+- **2026-10-15** (4 steps, 3 order attempts, $0.03): Oct 15: No new entries. Verified the Sept CPI print (core +0.3% m/m, headline +0.6%, hotter than expected, so the EXP1 size-cut rule does not trigger). Placed GTC protective stop-sells at about -8% on the three EXP1 positions (PLTR 191.60, MRNA 191.10, TEAM 192.20). Cash stays about 86%. The EXP1 exit is about Oct 27 or the stop. OKTA still passes the screen but the 3-name cap is full. Journal updated.
 
 ## Orders in the last 7 days
 
@@ -54,10 +54,14 @@ The random-twin skill score, risk-adjusted return and experiment points arrive i
 | 2 | 2026-10-13T04:18 | buy 24 TEAM limit 210.0 | rejected | H52-stock (E1010-2-615b) | this position would cost $5,040; the Experiment-level limit is $5,000 (5% of the account, or one contract up to 10%) |
 | 2 | 2026-10-13T04:18 | buy 17 DDOG limit 291.0 | accepted | H52-stock (E1010-2-615b) |  |
 | 2 | 2026-10-13T04:18 | buy 23 TEAM limit 210.0 | accepted | H52-stock (E1010-2-615b) |  |
+| 2 | 2026-10-15T08:17 | sell 8 DELL market | pending_new | H52-stock |  |
 | 3 | 2026-10-13T04:19 | buy 23 MRNA limit 215.0 | accepted | EXP1 stock momentum-quality, 10-session  |  |
 | 3 | 2026-10-13T04:19 | buy 24 TEAM limit 209.0 | rejected | EXP1 stock momentum-quality, 10-session  | this position would cost $5,016; the Experiment-level limit is $5,000 (5% of the account, or one contract up to 10%) |
 | 3 | 2026-10-13T04:19 | buy 23 PLTR limit 210.0 | accepted | EXP1 stock momentum-quality, 10-session  |  |
 | 3 | 2026-10-13T04:19 | buy 23 TEAM limit 209.0 | accepted | EXP1 stock momentum-quality, 10-session  |  |
+| 3 | 2026-10-15T08:18 | sell 23 PLTR stop | pending_new |  |  |
+| 3 | 2026-10-15T08:18 | sell 23 MRNA stop | pending_new |  |  |
+| 3 | 2026-10-15T08:18 | sell 23 TEAM stop | pending_new |  |  |
 
 ## Open experiments
 

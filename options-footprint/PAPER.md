@@ -1,4 +1,4 @@
-# Paper traders (2026-10-20 08:31 UTC)
+# Paper traders (2026-10-21 08:36 UTC)
 
 Season 1: 6 months, with a checkpoint at 3 months.
 
@@ -6,9 +6,9 @@ Agent 1: the research committee's final playbook. Agent 2: the playoff pick (the
 
 | agent | equity $ | return since start | S&P 500 since start | cash % | positions | orders sent | rejected | open experiments | model cost $ |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | 97,402 | -2.60% | -1.49% | 93% | 3 | 8 | 0 | 3 | 0.27 |
-| 2 | 98,641 | -1.36% | -1.49% | 90% | 2 | 6 | 1 | 2 | 0.37 |
-| 3 | 100,269 | +0.27% | -1.49% | 85% | 3 | 8 | 3 | 2 | 0.38 |
+| 1 | 97,628 | -2.37% | -1.16% | 92% | 3 | 8 | 0 | 3 | 0.28 |
+| 2 | 98,919 | -1.08% | -1.16% | 90% | 2 | 6 | 1 | 2 | 0.38 |
+| 3 | 100,965 | +0.96% | -1.16% | 84% | 3 | 8 | 3 | 2 | 0.39 |
 
 The random-twin skill score, risk-adjusted return and experiment points arrive in the next build phase; they are computed from the saved trades, so they will cover these first days too.
 
@@ -26,21 +26,21 @@ The random-twin skill score, risk-adjusted return and experiment points arrive i
 
 ### Agent 1
 
-- **2026-10-16** (3 steps, 0 order attempts, $0.01): Fri 2026-10-16: No new orders. Reviewed the open book: PLTR 210 Nov-13 call (3 contracts, about -27%, option stop at -50%, planned exit about 10-28), and STMOM share positions MRNA (+13%), SHOP (+1.6%), ILMN (-2.1%). None is at the 12% stop or below its 50-day. Earnings calendar checked: no held name reports before its planned exit. No new setup passed the S1 or STMOM gates, so I stay about 89% cash. Journal updated with the cash rationale and re-entry conditions.
 - **2026-10-17** (4 steps, 1 order attempts, $0.01): Sat 2026-10-17: PLTR 210 Nov-13 call was at 4.80 vs 13.60 fill (-65%), past my -50% option stop. Placed a sell limit at 4.60 for all 3 contracts to exit on the next session. The stop was missed because PLTR gapped down on 10-16 and I had no resting stop order. Held the STMOM share positions (MRNA +4%, SHOP -3%, ILMN -5%); none is at its 12% stop, and none reports earnings before the ~10-27 planned exit. No new trades: the market 20-day return is near zero and no stock passed the momentum gate. About 91% cash. Journal updated: S1 paused pending review, and a rule added to place GTC stops at option entry.
 - **2026-10-20** (5 steps, 3 order attempts, $0.01): Held the three STMOM share positions (MRNA, SHOP, ILMN); none at stop or below 50-day. Placed resting GTC stop-loss orders on all three at their planned 12% levels (MRNA 184, SHOP 153.7, ILMN 242.7), per the lesson from the missed PLTR option stop. No new trades: no stock passed the momentum gate and the market 20-day return is roughly flat. About 92% cash. Journal updated. MRNA has Phase 3 melanoma data Sat 10-24, inside the hold; the GTC stop covers the gap risk.
+- **2026-10-21** (3 steps, 0 order attempts, $0.00): 2026-10-21: No new orders. Held the three STMOM share positions with resting GTC stops (MRNA 184, SHOP 153.7, ILMN 242.7). MRNA +15%, SHOP -1%, ILMN -3%; none at stop, MRNA Phase 3 data Sat 10-24 is covered by the stop. ACN passed the stock-level momentum screen but the market 20-day return is -0.6%, so the entry gate stays closed. About 92% cash. Journal updated with positions, watch item ACN, and re-entry conditions.
 
 ### Agent 2
 
-- **2026-10-16** (5 steps, 1 order attempts, $0.01): 2026-10-16: Placed one H52-stock limit buy for GTLB (86 sh, limit 57, ~5% of account), the third slot in the max-3 H52 book. GTLB is 0.1% off its 52-week high, 19% above its 50-day average, with no earnings in the 20-session window. Kept DDOG (-6.9%, stop 257.36) and TEAM (+3.4%, stop 188.96 or close below ma50). Did not trade C-stock: the screen still needs to be written down and confirmed before any entry. Journal updated with the GTLB exit plan and a draft C-stock screen for review.
 - **2026-10-17** (3 steps, 1 order attempts, $0.00): 2026-10-17: DDOG closed 247.11 on 10/16, below my written 257.36 close-based stop, so I submitted a market sell of 17 sh for the next open (entry 285.95, about -14%). TEAM (-1.0%, stop close below 188.96 or ma50) and GTLB (-7.3%, exit at close below 50d MA or about -10% from 56.92 entry, around 51.2) remain open and above their stops. No new entries: SPY 5d -2.0% opens the C-stock gate but the screen is not finalized, and H52 slots are not filled because breadth is narrow (31%). Journal updated with the DDOG stop record and a lesson to check stops against the newest close first. Cash about 86%.
 - **2026-10-20** (3 steps, 0 order attempts, $0.01): 2026-10-20: No new orders. Checked both open positions against the newest closes (10/19 data): GTLB 53.29 is above its ~51.2 stop and well above its 50d MA; TEAM 214.75 is above its 188.96 stop and ma50. Both stay open. Market breadth is still narrow (30.8% above ma50), so the H52 screen gave no new qualified names beyond the two holdings, and the C-stock screen is still not written down, so no C-stock entries. Cash ~90%; the reason and the conditions for returning to trading are recorded in the journal.
+- **2026-10-21** (3 steps, 0 order attempts, $0.01): 2026-10-21: No new orders. GTLB (55.00, above ~51.2 stop and 50d MA) and TEAM (221.11, at 52-week high, above 188.96 stop and ma50) both remain open and within their rules. Breadth improved to 36.2% above ma50 but is still below the 40-50% level I set for returning to active trading, and the C-stock screen is still not written down, so no new entries. Cash ~90%. Journal updated.
 
 ### Agent 3
 
-- **2026-10-16** (3 steps, 0 order attempts, $0.00): Oct 16: No new orders. EXP1 positions (MRNA 236.5, PLTR 200.5, TEAM 217.12) remain well above their GTC stops (191.10, 191.60, 192.20). The 3-name cap is full, so OKTA passes the screen but is not bought. Equity 100,709, about 85% cash. Plan: hold to about Oct 27 exit or stop, whichever comes first. Journal updated.
 - **2026-10-17** (6 steps, 3 order attempts, $0.02): Oct 17: PLTR was stopped out Oct 15, which freed one EXP1 slot. IOVA passes the EXP1 filters on the Oct 16 close (3m rank 100, above 20d and 50d, 8% below its 52w high). I placed a day limit buy for 350 IOVA at 13.90 (about $4,865, within the $5,000 cap), tagged EXP1, with an exit plan. The -8% protective stop at 12.50 goes on once the fill is confirmed. OKTA no longer qualifies (below its 20d). MRNA and TEAM stay open with their GTC stops. Cash is about 90%. Journal updated.
 - **2026-10-20** (3 steps, 1 order attempts, $0.00): Oct 20: No new entries. I placed a GTC protective stop-sell on 350 IOVA at 12.50 (-8% from the 13.90 fill). MRNA (226.89, stop 191.10) and TEAM (214.75, stop 192.20) stay in EXP1 with their GTC stops. The three EXP1 names are all extended above their 20-day averages. The 3-name cap is full, so there are no new buys. Planned exits are about Oct 27 to 30, or the stops. Journal updated.
+- **2026-10-21** (2 steps, 0 order attempts, $0.00): Oct 21: No new orders. Held the three EXP1 positions (IOVA 14.90 vs 13.90 entry, MRNA 240.46 vs 207.68, TEAM 219.78 vs 208.99). All GTC stops remain in place (IOVA 12.50, MRNA 191.10, TEAM 192.20). The 3-name cap is full, so no new entries. Planned exits: MRNA and TEAM about Oct 27, IOVA about Oct 31, or the stop, whichever is first. Market softening (S&P -1.2% over 5 sessions) and FOMC Oct 27-28 ahead. Journal updated.
 
 ## Orders in the last 7 days
 

@@ -1,83 +1,83 @@
-# Last run: nightly (2026-10-22 01:29 UTC)
+# Last run: nightly (2026-10-23 01:31 UTC)
 ```
-  FJET   Call volume 5x+  (calls 8.94x, long-dated 2.15x, put/call drop 7.76x)
-  FLG    Calls 3x+ and puts flat (put/call drop 3x+)  (calls 5.72x, long-dated 0.64x, put/call drop 12.76x)
-  FLG    Call volume 5x+  (calls 5.72x, long-dated 0.64x, put/call drop 12.76x)
-  FTAI   Call volume 5x+  (calls 5.26x, long-dated 3.29x, put/call drop 2.54x)
-  FTRE   Calls 3x+ and puts flat (put/call drop 3x+)  (calls 5.02x, long-dated 14.67x, put/call drop 3.55x)
-  FTRE   Long-dated calls 5x+  (calls 5.02x, long-dated 14.67x, put/call drop 3.55x)
-  FTRE   Call volume 5x+  (calls 5.02x, long-dated 14.67x, put/call drop 3.55x)
-  FUN    Long-dated calls 5x+  (calls 4.1x, long-dated 5.41x, put/call drop 1.33x)
-  GLXY   Calls 3x+ and puts flat (put/call drop 3x+)  (calls 6.93x, long-dated 2.29x, put/call drop 3.39x)
-  GLXY   Call volume 5x+  (calls 6.93x, long-dated 2.29x, put/call drop 3.39x)
-  GSIT   Calls 3x+ and puts flat (put/call drop 3x+)  (calls 14.47x, long-dated 20.86x, put/call drop 22.9x)
-  GSIT   Long-dated calls 5x+  (calls 14.47x, long-dated 20.86x, put/call drop 22.9x)
-  GSIT   Call volume 5x+  (calls 14.47x, long-dated 20.86x, put/call drop 22.9x)
-  GTLB   Long-dated calls 5x+  (calls 2.04x, long-dated 10.74x, put/call drop 1.74x)
-  HSAI   Calls 3x+ and puts flat (put/call drop 3x+)  (calls 4.01x, long-dated 8.65x, put/call drop 4.12x)
-  HSAI   Long-dated calls 5x+  (calls 4.01x, long-dated 8.65x, put/call drop 4.12x)
-  ICLR   Long-dated calls 5x+  (calls 3.18x, long-dated 11.5x, put/call drop 0.57x)
-  IQV    Call volume 5x+  (calls 8.84x, long-dated 0.62x, put/call drop 0.46x)
-  JKS    Call volume 5x+  (calls 5.55x, long-dated 0.55x, put/call drop 2.77x)
-  KNSA   Long-dated calls 5x+  (calls 5.53x, long-dated 10.0x, put/call drop 2.16x)
-  KNSA   Call volume 5x+  (calls 5.53x, long-dated 10.0x, put/call drop 2.16x)
-  LAES   Calls 3x+ and puts flat (put/call drop 3x+)  (calls 3.07x, long-dated 1.52x, put/call drop 4.7x)
-  LBRT   Call volume 5x+  (calls 11.77x, long-dated 0.68x, put/call drop 0.51x)
-  LION   Long-dated calls 5x+  (calls 13.17x, long-dated 7.74x, put/call drop 0.64x)
-  LION   Call volume 5x+  (calls 13.17x, long-dated 7.74x, put/call drop 0.64x)
-  LPLA   Long-dated calls 5x+  (calls 0.83x, long-dated 6.75x, put/call drop 0.34x)
-  LTBR   Calls 3x+ and puts flat (put/call drop 3x+)  (calls 10.21x, long-dated 0.84x, put/call drop 14.35x)
-  LTBR   Call volume 5x+  (calls 10.21x, long-dated 0.84x, put/call drop 14.35x)
-  LX     Calls 3x+ and puts flat (put/call drop 3x+)  (calls 9.36x, long-dated 14.73x, put/call drop 9.5x)
-  LX     Long-dated calls 5x+  (calls 9.36x, long-dated 14.73x, put/call drop 9.5x)
-  LX     Call volume 5x+  (calls 9.36x, long-dated 14.73x, put/call drop 9.5x)
-  MLI    Call volume 5x+  (calls 10.26x, long-dated 0.89x, put/call drop 2.12x)
-  MLTX   Calls 3x+ and puts flat (put/call drop 3x+)  (calls 17.83x, long-dated 27.38x, put/call drop 11.95x)
-  MLTX   Long-dated calls 5x+  (calls 17.83x, long-dated 27.38x, put/call drop 11.95x)
-  MLTX   Call volume 5x+  (calls 17.83x, long-dated 27.38x, put/call drop 11.95x)
-  MLYS   Calls 3x+ and puts flat (put/call drop 3x+)  (calls 3.44x, long-dated 7.92x, put/call drop 15.38x)
-  MLYS   Long-dated calls 5x+  (calls 3.44x, long-dated 7.92x, put/call drop 15.38x)
-  MNRO   Calls 3x+ and puts flat (put/call drop 3x+)  (calls 12.95x, long-dated 6.22x, put/call drop 6.71x)
-  MNRO   Long-dated calls 5x+  (calls 12.95x, long-dated 6.22x, put/call drop 6.71x)
-  MNRO   Call volume 5x+  (calls 12.95x, long-dated 6.22x, put/call drop 6.71x)
-  MUFG   Calls 3x+ and puts flat (put/call drop 3x+)  (calls 9.71x, long-dated 0.01x, put/call drop 24.68x)
-  MUFG   Call volume 5x+  (calls 9.71x, long-dated 0.01x, put/call drop 24.68x)
-  PAA    Calls 3x+ and puts flat (put/call drop 3x+)  (calls 6.26x, long-dated 17.32x, put/call drop 3.07x)
-  PAA    Long-dated calls 5x+  (calls 6.26x, long-dated 17.32x, put/call drop 3.07x)
-  PAA    Call volume 5x+  (calls 6.26x, long-dated 17.32x, put/call drop 3.07x)
-  PACS   Calls 3x+ and puts flat (put/call drop 3x+)  (calls 8.69x, long-dated 13.14x, put/call drop 5.47x)
-  PACS   Long-dated calls 5x+  (calls 8.69x, long-dated 13.14x, put/call drop 5.47x)
-  PACS   Call volume 5x+  (calls 8.69x, long-dated 13.14x, put/call drop 5.47x)
-  PD     Calls 3x+ and puts flat (put/call drop 3x+)  (calls 5.31x, long-dated 0.83x, put/call drop 43.75x)
-  PD     Call volume 5x+  (calls 5.31x, long-dated 0.83x, put/call drop 43.75x)
-  POWL   Calls 3x+ and puts flat (put/call drop 3x+)  (calls 5.96x, long-dated 0.36x, put/call drop 33.32x)
-  POWL   Call volume 5x+  (calls 5.96x, long-dated 0.36x, put/call drop 33.32x)
-  PRCH   Long-dated calls 5x+  (calls 4.63x, long-dated 6.0x, put/call drop 1.63x)
-  PSNL   Calls 3x+ and puts flat (put/call drop 3x+)  (calls 15.85x, long-dated 48.0x, put/call drop 10.35x)
-  PSNL   Long-dated calls 5x+  (calls 15.85x, long-dated 48.0x, put/call drop 10.35x)
-  PSNL   Call volume 5x+  (calls 15.85x, long-dated 48.0x, put/call drop 10.35x)
-  QFIN   Long-dated calls 5x+  (calls 2.57x, long-dated 5.23x, put/call drop 17.21x)
-  REAL   Long-dated calls 5x+  (calls 3.59x, long-dated 11.62x, put/call drop 1.64x)
-  REPL   Long-dated calls 5x+  (calls 2.95x, long-dated 10.48x, put/call drop 0.77x)
-  ROIV   Call volume 5x+  (calls 14.33x, long-dated 4.07x, put/call drop 0.15x)
-  RSI    Call volume 5x+  (calls 5.41x, long-dated 0.55x, put/call drop 1.19x)
-  SE     Call volume 5x+  (calls 5.23x, long-dated 3.37x, put/call drop 0.81x)
-  SLS    Calls 3x+ and puts flat (put/call drop 3x+)  (calls 3.79x, long-dated 12.14x, put/call drop 5.4x)
-  SLS    Long-dated calls 5x+  (calls 3.79x, long-dated 12.14x, put/call drop 5.4x)
-  TAL    Call volume 5x+  (calls 14.08x, long-dated 2.69x, put/call drop 1.23x)
-  TEAM   Long-dated calls 5x+  (calls 2.84x, long-dated 11.98x, put/call drop 2.92x)
-  TSEM   Calls 3x+ and puts flat (put/call drop 3x+)  (calls 9.53x, long-dated 73.48x, put/call drop 3.22x)
-  TSEM   Long-dated calls 5x+  (calls 9.53x, long-dated 73.48x, put/call drop 3.22x)
-  TSEM   Call volume 5x+  (calls 9.53x, long-dated 73.48x, put/call drop 3.22x)
-  TTMI   Call volume 5x+  (calls 15.52x, long-dated 3.2x, put/call drop 1.45x)
-  TVTX   Calls 3x+ and puts flat (put/call drop 3x+)  (calls 4.75x, long-dated 9.41x, put/call drop 9.49x)
-  TVTX   Long-dated calls 5x+  (calls 4.75x, long-dated 9.41x, put/call drop 9.49x)
-  UAL    Calls 3x+ and puts flat (put/call drop 3x+)  (calls 12.95x, long-dated 2.17x, put/call drop 4.56x)
-  UAL    Call volume 5x+  (calls 12.95x, long-dated 2.17x, put/call drop 4.56x)
-  URBN   Long-dated calls 5x+  (calls 1.59x, long-dated 8.0x, put/call drop 0.56x)
-  VIVO   Long-dated calls 5x+  (calls 4.81x, long-dated 5.89x, put/call drop 0.73x)
-  VSAT   Long-dated calls 5x+  (calls 3.67x, long-dated 5.79x, put/call drop 1.81x)
-  WGS    Calls 3x+ and puts flat (put/call drop 3x+)  (calls 7.76x, long-dated 1.05x, put/call drop 3.58x)
-  WGS    Call volume 5x+  (calls 7.76x, long-dated 1.05x, put/call drop 3.58x)
-  ZYME   Long-dated calls 5x+  (calls 3.8x, long-dated 12.1x, put/call drop 2.42x)
+  RMD    Long-dated calls 5x+  (calls 1.75x, long-dated 5.63x, put/call drop 2.42x)
+  RNG    Call volume 5x+  (calls 8.17x, long-dated 1.06x, put/call drop 1.35x)
+  ROIV   Calls 3x+ and puts flat (put/call drop 3x+)  (calls 4.65x, long-dated 0.97x, put/call drop 12.35x)
+  RSG    Call volume 5x+  (calls 7.75x, long-dated 1.74x, put/call drop 0.22x)
+  SEI    Long-dated calls 5x+  (calls 7.81x, long-dated 17.62x, put/call drop 0.77x)
+  SEI    Call volume 5x+  (calls 7.81x, long-dated 17.62x, put/call drop 0.77x)
+  SENS   Long-dated calls 5x+  (calls 2.04x, long-dated 5.7x, put/call drop 0.82x)
+  SHOO   Call volume 5x+  (calls 100.18x, long-dated 4.0x, put/call drop 0.01x)
+  SIRI   Long-dated calls 5x+  (calls 2.46x, long-dated 14.51x, put/call drop 0.39x)
+  SONY   Calls 3x+ and puts flat (put/call drop 3x+)  (calls 3.22x, long-dated 2.3x, put/call drop 10.33x)
+  SPT    Call volume 5x+  (calls 6.57x, long-dated 2.82x, put/call drop 0.38x)
+  TAL    Calls 3x+ and puts flat (put/call drop 3x+)  (calls 16.33x, long-dated 0.36x, put/call drop 19.05x)
+  TAL    Call volume 5x+  (calls 16.33x, long-dated 0.36x, put/call drop 19.05x)
+  TH     Calls 3x+ and puts flat (put/call drop 3x+)  (calls 12.91x, long-dated 26.69x, put/call drop 20.45x)
+  TH     Long-dated calls 5x+  (calls 12.91x, long-dated 26.69x, put/call drop 20.45x)
+  TH     Call volume 5x+  (calls 12.91x, long-dated 26.69x, put/call drop 20.45x)
+  TNGX   Calls 3x+ and puts flat (put/call drop 3x+)  (calls 3.5x, long-dated 1.74x, put/call drop 68.1x)
+  TTMI   Long-dated calls 5x+  (calls 9.6x, long-dated 10.19x, put/call drop 0.86x)
+  TTMI   Call volume 5x+  (calls 9.6x, long-dated 10.19x, put/call drop 0.86x)
+  UMC    Long-dated calls 5x+  (calls 3.0x, long-dated 9.78x, put/call drop 0.24x)
+  URBN   Long-dated calls 5x+  (calls 0.42x, long-dated 5.08x, put/call drop 0.98x)
+  VITL   Call volume 5x+  (calls 5.24x, long-dated 4.14x, put/call drop 2.81x)
+  VIVO   Long-dated calls 5x+  (calls 3.21x, long-dated 7.88x, put/call drop 2.33x)
+  WIX    Calls 3x+ and puts flat (put/call drop 3x+)  (calls 4.14x, long-dated 0.68x, put/call drop 7.89x)
+  WMB    Long-dated calls 5x+  (calls 1.09x, long-dated 5.76x, put/call drop 0.86x)
+  XXI    Long-dated calls 5x+  (calls 4.69x, long-dated 5.77x, put/call drop 1.42x)
+  ZYME   Long-dated calls 5x+  (calls 2.9x, long-dated 7.34x, put/call drop 2.05x)
+Daily data: local copy updated with 1,513 rows from the database.
+
+=== Big move = up 15%+ within 10 sessions (378,638 ticker-days with outcomes, 774 tickers) ===
+Baseline: 16.9% of all days are followed by a big move; median 10-session return -0.02%. Halves split at 2025-07-31.
+
+rule                                              fired  hit %  lift   1st   2nd  drop median ret
+Any day (baseline)                               378638   16.9   1.0   1.0   1.0   1.0      -0.02
+Put/call drop 3x+                                 57110   15.5  0.92  0.94   0.9  0.91      +0.00
+Put/call drop 5x+                                 33295   15.0  0.89  0.93  0.86   0.9      +0.04
+Call volume 3x+                                   51492   18.4  1.09  1.11  1.08  1.06      -0.13
+Call volume 5x+                                   27202   18.6   1.1  1.13  1.08  1.06      -0.15
+Long-dated calls 3x+                              62874   17.6  1.04  1.04  1.05   1.0      +0.03
+Long-dated calls 5x+                              35778   17.6  1.04  1.04  1.05  0.99      +0.08
+Medium-dated calls 3x+                            67410   18.0  1.07   1.1  1.04  1.05      -0.11
+Short-dated calls 3x+                             57923   17.5  1.04  1.11  0.97  0.98      +0.24
+Out-of-the-money calls 3x+                        60227   17.5  1.04  1.05  1.03   1.0      +0.00
+Short out-of-the-money calls 3x+                  48769   18.4  1.09  1.16  1.03  1.06      +0.10
+Calls 3x+ while price quiet                       15130    9.2  0.55  0.54  0.56  0.61      -0.11
+Long-dated 3x+ while price quiet                  19415    8.7  0.52   0.5  0.55  0.59      -0.03
+Calls outpacing shares 2x+                        55847   15.8  0.94  0.93  0.95  0.94      -0.14
+Calls outpacing shares 3x+                        30611   15.2   0.9  0.89  0.91  0.91      -0.13
+Stealth: calls 3x+, shares normal, price quiet    11445    8.4   0.5  0.47  0.53  0.58      -0.15
+Calls 3x+ and puts flat (put/call drop 3x+)       19637   14.8  0.88  0.87  0.89  0.89      -0.04
+Momentum: calls 3x+ after 10%+ week               13519   28.8  1.71  1.76  1.66  1.52      -0.26
+
+=== Big move = up 30%+ within 10 sessions (378,638 ticker-days with outcomes, 774 tickers) ===
+Baseline: 5.3% of all days are followed by a big move; median 10-session return -0.02%. Halves split at 2025-07-31.
+
+rule                                              fired  hit %  lift   1st   2nd  drop median ret
+Any day (baseline)                               378638    5.3   1.0   1.0   1.0   1.0      -0.02
+Put/call drop 3x+                                 57110    4.8   0.9  0.91  0.89   0.8      +0.00
+Put/call drop 5x+                                 33295    4.4  0.83  0.88  0.77  0.76      +0.04
+Call volume 3x+                                   51492    6.9  1.29  1.34  1.24  1.15      -0.13
+Call volume 5x+                                   27202    7.1  1.34  1.42  1.27  1.16      -0.15
+Long-dated calls 3x+                              62874    6.0  1.14  1.18   1.1  1.01      +0.03
+Long-dated calls 5x+                              35778    6.2  1.18  1.22  1.13  1.01      +0.08
+Medium-dated calls 3x+                            67410    6.4  1.21  1.25  1.17  1.12      -0.11
+Short-dated calls 3x+                             57923    6.0  1.13  1.21  1.04  1.02      +0.24
+Out-of-the-money calls 3x+                        60227    6.3  1.18  1.24  1.12  1.06      +0.00
+Short out-of-the-money calls 3x+                  48769    6.2  1.17  1.24  1.09  1.14      +0.10
+Calls 3x+ while price quiet                       15130    2.5  0.46  0.46  0.47   0.5      -0.11
+Long-dated 3x+ while price quiet                  19415    2.3  0.44  0.43  0.46  0.45      -0.03
+Calls outpacing shares 2x+                        55847    5.2  0.99   1.0  0.98  0.92      -0.14
+Calls outpacing shares 3x+                        30611    5.0  0.94  0.95  0.94  0.88      -0.13
+Stealth: calls 3x+, shares normal, price quiet    11445    2.2  0.41  0.38  0.44  0.44      -0.15
+Calls 3x+ and puts flat (put/call drop 3x+)       19637    4.7  0.89  0.88  0.89   0.8      -0.04
+Momentum: calls 3x+ after 10%+ week               13519   12.7   2.4  2.56  2.23   2.0      -0.26
+
+Flags since 2026-09-08: 4069 written.
+
+lift = how many times more often a big rally follows the signal than an average day;
+1st/2nd = the same lift in each half of the data; drop = lift for a big DROP instead.
+A real directional signal has rally lift above 1 in both halves AND drop lift near or below 1.
 ```

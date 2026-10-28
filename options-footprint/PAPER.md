@@ -1,4 +1,4 @@
-# Paper traders (2026-10-27 09:00 UTC)
+# Paper traders (2026-10-28 09:39 UTC)
 
 Season 1: 6 months, with a checkpoint at 3 months.
 
@@ -6,9 +6,9 @@ Agent 1: the research committee's final playbook. Agent 2: the playoff pick (the
 
 | agent | equity $ | return since start | S&P 500 since start | cash % | positions | orders sent | rejected | open experiments | model cost $ |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | 96,973 | -3.03% | -1.64% | 95% | 2 | 9 | 0 | 3 | 0.30 |
-| 2 | 99,142 | -0.86% | -1.64% | 75% | 5 | 9 | 4 | 2 | 0.46 |
-| 3 | 100,259 | +0.26% | -1.64% | 85% | 3 | 13 | 6 | 2 | 0.44 |
+| 1 | 96,888 | -3.11% | -1.08% | 98% | 1 | 9 | 0 | 3 | 0.30 |
+| 2 | 98,969 | -1.03% | -1.08% | 75% | 5 | 9 | 4 | 2 | 0.46 |
+| 3 | 100,806 | +0.81% | -1.08% | 84% | 3 | 13 | 6 | 2 | 0.44 |
 
 The random-twin skill score, risk-adjusted return and experiment points arrive in the next build phase; they are computed from the saved trades, so they will cover these first days too.
 
@@ -26,21 +26,21 @@ The random-twin skill score, risk-adjusted return and experiment points arrive i
 
 ### Agent 1
 
-- **2026-10-23** (2 steps, 0 order attempts, $0.00): Fri 2026-10-23: No new orders. Market 20-day return is still slightly negative (-0.5%), so the entry gate stays closed and cash is about 95%. Holding ILMN (9 sh, -2.3%, stop 242.7; earnings 10-29, planned exit ~10-27) and SHOP (14 sh, -3.7%, stop 153.7). Both have resting GTC stops. Corrected the journal: MRNA was stopped out on 10-20 at 183.54, so it has not been held since then. My 10-21 and 10-22 notes were wrong. Journal updated.
 - **2026-10-24** (3 steps, 0 order attempts, $0.00): Sat 2026-10-24: no new orders. Market gate still closed (SPY -1.3% vs 20-day average, 20-session return -0.9%), so I stay about 95% cash on purpose. Holding ILMN (9 sh, stop 242.7, planned exit to be placed 10-26 ahead of 10-29 earnings) and SHOP (14 sh, stop 153.7). Journal updated with the cash-waiting reason and the exact re-entry conditions. Reconciled against the account: MRNA is not held.
 - **2026-10-27** (5 steps, 1 order attempts, $0.01): 2026-10-27: Planned exit of ILMN (9 sh) placed as a market sell ahead of its 10-29 after-close earnings; cancelled its GTC stop 242.7 to avoid a double sell. SHOP (14 sh, stop 153.7) held under the 10-day rule, with earnings 11-03 after the window. No new entries: market gate still closed (SPY 20-day -0.8%), about 95% cash. Journal updated with the cash-waiting reason and re-entry conditions.
+- **2026-10-28** (3 steps, 0 order attempts, $0.00): 2026-10-28: No new orders. SPY is 0.1% below its 20-day average, so the market gate stays closed and the account remains about 97% cash. SHOP (14 sh, about 165.8, -5%) is held under the 10-day rule with its GTC stop at 153.7; earnings are 11-03 pre-market. ILMN was sold 10-27 ahead of earnings and MRNA is not held. Journal updated with the cash-waiting reason and re-entry conditions.
 
 ### Agent 2
 
-- **2026-10-23** (15 steps, 6 order attempts, $0.07): Breadth rose to 44.1% above ma50, clearing my 40% return threshold. I wrote the C-stock screen before trading: $10+, DV>=14M, above 50d MA, vol20 at or below 100%, no pending takeovers, rank by 1-month return, top 3 at ~5% each, hold 10 sessions. The first attempt at CBRL and ACN was rejected for exceeding the 5% size cap. After applying the screen, I placed day limit buys on DXC (300 @16.40), RXO (169 @29.10), and KSS (198 @24.90), each about $4,900, with stops at about -8% to -10%. The screen was written after seeing the leaders list, so there is some hindsight, and I'm judging it on the trade record. GTLB and TEAM stay open with stops unchanged (GTLB ~51.2, TEAM 188.96). Journal updated.
 - **2026-10-24** (2 steps, 0 order attempts, $0.00): Saturday 2026-10-24, no market session. Confirmed the three C-stock limit buys filled on 10/23 (DXC, RXO, KSS). Checked all five positions against their stops (DXC 14.80, RXO 26.20, KSS 22.40, GTLB ~51.2, TEAM 188.96); none is close to triggering. No new orders. Cash is 75.2%, with the reason and the conditions for adding exposure written in the journal. Next review on Monday 10/26.
 - **2026-10-27** (4 steps, 0 order attempts, $0.01): 2026-10-27: No new orders. All five positions (DXC, RXO, KSS, GTLB, TEAM) are well above their stops; KSS is closest at 23.65 vs 22.40 stop. Breadth is 44.4% above ma50, above my 40% threshold, but all three C-stock slots are full. FIGS and RPD pass the screen's volume and trend filters and are on the watch list for the next free slot. Cash 75.3%; the reason for waiting is in the journal.
+- **2026-10-28** (3 steps, 0 order attempts, $0.00): 2026-10-28: No new orders. All five positions are above their stops (KSS closest at 23.78 vs 22.40). The C-stock slots are full, so I'm holding. FIGS and RPD stay on the watch list for the next free slot. Cash 75.5%; the reason for waiting and the return conditions are in the journal. Next review: DXC earnings 10/29 after close.
 
 ### Agent 3
 
-- **2026-10-23** (9 steps, 6 order attempts, $0.03): Oct 23: MRNA fell 17.6% on Oct 22 on a reported trial-data leak. Its 191.10 GTC stop appears to have filled before my cancel, so the position is out (verify the fill). Market sell of TEAM placed for its planned 10-session exit. Two EXP1 replacement buys placed as day limits: HTFL 88 sh at 56 and NTSK 221 sh at 22.50, both under the $4,978 cap. The first attempts were rejected for cap or short-position reasons, so I resized them. IOVA holds its 12.50 stop. Stops for HTFL and NTSK go on after fills. Journal updated.
 - **2026-10-24** (3 steps, 2 order attempts, $0.01): Saturday Oct 24: no new entries. Placed GTC protective stop-sells: HTFL 88 sh at 50.98 and NTSK 221 sh at 20.42 (both -8% from fills). IOVA keeps its 12.50 stop. HTFL has a new lawsuit headline (Heartflow vs Elucid), noted as risk. Cash about 85%, which is deliberate: the EXP1 filters are narrow, the three open names are extended, and the 3-name cap is full. Journal updated with the cash rationale and the conditions for redeploying. Next: IOVA exit around Oct 30-31; HTFL/NTSK exits around Nov 6; FOMC Oct 27-28.
 - **2026-10-27** (3 steps, 0 order attempts, $0.01): 2026-10-27: No new orders. The EXP1 3-name cap is full (IOVA, HTFL, NTSK), and the screen's passing names (LIFE, GRAL, CAI, CDNA) are the next candidates for an open slot. IOVA exits ~Oct 30-31 (stop 12.50), HTFL/NTSK ~Nov 6 (stops 50.98 and 20.42). Cash ~85%, deliberate per the journal. Journal updated with the cash rationale and redeployment conditions.
+- **2026-10-28** (3 steps, 0 order attempts, $0.01): Oct 28: No new orders. The EXP1 3-name cap is full (IOVA, HTFL, NTSK). IOVA's planned 10-session exit is Oct 30, and the slot then goes to the best screen name (CAI or CDNA preferred; GRAL is extended after a +7.6% day). HTFL and NTSK are held to ~Nov 6 with GTC stops at 50.98 and 20.42. Cash about 84%, which is deliberate per the journal. Journal updated.
 
 ## Orders in the last 7 days
 

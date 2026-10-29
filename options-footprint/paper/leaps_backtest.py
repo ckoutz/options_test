@@ -146,7 +146,7 @@ def main():
     pool = sorted(s for s, b in recent.items() if b and statistics.mean(c * v for c, v in b.values()) >= 50e6)
     raw = bars(pool + ["SPY"], START - dt.timedelta(days=120), "raw")
     split = bars(pool, START - dt.timedelta(days=120), "split")
-    spy = raw.get("SPY", {})
+    spy = {d: c for d, (c, _v) in raw.get("SPY", {}).items()}
     today = max(spy)
     results = []
     for kind, dates in (("spike", spikes), ("calm", calm)):

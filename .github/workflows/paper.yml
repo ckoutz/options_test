@@ -19,6 +19,7 @@ on:
           - report
           - respond
           - repair-experiments
+          - leaps-backtest
       agents:
         description: "Which agents (day / dry-run), e.g. 1,2,3"
         default: "1,2,3"
@@ -85,6 +86,7 @@ jobs:
             day) python paper/trader.py day --agents "${{ github.event.inputs.agents || '1,2,3' }}" ;;
             report) python paper/trader.py report ;;
             repair-experiments) python paper/trader.py repair-experiments ;;
+            leaps-backtest) python paper/leaps_backtest.py ;;
             respond) python paper/trader.py respond --id "${{ github.event.inputs.request_id }}" \
                        --status "${{ github.event.inputs.status }}" --response "${{ github.event.inputs.response }}" ;;
           esac
@@ -97,10 +99,10 @@ jobs:
       - name: Commit the reports
         if: always()
         run: |
-          ls PAPER.md PAPER_CHECK.md PAPER_ERROR.md PAPER_SMOKE.md PAPER_RESEARCH.md 2>/dev/null | grep -q . || exit 0
+          ls PAPER.md PAPER_CHECK.md PAPER_ERROR.md PAPER_SMOKE.md PAPER_RESEARCH.md LEAPS.md 2>/dev/null | grep -q . || exit 0
           git config user.name "options-footprint-bot"
           git config user.email "actions@users.noreply.github.com"
-          for f in PAPER.md PAPER_CHECK.md PAPER_ERROR.md PAPER_SMOKE.md PAPER_RESEARCH.md; do if [ -f $f ]; then git add $f; fi; done
+          for f in PAPER.md PAPER_CHECK.md PAPER_ERROR.md PAPER_SMOKE.md PAPER_RESEARCH.md LEAPS.md; do if [ -f $f ]; then git add $f; fi; done
           git diff --cached --quiet && exit 0
           git commit -q -m "Paper traders $(date -u '+%Y-%m-%d %H:%M')"
           for i in 1 2 3; do git pull --rebase -q -X theirs && git push -q && exit 0; sleep 5; done

@@ -147,7 +147,7 @@ def main():
     raw = bars(pool + ["SPY"], START - dt.timedelta(days=120), "raw")
     split = bars(pool, START - dt.timedelta(days=120), "split")
     spy = {d: c for d, (c, _v) in raw.get("SPY", {}).items()}
-    today = max(spy)
+    today = sorted(spy)[-2]       # yesterday: the free plan refuses same-day option prices
     results = []
     for kind, dates in (("spike", spikes), ("calm", calm)):
         for d in dates:

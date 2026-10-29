@@ -127,7 +127,9 @@ def summarize(rows, key):
 
 
 def main():
+    print("fetching VIX history", flush=True)
     vix = vix_history()
+    print(f"VIX history: {len(vix)} days", flush=True)
     spikes, calm = entries(vix)
     print(f"spike entries: {spikes}\ncalm entries: {calm}")
     try:
@@ -257,4 +259,10 @@ def write(results, spikes, calm, vix):
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception:   # noqa: BLE001 - logs are not readable from the chat, so the error goes in the report
+        import traceback
+        with open(os.path.join(ROOT, "LEAPS.md"), "w") as f:
+            f.write("# LEAPS backtest crashed\n\n```\n" + traceback.format_exc() + "\n```\n")
+        raise

@@ -201,13 +201,23 @@ def main():
     pend = [r["pending"] for r in results if "pending" in r]
     results = [r for r in results if "pending" not in r]
     if pend:
-        now_px = option_closes(sorted({p[2] for p in pend}), (dt.date.fromisoformat(today) - dt.timedelta(days=10)).isoformat(),
-                               (dt.date.fromisoformat(today) + dt.timedelta(days=1)).isoformat())
+        # Recent option bars need a paid data agreement; the free indicative quotes do not. Buy back at the ask.
+        occs = sorted({p[2] for p in pend})
+        ask = {}
+        for i in range(0, len(occs), 100):
+            pages = AP.get_pages(f"{AP.DATA}/v1beta1/options/snapshots", AP.data_keys(),
+                                 {"symbols": ",".join(occs[i:i + 100]), "feed": "indicative"}, "snapshots")
+            for page in pages:
+                for o, v in page.items():
+                    q = v.get("latestQuote") or {}
+                    if q.get("ap"):
+                        ask[o] = q["ap"]
+                    elif q.get("bp"):
+                        ask[o] = q["bp"] * 1.1
         for s, otm, occ, kind, d, S0, S1, strike, prem, exp, end_day in pend:
-            px = now_px.get(occ)
-            if not px:
+            if occ not in ask:
                 continue
-            value = S1 - px[-1][1] * BUY_HAIRCUT + prem
+            value = S1 - ask[occ] + prem
             spy_end = spy.get(end_day)
             results.append({"kind": kind, "date": d, "stock": s, "otm": otm, "contract": occ, "exp": exp,
                             "status": "open (marked today)", "premium_pct": 100 * prem / S0,

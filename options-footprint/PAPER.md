@@ -1,4 +1,4 @@
-# Paper traders (2026-10-31 09:39 UTC)
+# Paper traders (2026-11-03 10:52 UTC)
 
 Season 1: 6 months, with a checkpoint at 3 months.
 
@@ -6,9 +6,9 @@ Agent 1: the research committee's final playbook. Agent 2: the playoff pick (the
 
 | agent | equity $ | return since start | S&P 500 since start | cash % | positions | orders sent | rejected | open experiments | model cost $ |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | 96,769 | -3.23% | -2.88% | 98% | 1 | 9 | 0 | 3 | 0.31 |
-| 2 | 97,428 | -2.57% | -2.88% | 81% | 4 | 12 | 4 | 2 | 0.48 |
-| 3 | 99,325 | -0.67% | -2.88% | 89% | 2 | 15 | 6 | 2 | 0.46 |
+| 1 | 96,712 | -3.29% | -3.34% | 100% | 0 | 9 | 1 | 3 | 0.33 |
+| 2 | 96,992 | -3.01% | -3.34% | 91% | 2 | 12 | 4 | 2 | 0.49 |
+| 3 | 98,396 | -1.60% | -3.34% | 90% | 2 | 15 | 6 | 2 | 0.47 |
 
 The random-twin skill score, risk-adjusted return and experiment points arrive in the next build phase; they are computed from the saved trades, so they will cover these first days too.
 
@@ -26,27 +26,27 @@ The random-twin skill score, risk-adjusted return and experiment points arrive i
 
 ### Agent 1
 
-- **2026-10-29** (3 steps, 0 order attempts, $0.00): 2026-10-29: No new orders. SPY is only marginally above its 20-day average (+0.2%, 20-day return +1.1%), so the market gate is not clearly open and the account stays about 97% cash. SHOP (14 sh, about 168, -3.7%) is held under the 10-day rule with its GTC stop at 153.7; earnings are 11-03 pre-market. Journal updated with the cash-waiting reason and re-entry conditions. ACN noted as a candidate, not bought.
 - **2026-10-30** (3 steps, 0 order attempts, $0.00): 2026-10-30: No new orders. SPY is 0.2% below its 20-day average, so the market gate stays closed and the account is about 97% cash. ACN is strong but has no clean gate, so I passed. SHOP (14 sh, about 164, -6%) is held under the 10-day rule with its GTC stop at 153.7. Earnings are 11-03 pre-market. Journal updated and reconciled with the account.
 - **2026-10-31** (3 steps, 0 order attempts, $0.00): 2026-10-31 (Saturday): No new orders. Account reconciled: 97.7% cash, SHOP 14 sh at 157.49 (-9.8%) with GTC stop 153.7 resting. SHOP reports 11-03 before open (EPS est 0.47, recent record mixed); I'll decide that morning whether to sell at the open. Market gate remains closed (S&P 20-session -1.1%, only 47.5% of stocks above 50-day), so no new entries. Journal updated with the corrected SHOP price and re-entry conditions.
+- **2026-11-03** (8 steps, 1 order attempts, $0.02): 2026-11-03: Account is flat with 100% cash ($96,712.20). The SHOP 14-share position from my journal is no longer held. I cancelled its resting GTC stop (153.7) and a market exit was rejected because there were 0 shares. The SHOP exit price and date are unverified, probably a stop fill on 11-02. No new orders: the S&P is below its 20- and 50-day averages (-2.2%, -1.9%), so the market gate is closed. Journal and experiment E1010-1-66ad are corrected to the flat account. Next step: reconcile holdings and open orders before writing any exit plan.
 
 ### Agent 2
 
-- **2026-10-29** (3 steps, 0 order attempts, $0.00): 2026-10-29: No new orders. All five positions are above their stops: DXC 16.09 (stop 14.80, earnings after the close today), RXO 27.60 (stop 26.20, after a -5% day), KSS 23.68 (stop 22.40), GTLB ~55.60 (stop ~51.2), TEAM 208.30 (stop 188.96). All three C-stock slots are full, so no new entries. FIGS is the candidate for the next free slot. Cash is 75.9%; the reason for waiting and the return conditions are in the journal.
 - **2026-10-30** (5 steps, 1 order attempts, $0.01): 10/30: DXC gapped to 13.05 on a guidance cut, below my 14.80 stop, so I sold all 300 shares at market. Passed on FIGS because its earnings (11/05) fall inside the 10-session hold. No new buys. Remaining: RXO, KSS, GTLB, TEAM. RXO and TEAM report 11/05, and I lean toward exiting them before the report. Cash about 76%. Journal updated with the reason for waiting and the new no-earnings-in-hold rule.
 - **2026-10-31** (4 steps, 2 order attempts, $0.01): 10/31 (Saturday): Submitted market exits for RXO (169 sh) and TEAM (23 sh) to avoid the 11/05 earnings window. RXO had already reported on 10/29, so the date in my notes was likely wrong; I'll verify. KSS and GTLB held (both above stops, no earnings in their windows). No new entries: breadth is about 44-47% and most screen names have earnings inside the hold. Cash about 81%. Journal updated with the return conditions.
+- **2026-11-03** (3 steps, 0 order attempts, $0.00): 11/03: No new orders. Checked earnings: KSS reports 11/23 and GTLB has no report in the 30-day window, so both are inside the rules. KSS 24.15 (stop 22.40), GTLB 52.11 (stop ~51.2, watch it). Market is weak (SPY -2.2% vs 20-day average), breadth ~51%, and most screen names have earnings inside the hold, so I stay ~91% cash. Journal updated with the cash reason and return conditions (breadth above 40% and SPY back above its 20-day average, or a screen name with no earnings in its hold).
 
 ### Agent 3
 
-- **2026-10-29** (4 steps, 1 order attempts, $0.01): Oct 29: Cancelled the IOVA GTC stop (12.50) and placed a market sell of 350 IOVA (planned 10-session EXP1 exit; fill expected Oct 30). Replacement candidate CDNA (vs MA20 +7.9, not extended) will be bought the next session after the sale fills, to respect the 3-name cap. CAI and GRAL now too extended. HTFL and NTSK held to ~Nov 6 with GTC stops 50.98 and 20.42. Cash ~84% by design; journal updated with the cash rationale and the redeploy plan.
 - **2026-10-30** (3 steps, 1 order attempts, $0.00): Oct 30: IOVA exit filled (350 sh at 11.20). Placed a day limit buy of 69 CDNA at 72 (about 5% of equity), to fill the freed EXP1 slot. CDNA passes the screen (vs_ma20 +6.6, 0.8% off its 52-week high). Stop at about -8% once filled, and a 10-session exit around Nov 12. HTFL and NTSK are still held to ~Nov 6 with GTC stops at 50.98 and 20.42. Cash stays high by design: the 3-name cap and narrow filters mean few entries. Journal updated with the cash rationale and redeploy conditions.
 - **2026-10-31** (5 steps, 0 order attempts, $0.01): Oct 31: No new orders. CDNA's 72 limit expired unfilled after the stock ran to 87 (+22% on Oct 30, vs_ma20 +28), so I dropped it rather than chase. Other screen candidates (LIFE, QLYS) have earnings inside a 10-session hold (Nov 2 and Nov 9), and CAI/GRAL are extended or volatile, so no entries. HTFL and NTSK are held with GTC stops at 50.98 and 20.42, with planned exits around Nov 6. Cash about 89%, deliberate per the journal; redeploy conditions are written there.
+- **2026-11-03** (3 steps, 0 order attempts, $0.01): Nov 3: No new orders. HTFL and NTSK fell 7-10% on Nov 2 but remain above their GTC stops (50.98, 20.42), with exits planned around Nov 6. Screened CAI, GRAL, QLYS, LIFE and the 6-month leaders: all either gapped down or extended, or have earnings inside a 10-session hold, so none passes the EXP1 filters. Cash about 90% by design; re-entry conditions are in the journal.
 
 ## Orders in the last 7 days
 
 | agent | when (UTC) | order | status | strategy | note |
 |---|---|---|---|---|---|
-| 1 | 2026-10-27T09:00 | sell 9 ILMN market | pending_new | STMOM-shares-10d |  |
+| 1 | 2026-11-03T10:51 | sell 14 SHOP market | rejected | STMOM-shares-10d | you hold 0 and short selling is not enabled (request it if you need it) |
 | 2 | 2026-10-30T10:01 | sell 300 DXC market | pending_new | C-stock stop exit |  |
 | 2 | 2026-10-31T09:39 | sell 169 RXO market | accepted | C-stock |  |
 | 2 | 2026-10-31T09:39 | sell 23 TEAM market | accepted | H52-stock |  |
@@ -62,6 +62,6 @@ The random-twin skill score, risk-adjusted return and experiment points arrive i
 - agent 1 **D1-live-stock-dip** (E1010-1-213c): Oversold stocks (rsi<35) bought as shares during a market dip (market 5d <= -1.5%) gain about 1.5% over 10 sessions versus the benchmark of about 0.6%. Expect: Median +1.5% over 10 sessions, 55-65% winners. Edge small; costs are small for shares.. Judge by 2026-11-09.
 - agent 2 **C-stock: trend-in-weak-market long, 10 sessions** (E1010-2-4296): Stocks with 20-session gains of 20%+ and price within 7.6% of the 20-day average and close not above VWAP by 0.8%+ keep positive 10-session returns when the market's 5-session return is negative. Inhe Expect: Median 10-session stock return above zero, average beating the all-candidate benchmark (about +0.5% median). I expect a modest edge of about +1 to +2%. Judge by 2026-11-09.
 - agent 3 **EXP2 large-cap news-gap overreaction fade** (E1010-3-7d1b): Large liquid stocks (dollar volume >= $500M) that fall 8%+ in one session on non-fundamental or sector-spillover news, while still above their 200-day trend, recover part of the drop over the next 10  Expect: Modest bounce of 1-3% on average, but high variance; I expect it to be roughly a coin flip, and I will judge it honestly against random twins.. Judge by 2026-11-09.
-- agent 1 **STMOM-shares-10d** (E1010-1-66ad): Liquid large-cap stocks in the top of the 1-month return ranking, with price above the 50-day average, keep drifting up over the next 10 sessions (short-term momentum for high-turnover names, Medhat a Expect: Gross +0.5% to +1% over 10 sessions, about 52-55% winners. Median near zero or slightly positive. Beating random-twin shares by a small margin; if not. Judge by 2026-12-15.
 - agent 2 **H52-stock: near 52-week high, above 50d, long 20 sessions** (E1010-2-615b): Stocks trading within 5% of their 52-week high with a rising 50-day average (George and Hwang 2004 style anchoring effect) keep outperforming random stocks over the next 20 sessions, and this holds wh Expect: Median 20-session stock return modestly above the random-stock benchmark, about +0.5 to +1.5%. Expect a small edge, with wide dispersion. Not large.. Judge by 2026-11-09.
 - agent 3 **EXP1 stock momentum-quality, 10-session hold** (E1010-3-8b83): Liquid stocks (dollar volume >= $200M) that are near their 52-week high, above both 20- and 50-day averages, and in the top decile of 3-month return keep outperforming over the next 10 sessions, beati Expect: Average excess return of about +1% over 10 sessions vs random liquid stocks, hit rate modestly above 50%. Cost is low (no options), so a small edge ca. Judge by 2026-11-09.
+- agent 1 **STMOM-shares-10d** (E1010-1-66ad): Liquid large-cap stocks in the top of the 1-month return ranking, with price above the 50-day average, keep drifting up over the next 10 sessions (short-term momentum for high-turnover names, Medhat a Expect: Gross +0.5% to +1% over 10 sessions, about 52-55% winners. Median near zero or slightly positive. Beating random-twin shares by a small margin; if not. Judge by 2026-12-15.

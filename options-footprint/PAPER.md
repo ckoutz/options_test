@@ -1,4 +1,4 @@
-# Paper traders (2026-11-13 10:59 UTC)
+# Paper traders (2026-11-14 10:24 UTC)
 
 Season 1: 6 months, with a checkpoint at 3 months.
 
@@ -6,9 +6,9 @@ Agent 1: the research committee's final playbook. Agent 2: the playoff pick (the
 
 | agent | equity $ | return since start | S&P 500 since start | cash % | positions | orders sent | rejected | open experiments | model cost $ |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | 96,712 | -3.29% | -2.70% | 100% | 0 | 9 | 1 | 3 | 0.36 |
-| 2 | 96,851 | -3.15% | -2.70% | 95% | 1 | 13 | 4 | 2 | 0.53 |
-| 3 | 98,232 | -1.77% | -2.70% | 95% | 1 | 20 | 7 | 2 | 0.51 |
+| 1 | 96,712 | -3.29% | -3.05% | 100% | 0 | 9 | 1 | 3 | 0.37 |
+| 2 | 96,931 | -3.07% | -3.05% | 95% | 1 | 13 | 4 | 2 | 0.53 |
+| 3 | 98,284 | -1.72% | -3.05% | 90% | 2 | 21 | 7 | 2 | 0.52 |
 
 The random-twin skill score, risk-adjusted return and experiment points arrive in the next build phase; they are computed from the saved trades, so they will cover these first days too.
 
@@ -26,28 +26,28 @@ The random-twin skill score, risk-adjusted return and experiment points arrive i
 
 ### Agent 1
 
-- **2026-11-11** (3 steps, 0 order attempts, $0.00): 2026-11-11: No orders. Account flat at $96,712 (100% cash). SPY 749.92 is 1.4% below its 20-day average, so the +1% reclaim gate is still closed. ACN (1m +21%, 3m +44%, no earnings in the next 30 days) stays the watch candidate but is not entered until the gate opens. Journal updated with the cash-waiting reason and re-entry conditions.
 - **2026-11-12** (3 steps, 0 order attempts, $0.00): No orders. Account flat at $96,712 (100% cash), reconciled with journal. SPY 759.81 is -0.1% vs its 20-day average, so the +1% reclaim gate stays closed. ACN (1m +18.8%, 3m +43%, no earnings in 30 days) remains the watch candidate but will not be entered until the market gate opens. Journal updated with the waiting reason and re-entry conditions.
 - **2026-11-13** (3 steps, 0 order attempts, $0.00): No orders. Account flat at $96,712 (100% cash). SPY 757.12 is 0.3% below its 20-day average, so the +1% gate is still closed. ACN (1m +16%, 3m +42%) slipped to just below its MA20 after a -5.7% week, so it is not entered. Journal updated with waiting reason and re-entry conditions (SPY gate plus ACN reclaiming MA20).
+- **2026-11-14** (3 steps, 0 order attempts, $0.00): 2026-11-14: No orders. Account flat at $96,712 (100% cash), reconciled with journal. SPY 754.37 is 0.6% below its 20-day average, so the +1% reclaim gate stays closed. ACN (250.49, -0.4% vs MA20, 1m +11%, 3m +48%) is still the watch candidate but not entered: it needs the market gate and its own MA20 reclaim. Journal updated with the waiting reason and re-entry conditions.
 
 ### Agent 2
 
-- **2026-11-11** (3 steps, 0 order attempts, $0.00): 11/11: No new orders. SPY recovered to -1.4% vs its 20-day average (from -3.7%) and breadth rose to 53%, but the cash gate (SPY above 20d) is not yet met. The only liquid screen name, TRAX, is now +19.9% vs its 20-day average after a +5.3% day, pre-revenue with a large EPS miss, so I passed. KSS (24.75, stop 22.40, reports 11/23 outside the hold) stays. Cash ~95%. Journal updated with the cash reason and the exact return triggers.
 - **2026-11-12** (4 steps, 0 order attempts, $0.01): 11/12: No new orders. SPY is back to its 20-day average (-0.1%), but no liquid screen name passes all filters: the 1-month leaders are chases or have vol above 100%, and TRAX is pre-revenue with a large EPS miss. Cash gate is half met, so I stay in cash. KSS (24.48-24.65, stop 22.40, earnings 11/23 outside the hold) stays. Journal updated with the cash reason and exact return triggers.
 - **2026-11-13** (3 steps, 0 order attempts, $0.01): 2026-11-13: No new orders. SPY slipped to -0.3% vs its 20-day average, so the market gate is still not met, and no liquid screen name passes the filters (leaders are chases or vol over 100%; TRAX is pre-revenue with a large EPS miss). KSS closed 23.50 on 11/12 (-4.7%), still above the 22.40 stop, earnings 11/23 outside the hold. Cash ~95%. Journal updated with the cash reason and exact return triggers.
+- **2026-11-14** (3 steps, 0 order attempts, $0.01): 2026-11-14: No new orders. SPY is 0.6% below its 20-day average, so the market gate is still not met, and the liquid screen is again dominated by chases and vol-over-100% names. KSS closed 24.00 (+2.1%), above the 22.40 stop, with earnings 11/23 outside the hold. Cash ~95%. Journal updated with the cash reason and the exact return triggers.
 
 ### Agent 3
 
-- **2026-11-11** (3 steps, 0 order attempts, $0.01): Nov 11: HAE still held (39 sh, 123.08 fill, ~122.36), GTC stop at 114.20 in place, planned exit around Nov 20. Screened the 6-month leaders against EXP1 filters: nearly all fail on extension (vs_ma20 above +10), 100%+ vol, or trend. No new entries. Account about 95% cash by design. Journal records the cash rationale, redeploy conditions and the proposed vol cap for future EXP1 entries.
 - **2026-11-12** (3 steps, 0 order attempts, $0.01): Nov 12: HAE still held (39 sh, 120.54, -1.5% today), GTC stop at 114.20 in place, planned exit around Nov 20. Re-screened the top 6-month leaders against EXP1 filters: all are extended, 100%+ vol, gapped, or fail trend; AMPL is the closest and needs an earnings check before any entry. No new orders. Account about 95% cash by design; journal updated with the cash rationale and what would bring me back to investing.
 - **2026-11-13** (4 steps, 1 order attempts, $0.01): Nov 13: HAE still held with its 114.20 stop in place. AMPL passed every EXP1 filter (6m rank 100, vs_ma20 +3.4, vol 50%, no earnings in the next 30 days, no gap up), so I placed a day limit buy of 283 sh at 17.25 (~5% of equity) with an exit plan of an 8% stop and a 10-session exit. Journal updated with the cash-streak rationale and the redeploy conditions.
+- **2026-11-14** (2 steps, 1 order attempts, $0.00): Saturday 2026-11-14, no session. Placed a GTC protective stop sell on AMPL (283 sh) at 15.83, 8% under the 17.19 fill, since I had missed placing one on the fill day. HAE stop at 114.20 remains in place. No new entries: no name passes the EXP1 filters. Journal updated with the cash rationale, the redeploy conditions, and the stop lesson. Planned exits: HAE and AMPL around Nov 20 and Nov 27.
 
 ## Orders in the last 7 days
 
 | agent | when (UTC) | order | status | strategy | note |
 |---|---|---|---|---|---|
-| 3 | 2026-11-07T10:06 | sell 39 HAE stop | accepted |  |  |
 | 3 | 2026-11-13T10:58 | buy 283 AMPL limit 17.25 | pending_new | EXP1 stock momentum-quality, 10-session  |  |
+| 3 | 2026-11-14T10:24 | sell 283 AMPL stop | accepted | EXP1 stock momentum-quality protective s |  |
 
 ## Open experiments
 

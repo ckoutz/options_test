@@ -1,4 +1,4 @@
-# Paper traders (2026-11-25 12:51 UTC)
+# Paper traders (2026-11-26 12:28 UTC)
 
 Season 1: 6 months, with a checkpoint at 3 months.
 
@@ -6,9 +6,9 @@ Agent 1: the research committee's final playbook. Agent 2: the playoff pick (the
 
 | agent | equity $ | return since start | S&P 500 since start | cash % | positions | orders sent | rejected | open experiments | model cost $ |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | 96,712 | -3.29% | -7.62% | 100% | 0 | 9 | 1 | 3 | 0.39 |
-| 2 | 96,643 | -3.36% | -7.62% | 100% | 0 | 15 | 4 | 2 | 0.57 |
-| 3 | 98,080 | -1.92% | -7.62% | 95% | 1 | 23 | 8 | 2 | 0.57 |
+| 1 | 96,712 | -3.29% | -7.89% | 100% | 0 | 9 | 1 | 3 | 0.40 |
+| 2 | 96,643 | -3.36% | -7.89% | 100% | 0 | 15 | 4 | 2 | 0.57 |
+| 3 | 98,210 | -1.79% | -7.89% | 95% | 1 | 23 | 10 | 2 | 0.58 |
 
 The random-twin skill score, risk-adjusted return and experiment points arrive in the next build phase; they are computed from the saved trades, so they will cover these first days too.
 
@@ -26,31 +26,30 @@ The random-twin skill score, risk-adjusted return and experiment points arrive i
 
 ### Agent 1
 
-- **2026-11-21** (3 steps, 0 order attempts, $0.00): No orders. Account flat at $96,712 (100% cash), reconciled with journal. SPY closed 689.81, 7.8% below its 20-day average, so the +1% reclaim gate stays firmly closed. ACN at 221.17 is still 10.8% below its MA20 (falling knife per lesson 10) and not entered. Journal updated with the waiting reason and re-entry conditions (SPY gate, a stock passing the stock gate, and an earnings check).
 - **2026-11-24** (3 steps, 0 order attempts, $0.00): No orders. Account flat at $96,712 (100% cash), reconciled with journal. SPY 722.29 bounced 4.7% on 11-23 but remains 3.1% below its 20-day average, so the +1% gate stays closed. ACN 222.29 is 9.9% below its MA20 (falling knife), not entered. Journal updated with the waiting reason (cash >75% for 20+ sessions) and the re-entry conditions: SPY gate plus a stock passing the stock gate and an earnings check.
 - **2026-11-25** (3 steps, 0 order attempts, $0.00): No orders. Account flat at $96,712.20 (100% cash), reconciled with journal. SPY 718.78 is 3.3% below its 20-day average, so the +1% reclaim gate stays closed. ACN rallied 4.5% to 232.32 but is still 5.8% below its MA20, so it is a falling knife under lesson 10 and not entered. Journal updated with the reason for waiting (cash above 75% for 20+ sessions) and the re-entry conditions: SPY gate, a stock passing the stock gate, and an earnings check.
+- **2026-11-26** (3 steps, 0 order attempts, $0.00): 2026-11-26: No orders. Account flat at $96,712.20 (100% cash), reconciled with journal. SPY 716.70 is 3.2% below its 20-day average, so the +1% gate stays closed. ACN 240.49 rallied 3.5% but is still 2.4% below its MA20, so it is not entered under lesson 10. Journal updated with the waiting reason and re-entry conditions (SPY gate open plus a stock passing the stock gate, with ACN needing an MA20 reclaim and an earnings check; ACN reports 12-16).
 
 ### Agent 2
 
-- **2026-11-21** (3 steps, 0 order attempts, $0.01): 2026-11-21: No new orders. SPY 689.81 is 7.8% below its 20-day average and 9.2% below its 50-day, with breadth at 32%, so the market gate is still closed. The liquid screen's 1-month leaders are crash-rebound names with volatility above 100% or chases, and the losers are falling knives, so nothing passes. Account is 100% cash at about 96.6k. Journal updated with the cash reason and the exact return triggers.
 - **2026-11-24** (3 steps, 0 order attempts, $0.00): 2026-11-24: No orders. SPY 722.29 rebounded 4.7% on 11/23 but remains 3.1% below its 20-day average, so the market gate stays closed. The 1-month liquid leaders are crash rebounds with vol above 100% or chases 20%+ above the 20d average, so nothing passes the screen. Account is 100% cash at about 96.6k. Journal updated with the cash reason and the exact return triggers.
 - **2026-11-25** (3 steps, 0 order attempts, $0.00): 2026-11-25: No orders. SPY 718.78 is still 3.3% below its 20-day average and 5.2% below its 50-day, so the market gate is closed. The 1-month liquid leaders are crash rebounds with vol above 100% (SMST, SNDQ, BMNZ, AAOZ, IREZ) or chases 20%+ above the 20d average (INSM, SBIT, ZSL, BRBR), so nothing passes the filter. Account is 100% cash at about 96.6k. Journal updated with the cash reason and the exact return triggers.
+- **2026-11-26** (3 steps, 0 order attempts, $0.00): 2026-11-26: No orders. SPY 716.7 is still 3.2% below its 20-day average, so the market gate is closed. The 1-month liquid leaders are either crash rebounds with volatility above 100% or chases more than 20% above the 20-day average. The closest name, XERS, has volatility of 103%, just over my limit. Account is 100% cash at about 96.6k. Journal updated with the cash reasoning and the exact conditions that would bring me back.
 
 ### Agent 3
 
-- **2026-11-21** (3 steps, 0 order attempts, $0.01): Saturday 11-21: No new orders. Re-screened the top 6-month leaders against EXP1 filters (vs_ma20 < +10, vol < 60%, no earnings in hold, no 5%+ gap); none qualify, and breadth fell to 32% with the S&P fund down about 10% over 20 sessions, so my redeploy conditions are not met. Only AMPL is held (283 sh at 16.20, -5.8%) with a GTC stop at 15.83 and a planned time exit around Nov 27. Account is about 95% cash by design; journal updated with the cash rationale and the conditions that would bring me back.
 - **2026-11-24** (4 steps, 0 order attempts, $0.01): 2026-11-24: No new orders. Breadth recovered to 37.4% (from 32%) but is still below my 50% redeploy gate. CERT, APPN and INTA pass the EXP1 technical and earnings filters (no reports in the 10-session hold), but I kept the gate to avoid buying into a falling tape. If breadth stays 30-40% through ~Dec 1, I will consider a small, pre-registered sample-building trade. AMPL (283 sh, 17.09, GTC stop 15.83) is held to its ~Nov 27 planned time exit. Account is about 95% cash; journal updated with the cash rationale and redeploy conditions.
 - **2026-11-25** (3 steps, 1 order attempts, $0.00): 2026-11-25: No new entries. I cancelled AMPL's GTC stop to review it, then re-placed it at 15.83 GTC in the same session, so the position is protected again. AMPL closed at 16.98 on 11-24, about 1% below entry. Screened CERT, APPN and INTA: all pass the technical and earnings filters, but breadth (37.4% on 11-24) is still below my 50% gate. I am holding cash by design. If breadth stays 30-40% through about Dec 1, I will consider a pre-registered 5% sample-building trade. Journal updated.
+- **2026-11-26** (8 steps, 2 order attempts, $0.01): 11-26: Reviewed AMPL (283 sh, 17.10) and the three EXP1 candidates (CERT, APPN, INTA), which pass the technical and earnings filters. No new entries: breadth was 37.4% on the last reading, below my 50% gate, so cash stays about 95% by design. Problem: I cancelled AMPL's GTC stop for review, and the cancel is stuck in pending_cancel. Both replacement attempts at 15.83 were rejected because the 283 shares are still held for the old order. AMPL may be unprotected right now. Next session: check the account first and re-place the stop, or exit at the open since the planned time exit (~Nov 27) is due. Lesson recorded: do not cancel stops for review.
 
 ## Orders in the last 7 days
 
 | agent | when (UTC) | order | status | strategy | note |
 |---|---|---|---|---|---|
-| 2 | 2026-11-19T11:36 | sell 198 KSS limit 23.9 | pending_new | H52-stock exit (legacy position) |  |
 | 2 | 2026-11-20T11:34 | sell 198 KSS market | pending_new | H52-stock exit (legacy position) |  |
-| 3 | 2026-11-19T11:36 | sell 39 HAE limit 122.0 | rejected | EXP1 stock momentum-quality exit | Alpaca refused: HTTP 403: {"available":"0","code":40310000,"existing_qty":"39","held_for_orders":"39","message":"insufficient qty available for order (requested |
-| 3 | 2026-11-19T11:36 | sell 39 HAE limit 122.0 | pending_new | EXP1 stock momentum-quality exit |  |
 | 3 | 2026-11-25T12:51 | sell 283 AMPL stop | pending_new | EXP1 stock momentum-quality exit |  |
+| 3 | 2026-11-26T12:27 | sell 283 AMPL stop | rejected | EXP1 stock momentum-quality exit | Alpaca refused: HTTP 403: {"available":"0","code":40310000,"existing_qty":"283","held_for_orders":"283","message":"insufficient qty available for order (request |
+| 3 | 2026-11-26T12:28 | sell 283 AMPL stop | rejected | EXP1 stock momentum-quality exit | Alpaca refused: HTTP 403: {"available":"0","code":40310000,"existing_qty":"283","held_for_orders":"283","message":"insufficient qty available for order (request |
 
 ## Open experiments
 
